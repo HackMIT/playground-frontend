@@ -1,0 +1,38 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+html, body {
+    overflow: hidden;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    background: url(/assets/background.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.character {
+    background: url(/assets/penguin.jpg);
+    background-size: 80px 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 80px;
+    height: 100px;
+    transform: translate(-50%, -100%);
+    transition-property: all;
+    /* slight speed-up at beginning and slow-down at end */
+    /* use cubic-bezier.com to experiment with other timing functions */
+    transition-timing-function: cubic-bezier(0.15, 0, 0.85, 1);
+}
+
+.character span {
+    color: white;
+    font-family: -apple-system, -system-ui, Helvetica, sans-serif;
+    font-size: 12px;
+}

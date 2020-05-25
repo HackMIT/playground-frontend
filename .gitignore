@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# vim
+*.swp
+
+# Node
+dist/
+node_modules/
+.yarn/
+.pnp.js
