@@ -122,6 +122,20 @@ module.exports = {
           context: 'src', // prevent display of src/ in filename
         },
       },
+
+      /**
+       * Models
+       *
+       * Copy 3D models to build folder.
+       */
+      {
+        test: /\.(glb)$/,
+        loader: 'url-loader',
+        options: {
+          name: '[path][name].[ext]',
+          context: 'src',
+        },
+      },
     ],
   },
 }
