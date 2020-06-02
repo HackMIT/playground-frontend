@@ -9,13 +9,13 @@ Make sure you have yarn installed. If you don't have yarn installed, [click here
 ### Installation
 
 ```
-yarn install
+yarn
 ```
 
 ### Get Started
 
 ```
-yarn run dev
+yarn start
 ```
 
 If you need to test anything that involves communicating with [playground-backend](https://github.com/techx/playground), refer to the README in that repository to get that up and running.
