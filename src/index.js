@@ -5,7 +5,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 var container, controls;
-var camera, scene, renderer;
+var camera, clock, mixer, scene, renderer;
 
 function init() {
     container = document.createElement( 'div' );
@@ -14,15 +14,18 @@ function init() {
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.25, 20 );
     camera.position.set( - 1.8, 0.6, 2.7 );
 
+    clock = new THREE.Clock();
+
     scene = new THREE.Scene();
 
     var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
     scene.add(light);
 
     var loader = new GLTFLoader().setPath( 'assets/models/' );
-        loader.load( 'bread.glb', function ( gltf ) {
+        loader.load( 'floating_cube.glb', function ( gltf ) {
+            mixer = new THREE.AnimationMixer( gltf.scene );
+            mixer.clipAction(gltf.animations[0]).play();
 
-            console.log(gltf.animations)
             scene.add( gltf.scene );
 
             render();
@@ -44,7 +47,6 @@ function init() {
     pmremGenerator.compileEquirectangularShader();
 
     controls = new OrbitControls( camera, renderer.domElement );
-    controls.addEventListener( 'change', render ); // use if there is no animation loop
     controls.minDistance = 2;
     controls.maxDistance = 20;
     controls.target.set( 0, 0, - 0.2 );
@@ -63,6 +65,13 @@ function onWindowResize() {
 }
 
 function render() {
+    requestAnimationFrame(render);
+
+    if (mixer !== undefined) {
+        var deltaTime = clock.getDelta();
+        mixer.update(deltaTime);
+    }
+
     renderer.render( scene, camera );
 }
 
