@@ -76,10 +76,10 @@ function render() {
 }
 
 window.onload = function () {
-    init();
-    render();
+    // init();
+    // render();
 
-    return;
+    // return;
 
     var conn;
 
@@ -101,14 +101,16 @@ window.onload = function () {
         }));
     });
 
-    return;
-
     if (window['WebSocket']) {
         let name = prompt('What\'s your name?');
 
         conn = new WebSocket('ws://' + 'localhost:8080' + '/ws');
         conn.onopen = function (evt) {
             // Connected to remote
+            conn.send(JSON.stringify({
+                name: name,
+                type: 'join'
+            }));
         };
         conn.onclose = function (evt) {
             // Disconnected from remote
@@ -123,18 +125,20 @@ window.onload = function () {
                     for (let [key, value] of Object.entries(data.characters)) {
                         characters[key] = new Character(value.name, value.x, value.y);
                     }
-
-                    conn.send(JSON.stringify({
-                        name: name,
-                        type: 'join'
-                    }));
                 } else if (data.type === 'move') {
                     characters[data.id].move(data.x, data.y);
                 } else if (data.type === 'join') {
-                    characters[data.id] = new Character(data.name);
+                    if (data.name === name) {
+                        return;
+                    }
+
+                    characters[data.id] = new Character(data.name, data.x, data.y);
                 } else if (data.type === 'leave') {
                     characters[data.id].remove();
                     characters.delete(data.id);
+                } else {
+                    console.log("received unknown packet: " + data.type)
+                    console.log(data)
                 }
             }
         };
