@@ -12,6 +12,8 @@ var camera, clock, mixer, scene, renderer;
 var raycaster, mouse; // deals with the ray casting (used to translate screen coordiantes to space coordiantes)
 var model; // the loaded model
 
+const d = 20; // this controls scale of camera
+
 function init() {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
@@ -19,7 +21,6 @@ function init() {
 
     // Isometric Camera
     var aspect = window.innerWidth / window.innerHeight;
-    var d = 20; // this controls scale...
     camera = new THREE.OrthographicCamera( - d * aspect, d * aspect, d, - d, 1, 1000 );
     
     camera.position.set( 20, 20, 20 ); // these need to all be equal?
@@ -86,7 +87,9 @@ function init() {
 }
 
 function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    var aspect = window.innerWidth / window.innerHeight;
+    camera.left = -d * aspect;
+    camera.right = d * aspect;
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
