@@ -25,10 +25,13 @@ class LinearAnimation {
 	update(timeDelta, posVector) {
 		// check if no active animation (undefined) or past end
 		this.elapsedTime += timeDelta;
-
-		if (this.destination !== null && this.elapsedTime < this.dist / LinearAnimation.SPEED) {
-			posVector.lerpVectors(this.origin, this.destination, ((this.elapsedTime)*LinearAnimation.SPEED)/this.dist);
-		} 
+		if (this.destination !== null) {
+			if (this.elapsedTime < this.dist / LinearAnimation.SPEED) {
+				posVector.lerpVectors(this.origin, this.destination, ((this.elapsedTime)*LinearAnimation.SPEED)/this.dist);
+			} else {
+				posVector.set(this.destination.x, this.destination.y, this.destination.z)
+			}
+		}
 	}
 
 
