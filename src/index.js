@@ -1,18 +1,33 @@
 import * as THREE from 'three';
 import { Character } from './js/character'
+import { AnimatedModel } from './js/AnimatedModel'
+import { LinearAnimation } from './js/Animations'
+
 import './styles/index.scss'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 var container, controls;
 var camera, clock, mixer, scene, renderer;
+var raycaster, mouse; // deals with the ray casting (used to translate screen coordiantes to space coordiantes)
+var model; // the loaded model
 
 function init() {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
 
-    camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.25, 20 );
-    camera.position.set( - 1.8, 0.6, 2.7 );
+
+    // Isometric Camera
+    var aspect = window.innerWidth / window.innerHeight;
+    var d = 20; // this controls scale...
+    camera = new THREE.OrthographicCamera( - d * aspect, d * aspect, d, - d, 1, 1000 );
+    
+    camera.position.set( 20, 20, 20 ); // these need to all be equal?
+    camera.lookAt(0, 0, 0 );
+
+    // set up for ray casting
+    raycaster = new THREE.Raycaster();
+    mouse = new THREE.Vector2();
 
     clock = new THREE.Clock();
 
@@ -22,17 +37,23 @@ function init() {
     scene.add(light);
 
     var loader = new GLTFLoader().setPath( 'assets/models/' );
-        loader.load( 'floating_cube.glb', function ( gltf ) {
-            mixer = new THREE.AnimationMixer( gltf.scene );
-            mixer.clipAction(gltf.animations[0]).play();
 
-            scene.add( gltf.scene );
+    loader.load( 'Fox.glb', function ( gltf ) {
+        mixer = new THREE.AnimationMixer( gltf.scene );
+        var walkCycle = mixer.clipAction(gltf.animations[1])
+        walkCycle.enabled = false
+        walkCycle.play();
 
-            render();
+        gltf.scene.scale.set( 0.05, 0.05, 0.05 )
+        scene.add( gltf.scene );
 
-        }, undefined, function(e) {
-            console.log(e)
-        });
+        model = new AnimatedModel(gltf.scene, mixer, walkCycle);
+
+        render();
+
+    }, undefined, function(e) {
+        console.log(e)
+    });
 
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
@@ -43,14 +64,23 @@ function init() {
     renderer.setClearColor(0xffffff, 1);
     container.appendChild( renderer.domElement );
 
+    // Add floor plane
+    var geo = new THREE.PlaneBufferGeometry(30, 30, 8, 8);
+    var texture = THREE.ImageUtils.loadTexture('assets/images/grid.jpg');
+    var mat = new THREE.MeshBasicMaterial({map: texture});
+    var floorPlane = new THREE.Mesh(geo, mat);
+    floorPlane.rotateX( - Math.PI / 2);
+
+    scene.add(floorPlane);
+    
     var pmremGenerator = new THREE.PMREMGenerator( renderer );
     pmremGenerator.compileEquirectangularShader();
 
-    controls = new OrbitControls( camera, renderer.domElement );
-    controls.minDistance = 2;
-    controls.maxDistance = 20;
-    controls.target.set( 0, 0, - 0.2 );
-    controls.update();
+    // controls = new OrbitControls( camera, renderer.domElement );
+    // controls.minDistance = 2;
+    // controls.maxDistance = 20;
+    // controls.target.set( 0, 0, - 0.2 );
+    // controls.update();
 
     window.addEventListener( 'resize', onWindowResize, false );
 }
@@ -64,15 +94,52 @@ function onWindowResize() {
     render();
 }
 
+
+function setMousePos(event) {
+    // calculate mouse position in normalized device coordinates
+    // (-1 to +1) for both components
+    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+}
+
+function onMouseMove( event ) {
+    if (mouse !== undefined) {
+        setMousePos(event);
+    }
+}
+
+
+function onMouseClick( event ) {
+    if (mouse !== undefined && model !== undefined) {
+        setMousePos(event);
+        var dest = groundCollisionVector(raycaster);
+        model.setAnimation(dest);
+    }
+}
+
+// uses raycaster to get collision of current pos of mouse w/ ground
+function groundCollisionVector (raycaster) {
+    raycaster.setFromCamera( mouse, camera );
+    var collisionPlane = new THREE.Plane( new THREE.Vector3( 0, 1, 0 ), 0 );
+    var intersectVector = new THREE.Vector3();
+    raycaster.ray.intersectPlane(collisionPlane, intersectVector); // copies intersection of ray & plane into vector thats passed in
+
+    return intersectVector;
+}
+
+
 function render() {
     requestAnimationFrame(render);
+    var deltaTime = clock.getDelta();
 
-    if (mixer !== undefined) {
-        var deltaTime = clock.getDelta();
-        mixer.update(deltaTime);
+    if (model !== undefined) {
+        
+        renderer.render( scene, camera ); 
+
+        model.update(deltaTime)
+
     }
 
-    renderer.render( scene, camera );
 }
 
 window.onload = function () {
@@ -143,3 +210,9 @@ window.onload = function () {
         item.innerHTML = '<b>Your browser does not support WebSockets.</b>';
     }
 };
+
+
+// window.addEventListener( 'mousemove', onMouseMove, false );
+window.addEventListener( 'click', onMouseClick, false );
+
+// window.requestAnimationFrame(render);
