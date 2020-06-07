@@ -12,7 +12,7 @@ class Character {
         document.getElementsByTagName("body")[0].appendChild(this.elem);
     }
 
-    move(x, y) {
+    move(x, y, callback) {
         let oldXpx = this.x * window.innerWidth;
         let oldYpx = this.y * window.innerHeight;
         let newXpx = x * window.innerWidth;
@@ -26,6 +26,8 @@ class Character {
         this.elem.style.top = y * 100 + "%";
         this.x = x;
         this.y = y;
+
+        setTimeout(callback, duration * 1000);
     }
 
     remove() {
