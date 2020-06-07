@@ -22,7 +22,7 @@ body {
     background-size: 80px 100px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: top;
     position: absolute;
     width: 80px;
     height: 100px;
@@ -34,7 +34,8 @@ body {
 }
 
 .character span {
-    color: white;
+    color: black;
     font-family: $font-family;
-    font-size: 12px;
+    font-size: 13px;
+    transform: translateY(-18px);
 }

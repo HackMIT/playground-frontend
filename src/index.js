@@ -61,9 +61,9 @@ window.onload = function () {
                     room = data.room;
 
                     if (room.slug === "home") {
-                        document.body.style.background = "url('" + homeBackground + "')";
+                        document.body.style.backgroundImage = "url('" + homeBackground + "')";
                     } else if (room.slug === "drw") {
-                        document.body.style.background = "url('" + drwBackground + "')";
+                        document.body.style.backgroundImage = "url('" + drwBackground + "')";
                     }
                 } else if (data.type === 'move') {
                     characters[data.id].move(data.x, data.y, () => {
