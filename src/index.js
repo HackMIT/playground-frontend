@@ -128,10 +128,6 @@ window.onload = function () {
                 } else if (data.type === 'move') {
                     characters[data.id].move(data.x, data.y);
                 } else if (data.type === 'join') {
-                    if (data.name === name) {
-                        return;
-                    }
-
                     characters[data.id] = new Character(data.name, data.x, data.y);
                 } else if (data.type === 'leave') {
                     characters[data.id].remove();
