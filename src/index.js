@@ -67,6 +67,10 @@ window.onload = function () {
                     }
                 } else if (data.type === 'move') {
                     characters[data.id].move(data.x, data.y, () => {
+                        if (data.name !== name) {
+                            return;
+                        }
+
                         for (const hallway of room.hallways) {
                             let distance = Math.sqrt(Math.pow(hallway.x - data.x, 2) + Math.pow(hallway.y - data.y, 2));
 
