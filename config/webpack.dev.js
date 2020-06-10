@@ -40,4 +40,8 @@ module.exports = merge(common, {
      */
     new webpack.HotModuleReplacementPlugin(),
   ],
+
+  output: {
+    filename: '[name].bundle.js'
+  }
 })
