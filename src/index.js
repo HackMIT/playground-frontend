@@ -1,4 +1,4 @@
-import { Character } from './js/character'
+import { Character } from './js/Character'
 import './styles/index.scss'
 
 import homeBackground from './images/home.png'
@@ -31,6 +31,8 @@ window.onload = function () {
 
         conn = new WebSocket('ws://' + 'localhost:8080' + '/ws');
         conn.onopen = function (evt) {
+            // window.location.replace("https://my.hackmit.org/login?sso=http://localhost:3000/");
+
             // Connected to remote
             conn.send(JSON.stringify({
                 name: name,
