@@ -1,6 +1,5 @@
 import { Character } from './js/Character'
 import './styles/index.scss'
-
 import homeBackground from './images/home.png'
 import drwBackground from './images/drw.png'
 
