@@ -4,12 +4,28 @@ class Character {
         this.y = y;
         this.name = name;
 
+        // this.chatElem = document.createElement("div");
+
         this.elem = document.createElement("div");
         this.elem.className = "character";
         this.move(x, y);
 
         this.elem.innerHTML = "<span>" + name + "</span>";
         document.getElementsByTagName("body")[0].appendChild(this.elem);
+    }
+
+    updateChatBubble(mssg) {
+        // set timer for chat bubble to appear
+        var charmssg = document.createElement('div');
+        charmssg.innerHTML = mssg;
+
+        charmssg.style.display = 'none'
+        
+        setTimeout(function(){
+            charmssg.innerHTML = null;
+        }, 3000);
+
+        charmssg.style.display = 'block'
     }
 
     move(x, y, callback) {

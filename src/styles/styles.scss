@@ -1,0 +1,91 @@
+@font-face {
+    font-family: 'Lemon Milk Medium';
+    src: url('../fonts/lemon-milk-font/LemonMilkMedium-mLZYV.otf');
+}
+
+@font-face {
+    font-family: 'Muli Regular';
+    src: url('../fonts/Muli/static/Muli-Regular.ttf')
+}
+
+h1 {
+    font-family: 'Lemon Milk Medium';
+    color: #001D55;
+    text-align: center;
+    -webkit-text-stroke-width: 1px #000000;
+}
+
+.MessageDisplay {
+    font-family: 'Muli Regular';
+    max-width: 90%;
+    margin-left: 5%;
+    background-color: #96D0F1;
+    opacity: 0;
+    font-family: sans-serif;
+    border-radius: 12px;
+    height: 600px;
+}
+
+.ChatBottom {
+    background-color: #7B9FCE;
+    -moz-box-shadow: 3px 0px 0px #36578E,
+    -1px 0px 0px #36578E,
+    0px 2px 0px #A0CDEC,
+    0px -1px 0px #4D609A;
+    box-shadow: 3px 0px 0px #36578E,
+    -1px 0px 0px #36578E,
+    0px 2px 0px #A0CDEC,
+    0px -1px 0px #4D609A;
+    font-weight: bold;
+    // margin-top: 50px;
+    text-align: center;
+    border-radius: 12px;
+    height: 50px;
+    width: 60%;
+    margin: 20px auto;
+}
+
+.MessageBox {
+    position: relative;
+    color: #FFF;
+    font-family: 'Muli Regular';
+    padding-bottom: 10px;
+    background-color: #051E52;
+    line-height:10px;
+    text-align: left;
+    -moz-box-shadow: 3px 0px 0px #9DC8EA,
+    -3px 0px 0px #597FBA,
+    0px 2px 0px #597FBA,
+    0px -2px 0px #88AFD9;
+    box-shadow: 3px 0px 0px #9DC8EA,
+    -3px 0px 0px #597FBA,
+    0px 2px 0px #597FBA,
+    0px -2px 0px #88AFD9;
+    border-radius: 12px;
+    border-color: #597FBA;
+    height: 50%;
+    width: 60%;
+    margin: auto;
+}
+
+.Button {
+    position: relative;
+    display:inline-block;
+    color: #FFF;
+    background-color: #24447C;
+    // -webkit-box-shadow: 0px 6px -1px #8EB9DB;
+    -moz-box-shadow: -2px 0px 0px #A3D0EF,
+    -2px 0px 0px #061C51,
+    0px 1px 0px #A3D0EF,
+    0px -1px 0px #061C51;  
+    box-shadow: -2px 0px 0px #A3D0EF,
+    -2px 0px 0px #061C51,
+    0px 1px 0px #A3D0EF,
+    0px -1px 0px #061C51;
+    padding: 20px;
+    text-align: center;
+    // width: 1px;
+    border-radius: 50%;
+    border-color: #597FBA;
+    // margin: 20px auto;
+}

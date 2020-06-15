@@ -1,5 +1,6 @@
 import { Character } from './js/character'
 import './styles/index.scss'
+import './styles/styles.scss'
 import homeBackground from './images/home.png'
 import drwBackground from './images/drw.png'
 
@@ -35,6 +36,21 @@ window.onload = function () {
                 name: name,
                 type: 'join'
             }));
+
+            let id = 'xyz';
+            let message = document.getElementById(id);
+            message.addEventListener('keypress', function (s) {
+                if (s.key === 'Enter') { 
+                    console.log('Event fired');
+
+                    conn.send(JSON.stringify({
+                        type: 'chat',
+                        mssg: message.value
+                    }))
+                }
+                    
+            })
+
         };
         conn.onclose = function (evt) {
             // Disconnected from remote
@@ -95,6 +111,11 @@ window.onload = function () {
 
                     characters[data.id].remove();
                     delete characters[data.id];
+                } else if (data.type == 'chat') {
+                    data.name = characters[data.id].name
+                    console.log(data)
+                    characters[data.id].updateChatBubble(data.mssg)
+
                 } else {
                     console.log("received unknown packet: " + data.type)
                     console.log(data)
