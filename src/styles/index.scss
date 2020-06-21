@@ -39,3 +39,14 @@ body {
     font-size: 13px;
     transform: translateY(-18px);
 }
+
+.interactable {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: top;
+    max-width: 100 px;
+    max-height: 100 px;
+    width: auto;
+    height: auto;
+}
