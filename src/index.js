@@ -1,10 +1,21 @@
-import { Character } from './js/character'
+import { Character } from './js/Character'
 import './styles/index.scss'
 import './styles/styles.scss'
 import homeBackground from './images/home.png'
 import drwBackground from './images/drw.png'
 
+const baseURL = "http://localhost:3000/";
+const param = "login?token=";
+
+const tokenURL = baseURL + param;
+
 window.onload = function () {
+    const route = window.location.href;
+
+    if (route !== baseURL) {
+        document.getElementById("sso-button").style.display = "none";
+    }
+
     var conn;
 
     var characters = new Map();
@@ -26,14 +37,16 @@ window.onload = function () {
         }));
     });
 
-    if (window['WebSocket']) {
-        let name = prompt('What\'s your name?');
+    if (window['WebSocket'] && route.includes(tokenURL)) {
+        // let name = prompt('What\'s your name?');
 
         conn = new WebSocket('ws://' + 'localhost:8080' + '/ws');
         conn.onopen = function (evt) {
+            const SSOtoken = route.slice(tokenURL.length);
+
             // Connected to remote
             conn.send(JSON.stringify({
-                name: name,
+                name: SSOtoken,
                 type: 'join'
             }));
 
