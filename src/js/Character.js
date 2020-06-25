@@ -10,21 +10,38 @@ class Character {
         this.elem.className = "character";
         this.move(x, y);
 
-        this.elem.innerHTML = "<span>" + name + "</span>";
+        this.elem.innerHTML = "<span id = \"name\">" + name + "</span>";
         document.getElementsByTagName("body")[0].appendChild(this.elem);
     }
 
-    updateChatBubble(mssg) {
-        // TODO: format chat message under the penguin
+    updateChatBubble(name, mssg) {
+        
+        var chatBubble = document.createElement('div');
+
         this.chatElem.className = 'mssg';
-        this.chatElem.innerHTML = "<span>" + mssg + "</span>";
-        document.getElementsByTagName('div')[document.getElementsByTagName('div').length-1].appendChild(this.chatElem)
+        this.chatElem.innerHTML = "<span id = \"mssg\">" + mssg + "</span>";
+        
+        var characters = document.querySelectorAll('div.character > span');
+
+        for (var i = 0; i < characters.length; i++) {
+            let charName = characters[i].innerHTML;
+            if (charName === name){
+
+                let char = document.getElementsByClassName('character')[i];
+
+                chatBubble.className = 'text-bubble';
+                
+                chatBubble.appendChild(this.chatElem);
+                char.appendChild(chatBubble);
+
+                break;
+            }
+        }
 
         setTimeout(() => {
             this.chatElem.innerHTML = null;
+            chatBubble = null;
         }, 5000);
-
-        console.log('does anything happen')
 
     }
 

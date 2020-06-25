@@ -127,7 +127,7 @@ window.onload = function () {
                 } else if (data.type == 'chat') {
                     data.name = characters[data.id].name
                     console.log(data)
-                    characters[data.id].updateChatBubble(data.mssg)
+                    characters[data.id].updateChatBubble(data.name, data.mssg)
 
                 } else {
                     console.log("received unknown packet: " + data.type)
