@@ -6,5 +6,9 @@ module.exports = [
   {
     path: 'editor',
     template: 'editor'
+  },
+  {
+    path: 'sponsor',
+    template: 'sponsor'
   }
 ];
