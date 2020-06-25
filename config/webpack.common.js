@@ -12,7 +12,8 @@ module.exports = {
    */
   entry: {
     game: [paths.src + '/index.js'],
-    editor: [paths.src + '/editor.js']
+    editor: [paths.src + '/editor.js'],
+    character: [paths.src + '/character.js']
   },
 
   /**
