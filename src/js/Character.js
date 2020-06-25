@@ -4,7 +4,7 @@ class Character {
         this.y = y;
         this.name = name;
 
-        // this.chatElem = document.createElement("div");
+        this.chatElem = document.createElement("div");
 
         this.elem = document.createElement("div");
         this.elem.className = "character";
@@ -15,17 +15,17 @@ class Character {
     }
 
     updateChatBubble(mssg) {
-        // set timer for chat bubble to appear
-        var charmssg = document.createElement('div');
-        charmssg.innerHTML = mssg;
+        // TODO: format chat message under the penguin
+        this.chatElem.className = 'mssg';
+        this.chatElem.innerHTML = "<span>" + mssg + "</span>";
+        document.getElementsByTagName('div')[document.getElementsByTagName('div').length-1].appendChild(this.chatElem)
 
-        charmssg.style.display = 'none'
-        
-        setTimeout(function(){
-            charmssg.innerHTML = null;
-        }, 3000);
+        setTimeout(() => {
+            this.chatElem.innerHTML = null;
+        }, 5000);
 
-        charmssg.style.display = 'block'
+        console.log('does anything happen')
+
     }
 
     move(x, y, callback) {
