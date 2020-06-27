@@ -1,4 +1,5 @@
 import './styles/character.scss'
+import './styles/lemonmilk-cufonfonts-webfont/style.css'
 //get headers
 const selectHeader1 = document.getElementById("Select-tab-1");
 const selectHeader2 = document.getElementById("Select-tab-2");
@@ -43,3 +44,33 @@ selectHeader3.addEventListener("click",()=>{
     }
 });
 
+//could be one function with parameters for different pages
+function renderFaceComponents(){
+    const selectFaceComponentsContainer = document.getElementById("Select-faces-container");
+    for (let i=0;i<15;i++){
+        const faceTile = document.createElement("div");
+        faceTile.className = "Select-face-tile";
+        selectFaceComponentsContainer.appendChild(faceTile);
+    }
+}
+function renderClothesComponents(){
+    const selectClothesComponentsContainer = document.getElementById("Select-clothes-container");
+    for (let i=0;i<15;i++){
+        const clothTile = document.createElement("div");
+        clothTile.className = "Select-cloth-tile";
+        selectClothesComponentsContainer.appendChild(clothTile);
+    }
+}
+function renderAccessoriesComponents(){
+    const selectAccessoriesComponentsContainer = document.getElementById("Select-accessories-container");
+    for (let i=0;i<15;i++){
+        const accessoryTile = document.createElement("div");
+        accessoryTile.className = "Select-accessories-tile";
+        selectAccessoriesComponentsContainer.appendChild(accessoryTile);
+    }
+}
+
+
+renderFaceComponents();
+renderClothesComponents();
+renderAccessoriesComponents();
