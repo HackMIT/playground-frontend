@@ -1,14 +1,15 @@
 class Character {
-    constructor(name, x = 0.5, y = 0.5) {
-        this.x = x;
-        this.y = y;
-        this.name = name;
+    constructor(character) {
+        this.x = character.x;
+        this.y = character.y;
+        this.id = character.id;
+        this.name = character.name;
 
         this.elem = document.createElement("div");
         this.elem.className = "character";
-        this.move(x, y);
+        this.move(this.x, this.y);
 
-        this.elem.innerHTML = "<span>" + name + "</span>";
+        this.elem.innerHTML = "<span>" + this.name + "</span>";
         document.getElementsByTagName("body")[0].appendChild(this.elem);
     }
 

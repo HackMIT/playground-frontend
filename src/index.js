@@ -45,7 +45,7 @@ window.onload = function () {
 
             // Connected to remote
             conn.send(JSON.stringify({
-                name: SSOtoken,
+                token: SSOtoken,
                 type: 'join'
             }));
         };
@@ -57,6 +57,7 @@ window.onload = function () {
 
             for (var i = 0; i < messages.length; i++) {
                 var data = JSON.parse(messages[i]);
+                console.log(data)
 
                 if (data.type === 'init') {
                     for (let key of Object.keys(characters)) {
@@ -100,7 +101,7 @@ window.onload = function () {
                         }
                     });
                 } else if (data.type === 'join') {
-                    characters[data.id] = new Character(data.name, data.x, data.y);
+                    characters[data.character.id] = new Character(data.character);
                 } else if (data.type === 'leave') {
                     if (data.name === name) {
                         return;
