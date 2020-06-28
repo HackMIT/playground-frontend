@@ -3,18 +3,7 @@ import './styles/index.scss'
 import homeBackground from './images/home.png'
 import drwBackground from './images/drw.png'
 
-const baseURL = "http://localhost:3000/";
-const param = "login?token=";
-
-const tokenURL = baseURL + param;
-
 window.onload = function () {
-    const route = window.location.href;
-
-    if (route !== baseURL) {
-        document.getElementById("sso-button").style.display = "none";
-    }
-
     var conn;
 
     var characters = new Map();
@@ -36,18 +25,26 @@ window.onload = function () {
         }));
     });
 
-    if (window['WebSocket'] && route.includes(tokenURL)) {
+    if (window['WebSocket']) {
         // let name = prompt('What\'s your name?');
 
         conn = new WebSocket('ws://' + 'localhost:8080' + '/ws');
         conn.onopen = function (evt) {
-            const SSOtoken = route.slice(tokenURL.length);
+            let joinPacket = {
+                type: 'join'
+            };
+
+            if (localStorage.getItem("token") !== null) {
+                joinPacket.token = localStorage.getItem("token");
+            } else if (window.location.hash.length > 1) {
+                joinPacket.quillToken = document.location.hash.substring(1);
+            } else {
+                // No auth data
+                return;
+            }
 
             // Connected to remote
-            conn.send(JSON.stringify({
-                token: SSOtoken,
-                type: 'join'
-            }));
+            conn.send(JSON.stringify(joinPacket));
         };
         conn.onclose = function (evt) {
             // Disconnected from remote
@@ -60,6 +57,10 @@ window.onload = function () {
                 console.log(data)
 
                 if (data.type === 'init') {
+                    localStorage.setItem("token", data.token);
+                    history.pushState(null, null, ' ');
+                    document.getElementById("sso-button").style.display = "none";
+
                     for (let key of Object.keys(characters)) {
                         characters[key].remove();
                         delete characters[key];
