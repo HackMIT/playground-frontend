@@ -17,6 +17,46 @@ body {
     background-size: cover;
 }
 
+#login-panel {
+    background: #fff;
+    border: 2px solid #333;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: Helvetica, sans-serif;
+    left: 50%;
+    padding: 24px 24px 28px;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    
+    a {
+        border-radius: 3px;
+        color: #fff;
+        display: block;
+        margin: 16px 16px 0;
+        padding: 10px 0;
+        text-decoration: none;
+
+        &.hacker {
+            background: #43a047;
+
+            &:hover {
+                background: #388e3c;
+            }
+        }
+
+        &.sponsor {
+            background: #039be5;
+
+            &:hover {
+                background: #0288d1;
+            }
+        }
+    }
+}
+
 .character {
     background: url(../images/penguin.jpg);
     background-size: 80px 100px;
@@ -42,14 +82,14 @@ body {
     border: 5px;
 }
 
-#name {
-    color: white;
+.name {
+    color: #000;
     font-family: $font-family;
     font-size: 13px;
     transform: translateY(104px);
 }
 
-#mssg {
+.mssg {
     color: black;
     font-family: $font-family;
     font-size: 13px;
