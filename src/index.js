@@ -63,12 +63,14 @@ window.onload = function () {
             conn.send(JSON.stringify(joinPacket));
 
             // Start sending chat events
-            document.getElementById('chat-box').addEventListener('keypress', function (s) {
-                if (s.key === 'Enter') { 
+            document.getElementById('chat-box').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') { 
                     conn.send(JSON.stringify({
                         type: 'chat',
-                        mssg: message.value
+                        mssg: e.target.value
                     }))
+
+                    e.target.value = '';
                 }
             });
         };
@@ -80,7 +82,6 @@ window.onload = function () {
 
             for (var i = 0; i < messages.length; i++) {
                 var data = JSON.parse(messages[i]);
-                console.log(data)
 
                 if (data.type === 'init') {
                     localStorage.setItem('token', data.token);
@@ -138,9 +139,7 @@ window.onload = function () {
                     delete characters[data.id];
                 } else if (data.type == 'chat') {
                     data.name = characters[data.id].name
-                    console.log(data)
-                    characters[data.id].updateChatBubble(data.name, data.mssg)
-
+                    characters[data.id].updateChatBubble(data.mssg)
                 } else {
                     console.log('received unknown packet: ' + data.type)
                     console.log(data)
