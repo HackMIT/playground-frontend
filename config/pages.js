@@ -8,6 +8,10 @@ module.exports = [
     template: 'editor'
   },
   {
+    path: 'login',
+    template: 'login'
+  },
+  {
     path: 'sponsor',
     template: 'sponsor'
   }
