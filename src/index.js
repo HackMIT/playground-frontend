@@ -1,4 +1,5 @@
 import { Character } from './js/Character'
+import { Interactable } from './js/Interactable'
 import './styles/index.scss'
 import homeBackground from './images/home.png'
 import drwBackground from './images/drw.png'
@@ -12,6 +13,7 @@ window.onload = function () {
     var conn;
 
     var characters = new Map();
+    var interactables = new Map();
     var room;
 
     // When clicking on the page, send a move message to the server
@@ -75,6 +77,10 @@ window.onload = function () {
 
                     for (let [key, value] of Object.entries(data.room.characters)) {
                         characters[key] = new Character(value.name, value.x, value.y);
+                    }
+
+                    for (let [key, value] of Object.entries(data.room.interactables)) {
+                        interactables[key] = new Interactable(value.action, value.appearance, value.x, value.y);
                     }
 
                     room = data.room;
