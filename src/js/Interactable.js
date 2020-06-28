@@ -15,10 +15,6 @@ class Interactable {
         document.getElementsByTagName("body")[0].appendChild(this.elem);
     }
 
-    remove() {
-        this.elem.remove();
-    }
-
     // TODO: add functions for specific actions
 }
 
