@@ -4,6 +4,11 @@ import homeBackground from './images/home.png'
 import drwBackground from './images/drw.png'
 
 window.onload = function () {
+    // Quick check for auth data
+    if (localStorage.getItem('token') !== null) {
+        document.getElementById('login-panel').style.display = 'none';
+    }
+
     var conn;
 
     var characters = new Map();
@@ -34,8 +39,8 @@ window.onload = function () {
                 type: 'join'
             };
 
-            if (localStorage.getItem("token") !== null) {
-                joinPacket.token = localStorage.getItem("token");
+            if (localStorage.getItem('token') !== null) {
+                joinPacket.token = localStorage.getItem('token');
             } else if (window.location.hash.length > 1) {
                 joinPacket.quillToken = document.location.hash.substring(1);
             } else {
@@ -57,9 +62,9 @@ window.onload = function () {
                 console.log(data)
 
                 if (data.type === 'init') {
-                    localStorage.setItem("token", data.token);
+                    localStorage.setItem('token', data.token);
                     history.pushState(null, null, ' ');
-                    document.getElementById("sso-button").style.display = "none";
+                    document.getElementById('login-panel').style.display = 'none';
 
                     for (let key of Object.keys(characters)) {
                         characters[key].remove();
@@ -74,9 +79,9 @@ window.onload = function () {
 
                     room = data.room;
 
-                    if (room.slug === "home") {
+                    if (room.slug === 'home') {
                         document.body.style.backgroundImage = "url('" + homeBackground + "')";
-                    } else if (room.slug === "drw") {
+                    } else if (room.slug === 'drw') {
                         document.body.style.backgroundImage = "url('" + drwBackground + "')";
                     }
                 } else if (data.type === 'move') {
@@ -111,7 +116,7 @@ window.onload = function () {
                     characters[data.id].remove();
                     delete characters[data.id];
                 } else {
-                    console.log("received unknown packet: " + data.type)
+                    console.log('received unknown packet: ' + data.type)
                     console.log(data)
                 }
             }
