@@ -1,7 +1,11 @@
 import { Character } from './js/Character'
+import { Interactable } from './js/Interactable'
 import './styles/index.scss'
+import './styles/sponsor.scss'
+import './styles/styles.scss'
 import homeBackground from './images/home.png'
 import drwBackground from './images/drw.png'
+import sponsorBackground from './images/sponsor.png'
 
 window.onload = function () {
     // Quick check for auth data
@@ -12,16 +16,21 @@ window.onload = function () {
     var conn;
 
     var characters = new Map();
+    var interactables = new Map();
     var room;
 
+    let gameElem = document.getElementById("game");
+
     // When clicking on the page, send a move message to the server
-    document.addEventListener('click', function (e) {
+    gameElem.addEventListener('click', function (e) {
         if (!conn) {
             return false;
         }
 
-        let x = e.pageX / window.innerWidth;
-        let y = e.pageY / window.innerHeight;
+        // Send move packet
+        let rect = gameElem.getBoundingClientRect();
+        let x = (e.pageX - rect.x) / rect.width;
+        let y = (e.pageY - rect.y) / rect.height;
 
         conn.send(JSON.stringify({
             x: x,
@@ -50,6 +59,18 @@ window.onload = function () {
 
             // Connected to remote
             conn.send(JSON.stringify(joinPacket));
+
+            // Start sending chat events
+            document.getElementById('chat-box').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') { 
+                    conn.send(JSON.stringify({
+                        type: 'chat',
+                        mssg: e.target.value
+                    }))
+
+                    e.target.value = '';
+                }
+            });
         };
         conn.onclose = function (evt) {
             // Disconnected from remote
@@ -59,7 +80,6 @@ window.onload = function () {
 
             for (var i = 0; i < messages.length; i++) {
                 var data = JSON.parse(messages[i]);
-                console.log(data)
 
                 if (data.type === 'init') {
                     localStorage.setItem('token', data.token);
@@ -77,12 +97,18 @@ window.onload = function () {
                         characters[key] = new Character(value.name, value.x, value.y);
                     }
 
+                    for (let [key, value] of Object.entries(data.room.interactables)) {
+                        interactables[key] = new Interactable(value.action, value.appearance, value.x, value.y);
+                    }
+
                     room = data.room;
 
                     if (room.slug === 'home') {
-                        document.body.style.backgroundImage = "url('" + homeBackground + "')";
+                        gameElem.style.backgroundImage = "url('" + sponsorBackground + "')";
+                        gameElem.classList.add("sponsor");
+                        document.getElementById("sponsor-pane").classList.add("active");
                     } else if (room.slug === 'drw') {
-                        document.body.style.backgroundImage = "url('" + drwBackground + "')";
+                        gameElem.style.backgroundImage = "url('" + drwBackground + "')";
                     }
                 } else if (data.type === 'move') {
                     characters[data.id].move(data.x, data.y, () => {
@@ -115,14 +141,21 @@ window.onload = function () {
 
                     characters[data.id].remove();
                     delete characters[data.id];
+                } else if (data.type == 'chat') {
+                    data.name = characters[data.id].name
+                    characters[data.id].updateChatBubble(data.mssg)
                 } else {
                     console.log('received unknown packet: ' + data.type)
                     console.log(data)
                 }
             }
         };
+
     } else {
         var item = document.createElement('div');
         item.innerHTML = '<b>Your browser does not support WebSockets.</b>';
+
     }
+    
+    
 };

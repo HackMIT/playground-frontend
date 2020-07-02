@@ -1,0 +1,402 @@
+#root {
+    font-family: "Lemon/Milk Regular";
+    background: -moz-linear-gradient(45deg, #fbcdc2 0%, #fbcdc2 20%, #fbcdc2 40%, #96d0f1 60%, #96d0f1 100%);
+    background: -webkit-linear-gradient(45deg, #fbcdc2 0%, #fbcdc2 20%, #fbcdc2 40%, #96d0f1 60%, #96d0f1 100%);
+    background: linear-gradient(70deg, #fbcdc2 0%, #fbcdc2 20%, #fbcdc2 40%, #96d0f1 60%, #96d0f1 100%);
+    height: 800px;
+    overflow: auto;
+}
+
+.Select-Container {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    .Select-headers {
+        height: 3rem;
+        display: flex;
+        width: 60%;
+        flex-direction: row;
+        color: white;
+        .Select-header-1 {
+            border-top-left-radius: 1.5em;
+            border-top-right-radius: 1.5em;
+            background-color: white;
+            color: black;
+            opacity: 0.8;
+            word-wrap: break-word;
+            text-align: center;
+            align-items: center;
+            padding-top: 1rem;
+        }
+        .Select-header-1-alternate {
+            border-top-left-radius: 1.5em;
+            border-top-right-radius: 1.5em;
+            word-wrap: break-word;
+            text-align: center;
+            align-items: center;
+            padding-top: 1rem;
+            background-color: black;
+        }
+        .Select-header-1-alternate:hover {
+            background-color: white;
+            opacity: 0.4;
+            color: black;
+        }
+        .Select-header-2-alternate {
+            border-top-left-radius: 1.5em;
+            border-top-right-radius: 1.5em;
+            background-color: #a9a9a9;
+            word-wrap: break-word;
+            text-align: center;
+            align-items: center;
+            padding-top: 1rem;
+            background-color: black;
+        }
+        .Select-header-2-alternate:hover {
+            background-color: white;
+            color: black;
+            opacity: 0.4;
+        }
+        .Select-header-2 {
+            border-top-left-radius: 1.5em;
+            border-top-right-radius: 1.5em;
+            word-wrap: break-word;
+            text-align: center;
+            align-items: center;
+            padding-top: 1rem;
+            background-color: white;
+            opacity: 0.8;
+            color: black;
+        }
+        .Select-header-3-alternate {
+            border-top-left-radius: 1.5em;
+            border-top-right-radius: 1.5em;
+            word-wrap: break-word;
+            text-align: center;
+            align-items: center;
+            padding-top: 1rem;
+            background-color: black;
+        }
+        .Select-header-3-alternate:hover {
+            color: black;
+            background-color: white;
+            opacity: 0.4;
+        }
+        .Select-header-3 {
+            border-top-left-radius: 1.5em;
+            border-top-right-radius: 1.5em;
+            background-color: #a9a9a9;
+            word-wrap: break-word;
+            text-align: center;
+            align-items: center;
+            padding-top: 1rem;
+            background-color: white;
+            opacity: 0.8;
+            color: black;
+        }
+    }
+    .Select-body {
+        background: white;
+        opacity: 0.5;
+        height: 600px;
+        width: 1200px;
+        border-radius: 2.5rem;
+        .Select-close {
+            margin-top: 1em;
+            width: 97%;
+            height: 1rem;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+        }
+        .Select-close-icon {
+            height: 2.5rem;
+            width: 2.5rem;
+            background-color: red;
+            border-radius: 100%;
+        }
+        .Select-face {
+            height: inherit;
+            display: flex;
+            flex-direction: row;
+            margin: 1em;
+            .Select-face-avatar {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-top: 3em;
+                .Select-face-avatar-label {
+                    color: black;
+                    font-size: 1em;
+                }
+                .Select-face-avatar-container {
+                    width: 250px;
+                    height: 400px;
+                    background-color: black;
+                    border-radius: 12px;
+                    margin-top: 1rem;
+                }
+            }
+            .Select-face-components {
+                height: inherit;
+                width: 80%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-top: 3em;
+                .Select-face-components-label {
+                    color: black;
+                    font-size: 1em;
+                    text-align: center;
+                }
+                .Select-face-components-container {
+                    border-radius: 12px;
+                    height: 400px;
+                    width: 450px;
+                    background-color: black;
+                    margin-top: 1rem;
+                    padding: 5px;
+                    display: flex;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    justify-content: space-around;
+                    flex-direction: row;
+                    overflow: auto;
+                }
+                .Select-face-tile {
+                    width: 5rem;
+                    height: 5rem;
+                    background-color: white;
+                    opacity: 0.8;
+                    border-radius: 100%;
+                    margin: 5px;
+                    transition: all 0.2s ease-in-out;
+                    &:hover {
+                        transform: scale(1.5);
+                    }
+                }
+            }
+            .Select-clothes-components {
+                height: inherit;
+                width: 80%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-top: 3em;
+                .Select-clothes-components-label {
+                    color: black;
+                    font-size: 1em;
+                    text-align: center;
+                }
+                .Select-clothes-components-container {
+                    border-radius: 12px;
+                    height: 400px;
+                    width: 450px;
+                    background-color: #682331;
+                    margin-top: 1rem;
+                    display: flex;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    justify-content: space-around;
+                    flex-direction: row;
+                    padding: 5px;
+                    overflow: auto;
+                }
+                .Select-cloth-tile {
+                    width: 5rem;
+                    height: 5rem;
+                    background-color: white;
+                    opacity: 0.8;
+                    border-radius: 3px;
+                    margin: 5px;
+                    transition: all 0.2s ease-in-out;
+                    &:hover {
+                        transform: scale(1.5);
+                    }
+                }
+            }
+            .Select-clothes-components-alternate {
+                display: none !important;
+            }
+            .Select-accessories-components {
+                height: inherit;
+                width: 80%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-top: 3em;
+                .Select-accessories-components-label {
+                    color: black;
+                    font-size: 1em;
+                    text-align: center;
+                }
+                .Select-accessories-components-container {
+                    border-radius: 12px;
+                    height: 400px;
+                    width: 450px;
+                    background-color: #7a2960;
+                    margin-top: 1rem;
+                    display: flex;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    justify-content: space-around;
+                    flex-direction: row;
+                    padding: 5px;
+                    overflow: auto;
+                }
+                .Select-accessories-tile {
+                    width: 5rem;
+                    height: 5rem;
+                    background-color: white;
+                    opacity: 0.8;
+                    border-radius: 3px;
+                    margin: 5px;
+                    transition: all 0.2s ease-in-out;
+                    &:hover {
+                        transform: scale(1.5);
+                    }
+                }
+            }
+            .Select-accessories-components-alternate {
+                display: none;
+            }
+        }
+        .Select-face-components-alternate {
+            display: none;
+        }
+    }
+}
+
+@media only screen and (min-width: 501px) {
+    .Select-body {
+        width: 80% !important;
+    }
+    .Select-close {
+        width: 100%;
+    }
+    .Select-headers {
+        width: 74% !important;
+    }
+    .Select-face-components {
+        width: 80% !important;
+    }
+    .Select-face-components-container {
+        width: 90% !important;
+    }
+    .Select-clothes-components-container {
+        width: 90% !important;
+    }
+    .Select-accessories-components-container {
+        width: 90% !important;
+    }
+    .Select-face-avatar {
+        width: 60% !important;
+    }
+    .Select-face-avatar-container {
+        width: 60% !important;
+        height: 400px !important;
+    }
+    .Select-header-1 {
+        width: 80% !important;
+    }
+    .Select-header-1-alternate {
+        width: 80% !important;
+    }
+    .Select-header-2 {
+        width: 80% !important;
+    }
+    .Select-header-2-alternate {
+        width: 80% !important;
+    }
+    .Select-header-3 {
+        width: 80% !important;
+    }
+    .Select-header-3-alternate {
+        width: 80% !important;
+    }
+}
+@media only screen and (max-width: 1140px) and (min-width: 750px) {
+    .Select-headers {
+        width: 70% !important;
+    }
+}
+@media only screen and (max-width: 749px) and (min-width: 501px) {
+    .Select-headers {
+        width: 65% !important;
+    }
+}
+@media only screen and (max-width: 500px) {
+    .Select-face {
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: auto;
+        padding-top: 1rem;
+    }
+    .Select-body {
+        width: 60% !important;
+        height: 800px !important;
+        border-top-right-radius: 0em !important;
+        border-top-left-radius: 0em !important;
+        overflow: auto;
+    }
+    .Select-headers {
+        height: 40% !important;
+        flex-direction: column !important;
+        .Select-header-1 {
+            height: 2rem !important;
+        }
+        .Select-header-1-alternate {
+            height: 2rem !important;
+        }
+        .Select-header-2 {
+            border-top-left-radius: 0px !important;
+            border-top-right-radius: 0px !important;
+            height: 2rem !important;
+        }
+        .Select-header-2-alternate {
+            border-top-left-radius: 0px !important;
+            border-top-right-radius: 0px !important;
+            height: 2rem !important;
+        }
+        .Select-header-3 {
+            border-top-left-radius: 0px !important;
+            border-top-right-radius: 0px !important;
+            height: 2rem !important;
+        }
+        .Select-header-3-alternate {
+            border-top-left-radius: 0px !important;
+            border-top-right-radius: 0px !important;
+            height: 2rem !important;
+        }
+    }
+    .Select-face-components {
+        width: 100% !important;
+        height: 50% !important;
+    }
+    .Select-face-components-container {
+        width: 90% !important;
+    }
+    .Select-face-avatar {
+        margin-top: 0em !important;
+        width: 100% !important;
+        justify-content: flex-start !important;
+    }
+    .Select-face-avatar-container {
+        width: 80% !important;
+        height: 300px !important;
+    }
+    .Select-clothes-components-container {
+        width: 90% !important;
+    }
+    .Select-accessories-components-container {
+        width: 90% !important;
+    }
+    .Select-accessories-components {
+        width: 100% !important;
+        height: 50% !important;
+    }
+    .Select-clothes-components {
+        width: 100% !important;
+        height: 50% !important;
+    }
+}
