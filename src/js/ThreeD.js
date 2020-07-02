@@ -9,6 +9,7 @@ const d = 20; // this controls scale of camera
 class Scene3D {
 	constructor() {
 		this.container = document.createElement( 'div' );
+		this.container.id = 'three-container'
 	    document.body.appendChild( this.container );
 
 	    // Isometric Camera
@@ -27,7 +28,7 @@ class Scene3D {
 	    var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
 	    this.scene.add(light);
 
-	    var loader = new GLTFLoader().setPath( '/images/' );
+	    var loader = new GLTFLoader().setPath( 'assets/models/' );
 
 	    //load glb file
 	    loader.load( 'Fox.glb', ( gltf ) => {
@@ -37,7 +38,7 @@ class Scene3D {
 
 	   		//set model of all already created characters
 	   		for (let key of Object.keys(this.characters)) {
-				this.characters[key].setModel(this.scene, this.modelScene, this.modelAnimation)
+				this.characters[key].setModel(this, this.modelScene, this.modelAnimation)
 			}
 	    }, undefined, function(e) {
 	        console.log(e)
@@ -46,13 +47,14 @@ class Scene3D {
 	    this.characters = new Map();
 
 	    //set up renderer
-	    this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+	    this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+	    this.renderer.domElement.id = 'three-canvas'
 	    this.renderer.setPixelRatio( window.devicePixelRatio );
 	    this.renderer.setSize( window.innerWidth, window.innerHeight );
 	    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
 	    this.renderer.toneMappingExposure = 0.8;
 	    this.renderer.outputEncoding = THREE.sRGBEncoding;
-	    this.renderer.setClearColor(0xffffff, 1);
+	    this.renderer.setClearColor(0xffffff, 0);
 	    this.container.appendChild( this.renderer.domElement );
 
 	    // Add floor plane
@@ -66,6 +68,8 @@ class Scene3D {
 	    
 	    var pmremGenerator = new THREE.PMREMGenerator( this.renderer );
 	    pmremGenerator.compileEquirectangularShader();
+
+	    this.render()
 	}
 
 
@@ -81,19 +85,20 @@ class Scene3D {
 	}
 
 	// create a new character at 0,0
-	newCharacter(character_id, name, x, y) {      
+	newCharacter(character_id, name, x, y) { 
+
         this.characters[character_id] = new Character3D(name, x, y);
 
         if (this.modelScene !== undefined) {
-        	this.characters[character_id].setModel(this.scene, this.modelScene, this.modelAnimation)
+        	this.characters[character_id].setModel(this, this.modelScene, this.modelAnimation)
         }
-
 	}
 
 	// move character with given id to x,y
-	moveCharacter(character_id, x, y) {
+	moveCharacter(character_id, x, y, callback) {
 		let newPos = this.worldVectorForPos(x, y);
-		this.characters[character_id].moveTo(newPos);
+		let duration = this.characters[character_id].moveTo(newPos);
+		setTimeout(callback, duration * 1000);
 	}
 
 	// delete character (remove from map and scene) 
@@ -109,34 +114,34 @@ class Scene3D {
 	}
 	
 	worldVectorForPos(x, y) {
-		this.mouse.x = x;
-		this.mouse.y = y;
+		this.mouse.x = x * 2 - 1;
+		this.mouse.y = -1 * (y * 2 - 1);
 
 		return this.groundCollisionVector(this.raycaster);
 	}
 
 	// uses raycaster to get collision of current pos of mouse w/ ground
 	groundCollisionVector (raycaster) {
-	    raycaster.setFromCamera( mouse, camera );
+	    this.raycaster.setFromCamera( this.mouse, this.camera );
 	    var collisionPlane = new THREE.Plane( new THREE.Vector3( 0, 1, 0 ), 0 );
 	    var intersectVector = new THREE.Vector3();
-	    raycaster.ray.intersectPlane(collisionPlane, intersectVector); // copies intersection of ray & plane into vector thats passed in
+	    this.raycaster.ray.intersectPlane(collisionPlane, intersectVector); // copies intersection of ray & plane into vector thats passed in
 
 	    return intersectVector;
 	}
 
 
 	render() {
-	    requestAnimationFrame(render);
+	    requestAnimationFrame(this.render.bind(this));
 	    var deltaTime = this.clock.getDelta();
+	    if (this.render != undefined) {
+	    	this.renderer.render( this.scene, this.camera ); 
+	    }
 
-	    if (model !== undefined) {
-	        
-	        this.renderer.render( scene, camera ); 
-
-	        this.characters.forEach(character => {
-	        	character.update(deltaTime)
-	        });
+	    if (this.modelScene != undefined) {
+	        for (let key of Object.keys(this.characters)) {
+				this.characters[key].update(deltaTime);
+			}
 	    }
 	}
 }
@@ -152,8 +157,9 @@ class Character3D {
 		this.model.update(deltaTime)
 	}
 
+	//returns time it'll take
 	moveTo(vector) {
-		this.model.setAnimation(vector)
+		return this.model.setAnimation(vector)
 	}
 
 	setModel(parentScene, model, animation) {
@@ -162,9 +168,9 @@ class Character3D {
         walkCycle.enabled = false;
         walkCycle.play();
 
-        parentScene.add( model );
+        parentScene.scene.add( model );
 
-        this.model = new AnimatedModel(this.model, mixer, walkCycle, this.init_x, this.init_y);   
+        this.model = new AnimatedModel(model, mixer, walkCycle, parentScene.worldVectorForPos(this.init_x, this.init_y));   
 	}
 }
 

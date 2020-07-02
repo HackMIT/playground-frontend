@@ -2,17 +2,18 @@ import * as THREE from 'three';
 import { LinearAnimation } from './Animations'
 
 class AnimatedModel {
-	constructor(modelGeometry, mixer, walkCycle, x, y) {
+	constructor(modelGeometry, mixer, walkCycle, start) {
 		this.modelGeometry = modelGeometry;
 		this.Animation = new LinearAnimation();
 		this.mixer = mixer;
 		this.walkCycle = walkCycle
 
-		this.modelGeometry.position.set(x, y, 0)
+		modelGeometry.position.set(start.x, start.y, start.z)
 	}
 
+	//returns time it'll take
 	setAnimation(dest) {
-		this.Animation.init(this.modelGeometry.position, dest);
+		let time = this.Animation.init(this.modelGeometry.position, dest);
 
 		// update roation (by finding vector we're traveling along, setting angle to that)
         var bearing = dest.clone();
@@ -30,6 +31,8 @@ class AnimatedModel {
         this.modelGeometry.setRotationFromAxisAngle(new THREE.Vector3( 0, 1, 0 ), angle)
         this.walkCycle.clampWhenFinished = false
         this.walkCycle.enabled = true
+
+        return time
 	}
 
 	update(timeDelta) {

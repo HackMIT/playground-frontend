@@ -1,5 +1,6 @@
 import { Character } from './js/Character'
 import { Scene3D } from './js/ThreeD'
+import { Interactable } from './js/Interactable'
 import './styles/index.scss'
 import homeBackground from './images/home.png'
 import drwBackground from './images/drw.png'
@@ -16,11 +17,17 @@ window.onload = function () {
     var conn;
 
     // var characters = new Map();
+    var interactables = new Map();
     var room;
 
     // When clicking on the page, send a move message to the server
     document.addEventListener('click', function (e) {
         if (!conn) {
+            return false;
+        }
+
+        //only move if you click on canvas
+        if (e.target.id !== 'three-canvas') {
             return false;
         }
 
@@ -32,6 +39,10 @@ window.onload = function () {
             y: y,
             type: 'move'
         }));
+    });
+
+    window.addEventListener('resize', function(e) {
+        scene.fixCameraOnResize()
     });
 
     if (window['WebSocket']) {
@@ -77,6 +88,10 @@ window.onload = function () {
                         // characters[key] = new Character(value.name, value.x, value.y);
                     }
 
+                    for (let [key, value] of Object.entries(data.room.interactables)) {
+                        interactables[key] = new Interactable(value.action, value.appearance, value.x, value.y);
+                    }
+
                     room = data.room;
 
                     if (room.slug === 'home') {
@@ -85,7 +100,7 @@ window.onload = function () {
                         document.body.style.backgroundImage = "url('" + drwBackground + "')";
                     }
                 } else if (data.type === 'move') {
-                    characters[data.id].move(data.x, data.y, () => {
+                    scene.moveCharacter(data.id, data.x, data.y, () => {
                         if (data.name !== name) {
                             return;
                         }
@@ -120,8 +135,49 @@ window.onload = function () {
                 }
             }
         };
+
     } else {
         var item = document.createElement('div');
         item.innerHTML = '<b>Your browser does not support WebSockets.</b>';
+
     }
+    
 };
+
+// --- Coffee chat sign up
+const openEls = document.querySelectorAll("[data-open]");
+const isVisible = "is-visible";
+ 
+for(const el of openEls) {
+  el.addEventListener("click", function() {
+    const modalId = this.dataset.open;
+    document.getElementById(modalId).classList.add(isVisible);
+  });
+}
+
+const closeEls = document.querySelectorAll("[data-close]");
+ 
+for (const el of closeEls) {
+  el.addEventListener("click", function() {
+    this.parentElement.parentElement.parentElement.classList.remove(isVisible);
+  });
+} 
+document.addEventListener("click", e => {
+  if (e.target == document.querySelector(".modal.is-visible")) {
+    document.querySelector(".modal.is-visible").classList.remove(isVisible);
+  }
+});
+
+document.addEventListener("keyup", e => {
+    if (e.key == "Escape" && document.querySelector(".modal.is-visible")) {
+      document.querySelector(".modal.is-visible").classList.remove(isVisible);
+    }
+  });
+
+function setColor(e) {
+    var target = e.target,
+    count = +target.dataset.count;
+  
+    target.style.backgroundColor = count === 1 ? "#001d55" : '#26acc5';
+    target.dataset.count = count === 1 ? 0 : 1;
+}

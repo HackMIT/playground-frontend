@@ -13,12 +13,15 @@ class LinearAnimation {
 	}
 
 	// initializes a new animation at the curFrame, updates variables accordingly
+	//returns time it'll take
 	init(origin, destination) {
 		this.origin = origin.clone();
 		this.destination = destination.clone();
 		this.elapsedTime = 0;
 
 		this.dist = Math.abs(origin.distanceTo(destination));
+
+		return this.dist / LinearAnimation.SPEED
 	}
 
 	// updates posVector passed in
