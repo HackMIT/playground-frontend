@@ -28,8 +28,15 @@
     margin: 20px 0;
 
     .action {
+        cursor: pointer;
         display: inline-block;
         margin: 0 12px;
+
+        &:hover {
+            .icon-container {
+                background: rgba(255, 255, 255, 0.3);
+            }
+        }
 
         .icon-container {
             background: rgba(255, 255, 255, 0.5);

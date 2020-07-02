@@ -7,6 +7,14 @@ import homeBackground from './images/home.png'
 import drwBackground from './images/drw.png'
 import sponsorBackground from './images/sponsor.png'
 
+window.onCoffeeChat = function () {
+    document.getElementById("modal1").classList.add("visible");
+};
+
+window.onCloseCoffeeChat = function () {
+    document.getElementById("modal1").classList.remove("visible");
+};
+
 window.onload = function () {
     // Quick check for auth data
     if (localStorage.getItem('token') !== null) {
