@@ -8,6 +8,10 @@ module.exports = [
     template: 'editor'
   },
   {
+    path: 'character',
+    template: 'character'
+  },
+  {
     path: 'login',
     template: 'login'
   },

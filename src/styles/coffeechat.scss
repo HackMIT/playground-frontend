@@ -1,137 +1,119 @@
-
 // -------------------------------- Pop-up --------------------------------
 
-:root {
-    --bounceEasing: cubic-bezier(0.51, 0.92, 0.24, 1.15);
-  }
-   
-  button {
-    cursor: pointer;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: inherit;
-  }
-
-  .btn-group {
-    text-align: center;
-  }
-   
-  .open-modal {
-    font-weight: bold;
-    background: $blue_text;
-    color: $white;
-    padding: .75rem 1.75rem;
-    margin-bottom: 1rem;
-    border-radius: 5px;
-  }
-
-  .modal { 
-    position: fixed;
+.modal { 
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    display: flex;
+    width: 100%;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    background: $blue_text;
-    cursor: pointer;
-    visibility: hidden;
-    opacity: 0;
-    transition: all 0.35s ease-in;
-  }
+    display: none;
+    text-align: center;
+    font-family: Muli;
 
-  .modal-dialog {
-    position: relative;
-    max-width: 800px;
-    max-height: 80vh;
-    border-radius: 5px;
+    &.visible {
+        display: flex;
+    }
+}
+
+.modal-dialog {
     background: $white;
-    overflow: auto;
+    border-radius: 3px;
     cursor: default;
-  }
+    display: flex;
+    flex-direction: column;
+    height: 30vw;
+    overflow: hidden;
+    position: relative;
+    width: 30vw;
+}
 
-  .modal-dialog > * {
-    padding: 1rem;
-  }
-   
-  .modal-header,
-  .modal-footer {
+.modal-header {
     background: $blue_light;
-  }
-   
-  .modal-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-  }
-   
-  .modal-header .modal-close {
-    font-size: 1.5rem;
-  }
-   
-  .modal p + p {
-    margin-top: 1rem;
-  }
+    justify-content: space-around;
+    height: 48px;
+    flex-shrink: 0;
+    flex-basis: 48px;
+    width: 100%;
 
-  .modal {
-    visibility: hidden;
-    opacity: 0;
-    transition: all 0.35s ease-in;
-  }
-   
-  .modal.is-visible {
-    visibility: visible;
-    opacity: 1;
-  }
+    .close-modal {
+        font-size: 2rem;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        outline: none;
+        font-size: inherit;
+    }
+}
 
-  [data-animation="slideInOutLeft"] .modal-dialog {
-    opacity: 0;
-    transform: translateX(-100%);
-    transition: all 0.5s var(--bounceEasing);
-  }
-   
-  [data-animation="slideInOutLeft"].is-visible .modal-dialog {
-    opacity: 1;
-    transform: none;
-    transition-delay: 0.2s;
-  }
-  
-  //----- CSS for time slot selecter
-  .days {
-    width: 1000px;
-  }
-  
-  .day {
-    width: 120px;
-    height: 230px;
+.modal-content {
     background-color: #efeff6;
-    padding:10px;
-    float:left;
-    margin-right:7px;
-    margin-bottom:5px;
-  }
-  
-  .datelabel {
+    box-sizing: border-box;
+    display: block;
+    padding: 15px;
+    overflow: scroll;
+}
+
+.modal-footer {
+    background: $blue_light;
+    flex-shrink: 0;
+    flex-basis: 48px;
+}
+
+//----- CSS for time slot selecter
+
+.time-selector {
+    overflow: scroll;
+    text-align: center;
+    display: flex;
+    align-items: top;
+    justify-content: center;
+}
+
+.day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 50%;
+}
+
+.datelabel {
     margin-bottom: 15px;
-  }
-  
-  .timeslot {
-    background-color: $blue_text;
-    width: auto;
-    height: 20px;
-    color:$white;
-    padding:7px;
+}
+
+.timeslot {
+    background: transparent;
+    border: 2px solid $blue_text;
+    color: $blue_text;
+    cursor: pointer;
+    width: 96px;
+    font-family: Muli;
+    padding: 8px;
     margin-top: 5px;
     font-size: 14px;
     border-radius: 3px;
-    vertical-align: center;
-    text-align:center;
-  }
-  
-  .timeslot:hover { 
-    background-color: $blue_light;
-    cursor: pointer;
-  }
+    text-align: center;
+    transition: 0.2s ease all;
+}
+
+.timeslot:hover { 
+    background-color: $blue_text;
+    color: #fff;
+}
+
+.interactable {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: top;
+    max-width: 100px;
+    max-height: 100px;
+    width: auto;
+    height: auto;
+}

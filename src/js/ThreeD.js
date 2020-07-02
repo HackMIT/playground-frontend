@@ -10,7 +10,7 @@ class Scene3D {
 	constructor() {
 		this.container = document.createElement( 'div' );
 		this.container.id = 'three-container'
-	    document.body.appendChild( this.container );
+	    document.getElementById('game').appendChild( this.container );
 
 	    // Isometric Camera
 	    var aspect = window.innerWidth / window.innerHeight;
