@@ -2,11 +2,13 @@ import * as THREE from 'three';
 import { LinearAnimation } from './Animations'
 
 class AnimatedModel {
-	constructor(modelGeometry, mixer, walkCycle) {
+	constructor(modelGeometry, mixer, walkCycle, x, y) {
 		this.modelGeometry = modelGeometry;
 		this.Animation = new LinearAnimation();
 		this.mixer = mixer;
 		this.walkCycle = walkCycle
+
+		this.modelGeometry.position.set(x, y, 0)
 	}
 
 	setAnimation(dest) {

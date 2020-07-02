@@ -1,3 +1,4 @@
+const pages = require('./pages')
 const paths = require('./paths')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
@@ -9,7 +10,12 @@ module.exports = {
    *
    * The first place Webpack looks to start building the bundle.
    */
-  entry: [paths.src + '/index.js'],
+  entry: {
+    game: [paths.src + '/index.js'],
+    editor: [paths.src + '/editor.js'],
+    login: [paths.src + '/login.js'],
+    sponsor: [paths.src + '/sponsor.js']
+  },
 
   /**
    * Output
@@ -53,12 +59,14 @@ module.exports = {
      *
      * Generates an HTML file from a template.
      */
-    new HtmlWebpackPlugin({
+    ...pages.map(page => new HtmlWebpackPlugin({
       title: 'HackMIT Playground',
       // favicon: paths.static + '/favicon.png',
-      template: paths.src + '/template.html', // template file
-      filename: 'index.html', // output file
-    }),
+      template: paths.src + '/' + page.template + '.html',
+      chunks: ['common', page.template],
+      filename: page.path,
+      inject: true
+    }))
   ],
 
   /**
