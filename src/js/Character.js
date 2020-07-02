@@ -23,6 +23,14 @@ class Character {
         this.elem.appendChild(this.profileElem);
         this.profileElem.style.display = 'none';
 
+        this.yellowElem = document.createElement("div"); //span to text
+        this.yellowElem.className = 'yellow-background';
+        this.elem.addEventListener('click', (e) => {
+            this.yellowElem.style.display = 'block';
+        });
+        this.elem.appendChild(this.yellowElem);
+        this.yellowElem.style.display = 'none';
+
         this.whiteProfileElem = document.createElement("div"); 
         this.whiteProfileElem.className = 'profile-back';
         this.elem.addEventListener('click', (e) => {
@@ -30,6 +38,20 @@ class Character {
         });
         this.elem.appendChild(this.whiteProfileElem);
         this.whiteProfileElem.style.display = 'none';
+
+        this.closeButton = document.createElement("div"); //span to text
+        this.closeButton.className = 'close-button';
+        this.closeButton.innerHTML = 'X';
+
+        // document.getElementById("close-button").addEventListener('click', () => {
+        //     console.log('here')
+        //     this.profileElem.style.display = 'none';
+        //     this.yellowElem.style.display = 'none';
+        //     this.gradProfileElem.style.display = 'none';
+
+        // })
+        this.whiteProfileElem.appendChild(this.closeButton);
+        //this.closeButton.style.display = 'none';
 
         this.gradProfileElem = document.createElement("div"); 
         this.gradProfileElem.className = 'profile-gradient';
@@ -67,48 +89,50 @@ class Character {
         //     ctx.stroke();
         // }
 
+        this.buttonContainer = document.createElement("div");
+        this.buttonContainer.className = 'button-container';
+        this.elem.addEventListener('click', (e) => {
+            this.buttonContainer.style.display = 'block';
+        });
+        this.elem.appendChild(this.buttonContainer);
+        this.buttonContainer.style.display = 'none';
+
         this.buttons1 = document.createElement("div"); 
         this.buttons1.className = 'profile-button';
-        this.elem.addEventListener('click', (e) => {
-            this.buttons1.style.display = 'inline-block';
-        });
-        this.elem.appendChild(this.buttons1);
-        this.buttons1.style.display = 'none';
 
         this.buttons2 = document.createElement("div"); 
         this.buttons2.className = 'profile-button';
-        this.elem.addEventListener('click', (e) => {
-            this.buttons2.style.display = 'inline-block';
-        });
-        this.elem.appendChild(this.buttons2);
-        this.buttons2.style.display = 'none';
 
         this.buttons3 = document.createElement("div"); 
         this.buttons3.className = 'profile-button';
-        this.elem.addEventListener('click', (e) => {
-            this.buttons3.style.display = 'inline-block';
-        });
-        this.elem.appendChild(this.buttons3);
-        this.buttons3.style.display = 'none';
+
+        this.buttons4 = document.createElement("div"); 
+        this.buttons4.className = 'profile-button';
+
+        this.buttons5 = document.createElement("div"); 
+        this.buttons5.className = 'profile-button';
+
+        this.buttonContainer.appendChild(this.buttons1);
+        this.buttonContainer.appendChild(this.buttons2);
+        this.buttonContainer.appendChild(this.buttons3);
+        this.buttonContainer.appendChild(this.buttons4);
+        this.buttonContainer.appendChild(this.buttons5);
 
         this.profile_name = document.createElement("div"); 
         this.profile_name.className = 'profile-text';
-        this.profile_name.innerHTML = 'SAVANNAH LIU'; 
+        this.profile_name.innerHTML = character.name;
 
         this.school_name = document.createElement("div"); 
         this.school_name.className = 'sub-text';
         this.school_name.innerHTML = 'Massachusetts Institute of Tech';
-        // this.elem.addEventListener('click', (e) => {
-        //     this.gradProfileElem.style.display = 'block';
-        // });
-        // this.profile_name.className = 'profile-text';
-        // this.elem.addEventListener('click', (e) => {
-        //     this.profile_name.style.innerHTML = 'HIIII';
-        // });
+
+        this.location_name = document.createElement("div"); 
+        this.location_name.className = 'location-text';
+        this.location_name.innerHTML = 'Arizona, United States';
+
         this.whiteProfileElem.appendChild(this.profile_name);
         this.whiteProfileElem.appendChild(this.school_name);
-        //this.profile_name.style.display = 'none';
-        this.gradProfileElem.appendChild('class="fa fa-globe"');
+        this.gradProfileElem.appendChild(this.location_name)
     }
 
     updateChatBubble(mssg) {
