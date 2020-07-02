@@ -79,6 +79,7 @@ body {
     height: 100%;
     background-repeat: no-repeat;
     background-size: 100% 100%;
+    position: relative;
 }
 
 #login-panel {
@@ -124,10 +125,7 @@ body {
 .character {
     background: url(../images/penguin.jpg);
     background-size: 80px 100px;
-    display: flex;
-    justify-content: center;
-    align-items: top;
-    position: relative;
+    position: absolute;
     width: 80px;
     height: 100px;
     transform: translate(-50%, -100%);

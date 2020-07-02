@@ -3,8 +3,11 @@ import { Interactable } from './js/Interactable'
 import './styles/index.scss'
 import './styles/sponsor.scss'
 import './styles/styles.scss'
+import './images/Code_Icon.svg'
+import './images/Coffee_Icon.svg'
+import './images/Site_Icon.svg'
 import homeBackground from './images/home.jpg'
-import sponsorBackground from './images/sponsor.png'
+import sponsorBackground from './images/Sponsor_Room_1.svg'
 
 let conn = new WebSocket('ws://' + 'localhost:8080' + '/ws');
 
@@ -113,11 +116,16 @@ window.onload = function () {
 
                     if (room.slug === 'home') {
                         gameElem.style.backgroundImage = "url('" + homeBackground + "')";
-                    } else if (room.slug === 'sponsor') {
+                        gameElem.classList.remove("sponsor");
+                        document.getElementById("sponsor-pane").classList.remove("active");
+                        document.getElementById("outer").classList.remove("sponsor");
+                    } else {
                         gameElem.style.backgroundImage = "url('" + sponsorBackground + "')";
                         gameElem.classList.add("sponsor");
                         document.getElementById("sponsor-pane").classList.add("active");
                         document.getElementById("outer").classList.add("sponsor");
+
+                        document.getElementById("sponsor-name").innerHTML = "<span>" + room.slug + "</span>" + room.slug;
                     }
 
                     // Start sending chat events
@@ -160,12 +168,12 @@ window.onload = function () {
                 } else if (data.type === 'join') {
                     characters[data.character.id] = new Character(data.character);
                 } else if (data.type === 'leave') {
-                    if (data.id === characterID) {
+                    if (data.character.id === characterID) {
                         return;
                     }
 
-                    characters[data.id].remove();
-                    delete characters[data.id];
+                    characters[data.character.id].remove();
+                    delete characters[data.character.id];
                 } else if (data.type == 'chat') {
                     data.name = characters[data.id].name
                     characters[data.id].updateChatBubble(data.mssg)
