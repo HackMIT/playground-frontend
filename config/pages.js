@@ -8,7 +8,7 @@ module.exports = [
     template: 'editor'
   },
   {
-    path:'character',
-    template:'character'
+    path: 'character',
+    template: 'character'
   }
 ];
