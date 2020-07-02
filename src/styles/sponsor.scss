@@ -17,6 +17,16 @@
     h1 {
         font-size: 48px;
         margin: 12px 0;
+        position: relative;
+
+        span {
+            position: absolute;
+            left: 2px;
+            top: -3px;
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: black;
+            -webkit-text-fill-color: transparent;
+        }
     }
 
     p {
