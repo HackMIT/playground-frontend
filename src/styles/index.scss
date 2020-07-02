@@ -1,5 +1,20 @@
 @import 'variables';
+//@font-face {font-family: "Lemon/Milk"; src: url("//db.onlinewebfonts.com/t/67137b5f6928edc941186baaab5a664b.eot"); src: url("//db.onlinewebfonts.com/t/67137b5f6928edc941186baaab5a664b.eot?#iefix") format("embedded-opentype"), url("//db.onlinewebfonts.com/t/67137b5f6928edc941186baaab5a664b.woff2") format("woff2"), url("//db.onlinewebfonts.com/t/67137b5f6928edc941186baaab5a664b.woff") format("woff"), url("//db.onlinewebfonts.com/t/67137b5f6928edc941186baaab5a664b.ttf") format("truetype"), url("//db.onlinewebfonts.com/t/67137b5f6928edc941186baaab5a664b.svg#Lemon/Milk") format("svg"); }
+@font-face {
+    font-family: 'Lemon/Milk';
+    src: url("//db.onlinewebfonts.com/t/67137b5f6928edc941186baaab5a664b.eot"); 
+    src: url("//db.onlinewebfonts.com/t/67137b5f6928edc941186baaab5a664b.eot?#iefix") format("embedded-opentype"), 
+    url("//db.onlinewebfonts.com/t/67137b5f6928edc941186baaab5a664b.woff2") format("woff2"), 
+    url("//db.onlinewebfonts.com/t/67137b5f6928edc941186baaab5a664b.woff") format("woff"), 
+    url("//db.onlinewebfonts.com/t/67137b5f6928edc941186baaab5a664b.ttf") format("truetype"), 
+    url("//db.onlinewebfonts.com/t/67137b5f6928edc941186baaab5a664b.svg#Lemon/Milk") format("svg"); 
+    font-weight: normal;
+    font-style: normal;
+}
 
+div{
+    font-family: 'SansationLight';
+}
 * {
     padding: 0;
     margin: 0;
@@ -73,9 +88,114 @@ body {
     transition-timing-function: cubic-bezier(0.15, 0, 0.85, 1);
 }
 
+.earth {
+    background: url(../images/circle-cropped.png);
+    background-size: 30px 30px;
+    display: flex;
+    justify-content: center;
+    align-items: top;
+    margin-top: 10px;
+    margin-left: 135px;
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    transform: translate(-50%, -100%);
+    transition-property: all;
+    /* slight speed-up at beginning and slow-down at end */
+    /* use cubic-bezier.com to experiment with other timing functions */
+    //transition-timing-function: cubic-bezier(0.15, 0, 0.85, 1);
+}
+
 .character span {
     color: black;
     font-family: $font-family;
     font-size: 13px;
     transform: translateY(-18px);
+}
+
+.profile {
+    background-color: #1B4481;
+    width: 200px;
+    height: 350px;
+    position: absolute;
+    bottom: 130px;
+    border-radius: 20px;
+}
+
+.profile-back {
+    background-color: #FFFFFF;
+    width: 180px;
+    height: 300px;
+    position: absolute;
+    bottom: 170px;
+    border-radius: 20px;
+}
+
+.profile-gradient {
+    background: rgb(150,208,241);
+    background: linear-gradient(140deg, rgba(150,208,241,1) 9%, rgba(251,205,194,1) 93%);
+    width: 160px;
+    height: 240px;
+    position: absolute;
+    bottom: 180px;
+    border-radius: 20px;
+}
+
+.bio-gradient {
+    background: rgb(255,255,255);
+    background: linear-gradient(60deg, rgba(255,255,255,0.23012955182072825) 44%, rgba(251,205,194,0.15730042016806722) 57%);
+    width: 160px;
+    height: 70px;
+    position: absolute;
+    bottom: 180px;
+}
+
+.profile-button {
+    background: #FFFFFF;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    bottom: 135px;
+    border-radius: 50px;
+}
+
+font-face {
+    font-family: 'Lemon/Milk';
+    src: url('http://www.fontsaddict.com/fontface/lemonmilk.ttf');
+  }
+
+.profile-text {
+    color: #001D55;
+    size: 400px;
+    text-align: center;
+    position: absolute;
+    left: 15%;
+    margin-right: -20%;
+    margin-top: 10px;
+    font-family: font-face;
+}
+
+.bio-text {
+    color: #001D55;
+    size: 400px;
+    margin-top: 10px;
+    font-size: 10px;
+    text-align: center;
+    position: absolute;
+    margin-top: 10px;
+    padding: 5px;
+    font-family: font-face;
+}
+
+.sub-text {
+    color: #001D55;
+    size: 400px;
+    font-size: 10px;
+    text-align: center;
+    position: absolute;
+    margin-top: 30px;
+    left: 15%;
+    margin-right: -20%;
+    font-family: font-face;
 }
