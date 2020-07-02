@@ -3,8 +3,7 @@ import { Interactable } from './js/Interactable'
 import './styles/index.scss'
 import './styles/sponsor.scss'
 import './styles/styles.scss'
-import homeBackground from './images/home.png'
-import drwBackground from './images/drw.png'
+import homeBackground from './images/home.jpg'
 import sponsorBackground from './images/sponsor.png'
 
 let conn = new WebSocket('ws://' + 'localhost:8080' + '/ws');
