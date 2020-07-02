@@ -2,6 +2,7 @@ import { Character } from './js/Character'
 import { Interactable } from './js/Interactable'
 import './styles/index.scss'
 import './styles/sponsor.scss'
+import './styles/styles.scss'
 import homeBackground from './images/home.png'
 import drwBackground from './images/drw.png'
 import sponsorBackground from './images/sponsor.png'
@@ -26,6 +27,7 @@ window.onload = function () {
             return false;
         }
 
+        // Send move packet
         let rect = gameElem.getBoundingClientRect();
         let x = (e.pageX - rect.x) / rect.width;
         let y = (e.pageY - rect.y) / rect.height;
@@ -57,6 +59,18 @@ window.onload = function () {
 
             // Connected to remote
             conn.send(JSON.stringify(joinPacket));
+
+            // Start sending chat events
+            document.getElementById('chat-box').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') { 
+                    conn.send(JSON.stringify({
+                        type: 'chat',
+                        mssg: e.target.value
+                    }))
+
+                    e.target.value = '';
+                }
+            });
         };
         conn.onclose = function (evt) {
             // Disconnected from remote
@@ -127,6 +141,9 @@ window.onload = function () {
 
                     characters[data.id].remove();
                     delete characters[data.id];
+                } else if (data.type == 'chat') {
+                    data.name = characters[data.id].name
+                    characters[data.id].updateChatBubble(data.mssg)
                 } else {
                     console.log('received unknown packet: ' + data.type)
                     console.log(data)
