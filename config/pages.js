@@ -10,5 +10,13 @@ module.exports = [
   {
     path: 'character',
     template: 'character'
+  },
+  {
+    path: 'login',
+    template: 'login'
+  },
+  {
+    path: 'sponsor',
+    template: 'sponsor'
   }
 ];
