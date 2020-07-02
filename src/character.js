@@ -1,5 +1,5 @@
 import './styles/character.scss'
-import './styles/lemonmilk-cufonfonts-webfont/style.css'
+//import './styles/lemonmilk-cufonfonts-webfont/style.css'
 //get headers
 const selectHeader1 = document.getElementById("Select-tab-1");
 const selectHeader2 = document.getElementById("Select-tab-2");

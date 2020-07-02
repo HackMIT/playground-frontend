@@ -7,18 +7,8 @@
 @import "./index.scss";
 @import "./coffeechat.scss";
 
-@font-face {
-    font-family: 'Lemon Milk Medium';
-    src: url('../fonts/lemon-milk-font/LemonMilkMedium-mLZYV.otf');
-}
-
-@font-face {
-    font-family: 'Muli Regular';
-    src: url('../fonts/Muli/static/Muli-Regular.ttf')
-}
-
 h1 {
-    font-family: 'Lemon Milk Medium';
+    font-family: LemonMilkMedium;
     color: #001D55;
     text-align: center;
     -webkit-text-stroke-width: 1px #000000;
