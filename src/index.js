@@ -33,6 +33,7 @@ window.onload = function () {
         document.getElementById('login-panel').style.display = 'none';
     }
 
+    var characterID;
     var characters = new Map();
     var interactables = new Map();
     var room;
@@ -58,8 +59,6 @@ window.onload = function () {
     });
 
     if (window['WebSocket']) {
-        // let name = prompt('What\'s your name?');
-
         conn.onopen = function (evt) {
             let joinPacket = {
                 type: 'join'
@@ -85,11 +84,16 @@ window.onload = function () {
 
             for (var i = 0; i < messages.length; i++) {
                 var data = JSON.parse(messages[i]);
+                console.log(data)
 
                 if (data.type === 'init') {
-                    localStorage.setItem('token', data.token);
-                    history.pushState(null, null, ' ');
-                    document.getElementById('login-panel').style.display = 'none';
+                    characterID = data.character.id;
+
+                    if (data.token !== undefined) {
+                        localStorage.setItem('token', data.token);
+                        history.pushState(null, null, ' ');
+                        document.getElementById('login-panel').style.display = 'none';
+                    }
 
                     for (let key of Object.keys(characters)) {
                         characters[key].remove();
@@ -99,7 +103,7 @@ window.onload = function () {
                     characters = new Map();
 
                     for (let [key, value] of Object.entries(data.room.characters)) {
-                        characters[key] = new Character(value.name, value.x, value.y);
+                        characters[key] = new Character(value);
                     }
 
                     for (let [key, value] of Object.entries(data.room.interactables)) {
@@ -109,11 +113,12 @@ window.onload = function () {
                     room = data.room;
 
                     if (room.slug === 'home') {
+                        gameElem.style.backgroundImage = "url('" + homeBackground + "')";
+                    } else if (room.slug === 'sponsor') {
                         gameElem.style.backgroundImage = "url('" + sponsorBackground + "')";
                         gameElem.classList.add("sponsor");
                         document.getElementById("sponsor-pane").classList.add("active");
-                    } else if (room.slug === 'drw') {
-                        gameElem.style.backgroundImage = "url('" + drwBackground + "')";
+                        document.getElementById("outer").classList.add("sponsor");
                     }
 
                     // Start sending chat events
@@ -129,7 +134,7 @@ window.onload = function () {
                     });
                 } else if (data.type === 'move') {
                     characters[data.id].move(data.x, data.y, () => {
-                        if (data.name !== name) {
+                        if (data.id !== characterID) {
                             return;
                         }
 
@@ -156,7 +161,7 @@ window.onload = function () {
                 } else if (data.type === 'join') {
                     characters[data.character.id] = new Character(data.character);
                 } else if (data.type === 'leave') {
-                    if (data.name === name) {
+                    if (data.id === characterID) {
                         return;
                     }
 
