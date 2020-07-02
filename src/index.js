@@ -7,6 +7,18 @@ import homeBackground from './images/home.png'
 import drwBackground from './images/drw.png'
 import sponsorBackground from './images/sponsor.png'
 
+let conn = new WebSocket('ws://' + 'localhost:8080' + '/ws');
+
+window.onSponsorLogin = function() {
+    let joinPacket = {
+        type: 'join',
+        name: prompt("What's your name?")
+    };
+
+    // Connected to remote
+    conn.send(JSON.stringify(joinPacket));
+};
+
 window.onCoffeeChat = function () {
     document.getElementById("modal1").classList.add("visible");
 };
@@ -20,8 +32,6 @@ window.onload = function () {
     if (localStorage.getItem('token') !== null) {
         document.getElementById('login-panel').style.display = 'none';
     }
-
-    var conn;
 
     var characters = new Map();
     var interactables = new Map();
@@ -50,7 +60,6 @@ window.onload = function () {
     if (window['WebSocket']) {
         // let name = prompt('What\'s your name?');
 
-        conn = new WebSocket('ws://' + 'localhost:8080' + '/ws');
         conn.onopen = function (evt) {
             let joinPacket = {
                 type: 'join'
@@ -67,18 +76,6 @@ window.onload = function () {
 
             // Connected to remote
             conn.send(JSON.stringify(joinPacket));
-
-            // Start sending chat events
-            document.getElementById('chat-box').addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') { 
-                    conn.send(JSON.stringify({
-                        type: 'chat',
-                        mssg: e.target.value
-                    }))
-
-                    e.target.value = '';
-                }
-            });
         };
         conn.onclose = function (evt) {
             // Disconnected from remote
@@ -118,6 +115,18 @@ window.onload = function () {
                     } else if (room.slug === 'drw') {
                         gameElem.style.backgroundImage = "url('" + drwBackground + "')";
                     }
+
+                    // Start sending chat events
+                    document.getElementById('chat-box').addEventListener('keypress', function (e) {
+                        if (e.key === 'Enter') { 
+                            conn.send(JSON.stringify({
+                                type: 'chat',
+                                mssg: e.target.value
+                            }))
+
+                            e.target.value = '';
+                        }
+                    });
                 } else if (data.type === 'move') {
                     characters[data.id].move(data.x, data.y, () => {
                         if (data.name !== name) {
@@ -140,6 +149,10 @@ window.onload = function () {
                             break;
                         }
                     });
+                } else if (data.type === 'error') {
+                    if (data.code === 1) {
+                        document.getElementById('login-panel').style.display = 'block';
+                    }
                 } else if (data.type === 'join') {
                     characters[data.character.id] = new Character(data.character);
                 } else if (data.type === 'leave') {
