@@ -1,8 +1,10 @@
 import { Character } from './js/Character'
 import { Interactable } from './js/Interactable'
 import './styles/index.scss'
+import './styles/sponsor.scss'
 import homeBackground from './images/home.png'
 import drwBackground from './images/drw.png'
+import sponsorBackground from './images/sponsor.png'
 
 window.onload = function () {
     // Quick check for auth data
@@ -16,14 +18,17 @@ window.onload = function () {
     var interactables = new Map();
     var room;
 
+    let gameElem = document.getElementById("game");
+
     // When clicking on the page, send a move message to the server
-    document.addEventListener('click', function (e) {
+    gameElem.addEventListener('click', function (e) {
         if (!conn) {
             return false;
         }
 
-        let x = e.pageX / window.innerWidth;
-        let y = e.pageY / window.innerHeight;
+        let rect = gameElem.getBoundingClientRect();
+        let x = (e.pageX - rect.x) / rect.width;
+        let y = (e.pageY - rect.y) / rect.height;
 
         conn.send(JSON.stringify({
             x: x,
@@ -85,9 +90,11 @@ window.onload = function () {
                     room = data.room;
 
                     if (room.slug === 'home') {
-                        document.body.style.backgroundImage = "url('" + homeBackground + "')";
+                        gameElem.style.backgroundImage = "url('" + sponsorBackground + "')";
+                        gameElem.classList.add("sponsor");
+                        document.getElementById("sponsor-pane").classList.add("active");
                     } else if (room.slug === 'drw') {
-                        document.body.style.backgroundImage = "url('" + drwBackground + "')";
+                        gameElem.style.backgroundImage = "url('" + drwBackground + "')";
                     }
                 } else if (data.type === 'move') {
                     characters[data.id].move(data.x, data.y, () => {

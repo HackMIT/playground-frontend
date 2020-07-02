@@ -10,7 +10,7 @@ class Character {
         this.move(this.x, this.y);
 
         this.elem.innerHTML = "<span>" + this.name + "</span>";
-        document.getElementsByTagName("body")[0].appendChild(this.elem);
+        document.getElementById("game").appendChild(this.elem);
     }
 
     move(x, y, callback) {
@@ -18,7 +18,7 @@ class Character {
         let oldYpx = this.y * window.innerHeight;
         let newXpx = x * window.innerWidth;
         let newYpx = y * window.innerHeight;
-        let speed = 300; // pixels per second
+        let speed = 400; // pixels per second
 
         let duration = Math.sqrt(Math.pow(oldXpx - newXpx, 2) + Math.pow(oldYpx - newYpx, 2)) / speed;
         this.elem.style.transitionDuration = duration + "s";

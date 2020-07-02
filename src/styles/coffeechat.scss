@@ -3,30 +3,30 @@
 
 :root {
     --bounceEasing: cubic-bezier(0.51, 0.92, 0.24, 1.15);
-  }
-   
-  button {
+}
+
+button {
     cursor: pointer;
     background: transparent;
     border: none;
     outline: none;
     font-size: inherit;
-  }
+}
 
-  .btn-group {
+.btn-group {
     text-align: center;
-  }
-   
-  .open-modal {
+}
+
+.open-modal {
     font-weight: bold;
     background: $blue_text;
     color: $white;
     padding: .75rem 1.75rem;
     margin-bottom: 1rem;
     border-radius: 5px;
-  }
+}
 
-  .modal { 
+.modal { 
     position: fixed;
     top: 0;
     left: 0;
@@ -41,9 +41,9 @@
     visibility: hidden;
     opacity: 0;
     transition: all 0.35s ease-in;
-  }
+}
 
-  .modal-dialog {
+.modal-dialog {
     position: relative;
     max-width: 800px;
     max-height: 80vh;
@@ -51,60 +51,60 @@
     background: $white;
     overflow: auto;
     cursor: default;
-  }
+}
 
-  .modal-dialog > * {
+.modal-dialog > * {
     padding: 1rem;
-  }
-   
-  .modal-header,
-  .modal-footer {
+}
+
+.modal-header,
+.modal-footer {
     background: $blue_light;
-  }
-   
-  .modal-header {
+}
+
+.modal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
-   
-  .modal-header .modal-close {
-    font-size: 1.5rem;
-  }
-   
-  .modal p + p {
-    margin-top: 1rem;
-  }
+}
 
-  .modal {
+.modal-header .modal-close {
+    font-size: 1.5rem;
+}
+
+.modal p + p {
+    margin-top: 1rem;
+}
+
+.modal {
     visibility: hidden;
     opacity: 0;
     transition: all 0.35s ease-in;
-  }
-   
-  .modal.is-visible {
+}
+
+.modal.is-visible {
     visibility: visible;
     opacity: 1;
-  }
+}
 
-  [data-animation="slideInOutLeft"] .modal-dialog {
+[data-animation="slideInOutLeft"] .modal-dialog {
     opacity: 0;
     transform: translateX(-100%);
     transition: all 0.5s var(--bounceEasing);
-  }
-   
-  [data-animation="slideInOutLeft"].is-visible .modal-dialog {
+}
+
+[data-animation="slideInOutLeft"].is-visible .modal-dialog {
     opacity: 1;
     transform: none;
     transition-delay: 0.2s;
-  }
-  
-  //----- CSS for time slot selecter
-  .days {
+}
+
+//----- CSS for time slot selecter
+.days {
     width: 1000px;
-  }
-  
-  .day {
+}
+
+.day {
     width: 120px;
     height: 230px;
     background-color: #efeff6;
@@ -112,13 +112,13 @@
     float:left;
     margin-right:7px;
     margin-bottom:5px;
-  }
-  
-  .datelabel {
+}
+
+.datelabel {
     margin-bottom: 15px;
-  }
-  
-  .timeslot {
+}
+
+.timeslot {
     background-color: $blue_text;
     width: auto;
     height: 20px;
@@ -129,9 +129,9 @@
     border-radius: 3px;
     vertical-align: center;
     text-align:center;
-  }
-  
-  .timeslot:hover { 
+}
+
+.timeslot:hover { 
     background-color: $blue_light;
     cursor: pointer;
-  }
+}
