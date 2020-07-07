@@ -9,27 +9,27 @@
   <body>
     <div id="outer">
       <div id="main">
-        <div id="game" class="sponsor"></div>
+        <div id="game"></div>
 
         <div id="sponsor-pane">
           <h2>Welcome to</h2>
-          <h1><span>Company Name</span>Company Name</h1>
+          <h1 id="sponsor-name"><span>Yext</span>Yext</h1>
           <div id="sponsor-pane-actions">
             <div class="action">
               <div class="icon-container">
-                <img src="https://placehold.it/100" />
+                <img src="/images/Code_Icon.svg" />
               </div>
               <span>View Challenges</span>
             </div>
             <div class="action" onClick="window.onCoffeeChat()">
               <div class="icon-container">
-                <img src="https://placehold.it/100" />
+                <img src="/images/Coffee_Icon.svg" />
               </div>
               <span>Schedule Coffee Chat</span>
             </div>
             <div class="action">
               <div class="icon-container">
-                <img src="https://placehold.it/100" />
+                <img src="/images/Site_Icon.svg" />
               </div>
               <span>Visit Website</span>
             </div>
@@ -37,7 +37,7 @@
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin cursus eu diam nec malesuada. Duis facilisis ante in leo faucibus luctus. Donec felis sem, accumsan a consectetur nec, venenatis et magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed aliquam nibh vitae risus faucibus laoreet. Ut eleifend lobortis nisl, at tristique tortor mollis sit amet. Donec malesuada libero placerat, gravida lectus nec, congue ex. Donec a leo at enim posuere tempor et at urna. Phasellus leo est, aliquam sit amet porta sit amet, interdum feugiat nisi.</p>
         </div>
       </div>
-      <div class='ChatBottom'>
+      <div id='chat' class='ChatBottom'>
         <button class='Button'> </button>
         <button class='Button'> </button>
         <button class='Button'> </button>
@@ -51,7 +51,7 @@
     <div id="login-panel">
       <h1>Log into Playground</h1>
       <a class="hacker" href="https://my.hackmit.org/login?sso=http://localhost:3000/login">Hacker Login</a>
-      <a class="sponsor" href="#">Sponsor Login</a>
+      <a class="sponsor" onClick="window.onSponsorLogin()">Sponsor Login</a>
     </div>
 
     <div class="modal" id="modal1">

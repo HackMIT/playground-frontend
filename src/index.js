@@ -4,9 +4,23 @@ import { Interactable } from './js/Interactable'
 import './styles/index.scss'
 import './styles/sponsor.scss'
 import './styles/styles.scss'
-import homeBackground from './images/home.png'
-import drwBackground from './images/drw.png'
-import sponsorBackground from './images/sponsor.png'
+import './images/Code_Icon.svg'
+import './images/Coffee_Icon.svg'
+import './images/Site_Icon.svg'
+import homeBackground from './images/home.jpg'
+import sponsorBackground from './images/Sponsor_Room_1.svg'
+
+let conn = new WebSocket('ws://' + 'localhost:8080' + '/ws');
+
+window.onSponsorLogin = function() {
+    let joinPacket = {
+        type: 'join',
+        name: prompt("What's your name?")
+    };
+
+    // Connected to remote
+    conn.send(JSON.stringify(joinPacket));
+};
 
 window.onCoffeeChat = function () {
     document.getElementById("modal1").classList.add("visible");
@@ -22,12 +36,12 @@ window.onload = function () {
     if (localStorage.getItem('token') !== null) {
         document.getElementById('login-panel').style.display = 'none';
     }
-
     var scene = new Scene3D();
 
-    var conn;
-
     // var characters = new Map();
+    var characterID;
+    var characters = new Map();
+
     var interactables = new Map();
     var room;
 
@@ -56,9 +70,6 @@ window.onload = function () {
     });
 
     if (window['WebSocket']) {
-        // let name = prompt('What\'s your name?');
-
-        conn = new WebSocket('ws://' + 'localhost:8080' + '/ws');
         conn.onopen = function (evt) {
             let joinPacket = {
                 type: 'join'
@@ -75,18 +86,6 @@ window.onload = function () {
 
             // Connected to remote
             conn.send(JSON.stringify(joinPacket));
-
-            // Start sending chat events
-            document.getElementById('chat-box').addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') { 
-                    conn.send(JSON.stringify({
-                        type: 'chat',
-                        mssg: e.target.value
-                    }))
-
-                    e.target.value = '';
-                }
-            });
         };
         conn.onclose = function (evt) {
             // Disconnected from remote
@@ -96,11 +95,16 @@ window.onload = function () {
 
             for (var i = 0; i < messages.length; i++) {
                 var data = JSON.parse(messages[i]);
+                console.log(data)
 
                 if (data.type === 'init') {
-                    localStorage.setItem('token', data.token);
-                    history.pushState(null, null, ' ');
-                    document.getElementById('login-panel').style.display = 'none';
+                    characterID = data.character.id;
+
+                    if (data.token !== undefined) {
+                        localStorage.setItem('token', data.token);
+                        history.pushState(null, null, ' ');
+                        document.getElementById('login-panel').style.display = 'none';
+                    }
 
                     scene.deleteAllCharacters();
 
@@ -116,15 +120,33 @@ window.onload = function () {
                     room = data.room;
 
                     if (room.slug === 'home') {
+                        gameElem.style.backgroundImage = "url('" + homeBackground + "')";
+                        gameElem.classList.remove("sponsor");
+                        document.getElementById("sponsor-pane").classList.remove("active");
+                        document.getElementById("outer").classList.remove("sponsor");
+                    } else {
                         gameElem.style.backgroundImage = "url('" + sponsorBackground + "')";
                         gameElem.classList.add("sponsor");
                         document.getElementById("sponsor-pane").classList.add("active");
-                    } else if (room.slug === 'drw') {
-                        gameElem.style.backgroundImage = "url('" + drwBackground + "')";
+                        document.getElementById("outer").classList.add("sponsor");
+
+                        document.getElementById("sponsor-name").innerHTML = "<span>" + room.slug + "</span>" + room.slug;
                     }
+
+                    // Start sending chat events
+                    document.getElementById('chat-box').addEventListener('keypress', function (e) {
+                        if (e.key === 'Enter') { 
+                            conn.send(JSON.stringify({
+                                type: 'chat',
+                                mssg: e.target.value
+                            }))
+
+                            e.target.value = '';
+                        }
+                    });
                 } else if (data.type === 'move') {
                     scene.moveCharacter(data.id, data.x, data.y, () => {
-                        if (data.name !== name) {
+                        if (data.id !== characterID) {
                             return;
                         }
 
@@ -144,16 +166,18 @@ window.onload = function () {
                             break;
                         }
                     });
+                } else if (data.type === 'error') {
+                    if (data.code === 1) {
+                        document.getElementById('login-panel').style.display = 'block';
+                    }
                 } else if (data.type === 'join') {
                     scene.newCharacter(data.character.id, data.character.name, data.character.x, data.character.y)
                 } else if (data.type === 'leave') {
-                    if (data.name === name) {
+                    if (data.character.id === characterID) {
                         return;
                     }
-
                     scene.deleteCharacter(data.id)
-                    characters[data.id].remove();
-                    delete characters[data.id];
+
                 } else if (data.type == 'chat') {
                     data.name = characters[data.id].name
                     characters[data.id].updateChatBubble(data.mssg)
