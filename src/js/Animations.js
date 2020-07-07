@@ -32,7 +32,11 @@ class LinearAnimation {
 			if (this.elapsedTime < this.dist / LinearAnimation.SPEED) {
 				posVector.lerpVectors(this.origin, this.destination, ((this.elapsedTime)*LinearAnimation.SPEED)/this.dist);
 			} else {
-				posVector.set(this.destination.x, this.destination.y, this.destination.z)
+				posVector.x = this.destination.x
+				posVector.y = this.destination.y
+				posVector.z = this.destination.z
+				// posVector.set(this.destination.x, this.destination.y, this.destination.z)
+				// console.log(posVector)
 			}
 		}
 	}

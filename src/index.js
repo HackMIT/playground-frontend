@@ -144,6 +144,8 @@ window.onload = function () {
                             e.target.value = '';
                         }
                     });
+
+                    scene.fixCameraOnResize();
                 } else if (data.type === 'move') {
                     scene.moveCharacter(data.id, data.x, data.y, () => {
                         if (data.id !== characterID) {

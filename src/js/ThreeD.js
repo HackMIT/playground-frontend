@@ -13,7 +13,7 @@ class Scene3D {
 	    document.getElementById('game').appendChild( this.container );
 
 	    // Isometric Camera
-	    var aspect = window.innerWidth / window.innerHeight;
+	    var aspect = this.container.clientWidth / this.container.clientHeight;
 	    this.camera = new THREE.OrthographicCamera( - d * aspect, d * aspect, d, - d, 1, 1000 );
 	    
 	    this.camera.position.set( 20, 20, 20 ); // these need to all be equal?
@@ -32,7 +32,7 @@ class Scene3D {
 
 	    //load glb file
 	    loader.load( 'Fox.glb', ( gltf ) => {
-	        gltf.scene.scale.set( 0.05, 0.05, 0.05 )	
+	        gltf.scene.scale.set( 0.04, 0.04, 0.04 )	
 	   		this.modelScene = gltf.scene // use this to create characters...
 	   		this.modelAnimation = gltf.animations[1] // this is walk cycle for characters
 
@@ -50,7 +50,7 @@ class Scene3D {
 	    this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
 	    this.renderer.domElement.id = 'three-canvas'
 	    this.renderer.setPixelRatio( window.devicePixelRatio );
-	    this.renderer.setSize( window.innerWidth, window.innerHeight );
+	    this.renderer.setSize( this.container.clientWidth, this.container.clientHeight );
 	    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
 	    this.renderer.toneMappingExposure = 0.8;
 	    this.renderer.outputEncoding = THREE.sRGBEncoding;
@@ -74,12 +74,12 @@ class Scene3D {
 
 
 	fixCameraOnResize() {
-		var aspect = window.innerWidth / window.innerHeight;
+		var aspect = this.container.clientWidth / this.container.clientHeight;
 	    this.camera.left = -d * aspect;
 	    this.camera.right = d * aspect;
 	    this.camera.updateProjectionMatrix();
 
-	    this.renderer.setSize( window.innerWidth, window.innerHeight );
+	    this.renderer.setSize( this.container.clientWidth, this.container.clientHeight );
 
 	    this.render();
 	}
@@ -109,7 +109,7 @@ class Scene3D {
 
 	deleteAllCharacters() {
 		for (let key of Object.keys(this.characters)) {
-			deleteCharacter(key);
+			this.deleteCharacter(key);
 		}
 	}
 	

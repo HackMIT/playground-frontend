@@ -13,6 +13,7 @@ class AnimatedModel {
 
 	//returns time it'll take
 	setAnimation(dest) {
+		if (this.Animation.destination && this.Animation.destination.equals(dest)) { return; }
 		let time = this.Animation.init(this.modelGeometry.position, dest);
 
 		// update roation (by finding vector we're traveling along, setting angle to that)
@@ -29,7 +30,6 @@ class AnimatedModel {
        
         //rotate around Y axis
         this.modelGeometry.setRotationFromAxisAngle(new THREE.Vector3( 0, 1, 0 ), angle)
-        this.walkCycle.clampWhenFinished = false
         this.walkCycle.enabled = true
 
         return time
