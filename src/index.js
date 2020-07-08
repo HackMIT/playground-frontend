@@ -178,7 +178,7 @@ window.onload = function () {
                     if (data.character.id === characterID) {
                         return;
                     }
-                    scene.deleteCharacter(data.id)
+                    scene.deleteCharacter(data.character.id)
 
                 } else if (data.type == 'chat') {
                     data.name = characters[data.id].name

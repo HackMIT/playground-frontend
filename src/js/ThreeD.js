@@ -28,21 +28,7 @@ class Scene3D {
 	    var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
 	    this.scene.add(light);
 
-	    var loader = new GLTFLoader().setPath( 'assets/models/' );
-
-	    //load glb file
-	    loader.load( 'Fox.glb', ( gltf ) => {
-	        gltf.scene.scale.set( 0.04, 0.04, 0.04 )	
-	   		this.modelScene = gltf.scene // use this to create characters...
-	   		this.modelAnimation = gltf.animations[1] // this is walk cycle for characters
-
-	   		//set model of all already created characters
-	   		for (let key of Object.keys(this.characters)) {
-				this.characters[key].setModel(this, this.modelScene, this.modelAnimation)
-			}
-	    }, undefined, function(e) {
-	        console.log(e)
-	    });
+	    this.loader = new GLTFLoader().setPath( 'assets/models/' );
 
 	    this.characters = new Map();
 
@@ -87,11 +73,11 @@ class Scene3D {
 	// create a new character at 0,0
 	newCharacter(character_id, name, x, y) { 
 
-        this.characters[character_id] = new Character3D(name, x, y);
+        this.characters[character_id] = new Character3D(name, x, y, this);
 
-        if (this.modelScene !== undefined) {
-        	this.characters[character_id].setModel(this, this.modelScene, this.modelAnimation)
-        }
+        // if (this.modelScene !== undefined) {
+        // 	this.characters[character_id].setModel(this, this.modelScene, this.modelAnimation)
+        // }
 	}
 
 	// move character with given id to x,y
@@ -103,7 +89,7 @@ class Scene3D {
 
 	// delete character (remove from map and scene) 
 	deleteCharacter(character_id) {
-		this.scene.remove(this.characters[character_id].model.modelGeometry);
+		this.characters[character_id].safe_delete(this)
 		delete this.characters[character_id];
 	}
 
@@ -138,31 +124,48 @@ class Scene3D {
 	    	this.renderer.render( this.scene, this.camera ); 
 	    }
 
-	    if (this.modelScene != undefined) {
-	        for (let key of Object.keys(this.characters)) {
-				this.characters[key].update(deltaTime);
-			}
-	    }
+	    
+        for (let key of Object.keys(this.characters)) {
+			this.characters[key].update(deltaTime);
+		}
 	}
 }
 
 class Character3D {
-	constructor(name, init_x, init_y) {
+	constructor(name, init_x, init_y, parent) {
 		this.name = name;
 		this.init_x = init_x;
 		this.init_y = init_y;
+
+
+		//load glb file
+	    parent.loader.load( 'Fox.glb', ( gltf ) => {
+	        gltf.scene.scale.set( 0.04, 0.04, 0.04 );	
+	   		this.setModel(parent, gltf.scene, gltf.animations[1], init_x, init_y);
+	    }, undefined, function(e) {
+	        console.log(e);
+	    });
+
 	}
 
 	update(deltaTime) {
-		this.model.update(deltaTime)
+		if (this.model !== undefined) {
+			this.model.update(deltaTime);
+		}
 	}
 
 	//returns time it'll take
 	moveTo(vector) {
-		return this.model.setAnimation(vector)
+		return this.model.setAnimation(vector);
 	}
 
-	setModel(parentScene, model, animation) {
+	safe_delete(parent) {
+		this.model.walkCycle.enabled = false;
+		parent.scene.remove(this.model.modelGeometry);
+	}
+
+
+	setModel(parentScene, model, animation, init_x, init_y) {
 		let mixer = new THREE.AnimationMixer( model );
         let walkCycle = mixer.clipAction( animation );
         walkCycle.enabled = false;
@@ -170,7 +173,7 @@ class Character3D {
 
         parentScene.scene.add( model );
 
-        this.model = new AnimatedModel(model, mixer, walkCycle, parentScene.worldVectorForPos(this.init_x, this.init_y));   
+        this.model = new AnimatedModel(model, mixer, walkCycle, parentScene.worldVectorForPos(init_x, init_y));  
 	}
 }
 
