@@ -14,20 +14,12 @@
         display: block;
     }
 
-    h1 {
-        display: table;
+    #sponsor-name {
+        display: block;
         font-size: 48px;
         margin: 12px auto;
         position: relative;
-
-        span {
-            position: absolute;
-            left: -2px;
-            top: -3px;
-            -webkit-text-stroke-width: 1px;
-            -webkit-text-stroke-color: black;
-            -webkit-text-fill-color: transparent;
-        }
+        width: 80%;
     }
 
     p {

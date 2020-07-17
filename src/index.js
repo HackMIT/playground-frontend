@@ -7,10 +7,12 @@ import './styles/styles.scss'
 import './images/Code_Icon.svg'
 import './images/Coffee_Icon.svg'
 import './images/Site_Icon.svg'
-import homeBackground from './images/home.jpg'
+import './images/sponsor_text.svg'
+import homeBackground from './images/home.png'
 import sponsorBackground from './images/Sponsor_Room_1.svg'
 
-let conn = new WebSocket('ws://' + 'localhost:8080' + '/ws');
+let conn = new WebSocket('ws://' + 'ec2-3-81-187-93.compute-1.amazonaws.com:8080' + '/ws');
+//let conn = new WebSocket('ws://' + 'localhost:8080' + '/ws');
 
 window.onSponsorLogin = function() {
     let joinPacket = {
