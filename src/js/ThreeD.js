@@ -83,8 +83,7 @@ class Scene3D {
 	// move character with given id to x,y
 	moveCharacter(character_id, x, y, callback) {
 		let newPos = this.worldVectorForPos(x, y);
-		let duration = this.characters[character_id].moveTo(newPos);
-		setTimeout(callback, duration * 1000);
+		this.characters[character_id].moveTo(newPos, callback);
 	}
 
 	// delete character (remove from map and scene) 
@@ -155,8 +154,8 @@ class Character3D {
 	}
 
 	//returns time it'll take
-	moveTo(vector) {
-		return this.model.setAnimation(vector);
+	moveTo(vector, callback) {
+		this.model.setAnimation(vector, callback);
 	}
 
 	safe_delete(parent) {

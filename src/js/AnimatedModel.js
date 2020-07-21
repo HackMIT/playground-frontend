@@ -9,12 +9,13 @@ class AnimatedModel {
 		this.walkCycle = walkCycle
 
 		modelGeometry.position.set(start.x, start.y, start.z)
+
+		this.callback = null
 	}
 
-	//returns time it'll take
-	setAnimation(dest) {
+	setAnimation(dest, callback) {
 		if (this.Animation.destination && this.Animation.destination.equals(dest)) { return; }
-		let time = this.Animation.init(this.modelGeometry.position, dest);
+		this.Animation.init(this.modelGeometry.position, dest);
 
 		// update roation (by finding vector we're traveling along, setting angle to that)
         var bearing = dest.clone();
@@ -32,7 +33,7 @@ class AnimatedModel {
         this.modelGeometry.setRotationFromAxisAngle(new THREE.Vector3( 0, 1, 0 ), angle)
         this.walkCycle.enabled = true
 
-        return time
+        this.callback = callback
 	}
 
 	update(timeDelta) {
@@ -44,6 +45,11 @@ class AnimatedModel {
 
 		if (this.Animation.finished()) {
 			this.walkCycle.enabled = false 
+
+			if (this.callback !== null) {
+				this.callback()
+				this.callback = null
+			}
 		}
 	}
 }
