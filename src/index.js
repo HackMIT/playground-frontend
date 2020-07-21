@@ -8,10 +8,10 @@ import './images/Coffee_Icon.svg'
 import './images/Site_Icon.svg'
 import './images/sponsor_text.svg'
 import './styles/coffeechat.scss'
-import homeBackground from './images/home.png'
-import sponsorBackground from './images/Sponsor_Room_1.svg'
 
 import './coffeechat';
+
+const BACKGROUND_IMAGE_URL = "https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/%SLUG%.png";
 
 let conn = new WebSocket('ws://' + 'ec2-3-81-187-93.compute-1.amazonaws.com:8080' + '/ws');
 //let conn = new WebSocket('ws://' + 'localhost:8080' + '/ws');
@@ -113,19 +113,18 @@ window.onload = function () {
 
 					room = data.room;
 
-					if (room.slug === 'home') {
-						gameElem.style.backgroundImage = "url('" + homeBackground + "')";
-						gameElem.classList.remove("sponsor");
+					if (room.sponsor) {
+						document.getElementById("sponsor-pane").classList.add("active");
+						document.getElementById("sponsor-name").innerHTML = "<span>" + room.slug + "</span>" + room.slug;
+						document.getElementById("outer").classList.add("sponsor");
+						gameElem.classList.add("sponsor");
+					} else {
 						document.getElementById("sponsor-pane").classList.remove("active");
 						document.getElementById("outer").classList.remove("sponsor");
-					} else {
-						gameElem.style.backgroundImage = "url('" + sponsorBackground + "')";
-						gameElem.classList.add("sponsor");
-						document.getElementById("sponsor-pane").classList.add("active");
-						document.getElementById("outer").classList.add("sponsor");
-
-						document.getElementById("sponsor-name").innerHTML = "<span>" + room.slug + "</span>" + room.slug;
+						gameElem.classList.remove("sponsor");
 					}
+
+					gameElem.style.backgroundImage = "url('" + BACKGROUND_IMAGE_URL.replace("%SLUG%", room.slug) + "')";
 
 					// Start sending chat events
 					document.getElementById('chat-box').addEventListener('keypress', function (e) {

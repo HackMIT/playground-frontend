@@ -163,19 +163,6 @@ body {
     }
 }
 
-.character {
-    background: url(../images/penguin.jpg);
-    background-size: 80px 100px;
-    position: absolute;
-    width: 80px;
-    height: 100px;
-    transform: translate(-50%, -100%);
-    transition-property: all;
-    /* slight speed-up at beginning and slow-down at end */
-    /* use cubic-bezier.com to experiment with other timing functions */
-    transition-timing-function: cubic-bezier(0.15, 0, 0.85, 1);
-}
-
 // make prettier
 .character .text-bubble {
     background-color: #fff;
