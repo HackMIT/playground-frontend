@@ -1,3 +1,5 @@
+@import './colors.scss';
+
 // -------------------------------- Pop-up --------------------------------
 
 .modal { 
@@ -24,6 +26,7 @@
     border-radius: 3px;
     cursor: default;
     display: flex;
+	justify-content: space-between;
     flex-direction: column;
     height: 30vw;
     overflow: hidden;
@@ -60,9 +63,21 @@
 }
 
 .modal-footer {
+	align-items: center;
     background: $blue_light;
-    flex-shrink: 0;
-    flex-basis: 48px;
+	display: flex;
+	justify-content: center;
+	padding: 16px 0;
+
+	input {
+		background: transparent;
+		border: 2px solid #2a4578;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 14px;
+		outline: none;
+		padding: 4px 12px;
+	}
 }
 
 //----- CSS for time slot selecter
@@ -84,7 +99,7 @@
 }
 
 .datelabel {
-    margin-bottom: 15px;
+    margin-bottom: 8px;
 }
 
 .timeslot {
