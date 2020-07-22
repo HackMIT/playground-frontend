@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-import { AnimatedModel } from './AnimatedModel'
-import { LinearAnimation } from './Animations'
+import { Character3D } from './Character3D'
 
 const d = 20; // this controls scale of camera
 
@@ -10,7 +9,8 @@ class Scene3D {
 	constructor() {
 		this.container = document.createElement( 'div' );
 		this.container.id = 'three-container'
-	    document.getElementById('game').appendChild( this.container );
+		this.gameElem = document.getElementById('game')
+	    this.gameElem.appendChild( this.container );
 
 	    // Isometric Camera
 	    var aspect = this.container.clientWidth / this.container.clientHeight;
@@ -73,7 +73,14 @@ class Scene3D {
 	// create a new character at 0,0
 	newCharacter(character_id, name, x, y) { 
 
-        this.characters[character_id] = new Character3D(name, x, y, this);
+        this.characters[character_id] = new Character3D(name, x, y, this, (vec) => { 
+        	vec.project( this.camera );
+
+        	let clientRect = this.gameElem.getBoundingClientRect();
+        	let x = Math.round(( 0.5 + vec.x / 2 ) * ( this.renderer.domElement.width / window.devicePixelRatio ));
+        	let y = Math.round(( 0.5 - vec.y / 2 ) * ( this.renderer.domElement.height / window.devicePixelRatio ));
+        	return [x, y]
+        } );
 
         // if (this.modelScene !== undefined) {
         // 	this.characters[character_id].setModel(this, this.modelScene, this.modelAnimation)
@@ -97,6 +104,11 @@ class Scene3D {
 			this.deleteCharacter(key);
 		}
 	}
+
+	// character with given id sends msg, returns its name
+	sendChat(character_id, msg) {
+		return this.characters[character_id].sendChat(msg);
+	}
 	
 	worldVectorForPos(x, y) {
 		this.mouse.x = x * 2 - 1;
@@ -115,7 +127,6 @@ class Scene3D {
 	    return intersectVector;
 	}
 
-
 	render() {
 	    requestAnimationFrame(this.render.bind(this));
 	    var deltaTime = this.clock.getDelta();
@@ -127,52 +138,6 @@ class Scene3D {
         for (let key of Object.keys(this.characters)) {
 			this.characters[key].update(deltaTime);
 		}
-	}
-}
-
-class Character3D {
-	constructor(name, init_x, init_y, parent) {
-		this.name = name;
-		this.init_x = init_x;
-		this.init_y = init_y;
-
-
-		//load glb file
-	    parent.loader.load( 'Fox.glb', ( gltf ) => {
-	        gltf.scene.scale.set( 0.04, 0.04, 0.04 );	
-	   		this.setModel(parent, gltf.scene, gltf.animations[1], init_x, init_y);
-	    }, undefined, function(e) {
-	        console.log(e);
-	    });
-
-	}
-
-	update(deltaTime) {
-		if (this.model !== undefined) {
-			this.model.update(deltaTime);
-		}
-	}
-
-	//returns time it'll take
-	moveTo(vector, callback) {
-		this.model.setAnimation(vector, callback);
-	}
-
-	safe_delete(parent) {
-		this.model.walkCycle.enabled = false;
-		parent.scene.remove(this.model.modelGeometry);
-	}
-
-
-	setModel(parentScene, model, animation, init_x, init_y) {
-		let mixer = new THREE.AnimationMixer( model );
-        let walkCycle = mixer.clipAction( animation );
-        walkCycle.enabled = false;
-        walkCycle.play();
-
-        parentScene.scene.add( model );
-
-        this.model = new AnimatedModel(model, mixer, walkCycle, parentScene.worldVectorForPos(init_x, init_y));  
 	}
 }
 

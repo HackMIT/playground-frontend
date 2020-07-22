@@ -174,8 +174,7 @@ window.onload = function () {
 					scene.deleteCharacter(data.character.id)
 
 				} else if (data.type == 'chat') {
-					data.name = characters[data.id].name
-					characters[data.id].updateChatBubble(data.mssg)
+					data.name = scene.sendChat(data.id, data.mssg);
 				} else {
 					console.log('received unknown packet: ' + data.type)
 					console.log(data)
