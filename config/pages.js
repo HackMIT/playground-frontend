@@ -18,5 +18,9 @@ module.exports = [
   {
     path: 'sponsor',
     template: 'sponsor'
+  },
+  {
+	path: 'register',
+	template: 'register'
   }
 ];
