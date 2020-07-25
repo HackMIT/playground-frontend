@@ -48,7 +48,7 @@ window.onload = function () {
 			return false;
 		}
 
-		if (e.target.classList.contains("element")) {
+		if (e.target.classList.contains("element") || e.target.parentElement.classList.contains("element")) {
 			return false;
 		}
 
@@ -117,16 +117,61 @@ window.onload = function () {
 					}
 
 					for (let [id, element] of Object.entries(data.room.elements)) {
-						let elementElem = document.createElement("img");
+						let elementElem = document.createElement("div");
 						elementElem.classList.add("element");
 						elementElem.style.left = (element.x * 100) + "vw";
 						elementElem.style.top = (element.y * 100) + "vh";
 						elementElem.style.width = (element.width * 100) + "vw";
-						elementElem.setAttribute("src", "https://hackmit-playground-2020.s3.amazonaws.com/elements/lamp.svg");
+
+						let imgElem = document.createElement("img");
+						imgElem.setAttribute("src", "https://hackmit-playground-2020.s3.amazonaws.com/elements/lamp.svg");
+						elementElem.appendChild(imgElem);
 						gameElem.appendChild(elementElem);
 
+						let brResizeElem = document.createElement("div");
+						brResizeElem.classList.add("resizer");
+						brResizeElem.classList.add("bottom-right");
+						elementElem.appendChild(brResizeElem);
+
+						brResizeElem.onmousedown = function(e) {
+							let startRect = elementElem.getBoundingClientRect();
+							let startX = elementElem.getBoundingClientRect().left + elementElem.getBoundingClientRect().width / 2;
+
+							let shiftX = elementElem.getBoundingClientRect().left + elementElem.getBoundingClientRect().width - e.clientX;
+							let shiftY = elementElem.getBoundingClientRect().left + elementElem.getBoundingClientRect().width - e.clientX;
+
+							function resizeAt(pageX, pageY) {
+								// -4 accounts for width of borders
+								let newWidth = pageX + shiftX - startRect.left - 4;
+
+								elementElem.style.left = (startX + (pageX - e.pageX) / 2) / window.innerWidth * 100 + "vw";
+								elementElem.style.width = newWidth / window.innerWidth * 100 + "vw";
+							}
+
+							resizeAt(e.pageX, e.pageY);
+
+							function onMouseMove(e) {
+								resizeAt(e.pageX, e.pageY);
+							}
+
+							document.addEventListener('mousemove', onMouseMove);
+
+							document.addEventListener('mouseup', function() {
+								document.removeEventListener('mousemove', onMouseMove);
+								elementElem.onmouseup = null;
+							});
+						};
+
+						brResizeElem.ondragstart = function() {
+							return false;
+						};
+
 						elementElem.onmousedown = function(e) {
-							elementElem.style.zIndex = 1000;
+							if (e.target.classList.contains("resizer")) {
+								return;
+							}
+
+							elementElem.classList.add("editing");
 
 							let shiftX = e.clientX - elementElem.getBoundingClientRect().left - elementElem.getBoundingClientRect().width / 2;
 							let shiftY = e.clientY - elementElem.getBoundingClientRect().top - elementElem.getBoundingClientRect().height / 2;

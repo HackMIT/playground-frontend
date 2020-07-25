@@ -122,6 +122,31 @@ body {
 	cursor: move;
 	position: absolute;
 	transform: translate(-50%, -50%);
+
+	.resizer {
+		position: absolute;
+		display: none;
+		width: 16px;
+		height: 16px;
+		box-sizing: border-box;
+		border-bottom: 2px solid #000;
+		border-right: 2px solid #000;
+		right: 4px;
+		bottom: 4px;
+
+		&.bottom-right {
+			cursor: nwse-resize;
+		}
+	}
+
+	&.editing {
+		border: 2px solid #000;
+		z-index: 1000;
+
+		.resizer {
+			display: block;
+		}
+	}
 }
 
 #three-container {
