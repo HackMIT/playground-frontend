@@ -12,6 +12,8 @@ import './styles/coffeechat.scss'
 import './coffeechat';
 
 import deleteIcon from './images/icons/delete.svg';
+import './images/icons/add.svg';
+import './images/icons/edit.svg';
 
 const BACKGROUND_IMAGE_URL = "https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/%SLUG%.png";
 
@@ -40,6 +42,7 @@ window.onload = function () {
 	var characters = new Map();
 
 	var elements = new Map();
+	var elementPaths = [];
 
 	var interactables = new Map();
 	var room;
@@ -52,7 +55,7 @@ window.onload = function () {
 			return false;
 		}
 
-		if (e.target.classList.contains("element") || e.target.parentElement.classList.contains("element")) {
+		if (e.target.id !== "three-canvas") {
 			return false;
 		}
 
@@ -138,6 +141,8 @@ window.onload = function () {
 						interactables[key] = new Interactable(value.action, value.appearance, value.x, value.y);
 					}
 
+					elementPaths = data.elementPaths;
+
 					for (let [id, element] of Object.entries(data.room.elements)) {
 						let elementElem = document.createElement("div");
 						elementElem.classList.add("element");
@@ -147,7 +152,8 @@ window.onload = function () {
 						elements[id] = elementElem;
 
 						let imgElem = document.createElement("img");
-						imgElem.setAttribute("src", "https://hackmit-playground-2020.s3.amazonaws.com/elements/lamp.svg");
+						imgElem.classList.add("element-img");
+						imgElem.setAttribute("src", "https://hackmit-playground-2020.s3.amazonaws.com/elements/" + element.path);
 						elementElem.appendChild(imgElem);
 						gameElem.appendChild(elementElem);
 
@@ -166,6 +172,30 @@ window.onload = function () {
 								id: id
 							}));
 						};
+
+						let pathSelect = document.createElement("select");
+
+						for (let i = 0; i < data.elementPaths.length; i++) {
+							let optionElem = document.createElement("option");
+							optionElem.value = data.elementPaths[i];
+							optionElem.text = data.elementPaths[i].split(".")[0];
+							pathSelect.appendChild(optionElem);
+						}
+
+						pathSelect.value = element.path;
+
+						pathSelect.onchange = function() {
+							element.path = pathSelect.value;
+
+							conn.send(JSON.stringify({
+								type: 'element_update',
+								room: data.room.slug,
+								id: id,
+								element: element
+							}));
+						};
+
+						elementElem.appendChild(pathSelect);
 
 						let brResizeElem = document.createElement("div");
 						brResizeElem.classList.add("resizer");
@@ -223,7 +253,7 @@ window.onload = function () {
 						};
 
 						elementElem.onmousedown = function(e) {
-							if (e.target.classList.contains("resizer")) {
+							if (!e.target.classList.contains("element-img")) {
 								return;
 							}
 
@@ -328,6 +358,7 @@ window.onload = function () {
 					elements[data.id].style.left = (data.element.x * 100) + "vw";
 					elements[data.id].style.top = (data.element.y * 100) + "vh";
 					elements[data.id].style.width = (data.element.width * 100) + "vw";
+					elements[data.id].querySelector("img").setAttribute("src", "https://hackmit-playground-2020.s3.amazonaws.com/elements/" + data.element.path);
 				} else if (data.type === 'error') {
 					if (data.code === 1) {
 						document.getElementById('login-panel').style.display = 'block';

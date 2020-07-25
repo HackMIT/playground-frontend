@@ -116,6 +116,25 @@ body {
     background-repeat: no-repeat;
     background-size: 100% 100%;
     position: relative;
+	overflow: hidden;
+
+	#add-button {
+		cursor: pointer;
+		height: 32px;
+		width: 32px;
+		position: absolute;
+		top: 72px;
+		right: 24px;
+	}
+
+	#edit-button {
+		cursor: pointer;
+		height: 32px;
+		width: 32px;
+		position: absolute;
+		top: 24px;
+		right: 24px;
+	}
 }
 
 .element {
@@ -123,6 +142,14 @@ body {
 	position: absolute;
 	transform: translate(-50%, -50%);
 	z-index: 100;
+
+	select {
+		position: absolute;
+		transform: translate(-50%, 100%);
+		left: 50%;
+		top: 100%;
+		display: none;
+	}
 
 	.delete {
 		background: #000;
@@ -161,7 +188,7 @@ body {
 	&.editing {
 		border: 2px solid #000;
 
-		.delete, .resizer {
+		.delete, .resizer, select {
 			display: block;
 		}
 	}
