@@ -136,16 +136,22 @@ window.onload = function () {
 						brResizeElem.onmousedown = function(e) {
 							let startRect = elementElem.getBoundingClientRect();
 							let startX = elementElem.getBoundingClientRect().left + elementElem.getBoundingClientRect().width / 2;
+							let startY = elementElem.getBoundingClientRect().top + elementElem.getBoundingClientRect().height / 2;
 
 							let shiftX = elementElem.getBoundingClientRect().left + elementElem.getBoundingClientRect().width - e.clientX;
-							let shiftY = elementElem.getBoundingClientRect().left + elementElem.getBoundingClientRect().width - e.clientX;
+							let shiftY = elementElem.getBoundingClientRect().top + elementElem.getBoundingClientRect().height - e.clientY;
 
 							function resizeAt(pageX, pageY) {
-								// -4 accounts for width of borders
-								let newWidth = pageX + shiftX - startRect.left - 4;
+								let newWidthX = pageX + shiftX - startRect.left;
 
-								elementElem.style.left = (startX + (pageX - e.pageX) / 2) / window.innerWidth * 100 + "vw";
-								elementElem.style.width = newWidth / window.innerWidth * 100 + "vw";
+								let newHeight = pageY + shiftY - startRect.top;
+								let newWidthY = newHeight * (startRect.width / startRect.height);
+
+								let newWidth = newWidthX > newWidthY ? newWidthX : newWidthY;
+
+								elementElem.style.top = (startY + (newWidth * (startRect.height / startRect.width) - startRect.height) / 2) / window.innerHeight * 100 + "vh";
+								elementElem.style.left = (startX + (newWidth - startRect.width) / 2) / window.innerWidth * 100 + "vw";
+								elementElem.style.width = (newWidth - 4) / window.innerWidth * 100 + "vw";
 							}
 
 							resizeAt(e.pageX, e.pageY);
@@ -159,6 +165,17 @@ window.onload = function () {
 							document.addEventListener('mouseup', function() {
 								document.removeEventListener('mousemove', onMouseMove);
 								elementElem.onmouseup = null;
+
+								element.x = parseFloat(elementElem.style.left.substring(0, elementElem.style.left.length - 2)) / 100;
+								element.y = parseFloat(elementElem.style.top.substring(0, elementElem.style.top.length - 2)) / 100;
+								element.width = parseFloat(elementElem.style.width.substring(0, elementElem.style.width.length - 2)) / 100;
+
+								conn.send(JSON.stringify({
+									type: 'element_update',
+									slug: data.room.slug,
+									id: id,
+									element: element
+								}));
 							});
 						};
 
