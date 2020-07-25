@@ -119,9 +119,29 @@ body {
 }
 
 .element {
-	cursor: move;
+	cursor: grab;
 	position: absolute;
 	transform: translate(-50%, -50%);
+	z-index: 100;
+
+	.delete {
+		background: #000;
+		box-sizing: border-box;
+		border-radius: 50%;
+		cursor: pointer;
+		position: absolute;
+		display: none;
+		width: 32px;
+		height: 32px;
+		top: -1px;
+		left: -1px;
+		transform: translate(-50%, -50%);
+		padding: 8px;
+
+		img {
+			width: 100%;
+		}
+	}
 
 	.resizer {
 		position: absolute;
@@ -140,11 +160,14 @@ body {
 
 	&.editing {
 		border: 2px solid #000;
-		z-index: 1000;
 
-		.resizer {
+		.delete, .resizer {
 			display: block;
 		}
+	}
+
+	&.moving {
+		cursor: grabbing;
 	}
 }
 

@@ -11,6 +11,8 @@ import './styles/coffeechat.scss'
 
 import './coffeechat';
 
+import deleteIcon from './images/icons/delete.svg';
+
 const BACKGROUND_IMAGE_URL = "https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/%SLUG%.png";
 
 //let conn = new WebSocket('ws://' + 'ec2-3-81-187-93.compute-1.amazonaws.com:8080' + '/ws');
@@ -37,6 +39,8 @@ window.onload = function () {
 	var characterID;
 	var characters = new Map();
 
+	var elements = new Map();
+
 	var interactables = new Map();
 	var room;
 
@@ -50,6 +54,24 @@ window.onload = function () {
 
 		if (e.target.classList.contains("element") || e.target.parentElement.classList.contains("element")) {
 			return false;
+		}
+
+		// Remove editable status from all elements
+		let elements = document.getElementsByClassName("element");
+		let wasEditing = 0;
+
+		for (var i = 0; i < elements.length; i++) {
+			if (!elements.item(i).classList.contains("editing")) {
+				continue;
+			}
+
+			elements.item(i).classList.remove("editing");
+			wasEditing += 1;
+		}
+
+		if (wasEditing > 0) {
+			// If we were editing something, don't move immediately after
+			return;
 		}
 
 		// Send move packet
@@ -122,11 +144,28 @@ window.onload = function () {
 						elementElem.style.left = (element.x * 100) + "vw";
 						elementElem.style.top = (element.y * 100) + "vh";
 						elementElem.style.width = (element.width * 100) + "vw";
+						elements[id] = elementElem;
 
 						let imgElem = document.createElement("img");
 						imgElem.setAttribute("src", "https://hackmit-playground-2020.s3.amazonaws.com/elements/lamp.svg");
 						elementElem.appendChild(imgElem);
 						gameElem.appendChild(elementElem);
+
+						let deleteButton = document.createElement("div");
+						deleteButton.classList.add("delete");
+						elementElem.appendChild(deleteButton);
+
+						let deleteButtonImg = document.createElement("img");
+						deleteButtonImg.setAttribute("src", deleteIcon);
+						deleteButton.appendChild(deleteButtonImg);
+
+						deleteButton.onclick = function(e) {
+							conn.send(JSON.stringify({
+								type: 'element_delete',
+								room: data.room.slug,
+								id: id
+							}));
+						};
 
 						let brResizeElem = document.createElement("div");
 						brResizeElem.classList.add("resizer");
@@ -172,7 +211,7 @@ window.onload = function () {
 
 								conn.send(JSON.stringify({
 									type: 'element_update',
-									slug: data.room.slug,
+									room: data.room.slug,
 									id: id,
 									element: element
 								}));
@@ -189,6 +228,7 @@ window.onload = function () {
 							}
 
 							elementElem.classList.add("editing");
+							elementElem.classList.add("moving");
 
 							let shiftX = e.clientX - elementElem.getBoundingClientRect().left - elementElem.getBoundingClientRect().width / 2;
 							let shiftY = e.clientY - elementElem.getBoundingClientRect().top - elementElem.getBoundingClientRect().height / 2;
@@ -209,6 +249,8 @@ window.onload = function () {
 
                             // (3) drop the ball, remove unneeded handlers
                             document.addEventListener('mouseup', function() {
+								elementElem.classList.remove("moving");
+
                                 document.removeEventListener('mousemove', onMouseMove);
                                 elementElem.onmouseup = null;
 
@@ -217,7 +259,7 @@ window.onload = function () {
 
 								conn.send(JSON.stringify({
 									type: 'element_update',
-									slug: data.room.slug,
+									room: data.room.slug,
 									id: id,
 									element: element
 								}));
@@ -279,6 +321,13 @@ window.onload = function () {
 							break;
 						}
 					});
+				} else if (data.type === 'element_delete') {
+					elements[data.id].remove();
+					delete elements[data.id];
+				} else if (data.type === 'element_update') {
+					elements[data.id].style.left = (data.element.x * 100) + "vw";
+					elements[data.id].style.top = (data.element.y * 100) + "vh";
+					elements[data.id].style.width = (data.element.width * 100) + "vw";
 				} else if (data.type === 'error') {
 					if (data.code === 1) {
 						document.getElementById('login-panel').style.display = 'block';
