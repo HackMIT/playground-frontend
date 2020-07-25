@@ -15,7 +15,8 @@ module.exports = {
     editor: [paths.src + '/editor.js'],
     character: [paths.src + '/character.js'],
     login: [paths.src + '/login.js'],
-    sponsor: [paths.src + '/sponsor.js']
+    sponsor: [paths.src + '/sponsor.js'],
+	settings: [paths.src + '/settings.js']
   },
 
   /**
