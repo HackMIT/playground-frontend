@@ -118,6 +118,12 @@ body {
     position: relative;
 }
 
+.element {
+	cursor: move;
+	position: absolute;
+	transform: translate(-50%, -50%);
+}
+
 #three-container {
   height: 100%;
   width: 100%;
