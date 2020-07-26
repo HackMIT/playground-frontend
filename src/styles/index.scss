@@ -137,6 +137,11 @@ body {
 		position: absolute;
 		top: 72px;
 		right: 24px;
+		display: none;
+
+		&.visible {
+			display: block;
+		}
 	}
 
 	#edit-button {
@@ -150,10 +155,13 @@ body {
 }
 
 .element {
-	cursor: grab;
 	position: absolute;
 	transform: translate(-50%, -50%);
 	z-index: 100;
+
+	&.editable {
+		cursor: grab;
+	}
 
 	select {
 		position: absolute;

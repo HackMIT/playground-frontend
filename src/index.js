@@ -19,6 +19,7 @@ const BACKGROUND_IMAGE_URL = "https://hackmit-playground-2020.s3.us-east-1.amazo
 
 //let conn = new WebSocket('ws://' + 'ec2-3-81-187-93.compute-1.amazonaws.com:8080' + '/ws');
 let conn;
+let editing;
 let elementPaths;
 
 let gameElem = document.getElementById("game");
@@ -152,6 +153,10 @@ function addElement(element, id, elementPaths) {
 	};
 
 	elementElem.onmousedown = function(e) {
+		if (!editing) {
+			return;
+		}
+
 		if (!e.target.classList.contains("element-img")) {
 			return;
 		}
@@ -270,6 +275,29 @@ window.onload = function () {
 			y: y,
 			type: 'move'
 		}));
+	});
+
+	document.getElementById("edit-button").addEventListener("click", function(e) {
+		editing = !editing;
+
+		if (editing) {
+			document.getElementById("add-button").classList.add("visible");
+
+			let elements = document.getElementsByClassName("element");
+
+			for (let i = 0; i < elements.length; i++) {
+				elements.item(i).classList.add("editable");
+			}
+		} else {
+			document.getElementById("add-button").classList.remove("visible");
+
+			let elements = document.getElementsByClassName("element");
+
+			for (let i = 0; i < elements.length; i++) {
+				elements.item(i).classList.remove("editable");
+				elements.item(i).classList.remove("editing");
+			}
+		}
 	});
 
 	document.getElementById("add-button").addEventListener('click', function(e) {
