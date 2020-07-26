@@ -19,6 +19,162 @@ const BACKGROUND_IMAGE_URL = "https://hackmit-playground-2020.s3.us-east-1.amazo
 
 //let conn = new WebSocket('ws://' + 'ec2-3-81-187-93.compute-1.amazonaws.com:8080' + '/ws');
 let conn;
+let elementPaths;
+
+let gameElem = document.getElementById("game");
+
+function addElement(element, id, elementPaths) {
+	let elementElem = document.createElement("div");
+	elementElem.classList.add("element");
+	elementElem.style.left = (element.x * 100) + "vw";
+	elementElem.style.top = (element.y * 100) + "vh";
+	elementElem.style.width = (element.width * 100) + "vw";
+
+	let imgElem = document.createElement("img");
+	imgElem.classList.add("element-img");
+	imgElem.setAttribute("src", "https://hackmit-playground-2020.s3.amazonaws.com/elements/" + element.path);
+	elementElem.appendChild(imgElem);
+	gameElem.appendChild(elementElem);
+
+	let deleteButton = document.createElement("div");
+	deleteButton.classList.add("delete");
+	elementElem.appendChild(deleteButton);
+
+	let deleteButtonImg = document.createElement("img");
+	deleteButtonImg.setAttribute("src", deleteIcon);
+	deleteButton.appendChild(deleteButtonImg);
+
+	deleteButton.onclick = function(e) {
+		conn.send(JSON.stringify({
+			type: 'element_delete',
+			id: id
+		}));
+	};
+
+	let pathSelect = document.createElement("select");
+
+	for (let i = 0; i < elementPaths.length; i++) {
+		let optionElem = document.createElement("option");
+		optionElem.value = elementPaths[i];
+		optionElem.text = elementPaths[i].split(".")[0];
+		pathSelect.appendChild(optionElem);
+	}
+
+	pathSelect.value = element.path;
+
+	pathSelect.onchange = function() {
+		element.path = pathSelect.value;
+
+		conn.send(JSON.stringify({
+			type: 'element_update',
+			id: id,
+			element: element
+		}));
+	};
+
+	elementElem.appendChild(pathSelect);
+
+	let brResizeElem = document.createElement("div");
+	brResizeElem.classList.add("resizer");
+	brResizeElem.classList.add("bottom-right");
+	elementElem.appendChild(brResizeElem);
+
+	brResizeElem.onmousedown = function(e) {
+		let startRect = elementElem.getBoundingClientRect();
+		let startX = elementElem.getBoundingClientRect().left + elementElem.getBoundingClientRect().width / 2;
+		let startY = elementElem.getBoundingClientRect().top + elementElem.getBoundingClientRect().height / 2;
+
+		let shiftX = elementElem.getBoundingClientRect().left + elementElem.getBoundingClientRect().width - e.clientX;
+		let shiftY = elementElem.getBoundingClientRect().top + elementElem.getBoundingClientRect().height - e.clientY;
+
+		function resizeAt(pageX, pageY) {
+			let newWidthX = pageX + shiftX - startRect.left;
+
+			let newHeight = pageY + shiftY - startRect.top;
+			let newWidthY = newHeight * (startRect.width / startRect.height);
+
+			let newWidth = newWidthX > newWidthY ? newWidthX : newWidthY;
+
+			elementElem.style.top = (startY + (newWidth * (startRect.height / startRect.width) - startRect.height) / 2) / window.innerHeight * 100 + "vh";
+			elementElem.style.left = (startX + (newWidth - startRect.width) / 2) / window.innerWidth * 100 + "vw";
+			elementElem.style.width = (newWidth - 4) / window.innerWidth * 100 + "vw";
+		}
+
+		resizeAt(e.pageX, e.pageY);
+
+		function onMouseMove(e) {
+			resizeAt(e.pageX, e.pageY);
+		}
+
+		document.addEventListener('mousemove', onMouseMove);
+
+		document.addEventListener('mouseup', function() {
+			document.removeEventListener('mousemove', onMouseMove);
+			elementElem.onmouseup = null;
+
+			element.x = parseFloat(elementElem.style.left.substring(0, elementElem.style.left.length - 2)) / 100;
+			element.y = parseFloat(elementElem.style.top.substring(0, elementElem.style.top.length - 2)) / 100;
+			element.width = parseFloat(elementElem.style.width.substring(0, elementElem.style.width.length - 2)) / 100;
+
+			conn.send(JSON.stringify({
+				type: 'element_update',
+				id: id,
+				element: element
+			}));
+		});
+	};
+
+	brResizeElem.ondragstart = function() {
+		return false;
+	};
+
+	elementElem.onmousedown = function(e) {
+		if (!e.target.classList.contains("element-img")) {
+			return;
+		}
+
+		elementElem.classList.add("editing");
+		elementElem.classList.add("moving");
+
+		let shiftX = e.clientX - elementElem.getBoundingClientRect().left - elementElem.getBoundingClientRect().width / 2;
+		let shiftY = e.clientY - elementElem.getBoundingClientRect().top - elementElem.getBoundingClientRect().height / 2;
+
+		function moveAt(pageX, pageY) {
+			elementElem.style.left = (pageX - shiftX) / window.innerWidth * 100 + "vw";
+			elementElem.style.top = (pageY - shiftY) / window.innerHeight * 100 + "vh";
+		}
+
+		moveAt(e.pageX, e.pageY);
+
+		function onMouseMove(e) {
+			moveAt(e.pageX, e.pageY);
+		}
+
+		document.addEventListener('mousemove', onMouseMove);
+
+		document.addEventListener('mouseup', function() {
+			elementElem.classList.remove("moving");
+
+			document.removeEventListener('mousemove', onMouseMove);
+			elementElem.onmouseup = null;
+
+			element.x = parseFloat(elementElem.style.left.substring(0, elementElem.style.left.length - 2)) / 100;
+			element.y = parseFloat(elementElem.style.top.substring(0, elementElem.style.top.length - 2)) / 100;
+
+			conn.send(JSON.stringify({
+				type: 'element_update',
+				id: id,
+				element: element
+			}));
+		});
+	};
+
+	elementElem.ondragstart = function() {
+		return false;
+	};
+
+	return elementElem;
+}
 
 window.onSponsorLogin = () => {
 	let joinPacket = {
@@ -42,12 +198,10 @@ window.onload = function () {
 	var characters = new Map();
 
 	var elements = new Map();
-	var elementPaths = [];
 
 	var interactables = new Map();
 	var room;
 
-	let gameElem = document.getElementById("game");
 
 	// When clicking on the page, send a move message to the server
 	gameElem.addEventListener('click', function (e) {
@@ -86,6 +240,18 @@ window.onload = function () {
 			x: x,
 			y: y,
 			type: 'move'
+		}));
+	});
+
+	document.getElementById("add-button").addEventListener('click', function(e) {
+		conn.send(JSON.stringify({
+			type: 'element_add',
+			element: {
+				x: 0.2,
+				y: 0.2,
+				path: 'lamp.svg',
+				width: 0.1
+			}
 		}));
 	});
 
@@ -144,161 +310,8 @@ window.onload = function () {
 					elementPaths = data.elementPaths;
 
 					for (let [id, element] of Object.entries(data.room.elements)) {
-						let elementElem = document.createElement("div");
-						elementElem.classList.add("element");
-						elementElem.style.left = (element.x * 100) + "vw";
-						elementElem.style.top = (element.y * 100) + "vh";
-						elementElem.style.width = (element.width * 100) + "vw";
+						let elementElem = addElement(element, id, data.elementPaths);
 						elements[id] = elementElem;
-
-						let imgElem = document.createElement("img");
-						imgElem.classList.add("element-img");
-						imgElem.setAttribute("src", "https://hackmit-playground-2020.s3.amazonaws.com/elements/" + element.path);
-						elementElem.appendChild(imgElem);
-						gameElem.appendChild(elementElem);
-
-						let deleteButton = document.createElement("div");
-						deleteButton.classList.add("delete");
-						elementElem.appendChild(deleteButton);
-
-						let deleteButtonImg = document.createElement("img");
-						deleteButtonImg.setAttribute("src", deleteIcon);
-						deleteButton.appendChild(deleteButtonImg);
-
-						deleteButton.onclick = function(e) {
-							conn.send(JSON.stringify({
-								type: 'element_delete',
-								room: data.room.slug,
-								id: id
-							}));
-						};
-
-						let pathSelect = document.createElement("select");
-
-						for (let i = 0; i < data.elementPaths.length; i++) {
-							let optionElem = document.createElement("option");
-							optionElem.value = data.elementPaths[i];
-							optionElem.text = data.elementPaths[i].split(".")[0];
-							pathSelect.appendChild(optionElem);
-						}
-
-						pathSelect.value = element.path;
-
-						pathSelect.onchange = function() {
-							element.path = pathSelect.value;
-
-							conn.send(JSON.stringify({
-								type: 'element_update',
-								room: data.room.slug,
-								id: id,
-								element: element
-							}));
-						};
-
-						elementElem.appendChild(pathSelect);
-
-						let brResizeElem = document.createElement("div");
-						brResizeElem.classList.add("resizer");
-						brResizeElem.classList.add("bottom-right");
-						elementElem.appendChild(brResizeElem);
-
-						brResizeElem.onmousedown = function(e) {
-							let startRect = elementElem.getBoundingClientRect();
-							let startX = elementElem.getBoundingClientRect().left + elementElem.getBoundingClientRect().width / 2;
-							let startY = elementElem.getBoundingClientRect().top + elementElem.getBoundingClientRect().height / 2;
-
-							let shiftX = elementElem.getBoundingClientRect().left + elementElem.getBoundingClientRect().width - e.clientX;
-							let shiftY = elementElem.getBoundingClientRect().top + elementElem.getBoundingClientRect().height - e.clientY;
-
-							function resizeAt(pageX, pageY) {
-								let newWidthX = pageX + shiftX - startRect.left;
-
-								let newHeight = pageY + shiftY - startRect.top;
-								let newWidthY = newHeight * (startRect.width / startRect.height);
-
-								let newWidth = newWidthX > newWidthY ? newWidthX : newWidthY;
-
-								elementElem.style.top = (startY + (newWidth * (startRect.height / startRect.width) - startRect.height) / 2) / window.innerHeight * 100 + "vh";
-								elementElem.style.left = (startX + (newWidth - startRect.width) / 2) / window.innerWidth * 100 + "vw";
-								elementElem.style.width = (newWidth - 4) / window.innerWidth * 100 + "vw";
-							}
-
-							resizeAt(e.pageX, e.pageY);
-
-							function onMouseMove(e) {
-								resizeAt(e.pageX, e.pageY);
-							}
-
-							document.addEventListener('mousemove', onMouseMove);
-
-							document.addEventListener('mouseup', function() {
-								document.removeEventListener('mousemove', onMouseMove);
-								elementElem.onmouseup = null;
-
-								element.x = parseFloat(elementElem.style.left.substring(0, elementElem.style.left.length - 2)) / 100;
-								element.y = parseFloat(elementElem.style.top.substring(0, elementElem.style.top.length - 2)) / 100;
-								element.width = parseFloat(elementElem.style.width.substring(0, elementElem.style.width.length - 2)) / 100;
-
-								conn.send(JSON.stringify({
-									type: 'element_update',
-									room: data.room.slug,
-									id: id,
-									element: element
-								}));
-							});
-						};
-
-						brResizeElem.ondragstart = function() {
-							return false;
-						};
-
-						elementElem.onmousedown = function(e) {
-							if (!e.target.classList.contains("element-img")) {
-								return;
-							}
-
-							elementElem.classList.add("editing");
-							elementElem.classList.add("moving");
-
-							let shiftX = e.clientX - elementElem.getBoundingClientRect().left - elementElem.getBoundingClientRect().width / 2;
-							let shiftY = e.clientY - elementElem.getBoundingClientRect().top - elementElem.getBoundingClientRect().height / 2;
-
-							function moveAt(pageX, pageY) {
-								elementElem.style.left = (pageX - shiftX) / window.innerWidth * 100 + "vw";
-								elementElem.style.top = (pageY - shiftY) / window.innerHeight * 100 + "vh";
-						    }
-
-							moveAt(e.pageX, e.pageY);
-
-                            function onMouseMove(e) {
-                                moveAt(e.pageX, e.pageY);
-                            }
-
-                            // (2) move the ball on mousemove
-                            document.addEventListener('mousemove', onMouseMove);
-
-                            // (3) drop the ball, remove unneeded handlers
-                            document.addEventListener('mouseup', function() {
-								elementElem.classList.remove("moving");
-
-                                document.removeEventListener('mousemove', onMouseMove);
-                                elementElem.onmouseup = null;
-
-								element.x = parseFloat(elementElem.style.left.substring(0, elementElem.style.left.length - 2)) / 100;
-								element.y = parseFloat(elementElem.style.top.substring(0, elementElem.style.top.length - 2)) / 100;
-
-								conn.send(JSON.stringify({
-									type: 'element_update',
-									room: data.room.slug,
-									id: id,
-									element: element
-								}));
-							});
-						};
-
-						elementElem.ondragstart = function() {
-							return false;
-						};
 					}
 
 					room = data.room;
@@ -351,6 +364,9 @@ window.onload = function () {
 							break;
 						}
 					});
+				} else if (data.type === 'element_add') {
+					let elementElem = addElement(data.element, data.id, elementPaths);
+					elements[data.id] = elementElem;
 				} else if (data.type === 'element_delete') {
 					elements[data.id].remove();
 					delete elements[data.id];
