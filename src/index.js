@@ -23,12 +23,30 @@ let elementPaths;
 
 let gameElem = document.getElementById("game");
 
+function handleWindowSize() {
+	let outerElem = document.getElementById("outer");
+
+	if (window.innerWidth < window.innerHeight * (16 / 9)) {
+		if (outerElem.classList.contains("vertical")) {
+			return;
+		}
+
+		outerElem.classList.add("vertical");
+	} else {
+		if (!outerElem.classList.contains("vertical")) {
+			return;
+		}
+
+		outerElem.classList.remove("vertical");
+	}
+}
+
 function addElement(element, id, elementPaths) {
 	let elementElem = document.createElement("div");
 	elementElem.classList.add("element");
-	elementElem.style.left = (element.x * 100) + "vw";
-	elementElem.style.top = (element.y * 100) + "vh";
-	elementElem.style.width = (element.width * 100) + "vw";
+	elementElem.style.left = (element.x * 100) + "%";
+	elementElem.style.top = (element.y * 100) + "%";
+	elementElem.style.width = (element.width * 100) + "%";
 
 	let imgElem = document.createElement("img");
 	imgElem.classList.add("element-img");
@@ -80,24 +98,29 @@ function addElement(element, id, elementPaths) {
 	elementElem.appendChild(brResizeElem);
 
 	brResizeElem.onmousedown = function(e) {
-		let startRect = elementElem.getBoundingClientRect();
-		let startX = elementElem.getBoundingClientRect().left + elementElem.getBoundingClientRect().width / 2;
-		let startY = elementElem.getBoundingClientRect().top + elementElem.getBoundingClientRect().height / 2;
+		let outerRect = document.getElementById('outer').getBoundingClientRect();
 
-		let shiftX = elementElem.getBoundingClientRect().left + elementElem.getBoundingClientRect().width - e.clientX;
-		let shiftY = elementElem.getBoundingClientRect().top + elementElem.getBoundingClientRect().height - e.clientY;
+		let startRect = elementElem.getBoundingClientRect();
+		let startX = (elementElem.getBoundingClientRect().left - outerRect.left) + elementElem.getBoundingClientRect().width / 2;
+		let startY = (elementElem.getBoundingClientRect().top - outerRect.top) + elementElem.getBoundingClientRect().height / 2;
+
+		let shiftX = (elementElem.getBoundingClientRect().left - outerRect.left) + elementElem.getBoundingClientRect().width - (e.clientX - outerRect.left);
+		let shiftY = (elementElem.getBoundingClientRect().top - outerRect.top) + elementElem.getBoundingClientRect().height - (e.clientY - outerRect.top);
 
 		function resizeAt(pageX, pageY) {
-			let newWidthX = pageX + shiftX - startRect.left;
+			pageX -= outerRect.left;
+			pageY -= outerRect.top;
 
-			let newHeight = pageY + shiftY - startRect.top;
+			let newWidthX = pageX + shiftX - (startRect.left - outerRect.left);
+
+			let newHeight = pageY + shiftY - (startRect.top - outerRect.top);
 			let newWidthY = newHeight * (startRect.width / startRect.height);
 
 			let newWidth = newWidthX > newWidthY ? newWidthX : newWidthY;
 
-			elementElem.style.top = (startY + (newWidth * (startRect.height / startRect.width) - startRect.height) / 2) / window.innerHeight * 100 + "vh";
-			elementElem.style.left = (startX + (newWidth - startRect.width) / 2) / window.innerWidth * 100 + "vw";
-			elementElem.style.width = (newWidth - 4) / window.innerWidth * 100 + "vw";
+			elementElem.style.top = (startY + (newWidth * (startRect.height / startRect.width) - startRect.height) / 2) / outerRect.height * 100 + "%";
+			elementElem.style.left = (startX + (newWidth - startRect.width) / 2) / outerRect.width * 100 + "%";
+			elementElem.style.width = (newWidth - 4) / outerRect.width * 100 + "%";
 		}
 
 		resizeAt(e.pageX, e.pageY);
@@ -136,12 +159,17 @@ function addElement(element, id, elementPaths) {
 		elementElem.classList.add("editing");
 		elementElem.classList.add("moving");
 
-		let shiftX = e.clientX - elementElem.getBoundingClientRect().left - elementElem.getBoundingClientRect().width / 2;
-		let shiftY = e.clientY - elementElem.getBoundingClientRect().top - elementElem.getBoundingClientRect().height / 2;
+		let outerRect = document.getElementById('outer').getBoundingClientRect();
+
+		let shiftX = (e.pageX - outerRect.left) - (elementElem.getBoundingClientRect().left - outerRect.left) - elementElem.getBoundingClientRect().width / 2;
+		let shiftY = (e.pageY - outerRect.top) - (elementElem.getBoundingClientRect().top - outerRect.top) - elementElem.getBoundingClientRect().height / 2;
 
 		function moveAt(pageX, pageY) {
-			elementElem.style.left = (pageX - shiftX) / window.innerWidth * 100 + "vw";
-			elementElem.style.top = (pageY - shiftY) / window.innerHeight * 100 + "vh";
+			pageX -= outerRect.left;
+			pageY -= outerRect.top;
+
+			elementElem.style.left = (pageX - shiftX) / outerRect.width * 100 + "%";
+			elementElem.style.top = (pageY - shiftY) / outerRect.height * 100 + "%";
 		}
 
 		moveAt(e.pageX, e.pageY);
@@ -202,6 +230,7 @@ window.onload = function () {
 	var interactables = new Map();
 	var room;
 
+	handleWindowSize();
 
 	// When clicking on the page, send a move message to the server
 	gameElem.addEventListener('click', function (e) {
@@ -256,7 +285,8 @@ window.onload = function () {
 	});
 
 	window.addEventListener('resize', function(e) {
-		scene.fixCameraOnResize()
+		scene.fixCameraOnResize();
+		handleWindowSize();
 	});
 
 	if (window['WebSocket']) {
@@ -371,9 +401,9 @@ window.onload = function () {
 					elements[data.id].remove();
 					delete elements[data.id];
 				} else if (data.type === 'element_update') {
-					elements[data.id].style.left = (data.element.x * 100) + "vw";
-					elements[data.id].style.top = (data.element.y * 100) + "vh";
-					elements[data.id].style.width = (data.element.width * 100) + "vw";
+					elements[data.id].style.left = (data.element.x * 100) + "%";
+					elements[data.id].style.top = (data.element.y * 100) + "%";
+					elements[data.id].style.width = (data.element.width * 100) + "%";
 					elements[data.id].querySelector("img").setAttribute("src", "https://hackmit-playground-2020.s3.amazonaws.com/elements/" + data.element.path);
 				} else if (data.type === 'error') {
 					if (data.code === 1) {

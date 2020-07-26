@@ -40,8 +40,19 @@ body {
 }
 
 #outer {
-    width: 100%;
-    height: 100%;
+    //width: 100%;
+	width: 177.77vh;
+    height: 100vh;
+	margin: 0 auto;
+
+	&.vertical {
+		width: 100vw;
+		height: 56.25vw;
+		position: absolute;
+		transform: translate(-50%, -50%);
+		left: 50%;
+		top: 50%;
+	}
 
     &.sponsor {
         display: flex;
@@ -117,6 +128,7 @@ body {
     background-size: 100% 100%;
     position: relative;
 	overflow: hidden;
+	margin: 0 auto;
 
 	#add-button {
 		cursor: pointer;
