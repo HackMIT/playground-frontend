@@ -80,7 +80,7 @@ function setNotifications() {
         console.log("Browser notifications denied!");
         Notification.requestPermission().then(function (permission) {
           if (permission === "granted") {
-            let notification = new Notification("Hi there!");
+            let notification = new Notification("Welcome to HackPenguin notifications!");
             console.log(notification)
           }
         });
