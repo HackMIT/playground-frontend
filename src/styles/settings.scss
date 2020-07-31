@@ -1,0 +1,39 @@
+@import "fonts";
+@import "colors";
+@import "variables";
+
+@import './index';
+
+p, h1, h2{
+    color: $white;
+}
+
+p{
+    margin: 1em;
+}
+
+#root{
+    color: $white !important;
+}
+
+.settings-page{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    // padding: 10vh 0;
+    width: 50vw;
+    background-color: $blue_light;
+}
+
+.settings-option{
+    cursor: pointer;
+}
