@@ -7,7 +7,17 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <title><%= htmlWebpackPlugin.options.title %></title>
 </head>
-
+<div id="root">
+  <div class="container" id='notifications'>
+    <p>Welcome to Hack Penguin! Please select your notification options (if any)</p>
+    <form name="notification-options">
+      <input type="checkbox" id="email"> <label for=email> Email </label><br>
+      <input type="checkbox" id="SMS" name="phone-number"> <label for=SMS> SMS (US only) </label><br>
+      <input type="checkbox" id="browser"> <label for=browser>Browser notifications</label><br> <br>
+      <input type="submit" id="submit-button" value="Submit" onclick= "redirect()">
+    </form>
+  </div>
+</div>
 <body>
 </body>
 </html>

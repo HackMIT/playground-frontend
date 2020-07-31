@@ -1,0 +1,66 @@
+@import "fonts";
+@import "colors";
+
+#root {
+    font-family: "Lemon/Milk Regular";
+    background: -moz-linear-gradient(45deg, #fbcdc2 0%, #fbcdc2 20%, #fbcdc2 40%, #96d0f1 60%, #96d0f1 100%);
+    background: -webkit-linear-gradient(45deg, #fbcdc2 0%, #fbcdc2 20%, #fbcdc2 40%, #96d0f1 60%, #96d0f1 100%);
+    background: linear-gradient(70deg, #fbcdc2 0%, #fbcdc2 20%, #fbcdc2 40%, #96d0f1 60%, #96d0f1 100%);
+    height: 800px;
+    overflow: auto;
+}
+
+// p {
+//     font-family: MuliBold;
+//     color: $blue-text; 
+// }
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+label {
+    color: $white;
+    font-family: Muli;
+}
+
+#notifications {
+    background-color: $blue-dark;
+    color: $white;
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -70%);
+    display: block;
+    padding: 100px;
+    border-radius: 20px;
+    opacity: 0.9;
+
+     p {
+        text-align: center;
+        font-family: MuliBold;
+        font-size: large;
+     }
+
+     #notification-options {
+        zoom:1;
+        *display:inline;
+        color: $white;
+        font-size: small;
+     }
+
+     #phoneNumField {
+        font-family: Muli;
+     }
+
+     #submit-button {
+         align-content: center;
+         background-color: $accent-pink;
+         font-family: Muli;
+         height: 50px;
+         width: 150px;
+         margin-top: 15px;
+     }
+}
