@@ -10,11 +10,20 @@
 <div id="root">
   <div class="container" id='notifications'>
     <p>Welcome to Hack Penguin! Please select your notification options (if any)</p>
-    <form name="notification-options">
+    <!-- hacker registration -->
+    <form name="notification-options" id='hacker'>
       <input type="checkbox" id="email"> <label for=email> Email </label><br>
       <input type="checkbox" id="SMS" name="phone-number"> <label for=SMS> SMS (US only) </label><br>
       <input type="checkbox" id="browser"> <label for=browser>Browser notifications</label><br> <br>
       <input type="submit" id="submit-button" value="Submit" onclick= "redirect()">
+    </form>
+    <!-- sponsor registration -->
+    <form name="notification-options" id='sponsor'>
+      <label for=email-addres> Your email: </label> <input type='text' id="email-address"> <br> <br>
+      <input type="checkbox" id="email"> <label for=email> Email </label><br>
+      <input type="checkbox" id="SMS" name="phone-number"> <label for=SMS> SMS (US only) </label><br>
+      <input type="checkbox" id="browser"> <label for=browser>Browser notifications</label><br> <br>
+      <input type="submit" id="submit-button" value="Submit" onclick= "redirect();">
     </form>
   </div>
 </div>

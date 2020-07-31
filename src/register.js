@@ -3,6 +3,17 @@ import './styles/register.scss'
 document.getElementById("SMS").addEventListener("click", enterPhone);
 document.getElementById("submit-button").addEventListener("click", redirect);
 
+let userType = "hacker"
+toggleMode(userType)
+
+function toggleMode(userType) {
+    if (userType === 'hacker') {
+        document.getElementById('sponsor').style.display = "none";
+    } else {
+        document.getElementById('hacker').style.display = "none";
+    }
+}
+
 function enterPhone() {
     var checkBox = document.getElementById("SMS");
 
