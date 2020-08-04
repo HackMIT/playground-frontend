@@ -29,10 +29,10 @@ label {
     background-color: $blue-dark;
     color: $white;
     text-align: center;
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -70%);
+    transform: translate(-50%, -40%);
     display: block;
     padding: 100px;
     border-radius: 20px;
@@ -55,7 +55,7 @@ label {
         font-family: Muli;
      }
 
-     #submit-button {
+     #submit {
          align-content: center;
          background-color: $accent-pink;
          font-family: Muli;
@@ -63,5 +63,44 @@ label {
          width: 150px;
          margin-top: 15px;
          border-radius: 20px;
+         outline: none;
+         border: none;
+         margin-left: auto;
+         margin-right: auto;
      }
+}
+
+#coc-warning {
+
+    button {
+        background-color: $blue-dark;
+        color: $white;
+        font-family: MuliBold;
+        font-size: large;
+        border: none;
+        outline: none;
+    }
+
+    button:hover {
+        color: $accent-pink;
+    }
+
+    #text {
+        background-color: $white;
+        color: $blue-text;
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.2s ease-out;
+
+
+        strong {
+            font-family: MuliBold;
+            font-size: large;
+        }
+         
+        p {
+            font-size: small;
+            font-family: Muli;
+        }
+    }
 }

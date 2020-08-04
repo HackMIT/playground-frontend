@@ -1,8 +1,19 @@
 import './styles/register.scss'
 
 document.getElementById("SMS").addEventListener("click", enterPhone);
-document.getElementById("submit-button").addEventListener("click", redirect);
-// document.getElementById("browser").addEventListener("click", testNotifications);
+document.getElementById("submit").addEventListener("click", redirect);
+document.getElementById("instructions").addEventListener("click", function() {
+    var text = document.getElementById("text");
+    console.log(text.style.maxHeight);
+    if (text.style.maxHeight === "") {
+        console.log("expanding");
+        text.style.maxHeight = "none";
+    } else {
+        console.log("contracting");
+        text.style.maxHeight = "";
+    }
+});
+document.getElementById("sign").addEventListener("click", showSubmit);
 
 let userType = "hacker"
 toggleMode(userType)
@@ -29,8 +40,10 @@ function enterPhone() {
         div.innerHTML = "Enter your phone number (US) here: ";
         div.appendChild(input);
         div.style.display='block';
+        div.style.paddingBottom="10px";
 
-        document.getElementById("notifications").appendChild(div);
+        document.getElementById("coc-warning").prepend(div);
+        
     } else {
         document.getElementById('phoneNumField').remove();
   }
@@ -86,4 +99,16 @@ function setNotifications() {
         });
     }
 
+}
+
+function showSubmit() {
+    var checkbox = document.getElementById("sign");
+    
+    if (checkbox.checked === true) {
+        document.getElementById("submit").style.display = "block";
+        document.getElementById("submit").style.alignContent = "center";
+    }
+    else {
+        document.getElementById("submit").style.display = "none";
+    }
 }
