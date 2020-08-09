@@ -4,10 +4,6 @@ module.exports = [
     template: 'game'
   },
   {
-    path: 'editor',
-    template: 'editor'
-  },
-  {
     path: 'character',
     template: 'character'
   },

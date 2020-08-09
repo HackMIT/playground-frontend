@@ -131,11 +131,9 @@ function addElement(element, id, elementPaths) {
 			resizeAt(e.pageX, e.pageY);
 		}
 
-		document.addEventListener('mousemove', onMouseMove);
-
-		document.addEventListener('mouseup', function() {
+		function onMouseUp(e) {
 			document.removeEventListener('mousemove', onMouseMove);
-			elementElem.onmouseup = null;
+			document.removeEventListener('mouseup', onMouseUp);
 
 			element.x = parseFloat(elementElem.style.left.substring(0, elementElem.style.left.length - 2)) / 100;
 			element.y = parseFloat(elementElem.style.top.substring(0, elementElem.style.top.length - 2)) / 100;
@@ -146,7 +144,10 @@ function addElement(element, id, elementPaths) {
 				id: id,
 				element: element
 			}));
-		});
+		}
+
+		document.addEventListener('mousemove', onMouseMove);
+		document.addEventListener('mouseup', onMouseUp);
 	};
 
 	brResizeElem.ondragstart = function() {
@@ -184,12 +185,12 @@ function addElement(element, id, elementPaths) {
 			moveAt(e.pageX, e.pageY);
 		}
 
-		document.addEventListener('mousemove', onMouseMove);
-
-		document.addEventListener('mouseup', function() {
+		function onMouseUp(e) {
 			elementElem.classList.remove("moving");
 
 			document.removeEventListener('mousemove', onMouseMove);
+			document.removeEventListener('mouseup', onMouseUp);
+
 			elementElem.onmouseup = null;
 
 			element.x = parseFloat(elementElem.style.left.substring(0, elementElem.style.left.length - 2)) / 100;
@@ -200,7 +201,10 @@ function addElement(element, id, elementPaths) {
 				id: id,
 				element: element
 			}));
-		});
+		}
+
+		document.addEventListener('mousemove', onMouseMove);
+		document.addEventListener('mouseup', onMouseUp);
 	};
 
 	elementElem.ondragstart = function() {
@@ -220,10 +224,10 @@ window.onSponsorLogin = () => {
 	conn.send(JSON.stringify(joinPacket));
 };
 
-let gameElem = document.getElementById("game");
-gameElem.onclick = function(event) {
+gameElem.onclick = function(e) {
 	let modalElemDiv = document.getElementById("modal-elem-div");
-	if (event.target != modalElemDiv) {
+
+	if (modalElemDiv !== null && e.target !== modalElemDiv) {
 		modalElemDiv.remove();
 	}
 }
