@@ -10,6 +10,7 @@ import './images/sponsor_text.svg'
 import './styles/coffeechat.scss'
 
 import './coffeechat';
+import './day-of';
 
 import deleteIcon from './images/icons/delete.svg';
 import './images/icons/add.svg';
@@ -218,6 +219,14 @@ window.onSponsorLogin = () => {
 	// Connected to remote
 	conn.send(JSON.stringify(joinPacket));
 };
+
+let gameElem = document.getElementById("game");
+gameElem.onclick = function(event) {
+	let modalElemDiv = document.getElementById("modal-elem-div");
+	if (event.target != modalElemDiv) {
+		modalElemDiv.remove();
+	}
+}
 
 window.onload = function () {
 	// Quick check for auth data
