@@ -1,26 +1,26 @@
 module.exports = [
   {
-    path: "index.html",
-    template: "game",
+    path: 'index.html',
+    template: 'game',
   },
   {
-    path: "editor",
-    template: "editor",
+    path: 'editor',
+    template: 'editor',
   },
   {
-    path: "character",
-    template: "character",
+    path: 'character',
+    template: 'character',
   },
   {
-    path: "login",
-    template: "login",
+    path: 'login',
+    template: 'login',
   },
   {
-    path: "sponsor",
-    template: "sponsor",
+    path: 'sponsor',
+    template: 'sponsor',
   },
   {
-    path: "jukebox",
-    template: "jukebox",
+    path: 'jukebox',
+    template: 'jukebox',
   },
 ];
