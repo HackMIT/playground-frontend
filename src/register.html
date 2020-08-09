@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title><%= htmlWebpackPlugin.options.title %></title>
+</head>
+<div id="root">
+  <div class="container" id='notifications'>
+    <p>Welcome to Hack Penguin! Please select your notification options (if any)</p>
+    <!-- hacker registration -->
+    <form name="notification-options" id='hacker'>
+      <input type="checkbox" id="email"> <label for=email> Email </label><br>
+      <input type="checkbox" id="SMS" name="phone-number"> <label for=SMS> SMS (US only) </label><br>
+      <input type="checkbox" id="browser"> <label for=browser>Browser notifications</label><br> <br>
+    </form>
+    <!-- sponsor registration -->
+    <form name="notification-options" id='sponsor'>
+      <label for=email-address> Your email: </label> <input type='text' id="email-address"> <br> <br>
+      <input type="checkbox" id="email"> <label for=email> Email </label><br>
+      <input type="checkbox" id="SMS" name="phone-number"> <label for=SMS> SMS (US only) </label><br>
+      <input type="checkbox" id="browser"> <label for=browser>Browser notifications</label><br> <br>
+    </form>
+    <div id="coc-warning"> 
+      <button id="instructions"> Please affirm that you have read and agreed to abide by the terms of conduct. </button>
+      <div id="text">
+        <strong> HACKMIT 2020 CODE OF CONDUCT </strong> 
+        <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      </div>
+      <br>
+      <form id="agreement">
+        <input type="checkbox" id="sign"> <label for=sign> By signing, I hereby agree 
+          to abide by all rules set forth in HackMIT 2020's code of conduct. Failure to do 
+          so may result in my disqualification from HackMIT prizes, events, and participation. </label><br>   
+      </form>
+    </div>
+    <button id="submit" style="display: none;"> Go to Hack Penguin! </button>
+  </div>
+</div>
+<body>
+</body>
+</html>
