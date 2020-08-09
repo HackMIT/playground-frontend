@@ -10,6 +10,7 @@ import './images/sponsor_text.svg'
 import './styles/coffeechat.scss'
 
 import './coffeechat';
+import './day-of';
 
 const BACKGROUND_IMAGE_URL = "https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/%SLUG%.png";
 
@@ -25,6 +26,14 @@ window.onSponsorLogin = () => {
 	// Connected to remote
 	conn.send(JSON.stringify(joinPacket));
 };
+
+let gameElem = document.getElementById("game");
+gameElem.onclick = function(event) {
+	let modalElemDiv = document.getElementById("modal-elem-div");
+	if (event.target != modalElemDiv) {
+		modalElemDiv.remove();
+	}
+}
 
 window.onload = function () {
 	// Quick check for auth data

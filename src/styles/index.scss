@@ -196,3 +196,83 @@ body {
     font-size: 13px;
     transform: translateY(-18px);
 }
+
+@mixin border-gradient($from, $to, $weight: 0) {
+  $mix-main: mix($from, $to);
+  $mix-sub-from: mix($mix-main, $from);
+  $mix-sub-to: mix($mix-main, $to);
+  box-shadow: 0 3px 0 $weight rgba($mix-sub-to, .25),
+              0 -3px 0 $weight rgba($mix-sub-from, .25),
+              3px 0 0 $weight rgba($mix-sub-to, .25),
+              -3px 0 0 $weight  rgba($mix-sub-from, .25),
+              3px -3px 0 $weight rgba($mix-main, .5),
+              -3px 3px 0 $weight rgba($mix-main, .5),
+              3px 3px 0 $weight rgba($to, .75),
+              -3px -3px 0 $weight rgba($from, .75);
+}
+
+.modal-body {padding: 2px 16px;}
+
+.modal-content-dayof {
+    position: absolute;
+    background: rgba(0, 0, 0, 0);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 5%;
+    margin: auto;
+    width: 60%;
+    height: 88%;
+    align-items: center;
+    justify-content: center;
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+    &.visible {
+        display: flex;
+    }
+}
+
+@keyframes animatetop {
+    from {top: -300px; opacity: 0}
+    to {top: 0; opacity: 1}
+}
+
+.day-of-page {
+    position: absolute;
+    @include border-gradient(skyblue, hotpink);
+    margin: auto;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+}
+
+#day-of-icon {
+    position: absolute;
+    left: 86%;
+    top: 86%;
+    width: 7%;
+    height: auto;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#day-of-icon:hover {opacity:  0.7;}
+
+.close-day-of {
+    position: absolute;
+    z-index: 1;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.close-day-of:hover,
+.close-day-of:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
