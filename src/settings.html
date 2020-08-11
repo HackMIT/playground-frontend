@@ -1,25 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title><%= htmlWebpackPlugin.options.title %></title>
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title><%= htmlWebpackPlugin.options.title %></title>
-</head>
-
-<body>
-  <div id="root">
-    <div class="settings-page">
-      <div class="settings-container">
-        <h1>SETTINGS</h1>
-        <div class="settings-list">
-          <p class="settings-option">MUTE ALL MUSIC</p>
-          <p class="settings-option">MUTE ALL SOUNDS</p>
+  <body>
+    <div id="root">
+      <div class="settings-page">
+        <div class="settings-container">
+          <div class="settings-text">
+            <div class="settings-header">
+              <img class="settings-gear" src="images/settingsicon.svg" />
+              <h1>SETTINGS</h1>
+            </div>
+            <div class="settings-list">
+              <div class="settings-option">MUTE ALL MUSIC</div>
+              <div class="settings-option">MUTE ALL SOUNDS</div>
+            </div>
+            <button class="settings-logout">
+              LOGOUT
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</body>
-
+  </body>
 </html>
