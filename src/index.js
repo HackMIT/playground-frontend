@@ -1,6 +1,5 @@
 import { Character } from './js/Character'
 import { Scene3D } from './js/ThreeD'
-import { Interactable } from './js/Interactable'
 import { Element } from './js/element'
 import { Hallway } from './js/hallway'
 import socket from './js/socket'
@@ -20,11 +19,8 @@ import './images/icons/add.svg';
 import './images/icons/add-hallway.svg';
 import './images/icons/edit.svg';
 
-import BACKGROUND_IMAGE_URL from '../../home.png';
+const BACKGROUND_IMAGE_URL = "https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/%SLUG%.png";
 
-//const BACKGROUND_IMAGE_URL = "https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/%SLUG%.png";
-
-//let conn = new WebSocket('ws://' + 'ec2-3-81-187-93.compute-1.amazonaws.com:8080' + '/ws');
 let editing;
 let elementNames;
 let roomNames;
@@ -81,7 +77,6 @@ window.onload = function () {
 	var elements = new Map();
 	var hallways = new Map();
 
-	var interactables = new Map();
 	var room;
 
 	handleWindowSize();
@@ -182,6 +177,19 @@ window.onload = function () {
 		}));
 	});
 
+	// Start sending chat events
+	document.getElementById('chat-box').addEventListener('keypress', function (e) {
+		if (e.key === 'Enter') { 
+			socket.send(JSON.stringify({
+				type: 'chat',
+				mssg: e.target.value
+			}))
+
+			e.target.value = '';
+		}
+	});
+
+
 	window.addEventListener('resize', function(e) {
 		scene.fixCameraOnResize();
 		handleWindowSize();
@@ -223,15 +231,19 @@ window.onload = function () {
 						document.getElementById('login-panel').style.display = 'none';
 					}
 
+					// Delete stuff from previous room
 					scene.deleteAllCharacters();
+
+					for (let [_, element] of Object.entries(elements)) {
+						element.remove();
+					}
+
+					for (let [_, hallway] of Object.entries(hallways)) {
+						hallway.remove();
+					}
 
 					for (let [key, value] of Object.entries(data.room.characters)) {
 						scene.newCharacter(key, value.name, value.x, value.y)
-						// characters[key] = new Character(value.name, value.x, value.y);
-					}
-
-					for (let [key, value] of Object.entries(data.room.interactables)) {
-						interactables[key] = new Interactable(value.action, value.appearance, value.x, value.y);
 					}
 
 					elementNames = data.elementNames;
@@ -249,8 +261,10 @@ window.onload = function () {
 					}
 
 					room = data.room;
+					console.log(room)
 
 					if (room.sponsor) {
+						console.log("is sponsor")
 						document.getElementById("sponsor-pane").classList.add("active");
 						document.getElementById("sponsor-name").innerHTML = "<span>" + room.slug + "</span>" + room.slug;
 						document.getElementById("outer").classList.add("sponsor");
@@ -261,20 +275,7 @@ window.onload = function () {
 						gameElem.classList.remove("sponsor");
 					}
 
-					//gameElem.style.backgroundImage = "url('" + BACKGROUND_IMAGE_URL.replace("%SLUG%", room.slug) + "')";
-					gameElem.style.backgroundImage = "url('" + BACKGROUND_IMAGE_URL + "')";
-
-					// Start sending chat events
-					document.getElementById('chat-box').addEventListener('keypress', function (e) {
-						if (e.key === 'Enter') { 
-							socket.send(JSON.stringify({
-								type: 'chat',
-								mssg: e.target.value
-							}))
-
-							e.target.value = '';
-						}
-					});
+					gameElem.style.backgroundImage = "url('" + BACKGROUND_IMAGE_URL.replace("%SLUG%", room.slug) + "')";
 
 					scene.fixCameraOnResize();
 				} else if (data.type === 'move') {

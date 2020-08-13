@@ -65,11 +65,6 @@ body {
             justify-content: space-around;
             flex-grow: 1;
         }
-
-        #chat {
-            position: static;
-            transform: inherit;
-        }
     }
 
     #main {
@@ -83,7 +78,6 @@ body {
 	border-radius: 8px;
 	display: flex;
 	height: 52px;
-	width: 60%;
 	align-items: center;
 	justify-content: space-around;
 	padding: 0 16px;
@@ -100,8 +94,9 @@ body {
 		border-radius: 8px;
 		height: 38px;
 		padding: 0 8px;
-		width: 60%;
+		min-width: 320px;
 		border: none;
+		margin: 0 8px;
 	}
 
 	button {
@@ -114,6 +109,7 @@ body {
 		border: none;
 		width: 38px;
 		height: 38px;
+		margin: 0 4px;
 
 		&:active {
 			background: #1b2450;
@@ -128,7 +124,6 @@ body {
     background-size: 100% 100%;
     position: relative;
 	overflow: hidden;
-	margin: 0 auto;
 
 	#add-button {
 		cursor: pointer;
