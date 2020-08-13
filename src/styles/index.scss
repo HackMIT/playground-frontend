@@ -144,6 +144,20 @@ body {
 		}
 	}
 
+	#add-hallway-button {
+		cursor: pointer;
+		height: 32px;
+		width: 32px;
+		position: absolute;
+		top: 120px;
+		right: 24px;
+		display: none;
+
+		&.visible {
+			display: block;
+		}
+	}
+
 	#edit-button {
 		cursor: pointer;
 		height: 32px;
@@ -161,6 +175,14 @@ body {
 
 	&.editable {
 		cursor: grab;
+	}
+
+	&.invisible {
+		display: none;
+	}
+
+	img {
+		width: 100%;
 	}
 
 	select {
