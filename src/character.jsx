@@ -1,5 +1,8 @@
 import './styles/character.scss';
-// import './styles/lemonmilk-cufonfonts-webfont/style.css'
+
+// eslint-disable-next-line
+import createElement from './utils/jsxHelper'
+
 // get headers
 const selectHeader1 = document.getElementById('Select-tab-1');
 const selectHeader2 = document.getElementById('Select-tab-2');
@@ -48,25 +51,25 @@ selectHeader3.addEventListener('click', () => {
 function renderFaceComponents() {
   const selectFaceComponentsContainer = document.getElementById('Select-faces-container');
   for (let i = 0; i < 15; i += 1) {
-    const faceTile = document.createElement('div');
-    faceTile.className = 'Select-face-tile';
-    selectFaceComponentsContainer.appendChild(faceTile);
+    selectFaceComponentsContainer.appendChild(
+      <div className="Select-face-tile" />,
+    );
   }
 }
 function renderClothesComponents() {
   const selectClothesComponentsContainer = document.getElementById('Select-clothes-container');
   for (let i = 0; i < 15; i += 1) {
-    const clothTile = document.createElement('div');
-    clothTile.className = 'Select-cloth-tile';
-    selectClothesComponentsContainer.appendChild(clothTile);
+    selectClothesComponentsContainer.appendChild(
+      <div className="Select-cloth-tile" />,
+    );
   }
 }
 function renderAccessoriesComponents() {
   const selectAccessoriesComponentsContainer = document.getElementById('Select-accessories-container');
   for (let i = 0; i < 15; i += 1) {
-    const accessoryTile = document.createElement('div');
-    accessoryTile.className = 'Select-accessories-tile';
-    selectAccessoriesComponentsContainer.appendChild(accessoryTile);
+    selectAccessoriesComponentsContainer.appendChild(
+      <div className="Select-accessories-tile" />,
+    );
   }
 }
 

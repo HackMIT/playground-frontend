@@ -1,4 +1,4 @@
-import Scene3D from './js/ThreeD';
+import Scene from './js/scene';
 import Element from './js/element';
 import Hallway from './js/hallway';
 import Page from './js/page';
@@ -35,7 +35,7 @@ class Game extends Page {
       document.getElementById('login-panel').style.display = 'none';
     }
 
-    this.scene = new Scene3D();
+    this.scene = new Scene();
 
     this.characterId = null;
     this.characters = new Map();

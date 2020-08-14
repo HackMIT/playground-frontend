@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import LinearAnimation from './Animations';
+import LinearAnimation from './animations';
 
 class AnimatedModel {
   constructor(modelGeometry, mixer, walkCycle, start, name, reverseRaycaster) {
