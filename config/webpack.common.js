@@ -11,7 +11,7 @@ module.exports = {
    * The first place Webpack looks to start building the bundle.
    */
   entry: {
-    game: [paths.src + '/index.js'],
+    game: [paths.src + '/index.jsx'],
     character: [paths.src + '/character.js'],
     login: [paths.src + '/login.js'],
     sponsor: [paths.src + '/sponsor.js'],
@@ -83,7 +83,7 @@ module.exports = {
        * Use Babel to transpile JavaScript files.
        */
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         use: ['babel-loader', 'eslint-loader'],
       },
