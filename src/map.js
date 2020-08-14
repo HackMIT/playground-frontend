@@ -1,17 +1,19 @@
+import './styles/map.scss'
+
 function createMap(map) {
 
 	var geocoder = new MapboxGeocoder({
 		accessToken: mapboxgl.accessToken,
 		marker: {
-			color: 'orange'
+			color: "#001d55"
 		},
 		mapboxgl: mapboxgl
 	});
 
 	const saveLocationButton = new SaveLocationButton();
-	map.addControl(saveLocationButton);
 		
 	map.addControl(geocoder);
+	map.addControl(saveLocationButton);
 	map.addControl(new mapboxgl.NavigationControl());
 	
 	map.on('load', function() {
@@ -31,46 +33,20 @@ function createMap(map) {
 					}
 				});
 				
-				// Add a symbol layer
-				map.addLayer({
-					'id': 'points',
-					'type': 'symbol',
-					'source': 'points',
-					'layout': {
-						'icon-image': 'custom-marker',
-					}
-				});
-				
 				// handle searched locations
 				geocoder.on('result', function(e) {
 					console.log("searched");
-					map.getSource('single-point').setData(e.result.geometry);
-
-					// pin location
-					var geojson = {
-						type: "FeatureCollection",
-						features: [{
-							type:"Feature",
-							geometry: { type: "Point", coordinates: [ e.lngLat.lng, e.lngLat.lat ]}
-						}]
-					};
-					map.addSource("pins", {
-						"type": "geojson",
-						"data": geojson
-					});
-					map.addLayer({
-						id: "pinsLayer",
-						type: "circle",
-						source: "pins", 
-						paint: {
-							"circle-color": "red",
-							"circle-radius": 5 
-						}
-					});
+					if (e.result === "" || e.result === null) {
+						window.document.getElementById("save").style.display = "none";
+					}
+					else {
+						map.getSource('single-point').setData(e.result.geometry);
+						window.document.getElementById("save").style.display = "block";
+					}
 				});
-
 			}
 		);
+
 
 		// Change the cursor to a pointer when the it enters a feature in the 'symbols' layer.
 		map.on('mouseenter', 'symbols', function() {
@@ -103,15 +79,17 @@ class SaveLocationButton {
 	  this.map = undefined;
 	}
 
-	_createButton(className) {
+	_createButton(idName) {
 		const el = window.document.createElement('button')
-		el.className = className;
-		el.textContent = 'Save location';
-		el.addEventListener('click', (e) => {
-		  console.log(e);
-		  // e.preventDefault()
-		  e.stopPropagation()
-		}, false)
+		el.id = idName;
+		el.textContent = "I'm here!";
+		el.style.marginRight = "10px";
+		el.style.display = "none";
+		el.style.zIndex = -1;
+		el.style.position = "relative";
+		el.addEventListener("click", function() {
+			console.log("do something")
+		});
 		return el;
 	}
 }

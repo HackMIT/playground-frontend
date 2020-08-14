@@ -1,0 +1,17 @@
+@import "colors";
+@import "fonts";
+
+#save {
+    float: right;
+    background-color: white;
+    margin-left: 20px;
+    margin-top: 10px;
+    align-content: center;
+    font-family: Arial;
+    height: 50px;
+    width: 200px;
+    // z-index: 1;
+    // position:relative;
+}
+
+// fix the X out button (outside modal)
