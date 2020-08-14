@@ -1,7 +1,8 @@
 import './styles/modal.scss'
 
 function createModal(contentElem) {
-	let backgroundElem = document.createElement("div");
+
+    let backgroundElem = document.createElement("div");
 	backgroundElem.classList.add("modal-background");
 
 	let modalElem = document.createElement("div");

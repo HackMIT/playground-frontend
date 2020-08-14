@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
   <body>
@@ -20,7 +22,7 @@
 						<button></button>
 						<input id="chat-box" type="text" placeholder="Send message to the room" />
 						<button></button>
-						<button></button>
+						<button id="map"></button>
 						<button></button>
 					</div>
 				</div>

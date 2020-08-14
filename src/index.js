@@ -19,8 +19,10 @@ import deleteIcon from './images/icons/delete.svg';
 import './images/icons/add.svg';
 import './images/icons/add-hallway.svg';
 import './images/icons/edit.svg';
+import createMap from './map'
 
 const BACKGROUND_IMAGE_URL = "https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%SLUG%.png";
+const MAPBOX_API_KEY = "pk.eyJ1IjoiaGFja21pdDIwIiwiYSI6ImNrZHVpaTk4dDE4Ym0yc255YzM3NGx0dGIifQ.XXstZ1xCBEqC-Wz4_EI8Pw";
 
 class Game extends Page {
 	start = () => {
@@ -50,6 +52,7 @@ class Game extends Page {
 		this.addClickListener("day-of-button", this.handleDayofButton);
 		this.addClickListener("edit-button", this.handleEditButton);
 		this.addClickListener("game", this.handleGameClick);
+		this.addClickListener("map", this.handleShowMap);
 
 		this.handleWindowSize();
 
@@ -70,7 +73,7 @@ class Game extends Page {
 		});
 
 		window.addEventListener('resize', function(e) {
-			scene.fixCameraOnResize();
+			this.scene.fixCameraOnResize();
 			handleWindowSize();
 		});
 	}
@@ -334,6 +337,38 @@ class Game extends Page {
 
 			outerElem.classList.remove("vertical");
 		}
+	}
+
+	handleShowMap = () => {
+
+		// mapboxgl.accessToken = MAPBOX_API_KEY;
+
+		// var map = new mapboxgl.Map({
+		// 	container: 'map',
+		// 	style: 'mapbox://styles/mapbox/light-v10',
+		// 	center: [-96, 37.8],
+		// 	zoom: 3
+		// });
+
+		// console.log(map);
+		
+		let mapElem = document.createElement("div");
+		mapElem.classList.add("day-of-page"); // change "day-of-page" css
+		mapElem.id = "map-frame";
+		
+		createModal(mapElem);
+
+		mapboxgl.accessToken = MAPBOX_API_KEY;
+
+		var map = new mapboxgl.Map({
+			container: 'map-frame',
+			style: 'mapbox://styles/mapbox/light-v10',
+			center: [-96, 37.8],
+			zoom: 3
+		});
+
+		createMap(map);
+		
 	}
 }
 
