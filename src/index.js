@@ -344,6 +344,8 @@ class Game extends Page {
 		let mapElem = document.createElement("div");
 		mapElem.classList.add("day-of-page"); // change "day-of-page" css
 		mapElem.id = "map-frame";
+
+		console.log("here");
 		
 		createModal(mapElem);
 

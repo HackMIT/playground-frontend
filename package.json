@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "@babel/plugin-transform-react-jsx": "^7.10.4",
+    "@babel/plugin-transform-react-jsx-self": "^7.10.4",
     "axios": "^0.19.2",
     "fs": "^0.0.1-security",
     "modal": "^1.2.0",
