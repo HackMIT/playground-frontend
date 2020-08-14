@@ -1,60 +1,61 @@
 import * as THREE from 'three';
 
-import { AnimatedModel } from './AnimatedModel'
+import AnimatedModel from './AnimatedModel';
 
 class Character3D {
-	constructor(name, init_x, init_y, parent, reverseRaycaster) {
-		this.name = name;
-		this.init_x = init_x;
-		this.init_y = init_y;
-		this.reverseRaycaster = reverseRaycaster
+  constructor(name, initX, initY, parent, reverseRaycaster) {
+    this.name = name;
+    this.init_x = initX;
+    this.init_y = initY;
+    this.reverseRaycaster = reverseRaycaster;
 
-		//load glb file
-	    parent.loader.load( 'Fox.glb', ( gltf ) => {
-	        gltf.scene.scale.set( 0.04, 0.04, 0.04 );	
-	   		this.setModel(parent, gltf.scene, gltf.animations[1], init_x, init_y);
-	    }, undefined, function(e) {
-	        console.log(e);
-	    });
+    // load glb file
+    parent.loader.load('Fox.glb', (gltf) => {
+      gltf.scene.scale.set(0.04, 0.04, 0.04);
+      this.setModel(parent, gltf.scene, gltf.animations[1], initX, initY);
+    }, undefined, (e) => {
+      console.log(e);
+    });
+  }
 
-	}
+  update(deltaTime) {
+    if (this.model !== undefined) {
+      this.model.update(deltaTime);
+    }
+  }
 
-	update(deltaTime) {
-		if (this.model !== undefined) {
-			this.model.update(deltaTime);
-		}
-	}
+  // returns time it'll take
+  moveTo(vector, callback) {
+    this.model.setAnimation(vector, callback);
+  }
 
-	//returns time it'll take
-	moveTo(vector, callback) {
-		let time = this.model.setAnimation(vector, callback);	
-	}
+  safeDelete(parent) {
+    this.model.deconstruct();
+    parent.scene.remove(this.model.modelGeometry);
+  }
 
-	safe_delete(parent) {
-		this.model.deconstruct();
-		parent.scene.remove(this.model.modelGeometry);
-	}
+  setModel(parentScene, model, animation, initX, initY) {
+    const mixer = new THREE.AnimationMixer(model);
+    const walkCycle = mixer.clipAction(animation);
+    walkCycle.enabled = false;
+    walkCycle.play();
 
+    parentScene.scene.add(model);
 
-	setModel(parentScene, model, animation, init_x, init_y) {
-		let mixer = new THREE.AnimationMixer( model );
-        let walkCycle = mixer.clipAction( animation );
-        walkCycle.enabled = false;
-        walkCycle.play();
+    this.model = new AnimatedModel(
+      model, mixer, walkCycle,
+      parentScene.worldVectorForPos(initX, initY), this.name, this.reverseRaycaster,
+    );
+  }
 
-        parentScene.scene.add( model );
+  // say msg, return name
+  sendChat(msg) {
+    if (this.model !== undefined) {
+      this.model.updateChat(msg);
+    }
 
-        this.model = new AnimatedModel(model, mixer, walkCycle, parentScene.worldVectorForPos(init_x, init_y), this.name, this.reverseRaycaster);  
-	}
-
-	//say msg, return name
-	sendChat(msg) {
-		if (this.model !== undefined) {
-			this.model.updateChat(msg);
-		}
-
-		return this.name;
-	}
+    return this.name;
+  }
 }
 
-export { Character3D }
+export default Character3D;
