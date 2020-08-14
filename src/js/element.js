@@ -20,7 +20,7 @@ class Element extends Editable {
 	}
 
 	set width(newValue) {
-		this.data.radius = newValue;
+		this.data.width = newValue;
 	}
 
 	onNameSelect(value) {

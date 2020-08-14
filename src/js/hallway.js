@@ -33,7 +33,7 @@ class Hallway extends Editable {
 		this.sendUpdate(data);
 	}
 
-	makeEditable() {
+	makeEditable = () => {
 		super.makeEditable();
 		this.visible = true;
 	}

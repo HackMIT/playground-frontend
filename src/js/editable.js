@@ -70,7 +70,7 @@ class Editable {
 		brResizeElem.classList.add("bottom-right");
 		elementElem.appendChild(brResizeElem);
 
-		brResizeElem.onmousedown = function(e) {
+		brResizeElem.onmousedown = (e) => {
 			let outerRect = document.getElementById('outer').getBoundingClientRect();
 
 			let startRect = elementElem.getBoundingClientRect();
