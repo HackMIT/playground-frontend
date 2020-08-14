@@ -1,49 +1,50 @@
-import { Editable } from './editable'
+import Editable from './editable';
 
 class Hallway extends Editable {
+  dataKeyName = 'hallway';
 
-	dataKeyName = "hallway";
-	deleteEventName = "hallway_delete";
-	updateEventName = "hallway_update";
+  deleteEventName = 'hallway_delete';
 
-	constructor(element, id, elementNames) {
-		super(element, id, elementNames, true);
-		this.visible = false;
-	}
+  updateEventName = 'hallway_update';
 
-	get name() {
-		return this.data.to;
-	}
+  constructor(element, id, elementNames) {
+    super(element, id, elementNames, true);
 
-	get imagePath() {
-		return "https://vignette.wikia.nocookie.net/dont-starve-game/images/4/40/Map_Icon_Florid_Postern.png/revision/latest?cb=20180903223451";
-	}
+    this.visible = false;
+  }
 
-	get width() {
-		return this.data.radius * 2;
-	}
+  // eslint-disable-next-line
+  get imagePath() {
+    return 'https://vignette.wikia.nocookie.net/dont-starve-game/images/4/40/Map_Icon_Florid_Postern.png/revision/latest?cb=20180903223451';
+  }
 
-	set width(newValue) {
-		this.data.radius = newValue / 2;
-	}
+  get name() {
+    return this.data.to;
+  }
 
-	onNameSelect(value) {
-		let data = this.data;
-		data.to = value;
-		this.sendUpdate(data);
-	}
+  get width() {
+    return this.data.radius * 2;
+  }
 
-	makeEditable = () => {
-		super.makeEditable();
-		this.visible = true;
-	}
+  set width(newValue) {
+    this.data.radius = newValue / 2;
+  }
 
-	makeUneditable() {
-		super.makeUneditable();
-		this.visible = false;
-	}
+  onNameSelect(value) {
+    const { data } = this;
+    data.to = value;
+    this.sendUpdate(data);
+  }
+
+  makeEditable = () => {
+    super.makeEditable();
+    this.visible = true;
+  }
+
+  makeUneditable() {
+    super.makeUneditable();
+    this.visible = false;
+  }
 }
 
-export {
-	Hallway
-};
+export default Hallway;

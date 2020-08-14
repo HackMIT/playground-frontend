@@ -1,224 +1,239 @@
-import socket from './socket'
-import deleteIcon from '../images/icons/delete.svg'
+import socket from './socket';
+import deleteIcon from '../images/icons/delete.svg';
 
 class Editable {
-	constructor(data, id, elementNames) {
-		this.editable = false;
-		this.editing = false;
-		this.data = data;
-		this.id = id;
+  constructor(data, id, elementNames) {
+    this.editable = false;
+    this.editing = false;
+    this.data = data;
+    this.id = id;
 
-		this.element = this.createElement(elementNames);
-	}
+    this.element = this.createElement(elementNames);
+  }
 
-	set visible(newValue) {
-		if (newValue) {
-			this.element.classList.remove("invisible");
-		} else {
-			this.element.classList.add("invisible");
-		}
-	}
+  set visible(newValue) {
+    if (newValue) {
+      this.element.classList.remove('invisible');
+    } else {
+      this.element.classList.add('invisible');
+    }
+  }
 
-	remove() {
-		this.element.remove();
-		// TODO: Remove click listeners and stuff
-	}
+  remove() {
+    this.element.remove();
+    // TODO: Remove click listeners and stuff
+  }
 
-	createElement(elementNames) {
-		let elementElem = document.createElement("div");
-		elementElem.classList.add("element");
-		elementElem.style.left = (this.data.x * 100) + "%";
-		elementElem.style.top = (this.data.y * 100) + "%";
-		elementElem.style.width = (this.width * 100) + "%";
+  createElement(elementNames) {
+    const elementElem = document.createElement('div');
+    elementElem.classList.add('element');
+    elementElem.style.left = `${this.data.x * 100}%`;
+    elementElem.style.top = `${this.data.y * 100}%`;
+    elementElem.style.width = `${this.width * 100}%`;
 
-		let imgElem = document.createElement("img");
-		imgElem.classList.add("element-img");
-		imgElem.setAttribute("src", this.imagePath);
-		elementElem.appendChild(imgElem);
+    const imgElem = document.createElement('img');
+    imgElem.classList.add('element-img');
+    imgElem.setAttribute('src', this.imagePath);
+    elementElem.appendChild(imgElem);
 
-		let deleteButton = document.createElement("div");
-		deleteButton.classList.add("delete");
-		elementElem.appendChild(deleteButton);
+    const deleteButton = document.createElement('div');
+    deleteButton.classList.add('delete');
+    elementElem.appendChild(deleteButton);
 
-		let deleteButtonImg = document.createElement("img");
-		deleteButtonImg.setAttribute("src", deleteIcon);
-		deleteButton.appendChild(deleteButtonImg);
+    const deleteButtonImg = document.createElement('img');
+    deleteButtonImg.setAttribute('src', deleteIcon);
+    deleteButton.appendChild(deleteButtonImg);
 
-		deleteButton.onclick = (e) => {
-			this.sendDelete();
-		};
+    deleteButton.onclick = () => {
+      this.sendDelete();
+    };
 
-		let pathSelect = document.createElement("select");
+    const pathSelect = document.createElement('select');
 
-		for (let i = 0; i < elementNames.length; i++) {
-			let optionElem = document.createElement("option");
-			optionElem.value = elementNames[i];
-			optionElem.text = elementNames[i].split(".")[0];
-			pathSelect.appendChild(optionElem);
-		}
+    for (let i = 0; i < elementNames.length; i += 1) {
+      const optionElem = document.createElement('option');
+      optionElem.value = elementNames[i];
+      [optionElem.text] = elementNames[i].split('.');
+      pathSelect.appendChild(optionElem);
+    }
 
-		pathSelect.value = this.name;
+    pathSelect.value = this.name;
 
-		pathSelect.onchange = () => {
-			this.onNameSelect(pathSelect.value);
-		};
+    pathSelect.onchange = () => {
+      this.onNameSelect(pathSelect.value);
+    };
 
-		elementElem.appendChild(pathSelect);
+    elementElem.appendChild(pathSelect);
 
-		let brResizeElem = document.createElement("div");
-		brResizeElem.classList.add("resizer");
-		brResizeElem.classList.add("bottom-right");
-		elementElem.appendChild(brResizeElem);
+    const brResizeElem = document.createElement('div');
+    brResizeElem.classList.add('resizer');
+    brResizeElem.classList.add('bottom-right');
+    elementElem.appendChild(brResizeElem);
 
-		brResizeElem.onmousedown = (e) => {
-			let outerRect = document.getElementById('outer').getBoundingClientRect();
+    brResizeElem.onmousedown = (e) => {
+      const outerRect = document.getElementById('outer').getBoundingClientRect();
 
-			let startRect = elementElem.getBoundingClientRect();
-			let startX = (elementElem.getBoundingClientRect().left - outerRect.left) + elementElem.getBoundingClientRect().width / 2;
-			let startY = (elementElem.getBoundingClientRect().top - outerRect.top) + elementElem.getBoundingClientRect().height / 2;
+      const startRect = elementElem.getBoundingClientRect();
+      const startX = (elementElem.getBoundingClientRect().left - outerRect.left)
+          + elementElem.getBoundingClientRect().width / 2;
+      const startY = (elementElem.getBoundingClientRect().top - outerRect.top)
+          + elementElem.getBoundingClientRect().height / 2;
 
-			let shiftX = (elementElem.getBoundingClientRect().left - outerRect.left) + elementElem.getBoundingClientRect().width - (e.clientX - outerRect.left);
-			let shiftY = (elementElem.getBoundingClientRect().top - outerRect.top) + elementElem.getBoundingClientRect().height - (e.clientY - outerRect.top);
+      const shiftX = (elementElem.getBoundingClientRect().left - outerRect.left)
+          + elementElem.getBoundingClientRect().width - (e.clientX - outerRect.left);
+      const shiftY = (elementElem.getBoundingClientRect().top - outerRect.top)
+          + elementElem.getBoundingClientRect().height - (e.clientY - outerRect.top);
 
-			function resizeAt(pageX, pageY) {
-				pageX -= outerRect.left;
-				pageY -= outerRect.top;
+      function resizeAt(x, y) {
+        const pageX = x - outerRect.left;
+        const pageY = y - outerRect.top;
 
-				let newWidthX = pageX + shiftX - (startRect.left - outerRect.left);
+        const newWidthX = pageX + shiftX - (startRect.left - outerRect.left);
 
-				let newHeight = pageY + shiftY - (startRect.top - outerRect.top);
-				let newWidthY = newHeight * (startRect.width / startRect.height);
+        const newHeight = pageY + shiftY - (startRect.top - outerRect.top);
+        const newWidthY = newHeight * (startRect.width / startRect.height);
 
-				let newWidth = newWidthX > newWidthY ? newWidthX : newWidthY;
+        const newWidth = newWidthX > newWidthY ? newWidthX : newWidthY;
 
-				elementElem.style.top = (startY + (newWidth * (startRect.height / startRect.width) - startRect.height) / 2) / outerRect.height * 100 + "%";
-				elementElem.style.left = (startX + (newWidth - startRect.width) / 2) / outerRect.width * 100 + "%";
-				elementElem.style.width = (newWidth - 4) / outerRect.width * 100 + "%";
-			}
+        elementElem.style.top = `${((startY + (newWidth * (startRect.height / startRect.width) - startRect.height) / 2) / outerRect.height) * 100}%`;
+        elementElem.style.left = `${((startX + (newWidth - startRect.width) / 2) / outerRect.width) * 100}%`;
+        elementElem.style.width = `${((newWidth - 4) / outerRect.width) * 100}%`;
+      }
 
-			resizeAt(e.pageX, e.pageY);
+      resizeAt(e.pageX, e.pageY);
 
-			function onMouseMove(e) {
-				resizeAt(e.pageX, e.pageY);
-			}
+      const onMouseMove = (evt) => {
+        resizeAt(evt.pageX, evt.pageY);
+      };
 
-			let onMouseUp = e => {
-				document.removeEventListener('mousemove', onMouseMove);
-				document.removeEventListener('mouseup', onMouseUp);
+      const onMouseUp = () => {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
 
-				this.data.x = parseFloat(elementElem.style.left.substring(0, elementElem.style.left.length - 2)) / 100;
-				this.data.y = parseFloat(elementElem.style.top.substring(0, elementElem.style.top.length - 2)) / 100;
-				this.width = parseFloat(elementElem.style.width.substring(0, elementElem.style.width.length - 2)) / 100;
-				this.sendUpdate();
-			}
+        this.data.x = parseFloat(
+          elementElem.style.left.substring(0, elementElem.style.left.length - 2),
+        ) / 100;
+        this.data.y = parseFloat(
+          elementElem.style.top.substring(0, elementElem.style.top.length - 2),
+        ) / 100;
+        this.width = parseFloat(
+          elementElem.style.width.substring(0, elementElem.style.width.length - 2),
+        ) / 100;
 
-			document.addEventListener('mousemove', onMouseMove);
-			document.addEventListener('mouseup', onMouseUp);
-		};
+        this.sendUpdate();
+      };
 
-		brResizeElem.ondragstart = function() {
-			return false;
-		};
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    };
 
-		elementElem.onmousedown = (e) => {
-			if (!this.editable) {
-				return;
-			}
+    brResizeElem.ondragstart = () => false;
 
-			if (!e.target.classList.contains("element-img")) {
-				return;
-			}
+    elementElem.onmousedown = (e) => {
+      if (!this.editable) {
+        return;
+      }
 
-			this.editing = true;
-			elementElem.classList.add("editing");
-			elementElem.classList.add("moving");
+      if (!e.target.classList.contains('element-img')) {
+        return;
+      }
 
-			let outerRect = document.getElementById('outer').getBoundingClientRect();
+      this.editing = true;
+      elementElem.classList.add('editing');
+      elementElem.classList.add('moving');
 
-			let shiftX = (e.pageX - outerRect.left) - (elementElem.getBoundingClientRect().left - outerRect.left) - elementElem.getBoundingClientRect().width / 2;
-			let shiftY = (e.pageY - outerRect.top) - (elementElem.getBoundingClientRect().top - outerRect.top) - elementElem.getBoundingClientRect().height / 2;
+      const outerRect = document.getElementById('outer').getBoundingClientRect();
 
-			function moveAt(pageX, pageY) {
-				pageX -= outerRect.left;
-				pageY -= outerRect.top;
+      const shiftX = (e.pageX - outerRect.left)
+        - (elementElem.getBoundingClientRect().left - outerRect.left)
+        - elementElem.getBoundingClientRect().width / 2;
 
-				elementElem.style.left = (pageX - shiftX) / outerRect.width * 100 + "%";
-				elementElem.style.top = (pageY - shiftY) / outerRect.height * 100 + "%";
-			}
+      const shiftY = (e.pageY - outerRect.top)
+        - (elementElem.getBoundingClientRect().top - outerRect.top)
+        - elementElem.getBoundingClientRect().height / 2;
 
-			moveAt(e.pageX, e.pageY);
+      const moveAt = (x, y) => {
+        const pageX = x - outerRect.left;
+        const pageY = y - outerRect.top;
 
-			function onMouseMove(e) {
-				moveAt(e.pageX, e.pageY);
-			}
+        elementElem.style.left = `${((pageX - shiftX) / outerRect.width) * 100}%`;
+        elementElem.style.top = `${((pageY - shiftY) / outerRect.height) * 100}%`;
+      };
 
-			let onMouseUp = e => {
-				elementElem.classList.remove("moving");
+      moveAt(e.pageX, e.pageY);
 
-				document.removeEventListener('mousemove', onMouseMove);
-				document.removeEventListener('mouseup', onMouseUp);
+      const onMouseMove = (evt) => {
+        moveAt(evt.pageX, evt.pageY);
+      };
 
-				elementElem.onmouseup = null;
+      const onMouseUp = () => {
+        elementElem.classList.remove('moving');
 
-				this.data.x = parseFloat(elementElem.style.left.substring(0, elementElem.style.left.length - 2)) / 100;
-				this.data.y = parseFloat(elementElem.style.top.substring(0, elementElem.style.top.length - 2)) / 100;
-				this.sendUpdate();
-			}
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
 
-			document.addEventListener('mousemove', onMouseMove);
-			document.addEventListener('mouseup', onMouseUp);
-		};
+        elementElem.onmouseup = null;
 
-		elementElem.ondragstart = function() {
-			return false;
-		};
+        this.data.x = parseFloat(
+          elementElem.style.left.substring(0, elementElem.style.left.length - 2),
+        ) / 100;
+        this.data.y = parseFloat(
+          elementElem.style.top.substring(0, elementElem.style.top.length - 2),
+        ) / 100;
 
-		return elementElem;
-	}
+        this.sendUpdate();
+      };
 
-	sendDelete() {
-		socket.send(JSON.stringify({
-			type: this.deleteEventName,
-			id: this.id
-		}));
-	}
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    };
 
-	sendUpdate() {
-		socket.send(JSON.stringify({
-			type: this.updateEventName,
-			id: this.id,
-			[this.dataKeyName]: this.data
-		}));
-	}
+    elementElem.ondragstart = () => false;
 
-	applyUpdate(element) {
-		this.data = element;
+    return elementElem;
+  }
 
-		this.element.style.left = (element.x * 100) + "%";
-		this.element.style.top = (element.y * 100) + "%";
-		this.element.style.width = (this.width * 100) + "%";
-		this.element.querySelector("img").setAttribute("src", this.imagePath);
-	}
+  sendDelete() {
+    socket.send(JSON.stringify({
+      type: this.deleteEventName,
+      id: this.id,
+    }));
+  }
 
-	makeEditable() {
-		this.editable = true;
-		this.element.classList.add("editable");
-	}
+  sendUpdate() {
+    socket.send(JSON.stringify({
+      type: this.updateEventName,
+      id: this.id,
+      [this.dataKeyName]: this.data,
+    }));
+  }
 
-	makeUneditable() {
-		this.editable = false;
-		this.editing = false;
+  applyUpdate(element) {
+    this.data = element;
 
-		this.element.classList.remove("editable");
-		this.element.classList.remove("editing");
-	}
+    this.element.style.left = `${element.x * 100}%`;
+    this.element.style.top = `${element.y * 100}%`;
+    this.element.style.width = `${this.width * 100}%`;
+    this.element.querySelector('img').setAttribute('src', this.imagePath);
+  }
 
-	stopEditing() {
-		this.editing = false;
-		this.element.classList.remove("editing");
-	}
+  makeEditable() {
+    this.editable = true;
+    this.element.classList.add('editable');
+  }
+
+  makeUneditable() {
+    this.editable = false;
+    this.editing = false;
+
+    this.element.classList.remove('editable');
+    this.element.classList.remove('editing');
+  }
+
+  stopEditing() {
+    this.editing = false;
+    this.element.classList.remove('editing');
+  }
 }
 
-export {
-	Editable
-};
+export default Editable;

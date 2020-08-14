@@ -1,34 +1,32 @@
-import socket from './socket'
-import { Editable } from './editable'
+import Editable from './editable';
 
 class Element extends Editable {
+  dataKeyName = 'element';
 
-	dataKeyName = 'element';
-	deleteEventName = 'element_delete';
-	updateEventName = 'element_update';
+  deleteEventName = 'element_delete';
 
-	get imagePath() {
-		return "https://hackmit-playground-2020.s3.amazonaws.com/elements/" + this.data.path;
-	}
+  updateEventName = 'element_update';
 
-	get name() {
-		return this.data.path;
-	}
+  get imagePath() {
+    return `https://hackmit-playground-2020.s3.amazonaws.com/elements/${this.data.path}`;
+  }
 
-	get width() {
-		return this.data.width;
-	}
+  get name() {
+    return this.data.path;
+  }
 
-	set width(newValue) {
-		this.data.width = newValue;
-	}
+  get width() {
+    return this.data.width;
+  }
 
-	onNameSelect(value) {
-		this.data.path = value;
-		this.sendUpdate(this.data);
-	}
+  set width(newValue) {
+    this.data.width = newValue;
+  }
+
+  onNameSelect(value) {
+    this.data.path = value;
+    this.sendUpdate(this.data);
+  }
 }
 
-export {
-	Element
-};
+export default Element;

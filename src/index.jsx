@@ -1,6 +1,6 @@
-import { Scene3D } from './js/ThreeD';
-import { Element } from './js/element';
-import { Hallway } from './js/hallway';
+import Scene3D from './js/ThreeD';
+import Element from './js/element';
+import Hallway from './js/hallway';
 import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
@@ -152,7 +152,7 @@ class Game extends Page {
 
         if (data.token !== undefined) {
           localStorage.setItem('token', data.token);
-          window.Animationhistory.pushState(null, null, ' ');
+          window.history.pushState(null, null, ' ');
           document.getElementById('login-panel').style.display = 'none';
         }
 
@@ -167,22 +167,22 @@ class Game extends Page {
           hallway.remove();
         });
 
-        data.room.characters.forEach((id, character) => {
+        Object.entries(data.room.characters).forEach(([id, character]) => {
           this.scene.newCharacter(id, character.name, character.x, character.y);
         });
 
         this.elementNames = data.elementNames;
         this.roomNames = data.roomNames;
 
-        data.room.elements.forEach((id, element) => {
+        Object.entries(data.room.elements).forEach(([id, element]) => {
           const elementElem = new Element(element, id, data.elementNames);
           document.getElementById('game').appendChild(elementElem.element);
-          this.elements[id] = elementElem;
+          this.elements.set(id, elementElem);
         });
 
-        data.room.hallways.forEach((id, hallway) => {
-          this.hallways[id] = new Hallway(hallway, id, data.roomNames);
-          document.getElementById('game').appendChild(this.hallways[id].element);
+        Object.entries(data.room.hallways).forEach(([id, hallway]) => {
+          this.hallways.set(id, new Hallway(hallway, id, data.roomNames));
+          document.getElementById('game').appendChild(this.hallways.get(id).element);
         });
 
         this.room = data.room;
@@ -207,8 +207,7 @@ class Game extends Page {
             return;
           }
 
-          // eslint-disable-next-line
-          for (const [id, hallway] of Object.entries(this.hallways)) {
+          Array.from(this.hallways.values()).some((hallway) => {
             const distance = Math.sqrt(
               (hallway.data.x - data.x) ** 2 + (hallway.data.y - data.y) ** 2,
             );
@@ -220,27 +219,44 @@ class Game extends Page {
                 to: hallway.data.to,
               }));
 
-              break;
+              return true;
             }
-          }
+
+            return false;
+          });
+          // eslint-disable-next-line
+          // for (const [id, hallway] of Object.entries(this.hallways)) {
+          //   const distance = Math.sqrt(
+          //     (hallway.data.x - data.x) ** 2 + (hallway.data.y - data.y) ** 2,
+          //   );
+
+          //   if (distance <= hallway.data.radius) {
+          //     socket.send(JSON.stringify({
+          //       type: 'teleport',
+          //       from: this.room.slug,
+          //       to: hallway.data.to,
+          //     }));
+
+          //     break;
+          //   }
         });
       } else if (data.type === 'element_add') {
         const elementElem = new Element(data.element, data.id, this.elementNames);
         document.getElementById('game').appendChild(elementElem.element);
-        this.elements[data.id] = elementElem;
+        this.elements.set(data.id, elementElem);
       } else if (data.type === 'element_delete') {
-        this.elements[data.id].remove();
-        delete this.elements[data.id];
+        this.elements.get(data.id).remove();
+        this.elements.delete(data.id);
       } else if (data.type === 'element_update') {
-        this.elements[data.id].applyUpdate(data.element);
+        this.elements.get(data.id).applyUpdate(data.element);
       } else if (data.type === 'hallway_add') {
-        this.hallways[data.id] = new Hallway(data.hallway, data.id, this.roomNames);
-        document.getElementById('game').appendChild(this.hallways[data.id].element);
+        this.hallways.set(data.id, new Hallway(data.hallway, data.id, this.roomNames));
+        document.getElementById('game').appendChild(this.hallways.get(data.id).element);
       } else if (data.type === 'hallway_delete') {
-        this.hallways[data.id].remove();
-        delete this.hallways[data.id];
+        this.hallways.get(data.id).remove();
+        this.hallways.delete(data.id);
       } else if (data.type === 'hallway_update') {
-        this.hallways[data.id].applyUpdate(data.hallway);
+        this.hallways.get(data.id).applyUpdate(data.hallway);
       } else if (data.type === 'error') {
         if (data.code === 1) {
           document.getElementById('login-panel').style.display = 'block';
