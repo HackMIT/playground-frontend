@@ -1,0 +1,73 @@
+@mixin border-gradient($from, $to, $weight: 0) {
+  $mix-main: mix($from, $to);
+  $mix-sub-from: mix($mix-main, $from);
+  $mix-sub-to: mix($mix-main, $to);
+  box-shadow: 0 3px 0 $weight rgba($mix-sub-to, .25),
+              0 -3px 0 $weight rgba($mix-sub-from, .25),
+              3px 0 0 $weight rgba($mix-sub-to, .25),
+              -3px 0 0 $weight  rgba($mix-sub-from, .25),
+              3px -3px 0 $weight rgba($mix-main, .5),
+              -3px 3px 0 $weight rgba($mix-main, .5),
+              3px 3px 0 $weight rgba($to, .75),
+              -3px -3px 0 $weight rgba($from, .75);
+}
+
+.modal-background {
+	width: 100vw;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(0, 0, 0, 0.7);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.modal-content {
+    background: rgba(0, 0, 0, 0);
+    width: 60vw;
+    height: 88vh;
+    align-items: center;
+    justify-content: center;
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+	position: relative;
+
+	* {
+		max-width: 100%;
+	}
+}
+
+@keyframes animatetop {
+    from {top: -300px; opacity: 0}
+    to {top: 0; opacity: 1}
+}
+
+.day-of-page {
+    @include border-gradient(skyblue, hotpink);
+    margin: auto;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.modal-close-button {
+    position: absolute;
+    z-index: 1;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.modal-close-button:hover,
+.modal-close-button:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}

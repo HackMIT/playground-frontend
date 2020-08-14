@@ -1,6 +1,10 @@
 import { Character } from './js/Character'
 import { Scene3D } from './js/ThreeD'
-import { Interactable } from './js/Interactable'
+import { Element } from './js/element'
+import { Hallway } from './js/hallway'
+import Page from './js/page'
+import socket from './js/socket'
+import createModal from './modal';
 import './styles/index.scss'
 import './styles/sponsor.scss'
 import './images/Code_Icon.svg'
@@ -10,279 +14,91 @@ import './images/sponsor_text.svg'
 import './styles/coffeechat.scss'
 
 import './coffeechat';
-import './day-of';
-import './map';
 
 import deleteIcon from './images/icons/delete.svg';
 import './images/icons/add.svg';
+import './images/icons/add-hallway.svg';
 import './images/icons/edit.svg';
 
-const BACKGROUND_IMAGE_URL = "https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/%SLUG%.png";
+const BACKGROUND_IMAGE_URL = "https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%SLUG%.png";
 
-//let conn = new WebSocket('ws://' + 'ec2-3-81-187-93.compute-1.amazonaws.com:8080' + '/ws');
-let conn;
-let editing;
-let elementPaths;
-
-let gameElem = document.getElementById("game");
-let mapElem = document.getElementById("map");
-window.console.log("hi")
-
-function handleWindowSize() {
-	let outerElem = document.getElementById("outer");
-
-	if (window.innerWidth < window.innerHeight * (16 / 9)) {
-		if (outerElem.classList.contains("vertical")) {
-			return;
+class Game extends Page {
+	start = () => {
+		if (!window["WebSocket"]) {
+			// TODO: Handle error -- tell people their browser is incompatible
 		}
 
-		outerElem.classList.add("vertical");
-	} else {
-		if (!outerElem.classList.contains("vertical")) {
-			return;
+		// Quick check for auth data
+		if (localStorage.getItem('token') !== null) {
+			document.getElementById('login-panel').style.display = 'none';
 		}
 
-		outerElem.classList.remove("vertical");
-	}
-}
+		this.scene = new Scene3D();
 
-function addElement(element, id, elementPaths) {
-	let elementElem = document.createElement("div");
-	elementElem.classList.add("element");
-	elementElem.style.left = (element.x * 100) + "%";
-	elementElem.style.top = (element.y * 100) + "%";
-	elementElem.style.width = (element.width * 100) + "%";
+		this.characterID;
+		this.characters = new Map();
+		this.elements = new Map();
+		this.hallways = new Map();
+		this.room = null;
 
-	let imgElem = document.createElement("img");
-	imgElem.classList.add("element-img");
-	imgElem.setAttribute("src", "https://hackmit-playground-2020.s3.amazonaws.com/elements/" + element.path);
-	elementElem.appendChild(imgElem);
-	gameElem.appendChild(elementElem);
+		this.editing = false;
+		this.elementNames = [];
+		this.roomNames = [];
 
-	let deleteButton = document.createElement("div");
-	deleteButton.classList.add("delete");
-	elementElem.appendChild(deleteButton);
+		this.addClickListener("add-button", this.handleElementAddButton);
+		this.addClickListener("add-hallway-button", this.handleHallwayAddButton);
+		this.addClickListener("day-of-button", this.handleDayofButton);
+		this.addClickListener("edit-button", this.handleEditButton);
+		this.addClickListener("game", this.handleGameClick);
 
-	let deleteButtonImg = document.createElement("img");
-	deleteButtonImg.setAttribute("src", deleteIcon);
-	deleteButton.appendChild(deleteButtonImg);
+		this.handleWindowSize();
 
-	deleteButton.onclick = function(e) {
-		conn.send(JSON.stringify({
-			type: 'element_delete',
-			id: id
-		}));
-	};
+		socket.onopen = this.handleSocketOpen;
+		socket.onmessage = this.handleSocketMessage;
+		socket.start();
 
-	let pathSelect = document.createElement("select");
+		// Start sending chat events
+		document.getElementById('chat-box').addEventListener('keypress', function (e) {
+			if (e.key === 'Enter') { 
+				socket.send(JSON.stringify({
+					type: 'chat',
+					mssg: e.target.value
+				}))
 
-	for (let i = 0; i < elementPaths.length; i++) {
-		let optionElem = document.createElement("option");
-		optionElem.value = elementPaths[i];
-		optionElem.text = elementPaths[i].split(".")[0];
-		pathSelect.appendChild(optionElem);
+				e.target.value = '';
+			}
+		});
+
+		window.addEventListener('resize', function(e) {
+			scene.fixCameraOnResize();
+			handleWindowSize();
+		});
 	}
 
-	pathSelect.value = element.path;
-
-	pathSelect.onchange = function() {
-		element.path = pathSelect.value;
-
-		conn.send(JSON.stringify({
-			type: 'element_update',
-			id: id,
-			element: element
-		}));
-	};
-
-	elementElem.appendChild(pathSelect);
-
-	let brResizeElem = document.createElement("div");
-	brResizeElem.classList.add("resizer");
-	brResizeElem.classList.add("bottom-right");
-	elementElem.appendChild(brResizeElem);
-
-	brResizeElem.onmousedown = function(e) {
-		let outerRect = document.getElementById('outer').getBoundingClientRect();
-
-		let startRect = elementElem.getBoundingClientRect();
-		let startX = (elementElem.getBoundingClientRect().left - outerRect.left) + elementElem.getBoundingClientRect().width / 2;
-		let startY = (elementElem.getBoundingClientRect().top - outerRect.top) + elementElem.getBoundingClientRect().height / 2;
-
-		let shiftX = (elementElem.getBoundingClientRect().left - outerRect.left) + elementElem.getBoundingClientRect().width - (e.clientX - outerRect.left);
-		let shiftY = (elementElem.getBoundingClientRect().top - outerRect.top) + elementElem.getBoundingClientRect().height - (e.clientY - outerRect.top);
-
-		function resizeAt(pageX, pageY) {
-			pageX -= outerRect.left;
-			pageY -= outerRect.top;
-
-			let newWidthX = pageX + shiftX - (startRect.left - outerRect.left);
-
-			let newHeight = pageY + shiftY - (startRect.top - outerRect.top);
-			let newWidthY = newHeight * (startRect.width / startRect.height);
-
-			let newWidth = newWidthX > newWidthY ? newWidthX : newWidthY;
-
-			elementElem.style.top = (startY + (newWidth * (startRect.height / startRect.width) - startRect.height) / 2) / outerRect.height * 100 + "%";
-			elementElem.style.left = (startX + (newWidth - startRect.width) / 2) / outerRect.width * 100 + "%";
-			elementElem.style.width = (newWidth - 4) / outerRect.width * 100 + "%";
-		}
-
-		resizeAt(e.pageX, e.pageY);
-
-		function onMouseMove(e) {
-			resizeAt(e.pageX, e.pageY);
-		}
-
-		function onMouseUp(e) {
-			document.removeEventListener('mousemove', onMouseMove);
-			document.removeEventListener('mouseup', onMouseUp);
-
-			element.x = parseFloat(elementElem.style.left.substring(0, elementElem.style.left.length - 2)) / 100;
-			element.y = parseFloat(elementElem.style.top.substring(0, elementElem.style.top.length - 2)) / 100;
-			element.width = parseFloat(elementElem.style.width.substring(0, elementElem.style.width.length - 2)) / 100;
-
-			conn.send(JSON.stringify({
-				type: 'element_update',
-				id: id,
-				element: element
-			}));
-		}
-
-		document.addEventListener('mousemove', onMouseMove);
-		document.addEventListener('mouseup', onMouseUp);
-	};
-
-	brResizeElem.ondragstart = function() {
-		return false;
-	};
-
-	elementElem.onmousedown = function(e) {
-		if (!editing) {
-			return;
-		}
-
-		if (!e.target.classList.contains("element-img")) {
-			return;
-		}
-
-		elementElem.classList.add("editing");
-		elementElem.classList.add("moving");
-
-		let outerRect = document.getElementById('outer').getBoundingClientRect();
-
-		let shiftX = (e.pageX - outerRect.left) - (elementElem.getBoundingClientRect().left - outerRect.left) - elementElem.getBoundingClientRect().width / 2;
-		let shiftY = (e.pageY - outerRect.top) - (elementElem.getBoundingClientRect().top - outerRect.top) - elementElem.getBoundingClientRect().height / 2;
-
-		function moveAt(pageX, pageY) {
-			pageX -= outerRect.left;
-			pageY -= outerRect.top;
-
-			elementElem.style.left = (pageX - shiftX) / outerRect.width * 100 + "%";
-			elementElem.style.top = (pageY - shiftY) / outerRect.height * 100 + "%";
-		}
-
-		moveAt(e.pageX, e.pageY);
-
-		function onMouseMove(e) {
-			moveAt(e.pageX, e.pageY);
-		}
-
-		function onMouseUp(e) {
-			elementElem.classList.remove("moving");
-
-			document.removeEventListener('mousemove', onMouseMove);
-			document.removeEventListener('mouseup', onMouseUp);
-
-			elementElem.onmouseup = null;
-
-			element.x = parseFloat(elementElem.style.left.substring(0, elementElem.style.left.length - 2)) / 100;
-			element.y = parseFloat(elementElem.style.top.substring(0, elementElem.style.top.length - 2)) / 100;
-
-			conn.send(JSON.stringify({
-				type: 'element_update',
-				id: id,
-				element: element
-			}));
-		}
-
-		document.addEventListener('mousemove', onMouseMove);
-		document.addEventListener('mouseup', onMouseUp);
-	};
-
-	elementElem.ondragstart = function() {
-		return false;
-	};
-
-	return elementElem;
-}
-
-window.onSponsorLogin = () => {
-	let joinPacket = {
-		type: 'join',
-		name: prompt("What's your name?")
-	};
-
-	// Connected to remote
-	conn.send(JSON.stringify(joinPacket));
-};
-
-gameElem.onclick = function(e) {
-	let modalElemDiv = document.getElementById("modal-elem-div");
-
-	if (modalElemDiv !== null && e.target !== modalElemDiv) {
-		modalElemDiv.remove();
-	}
-}
-
-mapElem.onclick = function(e) {
-
-	console.log("hello");
-	let modalElemDiv = document.getElementById("map-elem-div");
-
-	if (modalElemDiv !== null && e.target !== modalElemDiv) {
-		modalElemDiv.remove();
-	}
-}
-
-window.onload = function () {
-	// Quick check for auth data
-	if (localStorage.getItem('token') !== null) {
-		document.getElementById('login-panel').style.display = 'none';
-	}
-	var scene = new Scene3D();
-
-	// var characters = new Map();
-	var characterID;
-	var characters = new Map();
-
-	var elements = new Map();
-
-	var interactables = new Map();
-	var room;
-
-	handleWindowSize();
-
-	// When clicking on the page, send a move message to the server
-	gameElem.addEventListener('click', function (e) {
-		if (!conn) {
-			return false;
-		}
-
+	handleGameClick = e => {
+		// When clicking on the page, send a move message to the server
 		if (e.target.id !== "three-canvas") {
 			return false;
 		}
 
 		// Remove editable status from all elements
-		let elements = document.getElementsByClassName("element");
 		let wasEditing = 0;
 
-		for (var i = 0; i < elements.length; i++) {
-			if (!elements.item(i).classList.contains("editing")) {
+		for (let [_, element] of Object.entries(this.elements)) {
+			if (!element.editing) {
 				continue;
 			}
 
-			elements.item(i).classList.remove("editing");
+			element.stopEditing();
+			wasEditing += 1;
+		}
+
+		for (let [_, hallway] of Object.entries(this.hallways)) {
+			if (!hallway.editing) {
+				continue;
+			}
+
+			hallway.stopEditing();
 			wasEditing += 1;
 		}
 
@@ -292,42 +108,166 @@ window.onload = function () {
 		}
 
 		// Send move packet
-		let rect = gameElem.getBoundingClientRect();
+		let rect = document.getElementById("game").getBoundingClientRect();
 		let x = (e.pageX - rect.x) / rect.width;
 		let y = (e.pageY - rect.y) / rect.height;
 
-		conn.send(JSON.stringify({
+		socket.send(JSON.stringify({
 			x: x,
 			y: y,
 			type: 'move'
 		}));
-	});
+	}
 
-	document.getElementById("edit-button").addEventListener("click", function(e) {
-		editing = !editing;
+	handleSocketOpen = () => {
+		let joinPacket = {
+			type: 'join'
+		};
 
-		if (editing) {
-			document.getElementById("add-button").classList.add("visible");
-
-			let elements = document.getElementsByClassName("element");
-
-			for (let i = 0; i < elements.length; i++) {
-				elements.item(i).classList.add("editable");
-			}
+		if (localStorage.getItem('token') !== null) {
+			joinPacket.token = localStorage.getItem('token');
+		} else if (window.location.hash.length > 1) {
+			joinPacket.quillToken = document.location.hash.substring(1);
 		} else {
-			document.getElementById("add-button").classList.remove("visible");
+			// No auth data
+			return;
+		}
 
-			let elements = document.getElementsByClassName("element");
+		// Connected to remote
+		socket.send(JSON.stringify(joinPacket));
+	}
 
-			for (let i = 0; i < elements.length; i++) {
-				elements.item(i).classList.remove("editable");
-				elements.item(i).classList.remove("editing");
+	handleSocketMessage = (e) => {
+		var messages = e.data.split('\n');
+
+		for (var i = 0; i < messages.length; i++) {
+			var data = JSON.parse(messages[i]);
+
+			if (data.type === 'init') {
+				this.characterID = data.character.id;
+
+				if (data.token !== undefined) {
+					localStorage.setItem('token', data.token);
+					history.pushState(null, null, ' ');
+					document.getElementById('login-panel').style.display = 'none';
+				}
+
+				// Delete stuff from previous room
+				this.scene.deleteAllCharacters();
+
+				for (let [_, element] of Object.entries(this.elements)) {
+					element.remove();
+				}
+
+				for (let [_, hallway] of Object.entries(this.hallways)) {
+					hallway.remove();
+				}
+
+				for (let [key, value] of Object.entries(data.room.characters)) {
+					scene.newCharacter(key, value.name, value.x, value.y)
+				}
+
+				this.elementNames = data.elementNames;
+				this.roomNames = data.roomNames;
+
+				for (let [id, element] of Object.entries(data.room.elements)) {
+					let elementElem = new Element(element, id, data.elementNames);
+					document.getElementById("game").appendChild(elementElem.element);
+					this.elements[id] = elementElem;
+				}
+
+				for (let [id, hallway] of Object.entries(data.room.hallways)) {
+					this.hallways[id] = new Hallway(hallway, id, data.roomNames);
+					document.getElementById("game").appendChild(this.hallways[id].element);
+				}
+
+				this.room = data.room;
+
+				if (this.room.sponsor) {
+					document.getElementById("sponsor-pane").classList.add("active");
+					document.getElementById("sponsor-name").innerHTML = "<span>" + this.room.slug + "</span>" + this.room.slug;
+					document.getElementById("outer").classList.add("sponsor");
+					document.getElementById("game").classList.add("sponsor");
+				} else {
+					document.getElementById("sponsor-pane").classList.remove("active");
+					document.getElementById("outer").classList.remove("sponsor");
+					document.getElementById("game").classList.remove("sponsor");
+				}
+
+				document.getElementById("game").style.backgroundImage = "url('" + BACKGROUND_IMAGE_URL.replace("%SLUG%", this.room.slug) + "')";
+
+				this.scene.fixCameraOnResize();
+			} else if (data.type === 'move') {
+				this.scene.moveCharacter(data.id, data.x, data.y, () => {
+					if (data.id !== this.characterID) {
+						return;
+					}
+
+					for (let [id, hallway] of Object.entries(this.hallways)) {
+						let distance = Math.sqrt(Math.pow(hallway.data.x - data.x, 2) + Math.pow(hallway.data.y - data.y, 2));
+
+						if (distance > hallway.data.radius) {
+							continue;
+						}
+
+						socket.send(JSON.stringify({
+							type: 'teleport',
+							from: this.room.slug,
+							to: hallway.data.to
+						}));
+
+						break;
+					}
+				});
+			} else if (data.type === 'element_add') {
+				let elementElem = new Element(data.element, data.id, elementNames);
+				document.getElementById("game").appendChild(elementElem.element);
+				this.elements[data.id] = elementElem;
+			} else if (data.type === 'element_delete') {
+				this.elements[data.id].remove();
+				delete this.elements[data.id];
+			} else if (data.type === 'element_update') {
+				this.elements[data.id].applyUpdate(data.element);
+			} else if (data.type === 'hallway_add') {
+				this.hallways[data.id] = new Hallway(data.hallway, data.id, roomNames);
+				document.getElementById("game").appendChild(hallways[data.id].element);
+			} else if (data.type === 'hallway_delete') {
+				this.hallways[data.id].remove();
+				delete this.hallways[data.id];
+			} else if (data.type === 'hallway_update') {
+				this.hallways[data.id].applyUpdate(data.hallway);
+			} else if (data.type === 'error') {
+				if (data.code === 1) {
+					document.getElementById('login-panel').style.display = 'block';
+				}
+			} else if (data.type === 'join') {
+				this.scene.newCharacter(data.character.id, data.character.name, data.character.x, data.character.y)
+			} else if (data.type === 'leave') {
+				if (data.character.id === characterID) {
+					return;
+				}
+				scene.deleteCharacter(data.character.id)
+
+			} else if (data.type == 'chat') {
+				data.name = scene.sendChat(data.id, data.mssg);
+			} else {
+				console.log('received unknown packet: ' + data.type)
+				console.log(data)
 			}
 		}
-	});
+	}
 
-	document.getElementById("add-button").addEventListener('click', function(e) {
-		conn.send(JSON.stringify({
+	handleDayofButton = () => {
+		let dayOfElem = document.createElement("iframe");
+		dayOfElem.classList.add("day-of-page");
+		dayOfElem.src = "https://dayof.hackmit.org";
+		dayOfElem.id = "day-of-iframe";
+
+		createModal(dayOfElem);
+	}
+
+	handleElementAddButton = () => {
+		socket.send(JSON.stringify({
 			type: 'element_add',
 			element: {
 				x: 0.2,
@@ -336,152 +276,88 @@ window.onload = function () {
 				width: 0.1
 			}
 		}));
-	});
+	}
 
-	window.addEventListener('resize', function(e) {
-		scene.fixCameraOnResize();
-		handleWindowSize();
-	});
+	handleHallwayAddButton = () => {
+		socket.send(JSON.stringify({
+			type: 'hallway_add',
+			hallway: {
+				x: 0.2,
+				y: 0.2,
+				radius: 0.1,
+				to: "microsoft"
+			}
+		}));
+	}
 
-	if (window['WebSocket']) {
-		conn = new WebSocket('ws://' + 'localhost:8080' + '/ws');
-		conn.onopen = function (evt) {
-			let joinPacket = {
-				type: 'join'
-			};
+	handleEditButton = () => {
+		this.editing = !this.editing;
 
-			if (localStorage.getItem('token') !== null) {
-				joinPacket.token = localStorage.getItem('token');
-			} else if (window.location.hash.length > 1) {
-				joinPacket.quillToken = document.location.hash.substring(1);
-			} else {
-				// No auth data
+		if (this.editing) {
+			document.getElementById("add-button").classList.add("visible");
+			document.getElementById("add-hallway-button").classList.add("visible");
+
+			for (let [_, element] of Object.entries(this.elements)) {
+				element.makeEditable();
+			}
+
+			for (let [_, hallway] of Object.entries(this.hallways)) {
+				hallway.makeEditable();
+			}
+		} else {
+			document.getElementById("add-button").classList.remove("visible");
+			document.getElementById("add-hallway-button").classList.remove("visible");
+
+			for (let [_, element] of Object.entries(this.elements)) {
+				element.makeUneditable();
+			}
+
+			for (let [_, hallway] of Object.entries(this.hallways)) {
+				hallway.makeUneditable();
+			}
+		}
+	}
+
+	handleWindowSize = () => {
+		let outerElem = document.getElementById("outer");
+
+		if (window.innerWidth < window.innerHeight * (16 / 9)) {
+			if (outerElem.classList.contains("vertical")) {
 				return;
 			}
 
-			// Connected to remote
-			conn.send(JSON.stringify(joinPacket));
-		};
-		conn.onclose = function (evt) {
-			// Disconnected from remote
-		};
-		conn.onmessage = function (evt) {
-			var messages = evt.data.split('\n');
-
-			for (var i = 0; i < messages.length; i++) {
-				var data = JSON.parse(messages[i]);
-
-				if (data.type === 'init') {
-					characterID = data.character.id;
-
-					if (data.token !== undefined) {
-						localStorage.setItem('token', data.token);
-						history.pushState(null, null, ' ');
-						document.getElementById('login-panel').style.display = 'none';
-					}
-
-					scene.deleteAllCharacters();
-
-					for (let [key, value] of Object.entries(data.room.characters)) {
-						scene.newCharacter(key, value.name, value.x, value.y)
-						// characters[key] = new Character(value.name, value.x, value.y);
-					}
-
-					for (let [key, value] of Object.entries(data.room.interactables)) {
-						interactables[key] = new Interactable(value.action, value.appearance, value.x, value.y);
-					}
-
-					elementPaths = data.elementPaths;
-
-					for (let [id, element] of Object.entries(data.room.elements)) {
-						let elementElem = addElement(element, id, data.elementPaths);
-						elements[id] = elementElem;
-					}
-
-					room = data.room;
-
-					if (room.sponsor) {
-						document.getElementById("sponsor-pane").classList.add("active");
-						document.getElementById("sponsor-name").innerHTML = "<span>" + room.slug + "</span>" + room.slug;
-						document.getElementById("outer").classList.add("sponsor");
-						gameElem.classList.add("sponsor");
-					} else {
-						document.getElementById("sponsor-pane").classList.remove("active");
-						document.getElementById("outer").classList.remove("sponsor");
-						gameElem.classList.remove("sponsor");
-					}
-
-					gameElem.style.backgroundImage = "url('" + BACKGROUND_IMAGE_URL.replace("%SLUG%", room.slug) + "')";
-
-					// Start sending chat events
-					document.getElementById('chat-box').addEventListener('keypress', function (e) {
-						if (e.key === 'Enter') { 
-							conn.send(JSON.stringify({
-								type: 'chat',
-								mssg: e.target.value
-							}))
-
-							e.target.value = '';
-						}
-					});
-
-					scene.fixCameraOnResize();
-				} else if (data.type === 'move') {
-					scene.moveCharacter(data.id, data.x, data.y, () => {
-						if (data.id !== characterID) {
-							return;
-						}
-
-						for (const hallway of room.hallways) {
-							let distance = Math.sqrt(Math.pow(hallway.x - data.x, 2) + Math.pow(hallway.y - data.y, 2));
-
-							if (distance > hallway.radius) {
-								continue;
-							}
-
-							conn.send(JSON.stringify({
-								type: 'teleport',
-								from: room.slug,
-								to: hallway.to
-							}));
-
-							break;
-						}
-					});
-				} else if (data.type === 'element_add') {
-					let elementElem = addElement(data.element, data.id, elementPaths);
-					elements[data.id] = elementElem;
-				} else if (data.type === 'element_delete') {
-					elements[data.id].remove();
-					delete elements[data.id];
-				} else if (data.type === 'element_update') {
-					elements[data.id].style.left = (data.element.x * 100) + "%";
-					elements[data.id].style.top = (data.element.y * 100) + "%";
-					elements[data.id].style.width = (data.element.width * 100) + "%";
-					elements[data.id].querySelector("img").setAttribute("src", "https://hackmit-playground-2020.s3.amazonaws.com/elements/" + data.element.path);
-				} else if (data.type === 'error') {
-					if (data.code === 1) {
-						document.getElementById('login-panel').style.display = 'block';
-					}
-				} else if (data.type === 'join') {
-					scene.newCharacter(data.character.id, data.character.name, data.character.x, data.character.y)
-				} else if (data.type === 'leave') {
-					if (data.character.id === characterID) {
-						return;
-					}
-					scene.deleteCharacter(data.character.id)
-
-				} else if (data.type == 'chat') {
-					data.name = scene.sendChat(data.id, data.mssg);
-				} else {
-					console.log('received unknown packet: ' + data.type)
-					console.log(data)
-				}
+			outerElem.classList.add("vertical");
+		} else {
+			if (!outerElem.classList.contains("vertical")) {
+				return;
 			}
-		};
 
-	} else {
-		var item = document.createElement('div');
-		item.innerHTML = '<b>Your browser does not support WebSockets.</b>';
+			outerElem.classList.remove("vertical");
+		}
 	}
+}
+
+let gamePage = new Game();
+
+window.onload = () => {
+	gamePage.start();
 };
+
+window.onSponsorLogin = () => {
+	let joinPacket = {
+		type: 'join',
+		name: prompt("What's your name?")
+	};
+
+	// Connected to remote
+	socket.send(JSON.stringify(joinPacket));
+	console.log(joinPacket)
+};
+
+// gameElem.onclick = function(e) {
+// 	let modalElemDiv = document.getElementById("modal-elem-div");
+// 
+// 	if (modalElemDiv !== null && e.target !== modalElemDiv) {
+// 		modalElemDiv.remove();
+// 	}
+// }
