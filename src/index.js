@@ -3,6 +3,7 @@ import { Scene3D } from './js/ThreeD'
 import { Element } from './js/element'
 import { Hallway } from './js/hallway'
 import socket from './js/socket'
+import createModal from './modal';
 import './styles/index.scss'
 import './styles/sponsor.scss'
 import './images/Code_Icon.svg'
@@ -12,7 +13,6 @@ import './images/sponsor_text.svg'
 import './styles/coffeechat.scss'
 
 import './coffeechat';
-import './day-of';
 
 import deleteIcon from './images/icons/delete.svg';
 import './images/icons/add.svg';
@@ -55,13 +55,13 @@ window.onSponsorLogin = () => {
 	socket.send(JSON.stringify(joinPacket));
 };
 
-gameElem.onclick = function(e) {
-	let modalElemDiv = document.getElementById("modal-elem-div");
-
-	if (modalElemDiv !== null && e.target !== modalElemDiv) {
-		modalElemDiv.remove();
-	}
-}
+// gameElem.onclick = function(e) {
+// 	let modalElemDiv = document.getElementById("modal-elem-div");
+// 
+// 	if (modalElemDiv !== null && e.target !== modalElemDiv) {
+// 		modalElemDiv.remove();
+// 	}
+// }
 
 window.onload = function () {
 	// Quick check for auth data
@@ -189,6 +189,14 @@ window.onload = function () {
 		}
 	});
 
+	document.getElementById('day-of-button').addEventListener('click', (e) => {
+		let dayOfElem = document.createElement("iframe");
+		dayOfElem.classList.add("day-of-page");
+		dayOfElem.src = "https://dayof.hackmit.org";
+		dayOfElem.id = "day-of-iframe";
+
+		createModal(dayOfElem);
+	});
 
 	window.addEventListener('resize', function(e) {
 		scene.fixCameraOnResize();
