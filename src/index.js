@@ -356,8 +356,6 @@ class Game extends Page {
 			zoom: 7.5
 		});
 
-		map.addControl(new mapboxgl.NavigationControl());
-
 		createMap(map);
 		
 	}

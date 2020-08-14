@@ -1,4 +1,18 @@
 function createMap(map) {
+
+	var geocoder = new MapboxGeocoder({
+		accessToken: mapboxgl.accessToken,
+		marker: {
+			color: 'orange'
+		},
+		mapboxgl: mapboxgl
+	});
+
+	const saveLocationButton = new SaveLocationButton();
+	map.addControl(saveLocationButton);
+		
+	map.addControl(geocoder);
+	map.addControl(new mapboxgl.NavigationControl());
 	
 	map.on('load', function() {
 		
@@ -8,37 +22,12 @@ function createMap(map) {
 			function(error, image) {
 				if (error) throw error;
 				map.addImage('custom-marker', image);
-				// Add a GeoJSON source with 2 points
-				map.addSource('points', {
-					'type': 'geojson',
-					'data': {
-						'type': 'FeatureCollection',
-						'features': [
-							{
-								// feature for Mapbox DC
-								'type': 'Feature',
-								'geometry': {
-								'type': 'Point',
-								'coordinates': [
-									-77.03238901390978,
-									38.913188059745586
-									]
-								},
-								'properties': {
-									'title': 'Mapbox DC'
-								}
-							},
-						{
-							// feature for Mapbox SF
-							'type': 'Feature',
-							'geometry': {
-							'type': 'Point',
-								'coordinates': [-122.414, 37.776]
-							},
-							'properties': {
-								'title': 'Mapbox SF'
-							}
-						}]
+				
+				map.addSource('single-point', {
+					type: 'geojson',
+					data: {
+					  type: 'FeatureCollection',
+					  features: []
 					}
 				});
 				
@@ -49,49 +38,83 @@ function createMap(map) {
 					'source': 'points',
 					'layout': {
 						'icon-image': 'custom-marker',
-						// get the title name from the source's "title" property
-						'text-field': ['get', 'title'],
-						'text-font': [
-							'Open Sans Semibold',
-							'Arial Unicode MS Bold'
-						],
-						'text-offset': [0, 1.25],
-						'text-anchor': 'top'
 					}
 				});
+				
+				// handle searched locations
+				geocoder.on('result', function(e) {
+					console.log("searched");
+					map.getSource('single-point').setData(e.result.geometry);
+
+					// pin location
+					var geojson = {
+						type: "FeatureCollection",
+						features: [{
+							type:"Feature",
+							geometry: { type: "Point", coordinates: [ e.lngLat.lng, e.lngLat.lat ]}
+						}]
+					};
+					map.addSource("pins", {
+						"type": "geojson",
+						"data": geojson
+					});
+					map.addLayer({
+						id: "pinsLayer",
+						type: "circle",
+						source: "pins", 
+						paint: {
+							"circle-color": "red",
+							"circle-radius": 5 
+						}
+					});
+				});
+
 			}
 		);
 
-		// Center the map on the coordinates of any clicked symbol from the 'symbols' layer.
-		map.on('click', 'symbols', function(e) {
-			map.flyTo({
-				center: e.features[0].geometry.coordinates
-			});
-		});
-			
 		// Change the cursor to a pointer when the it enters a feature in the 'symbols' layer.
 		map.on('mouseenter', 'symbols', function() {
+			console.log("hovering");
 			map.getCanvas().style.cursor = 'pointer';
 		});
 		
 		// Change it back to a pointer when it leaves.
 		map.on('mouseleave', 'symbols', function() {
+			console.log("left hover");
 			map.getCanvas().style.cursor = '';
 		});
-
-		var geocoder = new MapboxGeocoder({
-			accessToken: mapboxgl.accessToken,
-			marker: {
-				color: 'orange'
-			},
-			mapboxgl: mapboxgl
-		});
-			
-		map.addControl(geocoder);
 	});
-
-
-	return map;
 }
+
+class SaveLocationButton {
+	onAdd(map){
+	  this.map = map;
+	  this.container = document.createElement('div');
+	  this.container.className = 'save-location';
+	  
+	  const button = this._createButton('save')
+	  this.container.appendChild(button);
+
+	  return this.container;
+	}
+
+	onRemove(){
+	  this.container.parentNode.removeChild(this.container);
+	  this.map = undefined;
+	}
+
+	_createButton(className) {
+		const el = window.document.createElement('button')
+		el.className = className;
+		el.textContent = 'Save location';
+		el.addEventListener('click', (e) => {
+		  console.log(e);
+		  // e.preventDefault()
+		  e.stopPropagation()
+		}, false)
+		return el;
+	}
+}
+  
 
 export default createMap;
