@@ -39,9 +39,10 @@
   "dependencies": {
     "axios": "^0.19.2",
     "fs": "^0.0.1-security",
+    "modal": "^1.2.0",
     "moment": "^2.27.0",
     "path": "^0.12.7",
     "router": "^1.3.5",
-    "three": "^0.118.3"
+    "three": "^0.119.1"
   }
 }
