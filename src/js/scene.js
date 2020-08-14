@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-import Character3D from './Character3D';
+import Character from './character';
 
 const d = 20; // this controls scale of camera
 
-class Scene3D {
+class Scene {
   constructor() {
     this.container = document.createElement('div');
     this.container.id = 'three-container';
@@ -71,7 +71,7 @@ class Scene3D {
 
   // create a new character at 0,0
   newCharacter(characterId, name, x, y) {
-    this.characters[characterId] = new Character3D(name, x, y, this, (vec) => {
+    this.characters[characterId] = new Character(name, x, y, this, (vec) => {
       vec.project(this.camera);
 
       const pageX = Math.round((0.5 + vec.x / 2)
@@ -142,4 +142,4 @@ class Scene3D {
   }
 }
 
-export default Scene3D;
+export default Scene;

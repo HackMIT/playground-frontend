@@ -1,26 +1,21 @@
+// eslint-disable-next-line
+import createElement from './utils/jsxHelper';
+
 import './styles/modal.scss';
 
 function createModal(contentElem) {
-  console.log('creating modal');
-  const backgroundElem = document.createElement('div');
-  backgroundElem.classList.add('modal-background');
+  const modalElem = (
+    <div id="modal-background" className="modal-background">
+      <div className="modal-content">
+        <span className="modal-close-button" onclick={() => document.getElementById('modal-background').remove()}>
+          &times;
+        </span>
+        {contentElem}
+      </div>
+    </div>
+  );
 
-  const modalElem = document.createElement('div');
-  modalElem.classList.add('modal-content');
-
-  const closeButtonElem = document.createElement('span');
-  closeButtonElem.classList.add('modal-close-button');
-  closeButtonElem.innerHTML = '&times;';
-
-  closeButtonElem.onclick = () => {
-    backgroundElem.remove();
-  };
-
-  modalElem.appendChild(closeButtonElem);
-  modalElem.appendChild(contentElem);
-  backgroundElem.appendChild(modalElem);
-
-  document.body.appendChild(backgroundElem);
+  document.body.appendChild(modalElem);
 }
 
 export default createModal;
