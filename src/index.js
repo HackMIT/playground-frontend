@@ -11,6 +11,7 @@ import './styles/coffeechat.scss'
 
 import './coffeechat';
 import './day-of';
+import './map';
 
 import deleteIcon from './images/icons/delete.svg';
 import './images/icons/add.svg';
@@ -24,6 +25,8 @@ let editing;
 let elementPaths;
 
 let gameElem = document.getElementById("game");
+let mapElem = document.getElementById("map");
+window.console.log("hi")
 
 function handleWindowSize() {
 	let outerElem = document.getElementById("outer");
@@ -226,6 +229,16 @@ window.onSponsorLogin = () => {
 
 gameElem.onclick = function(e) {
 	let modalElemDiv = document.getElementById("modal-elem-div");
+
+	if (modalElemDiv !== null && e.target !== modalElemDiv) {
+		modalElemDiv.remove();
+	}
+}
+
+mapElem.onclick = function(e) {
+
+	console.log("hello");
+	let modalElemDiv = document.getElementById("map-elem-div");
 
 	if (modalElemDiv !== null && e.target !== modalElemDiv) {
 		modalElemDiv.remove();
