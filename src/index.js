@@ -340,17 +340,6 @@ class Game extends Page {
 	}
 
 	handleShowMap = () => {
-
-		// mapboxgl.accessToken = MAPBOX_API_KEY;
-
-		// var map = new mapboxgl.Map({
-		// 	container: 'map',
-		// 	style: 'mapbox://styles/mapbox/light-v10',
-		// 	center: [-96, 37.8],
-		// 	zoom: 3
-		// });
-
-		// console.log(map);
 		
 		let mapElem = document.createElement("div");
 		mapElem.classList.add("day-of-page"); // change "day-of-page" css
@@ -363,9 +352,11 @@ class Game extends Page {
 		var map = new mapboxgl.Map({
 			container: 'map-frame',
 			style: 'mapbox://styles/mapbox/light-v10',
-			center: [-96, 37.8],
-			zoom: 3
+			center: [-71.0942, 42.3601],
+			zoom: 7.5
 		});
+
+		map.addControl(new mapboxgl.NavigationControl());
 
 		createMap(map);
 		
