@@ -1,64 +1,64 @@
 #game {
-    &.sponsor {
-        height: 90vh;
-        width: 97.5vh;
-    }
+  &.sponsor {
+    height: 90vh;
+    width: 97.5vh;
+  }
 }
 
 #sponsor-pane {
-    display: none;
-    text-align: center;
-    width: 30%;
+  display: none;
+  text-align: center;
+  width: 30%;
 
-    &.active {
-        display: block;
-    }
+  &.active {
+    display: block;
+  }
 
-    #sponsor-name {
-        display: block;
-        font-size: 48px;
-        margin: 12px auto;
-        position: relative;
-        width: 80%;
-    }
+  #sponsor-name {
+    display: block;
+    font-size: 48px;
+    margin: 12px auto;
+    position: relative;
+    width: 80%;
+  }
 
-    p {
-        text-align: justify;
-    }
+  p {
+    text-align: justify;
+  }
 }
 
 #sponsor-pane-actions {
-    margin: 20px 0;
+  margin: 20px 0;
 
-    .action {
-        cursor: pointer;
-        display: inline-block;
-        margin: 0 12px;
+  .action {
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 12px;
 
-        &:hover {
-            .icon-container {
-                background: rgba(255, 255, 255, 0.3);
-            }
-        }
-
-        .icon-container {
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            display: block;
-            margin: 0 auto 4px;
-            padding: 8px;
-            width: 48px;
-            height: 48px;
-
-            img {
-                width: 100%;
-                height: 100%;
-            }
-        }
-
-        span {
-            font-family: Muli, sans-serif;
-            font-size: 12px;
-        }
+    &:hover {
+      .icon-container {
+        background: rgba(255, 255, 255, 0.3);
+      }
     }
+
+    .icon-container {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      display: block;
+      margin: 0 auto 4px;
+      padding: 8px;
+      width: 48px;
+      height: 48px;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    span {
+      font-family: Muli, sans-serif;
+      font-size: 12px;
+    }
+  }
 }

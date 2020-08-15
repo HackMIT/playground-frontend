@@ -1,8 +1,8 @@
-const pages = require('./pages');
-const paths = require('./paths');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const paths = require('./paths');
+const pages = require('./pages');
 
 module.exports = {
   /**
@@ -11,12 +11,12 @@ module.exports = {
    * The first place Webpack looks to start building the bundle.
    */
   entry: {
-    game: [paths.src + '/index.js'],
-    editor: [paths.src + '/editor.js'],
-    character: [paths.src + '/character.js'],
-    login: [paths.src + '/login.js'],
-    sponsor: [paths.src + '/sponsor.js'],
-    jukebox: [paths.src + '/jukebox.js'],
+    game: [`${paths.src}/index.jsx`],
+    character: [`${paths.src}/character.jsx`],
+    login: [`${paths.src}/login.js`],
+    sponsor: [`${paths.src}/sponsor.js`],
+    register: [`${paths.src}/register.js`],
+    jukebox: [`${paths.src}/jukebox.js`],
   },
 
   /**
@@ -61,17 +61,14 @@ module.exports = {
      *
      * Generates an HTML file from a template.
      */
-    ...pages.map(
-      (page) =>
-        new HtmlWebpackPlugin({
-          title: 'HackMIT Playground',
-          // favicon: paths.static + '/favicon.png',
-          template: paths.src + '/' + page.template + '.html',
-          chunks: ['common', page.template],
-          filename: page.path,
-          inject: true,
-        })
-    ),
+    ...pages.map((page) => new HtmlWebpackPlugin({
+      title: 'HackMIT Playground',
+      // favicon: paths.static + '/favicon.png',
+      template: `${paths.src}/${page.template}.html`,
+      chunks: ['common', page.template],
+      filename: page.path,
+      inject: true,
+    })),
   ],
 
   /**
@@ -87,7 +84,7 @@ module.exports = {
        * Use Babel to transpile JavaScript files.
        */
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         use: ['babel-loader', 'eslint-loader'],
       },
