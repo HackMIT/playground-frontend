@@ -22,7 +22,8 @@ import './images/icons/edit.svg';
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
-const BACKGROUND_IMAGE_URL = 'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%SLUG%.png';
+const BACKGROUND_IMAGE_URL =
+  'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%SLUG%.png';
 
 class Game extends Page {
   start = () => {
@@ -64,10 +65,12 @@ class Game extends Page {
     // Start sending chat events
     document.getElementById('chat-box').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
-        socket.send(JSON.stringify({
-          type: 'chat',
-          mssg: e.target.value,
-        }));
+        socket.send(
+          JSON.stringify({
+            type: 'chat',
+            mssg: e.target.value,
+          })
+        );
 
         e.target.value = '';
       }
@@ -77,7 +80,7 @@ class Game extends Page {
       this.scene.fixCameraOnResize();
       this.handleWindowSize();
     });
-  }
+  };
 
   handleGameClick = (e) => {
     // When clicking on the page, send a move message to the server
@@ -116,12 +119,14 @@ class Game extends Page {
     const x = (e.pageX - rect.x) / rect.width;
     const y = (e.pageY - rect.y) / rect.height;
 
-    socket.send(JSON.stringify({
-      x,
-      y,
-      type: 'move',
-    }));
-  }
+    socket.send(
+      JSON.stringify({
+        x,
+        y,
+        type: 'move',
+      })
+    );
+  };
 
   handleSocketOpen = () => {
     const joinPacket = {
@@ -139,7 +144,7 @@ class Game extends Page {
 
     // Connected to remote
     socket.send(JSON.stringify(joinPacket));
-  }
+  };
 
   handleSocketMessage = (e) => {
     const messages = e.data.split('\n');
@@ -182,14 +187,18 @@ class Game extends Page {
 
         Object.entries(data.room.hallways).forEach(([id, hallway]) => {
           this.hallways.set(id, new Hallway(hallway, id, data.roomNames));
-          document.getElementById('game').appendChild(this.hallways.get(id).element);
+          document
+            .getElementById('game')
+            .appendChild(this.hallways.get(id).element);
         });
 
         this.room = data.room;
 
         if (this.room.sponsor) {
           document.getElementById('sponsor-pane').classList.add('active');
-          document.getElementById('sponsor-name').innerHTML = `<span>${this.room.slug}</span>${this.room.slug}`;
+          document.getElementById(
+            'sponsor-name'
+          ).innerHTML = `<span>${this.room.slug}</span>${this.room.slug}`;
           document.getElementById('outer').classList.add('sponsor');
           document.getElementById('game').classList.add('sponsor');
         } else {
@@ -198,7 +207,12 @@ class Game extends Page {
           document.getElementById('game').classList.remove('sponsor');
         }
 
-        document.getElementById('game').style.backgroundImage = `url('${BACKGROUND_IMAGE_URL.replace('%SLUG%', this.room.slug)}')`;
+        document.getElementById(
+          'game'
+        ).style.backgroundImage = `url('${BACKGROUND_IMAGE_URL.replace(
+          '%SLUG%',
+          this.room.slug
+        )}')`;
 
         this.scene.fixCameraOnResize();
       } else if (data.type === 'move') {
@@ -209,15 +223,17 @@ class Game extends Page {
 
           Array.from(this.hallways.values()).some((hallway) => {
             const distance = Math.sqrt(
-              (hallway.data.x - data.x) ** 2 + (hallway.data.y - data.y) ** 2,
+              (hallway.data.x - data.x) ** 2 + (hallway.data.y - data.y) ** 2
             );
 
             if (distance <= hallway.data.radius) {
-              socket.send(JSON.stringify({
-                type: 'teleport',
-                from: this.room.slug,
-                to: hallway.data.to,
-              }));
+              socket.send(
+                JSON.stringify({
+                  type: 'teleport',
+                  from: this.room.slug,
+                  to: hallway.data.to,
+                })
+              );
 
               return true;
             }
@@ -241,7 +257,11 @@ class Game extends Page {
           //   }
         });
       } else if (data.type === 'element_add') {
-        const elementElem = new Element(data.element, data.id, this.elementNames);
+        const elementElem = new Element(
+          data.element,
+          data.id,
+          this.elementNames
+        );
         document.getElementById('game').appendChild(elementElem.element);
         this.elements.set(data.id, elementElem);
       } else if (data.type === 'element_delete') {
@@ -250,8 +270,13 @@ class Game extends Page {
       } else if (data.type === 'element_update') {
         this.elements.get(data.id).applyUpdate(data.element);
       } else if (data.type === 'hallway_add') {
-        this.hallways.set(data.id, new Hallway(data.hallway, data.id, this.roomNames));
-        document.getElementById('game').appendChild(this.hallways.get(data.id).element);
+        this.hallways.set(
+          data.id,
+          new Hallway(data.hallway, data.id, this.roomNames)
+        );
+        document
+          .getElementById('game')
+          .appendChild(this.hallways.get(data.id).element);
       } else if (data.type === 'hallway_delete') {
         this.hallways.get(data.id).remove();
         this.hallways.delete(data.id);
@@ -263,7 +288,10 @@ class Game extends Page {
         }
       } else if (data.type === 'join') {
         this.scene.newCharacter(
-          data.character.id, data.character.name, data.character.x, data.character.y,
+          data.character.id,
+          data.character.name,
+          data.character.x,
+          data.character.y
         );
       } else if (data.type === 'leave') {
         if (data.character.id === this.characterId) {
@@ -277,43 +305,47 @@ class Game extends Page {
         console.log(data);
       }
     }
-  }
+  };
 
   handleDayofButton = () => {
     createModal(
       <iframe
         id="day-of-iframe"
         className="day-of-page"
-        src="https://dayof.hackmit.org" />,
+        src="https://dayof.hackmit.org"
+      />
     );
-  }
+  };
 
   handleElementAddButton = () => {
-    socket.send(JSON.stringify({
-      type: 'element_add',
-      element: {
-        x: 0.2,
-        y: 0.2,
-        path: 'lamp.svg',
-        width: 0.1,
-      },
-    }));
-  }
+    socket.send(
+      JSON.stringify({
+        type: 'element_add',
+        element: {
+          x: 0.2,
+          y: 0.2,
+          path: 'lamp.svg',
+          width: 0.1,
+        },
+      })
+    );
+  };
 
   handleHallwayAddButton = () => {
-    socket.send(JSON.stringify({
-      type: 'hallway_add',
-      hallway: {
-        x: 0.2,
-        y: 0.2,
-        radius: 0.1,
-        to: 'microsoft',
-      },
-    }));
-  }
+    socket.send(
+      JSON.stringify({
+        type: 'hallway_add',
+        hallway: {
+          x: 0.2,
+          y: 0.2,
+          radius: 0.1,
+          to: 'microsoft',
+        },
+      })
+    );
+  };
 
-  handleRoomAddButton = () => {
-  }
+  handleRoomAddButton = () => {};
 
   handleEditButton = () => {
     this.editing = !this.editing;
@@ -343,7 +375,7 @@ class Game extends Page {
         hallway.makeUneditable();
       });
     }
-  }
+  };
 
   handleSponsorLogin = () => {
     const joinPacket = {
@@ -353,7 +385,7 @@ class Game extends Page {
 
     // Connected to remote
     socket.send(JSON.stringify(joinPacket));
-  }
+  };
 
   handleWindowSize = () => {
     const outerElem = document.getElementById('outer');
@@ -371,7 +403,7 @@ class Game extends Page {
 
       outerElem.classList.remove('vertical');
     }
-  }
+  };
 }
 
 const gamePage = new Game();

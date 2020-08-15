@@ -2,22 +2,23 @@
 
 @import 'variables';
 
-@import "fonts";
-@import "colors";
+@import 'fonts';
+@import 'colors';
 
 * {
   padding: 0;
   margin: 0;
 }
 
-h1, h2 {
+h1,
+h2 {
   font-family: LemonMilkMedium;
   color: $blue-text;
 }
 
 b {
   font-family: MuliBold;
-  color: $blue-text; 
+  color: $blue-text;
 }
 
 p {
@@ -32,7 +33,11 @@ html {
 
 body {
   background: rgb(150, 208, 241);
-  background: linear-gradient(135deg, rgba(150, 208, 241, 1) 0%, rgba(251, 205, 194, 1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(150, 208, 241, 1) 0%,
+    rgba(251, 205, 194, 1) 100%
+  );
   background-repeat: no-repeat;
   background-attachment: fixed;
   width: 100%;
@@ -86,7 +91,7 @@ body {
   left: 50%;
   transform: translate(-50%, 0);
 
-  input[type=text] {
+  input[type='text'] {
     color: #fff;
     font-family: Muli;
     background: #051e52;
@@ -248,7 +253,9 @@ body {
   &.editing {
     border: 2px solid #000;
 
-    .delete, .resizer, select {
+    .delete,
+    .resizer,
+    select {
       display: block;
     }
   }

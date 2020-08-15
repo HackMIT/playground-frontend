@@ -39,7 +39,7 @@ class Hallway extends Editable {
   makeEditable = () => {
     super.makeEditable();
     this.visible = true;
-  }
+  };
 
   makeUneditable() {
     super.makeUneditable();
