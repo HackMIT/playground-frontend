@@ -4,6 +4,7 @@ import Hallway from './js/hallway';
 import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
+import createSettingsModal from './settings.jsx';
 
 import './styles/index.scss';
 import './styles/sponsor.scss';
@@ -53,6 +54,7 @@ class Game extends Page {
     this.addClickListener('add-room-button', this.handleRoomAddButton);
     this.addClickListener('day-of-button', this.handleDayofButton);
     this.addClickListener('edit-button', this.handleEditButton);
+    this.addClickListener('settings', this.handleSettingsButton);
     this.addClickListener('game', this.handleGameClick);
     this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
 
@@ -375,6 +377,10 @@ class Game extends Page {
         hallway.makeUneditable();
       });
     }
+  };
+
+  handleSettingsButton = () => {
+    createModal(createSettingsModal());
   };
 
   handleSponsorLogin = () => {

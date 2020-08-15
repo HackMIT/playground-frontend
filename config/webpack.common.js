@@ -15,8 +15,7 @@ module.exports = {
     character: [`${paths.src}/character.jsx`],
     login: [`${paths.src}/login.js`],
     sponsor: [`${paths.src}/sponsor.js`],
-    register: [`${paths.src}/register.js`],
-    settings: [`${paths.src}/settings.js`]
+    register: [`${paths.src}/register.js`]
   },
 
   /**

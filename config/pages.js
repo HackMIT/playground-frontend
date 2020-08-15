@@ -16,10 +16,6 @@ module.exports = [
     template: 'sponsor',
   },
   {
-    path: 'settings',
-    template: 'settings',
-  },
-  {
     path: 'register',
     template: 'register',
   },
