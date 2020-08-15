@@ -2,6 +2,9 @@ import './styles/map.scss';
 import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import 'mapbox-gl/dist/mapbox-gl.css';
+
+import createElement from './utils/jsxHelper';
 
 class SaveLocationButton {
   onAdd(map) {
@@ -21,18 +24,44 @@ class SaveLocationButton {
   }
 
   createButton = (idName) => {
-    const el = window.document.createElement('button');
-    el.id = idName;
-    el.textContent = "I'm here!";
-    el.style.marginRight = '10px';
-    el.style.display = 'none';
-    el.style.zIndex = 1000;
-    el.style.position = 'relative';
-    el.addEventListener('click', () => {
-      console.log('do something');
+    const el = (
+      <button
+        id={idName}
+        textContent="I'm here!"
+        style="margin-right:10px; display:none;"
+      ></button>
+    );
+    el.addEventListener('click', (e) => {
+      // TODO: create geojson object, send to backend later
+      console.log(e);
     });
     return el;
   };
+}
+
+function registerLocation(map, coordinates) {
+  // go to DB
+  // add coordinate
+  // backend updates URL response
+  // grab from backend
+  // plot points
+  console.log('registering');
+  //   map.addSource('points', {
+  //     type: 'geojson',
+  //     data: {
+  //       type: 'FeatureCollection',
+  //       features: [
+  //         {
+  //           type: 'Feature',
+  //           properties: {},
+  //           geometry: {
+  //             type: 'Point',
+  //             coordinates: [coordinates[0], coordinates[1]],
+  //           },
+  //         },
+  //       ],
+  //     },
+  //   });
 }
 
 function createMap() {
@@ -52,10 +81,11 @@ function createMap() {
   });
 
   const saveLocationButton = new SaveLocationButton();
+  const navigationPanel = new mapboxgl.NavigationControl();
 
   map.addControl(geocoder);
   map.addControl(saveLocationButton);
-  map.addControl(new mapboxgl.NavigationControl());
+  map.addControl(navigationPanel);
 
   map.on('load', () => {
     // Add an image to use as a custom marker
@@ -65,6 +95,7 @@ function createMap() {
         if (error) throw error;
         map.addImage('custom-marker', image);
 
+        // pending search
         map.addSource('single-point', {
           type: 'geojson',
           data: {
@@ -73,28 +104,45 @@ function createMap() {
           },
         });
 
+        // hackers who've already placed themselves: MAKE THIS URL RESPONSE LATER
+        map.addSource('points', {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: [],
+          },
+        });
+
+        map.addLayer({
+          id: 'hackers',
+          type: 'symbol',
+          source: 'points',
+        });
+
         // handle searched locations
         geocoder.on('result', (e) => {
-          console.log('searched');
-          if (e.result === '' || e.result === null) {
-            window.document.getElementById('save').style.display = 'none';
-          } else {
-            map.getSource('single-point').setData(e.result.geometry);
-            window.document.getElementById('save').style.display = 'block';
-          }
+          console.log('searched: ' + e.result.geometry.coordinates);
+          map.getSource('single-point').setData(e.result.geometry);
+          window.document.getElementById('save').style.display = 'block';
+          registerLocation(map, e.result.geometry.coordinates);
         });
-        // eslint-disable-next-line
+
+        // remove "save location" button if nothing is searched
+        geocoder.on('clear', (e) => {
+          window.document.getElementById('save').style.display = 'none';
+        });
       }
     );
 
+    // TODO: this isn't working
     // Change the cursor to a pointer when the it enters a feature in the 'symbols' layer.
-    map.on('mouseenter', 'symbols', () => {
+    map.on('mouseenter', 'hackers', () => {
       console.log('hovering');
       map.getCanvas().style.cursor = 'pointer';
     });
 
     // Change it back to a pointer when it leaves.
-    map.on('mouseleave', 'symbols', () => {
+    map.on('mouseleave', 'hackers', () => {
       console.log('left hover');
       map.getCanvas().style.cursor = '';
     });

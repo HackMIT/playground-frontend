@@ -25,8 +25,10 @@ import './images/icons/edit.svg';
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
+// eslint-disable-next-line
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%SLUG%.png';
+// eslint-disable-next-line
 const MAPBOX_API_KEY =
   'pk.eyJ1IjoiaGFja21pdDIwIiwiYSI6ImNrZHVpaTk4dDE4Ym0yc255YzM3NGx0dGIifQ.XXstZ1xCBEqC-Wz4_EI8Pw';
 
@@ -395,8 +397,6 @@ class Game extends Page {
 
   handleShowMap = () => {
     const mapElem = <div className="day-of-page" id="map-frame" />;
-
-    console.log('here');
 
     createModal(mapElem);
 
