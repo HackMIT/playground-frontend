@@ -19,6 +19,7 @@ import './coffeechat';
 import './images/icons/add.svg';
 import './images/icons/add-hallway.svg';
 import './images/icons/edit.svg';
+import './images/icons/settings.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
@@ -54,7 +55,7 @@ class Game extends Page {
     this.addClickListener('add-room-button', this.handleRoomAddButton);
     this.addClickListener('day-of-button', this.handleDayofButton);
     this.addClickListener('edit-button', this.handleEditButton);
-    this.addClickListener('settings', this.handleSettingsButton);
+    this.addClickListener('settings-button', this.handleSettingsButton);
     this.addClickListener('game', this.handleGameClick);
     this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
 
