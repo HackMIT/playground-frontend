@@ -1,137 +1,134 @@
+/*@import './colors.scss';
 
 // -------------------------------- Pop-up --------------------------------
 
-:root {
-    --bounceEasing: cubic-bezier(0.51, 0.92, 0.24, 1.15);
-}
-
-button {
-    cursor: pointer;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: inherit;
-}
-
-.btn-group {
-    text-align: center;
-}
-
-.open-modal {
-    font-weight: bold;
-    background: $blue_text;
-    color: $white;
-    padding: .75rem 1.75rem;
-    margin-bottom: 1rem;
-    border-radius: 5px;
-}
-
 .modal { 
-    position: fixed;
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    display: flex;
+    width: 100%;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    background: $blue_text;
-    cursor: pointer;
-    visibility: hidden;
-    opacity: 0;
-    transition: all 0.35s ease-in;
+    display: none;
+    text-align: center;
+    font-family: Muli;
+
+    &.visible {
+        display: flex;
+    }
 }
 
 .modal-dialog {
-    position: relative;
-    max-width: 800px;
-    max-height: 80vh;
-    border-radius: 5px;
     background: $white;
-    overflow: auto;
+    border-radius: 3px;
     cursor: default;
-}
-
-.modal-dialog > * {
-    padding: 1rem;
-}
-
-.modal-header,
-.modal-footer {
-    background: $blue_light;
+    display: flex;
+	justify-content: space-between;
+    flex-direction: column;
+    height: 30vw;
+    overflow: hidden;
+    position: relative;
+    width: 30vw;
 }
 
 .modal-header {
+    background: $blue_light;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
+    height: 48px;
+    flex-shrink: 0;
+    flex-basis: 48px;
+    width: 100%;
+
+    .close-modal {
+        font-size: 2rem;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        outline: none;
+        font-size: inherit;
+    }
 }
 
-.modal-header .modal-close {
-    font-size: 1.5rem;
+.modal-content {
+    background-color: #efeff6;
+    box-sizing: border-box;
+    display: block;
+    padding: 15px;
+    overflow: scroll;
 }
 
-.modal p + p {
-    margin-top: 1rem;
-}
+.modal-footer {
+	align-items: center;
+    background: $blue_light;
+	display: flex;
+	justify-content: center;
+	padding: 16px 0;
 
-.modal {
-    visibility: hidden;
-    opacity: 0;
-    transition: all 0.35s ease-in;
-}
-
-.modal.is-visible {
-    visibility: visible;
-    opacity: 1;
-}
-
-[data-animation="slideInOutLeft"] .modal-dialog {
-    opacity: 0;
-    transform: translateX(-100%);
-    transition: all 0.5s var(--bounceEasing);
-}
-
-[data-animation="slideInOutLeft"].is-visible .modal-dialog {
-    opacity: 1;
-    transform: none;
-    transition-delay: 0.2s;
+	input {
+		background: transparent;
+		border: 2px solid #2a4578;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 14px;
+		outline: none;
+		padding: 4px 12px;
+	}
 }
 
 //----- CSS for time slot selecter
-.days {
-    width: 1000px;
+
+.time-selector {
+    overflow: scroll;
+    text-align: center;
+    display: flex;
+    align-items: top;
+    justify-content: center;
 }
 
 .day {
-    width: 120px;
-    height: 230px;
-    background-color: #efeff6;
-    padding:10px;
-    float:left;
-    margin-right:7px;
-    margin-bottom:5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 50%;
 }
 
 .datelabel {
-    margin-bottom: 15px;
+    margin-bottom: 8px;
 }
 
 .timeslot {
-    background-color: $blue_text;
-    width: auto;
-    height: 20px;
-    color:$white;
-    padding:7px;
+    background: transparent;
+    border: 2px solid $blue_text;
+    color: $blue_text;
+    cursor: pointer;
+    width: 96px;
+    font-family: Muli;
+    padding: 8px;
     margin-top: 5px;
     font-size: 14px;
     border-radius: 3px;
-    vertical-align: center;
-    text-align:center;
+    text-align: center;
+    transition: 0.2s ease all;
 }
 
 .timeslot:hover { 
-    background-color: $blue_light;
-    cursor: pointer;
+    background-color: $blue_text;
+    color: #fff;
 }
+
+.interactable {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: top;
+    max-width: 100px;
+    max-height: 100px;
+    width: auto;
+    height: auto;
+}*/

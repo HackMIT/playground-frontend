@@ -4,10 +4,6 @@ module.exports = [
     template: 'game'
   },
   {
-    path: 'editor',
-    template: 'editor'
-  },
-  {
     path: 'character',
     template: 'character'
   },
@@ -18,5 +14,9 @@ module.exports = [
   {
     path: 'sponsor',
     template: 'sponsor'
+  },
+  {
+	path: 'register',
+	template: 'register'
   }
 ];
