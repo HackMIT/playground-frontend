@@ -2,120 +2,267 @@
 
 @import 'variables';
 
-@import "fonts";
-@import "colors";
+@import 'fonts';
+@import 'colors';
 
 * {
-    padding: 0;
-    margin: 0;
+  padding: 0;
+  margin: 0;
 }
 
-h1, h2 {
-    font-family: LemonMilkMedium;
-    color: $blue-text;
+h1,
+h2 {
+  font-family: LemonMilkMedium;
+  color: $blue-text;
 }
 
 b {
-    font-family: MuliBold;
-    color: $blue-text; 
+  font-family: MuliBold;
+  color: $blue-text;
 }
 
 p {
-    font-family: Muli;
-    color: $blue-text;
+  font-family: Muli;
+  color: $blue-text;
 }
 
 html {
-    height: 100%;
-    width: 100%;
+  height: 100%;
+  width: 100%;
 }
 
 body {
-    background: rgb(150, 208, 241);
-    background: linear-gradient(135deg, rgba(150, 208, 241, 1) 0%, rgba(251, 205, 194, 1) 100%);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    width: 100%;
-    height: 100%;
+  background: rgb(150, 208, 241);
+  background: linear-gradient(
+    135deg,
+    rgba(150, 208, 241, 1) 0%,
+    rgba(251, 205, 194, 1) 100%
+  );
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  width: 100%;
+  height: 100%;
 }
 
 #outer {
-    width: 100%;
-    height: 100%;
+  //width: 100%;
+  width: 177.77vh;
+  height: 100vh;
+  margin: 0 auto;
 
-    &.sponsor {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+  &.vertical {
+    width: 100vw;
+    height: 56.25vw;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+  }
 
-        #main {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            flex-grow: 1;
-        }
-
-        #chat {
-            position: static;
-            transform: inherit;
-        }
-    }
+  &.sponsor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     #main {
-        width: 100%;
-        height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      flex-grow: 1;
     }
+  }
+
+  #main {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 #chat {
-	background: #7b9fce;
-	border-radius: 8px;
-	display: flex;
-	height: 52px;
-	width: 60%;
-	align-items: center;
-	justify-content: space-around;
-	padding: 0 16px;
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translate(-50%, 0);
+  background: #7b9fce;
+  border-radius: 8px;
+  display: flex;
+  height: 52px;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 16px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
 
-	input[type=text] {
-		color: #fff;
-		font-family: Muli;
-		background: #051e52;
-		text-align: left;
-		border-radius: 8px;
-		height: 38px;
-		padding: 0 8px;
-		width: 60%;
-		border: none;
-	}
+  input[type='text'] {
+    color: #fff;
+    font-family: Muli;
+    background: #051e52;
+    text-align: left;
+    border-radius: 8px;
+    height: 38px;
+    padding: 0 8px;
+    min-width: 320px;
+    border: none;
+    margin: 0 8px;
+  }
 
-	button {
-		color: #fff;
-		cursor: pointer;
-		background: #24447c;
-		text-align: center;
-		border-radius: 50%;
-		outline: none;
-		border: none;
-		width: 38px;
-		height: 38px;
+  button {
+    color: #fff;
+    cursor: pointer;
+    background: #24447c;
+    text-align: center;
+    border-radius: 50%;
+    outline: none;
+    border: none;
+    width: 38px;
+    height: 38px;
+    margin: 0 4px;
 
-		&:active {
-			background: #1b2450;
-		}
-	}
+    &:active {
+      background: #1b2450;
+    }
+  }
 }
 
 #game {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: relative;
+  overflow: hidden;
+
+  #add-button {
+    cursor: pointer;
+    height: 32px;
+    width: 32px;
+    position: absolute;
+    top: 72px;
+    right: 24px;
+    display: none;
+
+    &.visible {
+      display: block;
+    }
+  }
+
+  #add-hallway-button {
+    cursor: pointer;
+    height: 32px;
+    width: 32px;
+    position: absolute;
+    top: 120px;
+    right: 24px;
+    display: none;
+
+    &.visible {
+      display: block;
+    }
+  }
+
+  #add-room-button {
+    cursor: pointer;
+    height: 32px;
+    width: 32px;
+    position: absolute;
+    top: 168px;
+    right: 24px;
+    display: none;
+
+    &.visible {
+      display: block;
+    }
+  }
+
+  #edit-button {
+    cursor: pointer;
+    height: 32px;
+    width: 32px;
+    position: absolute;
+    top: 24px;
+    right: 24px;
+  }
+
+  #day-of-button {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    height: 64px;
+    width: 64px;
+    cursor: pointer;
+  }
+}
+
+.element {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+
+  &.editable {
+    cursor: grab;
+  }
+
+  &.invisible {
+    display: none;
+  }
+
+  img {
     width: 100%;
-    height: 100%;
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    position: relative;
+  }
+
+  select {
+    position: absolute;
+    transform: translate(-50%, 100%);
+    left: 50%;
+    top: 100%;
+    display: none;
+  }
+
+  .delete {
+    background: #000;
+    box-sizing: border-box;
+    border-radius: 50%;
+    cursor: pointer;
+    position: absolute;
+    display: none;
+    width: 32px;
+    height: 32px;
+    top: -1px;
+    left: -1px;
+    transform: translate(-50%, -50%);
+    padding: 8px;
+
+    img {
+      width: 100%;
+    }
+  }
+
+  .resizer {
+    position: absolute;
+    display: none;
+    width: 16px;
+    height: 16px;
+    border-bottom: 2px solid #000;
+    border-right: 2px solid #000;
+    right: 4px;
+    bottom: 4px;
+
+    &.bottom-right {
+      cursor: nwse-resize;
+    }
+  }
+
+  &.editing {
+    border: 2px solid #000;
+
+    .delete,
+    .resizer,
+    select {
+      display: block;
+    }
+  }
+
+  &.moving {
+    cursor: grabbing;
+  }
 }
 
 #three-container {
@@ -124,75 +271,76 @@ body {
 }
 
 #login-panel {
-    background: #fff;
-    border: 2px solid #333;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-family: Helvetica, sans-serif;
-    left: 50%;
-    padding: 24px 24px 28px;
-    position: absolute;
-    text-align: center;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px;
+  background: #fff;
+  border: 2px solid #333;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: Helvetica, sans-serif;
+  left: 50%;
+  padding: 24px 24px 28px;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
 
-    a {
-        border-radius: 3px;
-        color: #fff;
-        display: block;
-        margin: 16px 16px 0;
-        padding: 10px 0;
-        text-decoration: none;
+  a {
+    border-radius: 3px;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    margin: 16px 16px 0;
+    padding: 10px 0;
+    text-decoration: none;
 
-        &.hacker {
-            background: #43a047;
+    &.hacker {
+      background: #43a047;
 
-            &:hover {
-                background: #388e3c;
-            }
-        }
-
-        &.sponsor {
-            background: #039be5;
-
-            &:hover {
-                background: #0288d1;
-            }
-        }
+      &:hover {
+        background: #388e3c;
+      }
     }
+
+    &.sponsor {
+      background: #039be5;
+
+      &:hover {
+        background: #0288d1;
+      }
+    }
+  }
 }
 
 // make prettier
 .text-bubble {
-    background-color: #fff;
-    border: 1px solid #000;
-    border-radius: 4px;
-    display: block;
-    font-family: $font-family;
-    font-size: 13px;
-    left: 50%;
-    padding: 8px 16px;
-    position: absolute;
-    top: 0;
-    transform: translate(-50%, -100%);
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 4px;
+  display: block;
+  font-family: $font-family;
+  font-size: 13px;
+  left: 50%;
+  padding: 8px 16px;
+  position: absolute;
+  top: 0;
+  transform: translate(-50%, -100%);
 }
 
 .name {
-    color: #000;
-    display: block;
-    font-family: $font-family;
-    font-size: 13px;
-    position: absolute;
-    left: 50%;
-    text-align: center;
-    transform: translate(-50%, 104px);
-    width: 200%;
+  color: #000;
+  display: block;
+  font-family: $font-family;
+  font-size: 13px;
+  position: absolute;
+  left: 50%;
+  text-align: center;
+  transform: translate(-50%, 104px);
+  width: 200%;
 }
 
 .mssg {
-    color: black;
-    font-family: $font-family;
-    font-size: 13px;
-    transform: translateY(-18px);
+  color: black;
+  font-family: $font-family;
+  font-size: 13px;
+  transform: translateY(-18px);
 }
