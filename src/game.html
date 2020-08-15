@@ -1,83 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title><%= htmlWebpackPlugin.options.title %></title>
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title><%= htmlWebpackPlugin.options.title %></title>
-  <script src="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
-  <link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
-
-</head>
-
-<body>
-
-  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
-  <link
-    rel="stylesheet"
-    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css"
-    type="text/css"
-  />
-  <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
-  
-  <div id="outer">
-    <div id="main">
-      <div id="game">
-        <img id="edit-button" src="/images/icons/edit.svg" />
-        <img id="add-button" src="/images/icons/add.svg" />
-        <img id="add-hallway-button" src="/images/icons/add-hallway.svg" />
-        <img id="add-room-button" src="/images/icons/add-room.svg" />
-        <img id="day-of-button" src="https://img.icons8.com/plasticine/2x/books.png" />
-        <div id='chat' class='ChatBottom'>
-          <button></button>
-          <button></button>
-          <button></button>
-          <input id="chat-box" type="text" placeholder="Send message to the room" />
-          <button></button>
-          <button id="map"></button>
-          <button></button>
-        </div>
-      </div>
-      <div id="sponsor-pane">
-        <h2>Welcome to</h2>
-        <img id="sponsor-name" src="/images/sponsor_text.svg" />
-        <div id="sponsor-pane-actions">
-          <div class="action">
-            <div class="icon-container">
-              <img src="/images/Code_Icon.svg" />
-            </div>
-            <span>View Challenges</span>
-          </div>
-          <div class="action" onClick="window.onCoffeeChat()">
-            <div class="icon-container">
-              <img src="/images/Coffee_Icon.svg" />
-            </div>
-            <span>Schedule Coffee Chat</span>
-          </div>
-          <div class="action">
-            <div class="icon-container">
-              <img src="/images/Site_Icon.svg" />
-            </div>
-            <span>Visit Website</span>
+  <body>
+    <div id="outer">
+      <div id="main">
+        <div id="game">
+          <img id="edit-button" src="/images/icons/edit.svg" />
+          <img id="add-button" src="/images/icons/add.svg" />
+          <img id="add-hallway-button" src="/images/icons/add-hallway.svg" />
+          <img id="add-room-button" src="/images/icons/add-room.svg" />
+          <img
+            id="day-of-button"
+            src="https://img.icons8.com/plasticine/2x/books.png"
+          />
+          <div id="chat" class="ChatBottom">
+            <button></button>
+            <button></button>
+            <button></button>
+            <input
+              id="chat-box"
+              type="text"
+              placeholder="Send message to the room"
+            />
+            <button></button>
+            <button id="map"></button>
+            <button></button>
           </div>
         </div>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin cursus eu diam nec malesuada. Duis facilisis
-          ante in leo faucibus luctus. Donec felis sem, accumsan a consectetur nec, venenatis et magna. Lorem ipsum
-          dolor sit amet, consectetur adipiscing elit. Sed aliquam nibh vitae risus faucibus laoreet. Ut eleifend
-          lobortis nisl, at tristique tortor mollis sit amet. Donec malesuada libero placerat, gravida lectus nec,
-          congue ex. Donec a leo at enim posuere tempor et at urna. Phasellus leo est, aliquam sit amet porta sit amet,
-          interdum feugiat nisi.</p>
+        <div id="sponsor-pane">
+          <h2>Welcome to</h2>
+          <img id="sponsor-name" src="/images/sponsor_text.svg" />
+          <div id="sponsor-pane-actions">
+            <div class="action">
+              <div class="icon-container">
+                <img src="/images/Code_Icon.svg" />
+              </div>
+              <span>View Challenges</span>
+            </div>
+            <div class="action" onClick="window.onCoffeeChat()">
+              <div class="icon-container">
+                <img src="/images/Coffee_Icon.svg" />
+              </div>
+              <span>Schedule Coffee Chat</span>
+            </div>
+            <div class="action">
+              <div class="icon-container">
+                <img src="/images/Site_Icon.svg" />
+              </div>
+              <span>Visit Website</span>
+            </div>
+          </div>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
+            cursus eu diam nec malesuada. Duis facilisis ante in leo faucibus
+            luctus. Donec felis sem, accumsan a consectetur nec, venenatis et
+            magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
+            aliquam nibh vitae risus faucibus laoreet. Ut eleifend lobortis
+            nisl, at tristique tortor mollis sit amet. Donec malesuada libero
+            placerat, gravida lectus nec, congue ex. Donec a leo at enim posuere
+            tempor et at urna. Phasellus leo est, aliquam sit amet porta sit
+            amet, interdum feugiat nisi.
+          </p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div id="login-panel">
-    <h1>Log into Playground</h1>
-    <a class="hacker" href="https://my.hackmit.org/login?sso=http://localhost:3000/login">Hacker Login</a>
-    <a id="sponsor-login-button" class="sponsor">Sponsor Login</a>
-  </div>
-</body>
-
+    <div id="login-panel">
+      <h1>Log into Playground</h1>
+      <a
+        class="hacker"
+        href="https://my.hackmit.org/login?sso=http://localhost:3000/login"
+        >Hacker Login</a
+      >
+      <a id="sponsor-login-button" class="sponsor">Sponsor Login</a>
+    </div>
+  </body>
 </html>

@@ -71,18 +71,30 @@ class Editable {
     elementElem.appendChild(brResizeElem);
 
     brResizeElem.onmousedown = (e) => {
-      const outerRect = document.getElementById('outer').getBoundingClientRect();
+      const outerRect = document
+        .getElementById('outer')
+        .getBoundingClientRect();
 
       const startRect = elementElem.getBoundingClientRect();
-      const startX = (elementElem.getBoundingClientRect().left - outerRect.left)
-          + elementElem.getBoundingClientRect().width / 2;
-      const startY = (elementElem.getBoundingClientRect().top - outerRect.top)
-          + elementElem.getBoundingClientRect().height / 2;
+      const startX =
+        elementElem.getBoundingClientRect().left -
+        outerRect.left +
+        elementElem.getBoundingClientRect().width / 2;
+      const startY =
+        elementElem.getBoundingClientRect().top -
+        outerRect.top +
+        elementElem.getBoundingClientRect().height / 2;
 
-      const shiftX = (elementElem.getBoundingClientRect().left - outerRect.left)
-          + elementElem.getBoundingClientRect().width - (e.clientX - outerRect.left);
-      const shiftY = (elementElem.getBoundingClientRect().top - outerRect.top)
-          + elementElem.getBoundingClientRect().height - (e.clientY - outerRect.top);
+      const shiftX =
+        elementElem.getBoundingClientRect().left -
+        outerRect.left +
+        elementElem.getBoundingClientRect().width -
+        (e.clientX - outerRect.left);
+      const shiftY =
+        elementElem.getBoundingClientRect().top -
+        outerRect.top +
+        elementElem.getBoundingClientRect().height -
+        (e.clientY - outerRect.top);
 
       function resizeAt(x, y) {
         const pageX = x - outerRect.left;
@@ -95,9 +107,20 @@ class Editable {
 
         const newWidth = newWidthX > newWidthY ? newWidthX : newWidthY;
 
-        elementElem.style.top = `${((startY + (newWidth * (startRect.height / startRect.width) - startRect.height) / 2) / outerRect.height) * 100}%`;
-        elementElem.style.left = `${((startX + (newWidth - startRect.width) / 2) / outerRect.width) * 100}%`;
-        elementElem.style.width = `${((newWidth - 4) / outerRect.width) * 100}%`;
+        elementElem.style.top = `${
+          ((startY +
+            (newWidth * (startRect.height / startRect.width) -
+              startRect.height) /
+              2) /
+            outerRect.height) *
+          100
+        }%`;
+        elementElem.style.left = `${
+          ((startX + (newWidth - startRect.width) / 2) / outerRect.width) * 100
+        }%`;
+        elementElem.style.width = `${
+          ((newWidth - 4) / outerRect.width) * 100
+        }%`;
       }
 
       resizeAt(e.pageX, e.pageY);
@@ -110,15 +133,24 @@ class Editable {
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);
 
-        this.data.x = parseFloat(
-          elementElem.style.left.substring(0, elementElem.style.left.length - 2),
-        ) / 100;
-        this.data.y = parseFloat(
-          elementElem.style.top.substring(0, elementElem.style.top.length - 2),
-        ) / 100;
-        this.width = parseFloat(
-          elementElem.style.width.substring(0, elementElem.style.width.length - 2),
-        ) / 100;
+        this.data.x =
+          parseFloat(
+            elementElem.style.left.substring(
+              0,
+              elementElem.style.left.length - 2
+            )
+          ) / 100;
+        this.data.y =
+          parseFloat(
+            elementElem.style.top.substring(0, elementElem.style.top.length - 2)
+          ) / 100;
+        this.width =
+          parseFloat(
+            elementElem.style.width.substring(
+              0,
+              elementElem.style.width.length - 2
+            )
+          ) / 100;
 
         this.sendUpdate();
       };
@@ -142,22 +174,32 @@ class Editable {
       elementElem.classList.add('editing');
       elementElem.classList.add('moving');
 
-      const outerRect = document.getElementById('outer').getBoundingClientRect();
+      const outerRect = document
+        .getElementById('outer')
+        .getBoundingClientRect();
 
-      const shiftX = (e.pageX - outerRect.left)
-        - (elementElem.getBoundingClientRect().left - outerRect.left)
-        - elementElem.getBoundingClientRect().width / 2;
+      const shiftX =
+        e.pageX -
+        outerRect.left -
+        (elementElem.getBoundingClientRect().left - outerRect.left) -
+        elementElem.getBoundingClientRect().width / 2;
 
-      const shiftY = (e.pageY - outerRect.top)
-        - (elementElem.getBoundingClientRect().top - outerRect.top)
-        - elementElem.getBoundingClientRect().height / 2;
+      const shiftY =
+        e.pageY -
+        outerRect.top -
+        (elementElem.getBoundingClientRect().top - outerRect.top) -
+        elementElem.getBoundingClientRect().height / 2;
 
       const moveAt = (x, y) => {
         const pageX = x - outerRect.left;
         const pageY = y - outerRect.top;
 
-        elementElem.style.left = `${((pageX - shiftX) / outerRect.width) * 100}%`;
-        elementElem.style.top = `${((pageY - shiftY) / outerRect.height) * 100}%`;
+        elementElem.style.left = `${
+          ((pageX - shiftX) / outerRect.width) * 100
+        }%`;
+        elementElem.style.top = `${
+          ((pageY - shiftY) / outerRect.height) * 100
+        }%`;
       };
 
       moveAt(e.pageX, e.pageY);
@@ -174,12 +216,17 @@ class Editable {
 
         elementElem.onmouseup = null;
 
-        this.data.x = parseFloat(
-          elementElem.style.left.substring(0, elementElem.style.left.length - 2),
-        ) / 100;
-        this.data.y = parseFloat(
-          elementElem.style.top.substring(0, elementElem.style.top.length - 2),
-        ) / 100;
+        this.data.x =
+          parseFloat(
+            elementElem.style.left.substring(
+              0,
+              elementElem.style.left.length - 2
+            )
+          ) / 100;
+        this.data.y =
+          parseFloat(
+            elementElem.style.top.substring(0, elementElem.style.top.length - 2)
+          ) / 100;
 
         this.sendUpdate();
       };
@@ -194,18 +241,22 @@ class Editable {
   }
 
   sendDelete() {
-    socket.send(JSON.stringify({
-      type: this.deleteEventName,
-      id: this.id,
-    }));
+    socket.send(
+      JSON.stringify({
+        type: this.deleteEventName,
+        id: this.id,
+      })
+    );
   }
 
   sendUpdate() {
-    socket.send(JSON.stringify({
-      type: this.updateEventName,
-      id: this.id,
-      [this.dataKeyName]: this.data,
-    }));
+    socket.send(
+      JSON.stringify({
+        type: this.updateEventName,
+        id: this.id,
+        [this.dataKeyName]: this.data,
+      })
+    );
   }
 
   applyUpdate(element) {

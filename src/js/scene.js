@@ -14,7 +14,14 @@ class Scene {
 
     // Isometric Camera
     const aspect = this.container.clientWidth / this.container.clientHeight;
-    this.camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
+    this.camera = new THREE.OrthographicCamera(
+      -d * aspect,
+      d * aspect,
+      d,
+      -d,
+      1,
+      1000
+    );
 
     this.camera.position.set(20, 20, 20); // these need to all be equal?
     this.camera.lookAt(0, 0, 0);
@@ -36,7 +43,10 @@ class Scene {
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.domElement.id = 'three-canvas';
     this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+    this.renderer.setSize(
+      this.container.clientWidth,
+      this.container.clientHeight
+    );
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 0.8;
     this.renderer.outputEncoding = THREE.sRGBEncoding;
@@ -64,7 +74,10 @@ class Scene {
     this.camera.right = d * aspect;
     this.camera.updateProjectionMatrix();
 
-    this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+    this.renderer.setSize(
+      this.container.clientWidth,
+      this.container.clientHeight
+    );
 
     this.render();
   }
@@ -74,10 +87,14 @@ class Scene {
     this.characters[characterId] = new Character(name, x, y, this, (vec) => {
       vec.project(this.camera);
 
-      const pageX = Math.round((0.5 + vec.x / 2)
-        * (this.renderer.domElement.width / window.devicePixelRatio));
-      const pageY = Math.round((0.5 - vec.y / 2)
-        * (this.renderer.domElement.height / window.devicePixelRatio));
+      const pageX = Math.round(
+        (0.5 + vec.x / 2) *
+          (this.renderer.domElement.width / window.devicePixelRatio)
+      );
+      const pageY = Math.round(
+        (0.5 - vec.y / 2) *
+          (this.renderer.domElement.height / window.devicePixelRatio)
+      );
 
       return [pageX, pageY];
     });

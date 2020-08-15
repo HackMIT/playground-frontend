@@ -1,7 +1,7 @@
 import './styles/character.scss';
 
 // eslint-disable-next-line
-import createElement from './utils/jsxHelper'
+import createElement from './utils/jsxHelper';
 
 // get headers
 const selectHeader1 = document.getElementById('Select-tab-1');
@@ -10,11 +10,14 @@ const selectHeader3 = document.getElementById('Select-tab-3');
 // get components/pages
 const selectFacePage = document.getElementById('Select-face-page');
 const selectClothesPage = document.getElementById('Select-clothes-page');
-const selectAccessoriesPage = document.getElementById('Select-accessories-page');
+const selectAccessoriesPage = document.getElementById(
+  'Select-accessories-page'
+);
 
 // add event listeners/enable change of tab
 selectHeader1.addEventListener('click', () => {
-  if (selectHeader1.className === 'Select-header-1-alternate') { // change header styles {if background is black}
+  if (selectHeader1.className === 'Select-header-1-alternate') {
+    // change header styles {if background is black}
     selectHeader1.className = 'Select-header-1';
     selectHeader2.className = 'Select-header-2-alternate';
     selectHeader3.className = 'Select-header-3-alternate';
@@ -25,7 +28,8 @@ selectHeader1.addEventListener('click', () => {
   }
 });
 selectHeader2.addEventListener('click', () => {
-  if (selectHeader2.className === 'Select-header-2-alternate') { // change header styles {if background is black}
+  if (selectHeader2.className === 'Select-header-2-alternate') {
+    // change header styles {if background is black}
     selectHeader2.className = 'Select-header-2';
     selectHeader1.className = 'Select-header-1-alternate';
     selectHeader3.className = 'Select-header-3-alternate';
@@ -36,7 +40,8 @@ selectHeader2.addEventListener('click', () => {
   }
 });
 selectHeader3.addEventListener('click', () => {
-  if (selectHeader3.className === 'Select-header-3-alternate') { // change header styles {if background is black}
+  if (selectHeader3.className === 'Select-header-3-alternate') {
+    // change header styles {if background is black}
     selectHeader2.className = 'Select-header-2-alternate';
     selectHeader1.className = 'Select-header-1-alternate';
     selectHeader3.className = 'Select-header-3';
@@ -49,26 +54,32 @@ selectHeader3.addEventListener('click', () => {
 
 // could be one function with parameters for different pages
 function renderFaceComponents() {
-  const selectFaceComponentsContainer = document.getElementById('Select-faces-container');
+  const selectFaceComponentsContainer = document.getElementById(
+    'Select-faces-container'
+  );
   for (let i = 0; i < 15; i += 1) {
     selectFaceComponentsContainer.appendChild(
-      <div className="Select-face-tile" />,
+      <div className="Select-face-tile" />
     );
   }
 }
 function renderClothesComponents() {
-  const selectClothesComponentsContainer = document.getElementById('Select-clothes-container');
+  const selectClothesComponentsContainer = document.getElementById(
+    'Select-clothes-container'
+  );
   for (let i = 0; i < 15; i += 1) {
     selectClothesComponentsContainer.appendChild(
-      <div className="Select-cloth-tile" />,
+      <div className="Select-cloth-tile" />
     );
   }
 }
 function renderAccessoriesComponents() {
-  const selectAccessoriesComponentsContainer = document.getElementById('Select-accessories-container');
+  const selectAccessoriesComponentsContainer = document.getElementById(
+    'Select-accessories-container'
+  );
   for (let i = 0; i < 15; i += 1) {
     selectAccessoriesComponentsContainer.appendChild(
-      <div className="Select-accessories-tile" />,
+      <div className="Select-accessories-tile" />
     );
   }
 }
