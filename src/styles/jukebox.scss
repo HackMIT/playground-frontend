@@ -27,107 +27,15 @@
   }
 }
 
-.Jukebox-display-tag {
-  visibility: visible;
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 200px;
-  height: 3rem;
-  font-size: 30px;
-  color: white;
-  text-align: center;
-  padding-top: 0.8rem;
-  border-radius: 12px;
-  background-color: $blue_dark;
-}
-.Jukebox-display-tag-alternate {
-  visibility: hidden;
-}
-
-.Jukebox-display-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  padding-top: 2em;
-  .Jukebox-display-container-viewer {
-    width: 800px;
-    height: 500px;
-    background-color: $blue_dark;
-    border-radius: 15px;
-  }
-  .Jukebox-display-messaging-container {
-    width: 900px;
-    height: 80px;
-    border-radius: 12px;
-    background-color: $blue_light;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-
-    .Jukebox-display-messaging-container-leftbuttons {
-      display: flex;
-      flex-direction: row;
-      width: 150px;
-      justify-content: space-evenly;
-      align-items: center;
-    }
-    .Jukebox-display-messaging-container-messagebox {
-      width: 500px;
-      height: 70px;
-      background-color: $blue_dark;
-      border-radius: 12px;
-    }
-    .Jukebox-display-messaging-container-rightbuttons {
-      display: flex;
-      flex-direction: row;
-      width: 150px;
-      justify-content: space-evenly;
-      align-items: center;
-    }
-    .Jukebox-display-messaging-container-button {
-      width: 60px;
-      height: 60px;
-      background-color: $blue_dark;
-      border-radius: 100%;
-    }
-  }
-}
-
 #jukebox-container {
   width: 400px;
   height: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  background: -moz-linear-gradient(
-    180deg,
-    #fbcdc2 0%,
-    #fbcdc2 10%,
-    #fbcdc2 30%,
-    #96d0f1 40%,
-    #96d0f1 100%
-  );
-  background: -webkit-linear-gradient(
-    18deg,
-    #fbcdc2 0%,
-    #fbcdc2 10%,
-    #fbcdc2 30%,
-    #96d0f1 40%,
-    #96d0f1 100%
-  );
-  background: linear-gradient(
-    180deg,
-    #fbcdc2 0%,
-    #fbcdc2 10%,
-    #fbcdc2 30%,
-    #96d0f1 40%,
-    #96d0f1 100%
-  );
 
-  .jukebox-header {
+  #jukebox-header {
+    background: $accent_pink;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -154,33 +62,6 @@
 
       img {
         width: 100%;
-      }
-    }
-
-    .Jukebox-queue-tag {
-      width: 200px;
-      border-radius: 12px;
-      height: 3rem;
-      font-size: 30px;
-      background-color: $blue_dark;
-      color: white;
-      text-align: center;
-      margin-left: 1rem;
-      padding-top: 0.8rem;
-    }
-    .Jukebox-queue-close-div {
-      position: relative;
-      top: 0px;
-      left: 5rem;
-      display: flex;
-      align-items: flex-start;
-      flex-direction: column;
-      height: inherit;
-      .Jukebox-queue-close-div-button {
-        width: 20px;
-        height: 20px;
-        border-radius: 100%;
-        background-color: red;
       }
     }
   }
@@ -211,11 +92,38 @@
   }
 
   #jukebox-songs-queue {
+    background: $blue_light;
     flex-grow: 1;
 
     .jukebox-song {
-      .title {
-        color: $blue_text;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 0.6rem 1rem;
+
+      img {
+        height: 50px;
+        width: 92px;
+        margin-right: 16px;
+        object-fit: cover;
+        object-position: center center;
+      }
+
+      div {
+        overflow: hidden;
+
+        .title {
+          color: $blue_text;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          width: 100%;
+        }
+
+        .duration {
+          font-size: 14px;
+          margin-top: 2px;
+        }
       }
     }
   }
@@ -248,6 +156,7 @@
     }
 
     button {
+      cursor: pointer;
       height: 33px;
       background: $accent_blue;
       color: #fff;
@@ -257,74 +166,6 @@
       padding: 0 12px;
       border-radius: 2px;
       width: 64px;
-    }
-  }
-
-  .Jukebox-queue-container-title {
-    padding-top: 1rem;
-    font-size: 50px;
-    font-weight: bold;
-    color: $blue_text;
-    text-align: center;
-  }
-  .Jukebox-queue-container-tiles {
-    margin-top: 2rem;
-    height: 275px;
-    width: 380px;
-    border-radius: 12px;
-    overflow-y: scroll;
-    padding: 1rem;
-    .Jukebox-queue-container-tile {
-      width: 350px;
-      height: 120px;
-      background-color: $accent_pink;
-      border-radius: 12px;
-      margin: 1rem;
-      display: flex;
-      align-items: center;
-      flex-direction: row;
-      justify-content: space-evenly;
-      .Jukebox-queue-container-tile-cancel-button-container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        height: 100%;
-        margin-top: 1rem;
-        .Jukebox-queue-container-tile-cancel-button {
-          border-radius: 100%;
-          width: 15px;
-          height: 15px;
-          background-color: red;
-          opacity: 0.8;
-        }
-      }
-    }
-  }
-  .Jukebox-queue-container-controls {
-    display: flex;
-    flex-direction: row;
-    width: 95%;
-    height: 70px;
-    background-color: $blue_dark;
-    align-items: center;
-    justify-content: space-around;
-    border-radius: 12px;
-    margin-top: 1rem;
-
-    .Jukebox-queue-container-controls-input {
-      width: 280px;
-      height: 50px;
-      background-color: $blue_light;
-      border-radius: 12px;
-      color: white;
-      font-size: 1rem;
-    }
-
-    .Jukebox-queue-container-controls-input-button {
-      width: 40px;
-      height: 40px;
-      border-radius: 100%;
-      background-color: $accent_yellow;
     }
   }
 }

@@ -1,19 +1,20 @@
 import YouTubeIframeLoader from 'youtube-iframe';
 
-import './styles/jukebox.scss';
-
+import socket from './js/socket';
 import closeIcon from './images/icons/close.svg';
+import './styles/jukebox.scss';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
 class Jukebox {
   constructor() {
-    this.songs = [
-      {
-        title: 'Testing',
-      },
-    ];
+    this.songs = [];
+
+    socket.subscribe('song', (msg) => {
+      this.songs.push(msg);
+      this.updateJukeboxPane();
+    });
   }
 
   closeJukeboxPane = (e) => {
@@ -48,9 +49,21 @@ class Jukebox {
     const rootElem = <div />;
 
     this.songs.forEach((song) => {
+      const minutesStr = Math.floor(song.duration / 60)
+        .toString()
+        .padStart(2, '0');
+
+      const secondsStr = (song.duration - Math.floor(song.duration / 60) * 60)
+        .toString()
+        .padStart(2, '0');
+
       rootElem.appendChild(
         <div className="jukebox-song">
-          <p className="title">{song.title}</p>
+          <img src={song.thumbnailUrl} />
+          <div>
+            <p className="title">{song.title}</p>
+            <p className="duration">{`${minutesStr}:${secondsStr}`}</p>
+          </div>
         </div>
       );
     });
@@ -62,7 +75,7 @@ class Jukebox {
     const jukeboxElem = (
       <div id="jukebox-background" onclick={this.closeJukeboxPane}>
         <div id="jukebox-container" className="Jukebox-queue-container">
-          <div className="jukebox-header">
+          <div id="jukebox-header">
             <div className="spacer" />
             <h2>Jukebox</h2>
             <button id="jukebox-close-button" onclick={this.closeJukeboxPane}>
@@ -84,6 +97,7 @@ class Jukebox {
               <button
                 id="jukebox-queue-button"
                 className="Jukebox-queue-container-controls-input-button"
+                onclick={this.handleSubmitButton}
               >
                 Submit
               </button>
@@ -113,6 +127,17 @@ class Jukebox {
 
       this.updateJukeboxPane();
     }, 1);
+  };
+
+  handleSubmitButton = () => {
+    const url = document.getElementById('jukebox-song-input').value;
+    const urlParts = url.split('/');
+    const vidCode = urlParts[urlParts.length - 1];
+
+    socket.send({
+      type: 'song',
+      vidCode,
+    });
   };
 
   updateJukeboxPane = () => {

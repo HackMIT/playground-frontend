@@ -5,7 +5,7 @@ class Socket {
   }
 
   send(data) {
-    this.conn.send(data);
+    this.conn.send(JSON.stringify(data));
   }
 
   start() {
