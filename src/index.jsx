@@ -4,6 +4,7 @@ import Hallway from './js/hallway';
 import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
+import jukebox from './jukebox';
 
 import './styles/index.scss';
 import './styles/sponsor.scss';
@@ -18,6 +19,7 @@ import './coffeechat';
 import './images/icons/add.svg';
 import './images/icons/add-hallway.svg';
 import './images/icons/edit.svg';
+import './images/icons/music.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
@@ -55,6 +57,7 @@ class Game extends Page {
     this.addClickListener('edit-button', this.handleEditButton);
     this.addClickListener('game', this.handleGameClick);
     this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
+    this.addClickListener('jukebox-button', this.handleJukeboxButton);
 
     this.handleWindowSize();
 
@@ -65,12 +68,10 @@ class Game extends Page {
     // Start sending chat events
     document.getElementById('chat-box').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
-        socket.send(
-          JSON.stringify({
-            type: 'chat',
-            mssg: e.target.value,
-          })
-        );
+        socket.send({
+          type: 'chat',
+          mssg: e.target.value,
+        });
 
         e.target.value = '';
       }
@@ -119,13 +120,11 @@ class Game extends Page {
     const x = (e.pageX - rect.x) / rect.width;
     const y = (e.pageY - rect.y) / rect.height;
 
-    socket.send(
-      JSON.stringify({
-        x,
-        y,
-        type: 'move',
-      })
-    );
+    socket.send({
+      x,
+      y,
+      type: 'move',
+    });
   };
 
   handleSocketOpen = () => {
@@ -143,7 +142,7 @@ class Game extends Page {
     }
 
     // Connected to remote
-    socket.send(JSON.stringify(joinPacket));
+    socket.send(joinPacket);
   };
 
   handleSocketMessage = (data) => {
@@ -222,13 +221,11 @@ class Game extends Page {
           );
 
           if (distance <= hallway.data.radius) {
-            socket.send(
-              JSON.stringify({
-                type: 'teleport',
-                from: this.room.slug,
-                to: hallway.data.to,
-              })
-            );
+            socket.send({
+              type: 'teleport',
+              from: this.room.slug,
+              to: hallway.data.to,
+            });
 
             return true;
           }
@@ -308,31 +305,27 @@ class Game extends Page {
   };
 
   handleElementAddButton = () => {
-    socket.send(
-      JSON.stringify({
-        type: 'element_add',
-        element: {
-          x: 0.2,
-          y: 0.2,
-          path: 'lamp.svg',
-          width: 0.1,
-        },
-      })
-    );
+    socket.send({
+      type: 'element_add',
+      element: {
+        x: 0.2,
+        y: 0.2,
+        path: 'lamp.svg',
+        width: 0.1,
+      },
+    });
   };
 
   handleHallwayAddButton = () => {
-    socket.send(
-      JSON.stringify({
-        type: 'hallway_add',
-        hallway: {
-          x: 0.2,
-          y: 0.2,
-          radius: 0.1,
-          to: 'microsoft',
-        },
-      })
-    );
+    socket.send({
+      type: 'hallway_add',
+      hallway: {
+        x: 0.2,
+        y: 0.2,
+        radius: 0.1,
+        to: 'microsoft',
+      },
+    });
   };
 
   handleRoomAddButton = () => {};
@@ -367,6 +360,10 @@ class Game extends Page {
     }
   };
 
+  handleJukeboxButton = () => {
+    jukebox.openJukeboxPane(document.body);
+  };
+
   handleSponsorLogin = () => {
     const joinPacket = {
       type: 'join',
@@ -374,7 +371,7 @@ class Game extends Page {
     };
 
     // Connected to remote
-    socket.send(JSON.stringify(joinPacket));
+    socket.send(joinPacket);
   };
 
   handleWindowSize = () => {
