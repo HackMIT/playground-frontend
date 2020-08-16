@@ -1,6 +1,6 @@
-@import "fonts";
-@import "colors";
-@import "variables";
+@import 'fonts';
+@import 'colors';
+@import 'variables';
 
 * {
   padding: 0;
@@ -19,8 +19,10 @@ h2 {
   font-family: LemonMilkMedium;
 }
 
-#root {
+#settings {
+  background: #1b4481;
   color: $white !important;
+  padding: 32px;
 }
 
 .settings-header {

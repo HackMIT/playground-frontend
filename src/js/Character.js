@@ -1,61 +1,61 @@
+import * as THREE from 'three';
+
+import AnimatedModel from './animatedModel';
+
 class Character {
-    constructor(character) {
-        this.x = character.x;
-        this.y = character.y;
-        this.id = character.id;
-        this.name = character.name;
+  constructor(name, initX, initY, parent, reverseRaycaster) {
+    this.name = name;
+    this.init_x = initX;
+    this.init_y = initY;
+    this.reverseRaycaster = reverseRaycaster;
 
-        this.model = character.model;
+    // load glb file
+    parent.loader.load('Fox.glb', (gltf) => {
+      gltf.scene.scale.set(0.04, 0.04, 0.04);
+      this.setModel(parent, gltf.scene, gltf.animations[1], initX, initY);
+    }, undefined, (e) => {
+      console.log(e);
+    });
+  }
 
-        this.elem = document.createElement("div");
-        this.elem.className = "character";
+  update(deltaTime) {
+    if (this.model !== undefined) {
+      this.model.update(deltaTime);
+    }
+  }
 
-        this.chatElem = document.createElement('div');
-        this.chatElem.className = 'text-bubble';
+  // returns time it'll take
+  moveTo(vector, callback) {
+    this.model.setAnimation(vector, callback);
+  }
 
-        this.move(this.x, this.y);
+  safeDelete(parent) {
+    this.model.deconstruct();
+    parent.scene.remove(this.model.modelGeometry);
+  }
 
-        this.elem.innerHTML = '<span class="name">' + character.name + '</span>';
-        document.getElementById("game").appendChild(this.elem);
+  setModel(parentScene, model, animation, initX, initY) {
+    const mixer = new THREE.AnimationMixer(model);
+    const walkCycle = mixer.clipAction(animation);
+    walkCycle.enabled = false;
+    walkCycle.play();
+
+    parentScene.scene.add(model);
+
+    this.model = new AnimatedModel(
+      model, mixer, walkCycle,
+      parentScene.worldVectorForPos(initX, initY), this.name, this.reverseRaycaster,
+    );
+  }
+
+  // say msg, return name
+  sendChat(msg) {
+    if (this.model !== undefined) {
+      this.model.updateChat(msg);
     }
 
-    updateChatBubble(mssg) {
-        this.chatElem.innerHTML = mssg;
-        this.elem.appendChild(this.chatElem);
-
-        setTimeout(() => {
-            this.elem.removeChild(this.chatElem);
-        }, 5000);
-    }
-
-    move(x, y, callback) {
-        let oldXpx = this.x * window.innerWidth;
-        let oldYpx = this.y * window.innerHeight;
-        let newXpx = x * window.innerWidth;
-        let newYpx = y * window.innerHeight;
-        let speed = 400; // pixels per second
-
-        let duration = Math.sqrt(Math.pow(oldXpx - newXpx, 2) + Math.pow(oldYpx - newYpx, 2)) / speed;
-        this.elem.style.transitionDuration = duration + 's';
-
-        this.elem.style.left = x * 100 + '%';
-        this.elem.style.top = y * 100 + '%';
-        this.x = x;
-        this.y = y;
-
-        setTimeout(callback, duration * 1000);
-    }
-
-    remove() {
-        this.elem.remove();
-    }
-
-
-    update(deltaTime) {
-        this.model.update(deltaTime);
-    }
+    return this.name;
+  }
 }
 
-export {
-    Character
-};
+export default Character;
