@@ -4,7 +4,7 @@ import Hallway from './js/hallway';
 import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
-import openJukeboxPane from './jukebox';
+import jukebox from './jukebox';
 
 import './styles/index.scss';
 import './styles/sponsor.scss';
@@ -19,6 +19,8 @@ import './coffeechat';
 import './images/icons/add.svg';
 import './images/icons/add-hallway.svg';
 import './images/icons/edit.svg';
+import './images/icons/music.svg';
+import './images/icons/music2.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
@@ -370,7 +372,7 @@ class Game extends Page {
   };
 
   handleJukeboxButton = () => {
-    openJukeboxPane(document.body);
+    jukebox.openJukeboxPane(document.body);
   };
 
   handleSponsorLogin = () => {

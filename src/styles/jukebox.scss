@@ -132,11 +132,11 @@
     align-items: center;
     justify-content: space-between;
     box-sizing: border-box;
-    padding: 0.4rem;
+    padding: 0.4rem 1rem;
     width: 100%;
 
     .spacer {
-      width: 32px;
+      width: 20px;
     }
 
     h2 {
@@ -144,12 +144,17 @@
     }
 
     button {
+      cursor: pointer;
       outline: none;
       border: none;
       color: $blue_text;
       background: transparent;
-      font-size: 32px;
-      font-weight: 700;
+      width: 20px;
+      height: 20px;
+
+      img {
+        width: 100%;
+      }
     }
 
     .Jukebox-queue-tag {
@@ -180,12 +185,81 @@
     }
   }
 
-  .Jukebox-queue-container-display {
-    width: 350px;
-    height: 300px;
-    margin-top: 2rem;
-    background-color: $blue_dark;
+  #player {
+    background: #000;
+    height: 225px;
+    width: 100%;
+
+    iframe {
+      border: none;
+    }
   }
+
+  #jukebox-playing-now {
+    background: $blue_dark;
+    padding: 0.6rem 1rem;
+
+    h2 {
+      color: #fff;
+      font-size: 20px;
+    }
+
+    p {
+      color: #ccc;
+      font-size: 14px;
+    }
+  }
+
+  #jukebox-songs-queue {
+    flex-grow: 1;
+
+    .jukebox-song {
+      .title {
+        color: $blue_text;
+      }
+    }
+  }
+
+  #jukebox-controls {
+    background: $blue_dark;
+    padding: 0.6rem 1rem 1rem;
+
+    p {
+      color: #fff;
+      font-size: 14px;
+    }
+
+    div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    input {
+      font-size: 14px;
+      border-radius: 2px;
+      border: none;
+      padding: 8px;
+      height: 33px;
+      box-sizing: border-box;
+      width: 100%;
+      margin-right: 8px;
+    }
+
+    button {
+      height: 33px;
+      background: $accent_blue;
+      color: #fff;
+      outline: none;
+      border: none;
+      font-weight: 700;
+      padding: 0 12px;
+      border-radius: 2px;
+      width: 64px;
+    }
+  }
+
   .Jukebox-queue-container-title {
     padding-top: 1rem;
     font-size: 50px;
