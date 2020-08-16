@@ -61,7 +61,7 @@ class Game extends Page {
     this.handleWindowSize();
 
     socket.onopen = this.handleSocketOpen;
-    socket.onmessage = this.handleSocketMessage;
+    socket.subscribe('*', this.handleSocketMessage);
     socket.start();
 
     // Start sending chat events
@@ -148,164 +148,154 @@ class Game extends Page {
     socket.send(JSON.stringify(joinPacket));
   };
 
-  handleSocketMessage = (e) => {
-    const messages = e.data.split('\n');
+  handleSocketMessage = (data) => {
+    if (data.type === 'init') {
+      this.characterId = data.character.id;
 
-    for (let i = 0; i < messages.length; i += 1) {
-      const data = JSON.parse(messages[i]);
+      if (data.token !== undefined) {
+        localStorage.setItem('token', data.token);
+        window.history.pushState(null, null, ' ');
+        document.getElementById('login-panel').style.display = 'none';
+      }
 
-      if (data.type === 'init') {
-        this.characterId = data.character.id;
+      // Delete stuff from previous room
+      this.scene.deleteAllCharacters();
 
-        if (data.token !== undefined) {
-          localStorage.setItem('token', data.token);
-          window.history.pushState(null, null, ' ');
-          document.getElementById('login-panel').style.display = 'none';
-        }
+      this.elements.forEach((element) => {
+        element.remove();
+      });
 
-        // Delete stuff from previous room
-        this.scene.deleteAllCharacters();
+      this.hallways.forEach((hallway) => {
+        hallway.remove();
+      });
 
-        this.elements.forEach((element) => {
-          element.remove();
-        });
+      Object.entries(data.room.characters).forEach(([id, character]) => {
+        this.scene.newCharacter(id, character.name, character.x, character.y);
+      });
 
-        this.hallways.forEach((hallway) => {
-          hallway.remove();
-        });
+      this.elementNames = data.elementNames;
+      this.roomNames = data.roomNames;
 
-        Object.entries(data.room.characters).forEach(([id, character]) => {
-          this.scene.newCharacter(id, character.name, character.x, character.y);
-        });
-
-        this.elementNames = data.elementNames;
-        this.roomNames = data.roomNames;
-
-        Object.entries(data.room.elements).forEach(([id, element]) => {
-          const elementElem = new Element(element, id, data.elementNames);
-          document.getElementById('game').appendChild(elementElem.element);
-          this.elements.set(id, elementElem);
-        });
-
-        Object.entries(data.room.hallways).forEach(([id, hallway]) => {
-          this.hallways.set(id, new Hallway(hallway, id, data.roomNames));
-          document
-            .getElementById('game')
-            .appendChild(this.hallways.get(id).element);
-        });
-
-        this.room = data.room;
-
-        if (this.room.sponsor) {
-          document.getElementById('sponsor-pane').classList.add('active');
-          document.getElementById(
-            'sponsor-name'
-          ).innerHTML = `<span>${this.room.slug}</span>${this.room.slug}`;
-          document.getElementById('outer').classList.add('sponsor');
-          document.getElementById('game').classList.add('sponsor');
-        } else {
-          document.getElementById('sponsor-pane').classList.remove('active');
-          document.getElementById('outer').classList.remove('sponsor');
-          document.getElementById('game').classList.remove('sponsor');
-        }
-
-        document.getElementById(
-          'game'
-        ).style.backgroundImage = `url('${BACKGROUND_IMAGE_URL.replace(
-          '%SLUG%',
-          this.room.slug
-        )}')`;
-
-        this.scene.fixCameraOnResize();
-      } else if (data.type === 'move') {
-        this.scene.moveCharacter(data.id, data.x, data.y, () => {
-          if (data.id !== this.characterId) {
-            return;
-          }
-
-          Array.from(this.hallways.values()).some((hallway) => {
-            const distance = Math.sqrt(
-              (hallway.data.x - data.x) ** 2 + (hallway.data.y - data.y) ** 2
-            );
-
-            if (distance <= hallway.data.radius) {
-              socket.send(
-                JSON.stringify({
-                  type: 'teleport',
-                  from: this.room.slug,
-                  to: hallway.data.to,
-                })
-              );
-
-              return true;
-            }
-
-            return false;
-          });
-          // eslint-disable-next-line
-          // for (const [id, hallway] of Object.entries(this.hallways)) {
-          //   const distance = Math.sqrt(
-          //     (hallway.data.x - data.x) ** 2 + (hallway.data.y - data.y) ** 2,
-          //   );
-
-          //   if (distance <= hallway.data.radius) {
-          //     socket.send(JSON.stringify({
-          //       type: 'teleport',
-          //       from: this.room.slug,
-          //       to: hallway.data.to,
-          //     }));
-
-          //     break;
-          //   }
-        });
-      } else if (data.type === 'element_add') {
-        const elementElem = new Element(
-          data.element,
-          data.id,
-          this.elementNames
-        );
+      Object.entries(data.room.elements).forEach(([id, element]) => {
+        const elementElem = new Element(element, id, data.elementNames);
         document.getElementById('game').appendChild(elementElem.element);
-        this.elements.set(data.id, elementElem);
-      } else if (data.type === 'element_delete') {
-        this.elements.get(data.id).remove();
-        this.elements.delete(data.id);
-      } else if (data.type === 'element_update') {
-        this.elements.get(data.id).applyUpdate(data.element);
-      } else if (data.type === 'hallway_add') {
-        this.hallways.set(
-          data.id,
-          new Hallway(data.hallway, data.id, this.roomNames)
-        );
+        this.elements.set(id, elementElem);
+      });
+
+      Object.entries(data.room.hallways).forEach(([id, hallway]) => {
+        this.hallways.set(id, new Hallway(hallway, id, data.roomNames));
         document
           .getElementById('game')
-          .appendChild(this.hallways.get(data.id).element);
-      } else if (data.type === 'hallway_delete') {
-        this.hallways.get(data.id).remove();
-        this.hallways.delete(data.id);
-      } else if (data.type === 'hallway_update') {
-        this.hallways.get(data.id).applyUpdate(data.hallway);
-      } else if (data.type === 'error') {
-        if (data.code === 1) {
-          document.getElementById('login-panel').style.display = 'block';
-        }
-      } else if (data.type === 'join') {
-        this.scene.newCharacter(
-          data.character.id,
-          data.character.name,
-          data.character.x,
-          data.character.y
-        );
-      } else if (data.type === 'leave') {
-        if (data.character.id === this.characterId) {
+          .appendChild(this.hallways.get(id).element);
+      });
+
+      this.room = data.room;
+
+      if (this.room.sponsor) {
+        document.getElementById('sponsor-pane').classList.add('active');
+        document.getElementById(
+          'sponsor-name'
+        ).innerHTML = `<span>${this.room.slug}</span>${this.room.slug}`;
+        document.getElementById('outer').classList.add('sponsor');
+        document.getElementById('game').classList.add('sponsor');
+      } else {
+        document.getElementById('sponsor-pane').classList.remove('active');
+        document.getElementById('outer').classList.remove('sponsor');
+        document.getElementById('game').classList.remove('sponsor');
+      }
+
+      document.getElementById(
+        'game'
+      ).style.backgroundImage = `url('${BACKGROUND_IMAGE_URL.replace(
+        '%SLUG%',
+        this.room.slug
+      )}')`;
+
+      this.scene.fixCameraOnResize();
+    } else if (data.type === 'move') {
+      this.scene.moveCharacter(data.id, data.x, data.y, () => {
+        if (data.id !== this.characterId) {
           return;
         }
-        this.scene.deleteCharacter(data.character.id);
-      } else if (data.type === 'chat') {
-        data.name = this.scene.sendChat(data.id, data.mssg);
-      } else {
-        console.log(`received unknown packet: ${data.type}`);
-        console.log(data);
+
+        Array.from(this.hallways.values()).some((hallway) => {
+          const distance = Math.sqrt(
+            (hallway.data.x - data.x) ** 2 + (hallway.data.y - data.y) ** 2
+          );
+
+          if (distance <= hallway.data.radius) {
+            socket.send(
+              JSON.stringify({
+                type: 'teleport',
+                from: this.room.slug,
+                to: hallway.data.to,
+              })
+            );
+
+            return true;
+          }
+
+          return false;
+        });
+        // eslint-disable-next-line
+        // for (const [id, hallway] of Object.entries(this.hallways)) {
+        //   const distance = Math.sqrt(
+        //     (hallway.data.x - data.x) ** 2 + (hallway.data.y - data.y) ** 2,
+        //   );
+
+        //   if (distance <= hallway.data.radius) {
+        //     socket.send(JSON.stringify({
+        //       type: 'teleport',
+        //       from: this.room.slug,
+        //       to: hallway.data.to,
+        //     }));
+
+        //     break;
+        //   }
+      });
+    } else if (data.type === 'element_add') {
+      const elementElem = new Element(data.element, data.id, this.elementNames);
+      document.getElementById('game').appendChild(elementElem.element);
+      this.elements.set(data.id, elementElem);
+    } else if (data.type === 'element_delete') {
+      this.elements.get(data.id).remove();
+      this.elements.delete(data.id);
+    } else if (data.type === 'element_update') {
+      this.elements.get(data.id).applyUpdate(data.element);
+    } else if (data.type === 'hallway_add') {
+      this.hallways.set(
+        data.id,
+        new Hallway(data.hallway, data.id, this.roomNames)
+      );
+      document
+        .getElementById('game')
+        .appendChild(this.hallways.get(data.id).element);
+    } else if (data.type === 'hallway_delete') {
+      this.hallways.get(data.id).remove();
+      this.hallways.delete(data.id);
+    } else if (data.type === 'hallway_update') {
+      this.hallways.get(data.id).applyUpdate(data.hallway);
+    } else if (data.type === 'error') {
+      if (data.code === 1) {
+        document.getElementById('login-panel').style.display = 'block';
       }
+    } else if (data.type === 'join') {
+      this.scene.newCharacter(
+        data.character.id,
+        data.character.name,
+        data.character.x,
+        data.character.y
+      );
+    } else if (data.type === 'leave') {
+      if (data.character.id === this.characterId) {
+        return;
+      }
+      this.scene.deleteCharacter(data.character.id);
+    } else if (data.type === 'chat') {
+      this.scene.sendChat(data.id, data.mssg);
+    } else {
+      console.log(`received unknown packet: ${data.type}`);
+      console.log(data);
     }
   };
 

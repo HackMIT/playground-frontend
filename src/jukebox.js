@@ -86,14 +86,10 @@ function openJukeboxPane(rootElem) {
   const jukeboxElem = (
     <div id="jukebox-background" onclick={closeJukeboxPane}>
       <div id="jukebox-container" className="Jukebox-queue-container">
-        <div className="Jukebox-queue-accessories-container">
-          <div className="Jukebox-queue-tag">Jukebox</div>
-          <div className="Jukebox-queue-close-div">
-            <div
-              id="close-jukebox-button"
-              className="Jukebox-queue-close-div-button"
-            ></div>
-          </div>
+        <div className="jukebox-header">
+          <div className="spacer" />
+          <h2>Jukebox</h2>
+          <button id="close-button">&times;</button>
         </div>
         <div id="player" className="Jukebox-queue-container-display">
           <iframe

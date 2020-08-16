@@ -10,8 +10,9 @@
   right: 0;
   background: rgba(0, 0, 0, 0);
   display: flex;
+  flex-direction: row-reverse;
   align-items: center;
-  justify-content: right;
+  justify-content: left;
   padding-right: 0;
   transition: 0.25s ease all;
 
@@ -98,16 +99,9 @@
 #jukebox-container {
   width: 400px;
   height: 100%;
-  padding: 1rem;
   box-sizing: border-box;
-  visibility: visible;
-  transition: linear 0.5s;
-  position: absolute;
-  right: 0px;
-  top: 0px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   background: -moz-linear-gradient(
     180deg,
     #fbcdc2 0%,
@@ -133,11 +127,31 @@
     #96d0f1 100%
   );
 
-  .Jukebox-queue-accessories-container {
+  .jukebox-header {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 350px;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0.4rem;
+    width: 100%;
+
+    .spacer {
+      width: 32px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    button {
+      outline: none;
+      border: none;
+      color: $blue_text;
+      background: transparent;
+      font-size: 32px;
+      font-weight: 700;
+    }
+
     .Jukebox-queue-tag {
       width: 200px;
       border-radius: 12px;
