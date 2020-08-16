@@ -16,7 +16,6 @@ module.exports = {
     login: [`${paths.src}/login.js`],
     sponsor: [`${paths.src}/sponsor.js`],
     register: [`${paths.src}/register.js`],
-    jukebox: [`${paths.src}/jukebox.js`],
   },
 
   /**
@@ -61,14 +60,17 @@ module.exports = {
      *
      * Generates an HTML file from a template.
      */
-    ...pages.map((page) => new HtmlWebpackPlugin({
-      title: 'HackMIT Playground',
-      // favicon: paths.static + '/favicon.png',
-      template: `${paths.src}/${page.template}.html`,
-      chunks: ['common', page.template],
-      filename: page.path,
-      inject: true,
-    })),
+    ...pages.map(
+      (page) =>
+        new HtmlWebpackPlugin({
+          title: 'HackMIT Playground',
+          // favicon: paths.static + '/favicon.png',
+          template: `${paths.src}/${page.template}.html`,
+          chunks: ['common', page.template],
+          filename: page.path,
+          inject: true,
+        })
+    ),
   ],
 
   /**

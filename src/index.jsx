@@ -4,6 +4,7 @@ import Hallway from './js/hallway';
 import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
+import openJukeboxPane from './jukebox';
 
 import './styles/index.scss';
 import './styles/sponsor.scss';
@@ -55,6 +56,7 @@ class Game extends Page {
     this.addClickListener('edit-button', this.handleEditButton);
     this.addClickListener('game', this.handleGameClick);
     this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
+    this.addClickListener('jukebox-button', this.handleJukeboxButton);
 
     this.handleWindowSize();
 
@@ -375,6 +377,10 @@ class Game extends Page {
         hallway.makeUneditable();
       });
     }
+  };
+
+  handleJukeboxButton = () => {
+    openJukeboxPane(document.body);
   };
 
   handleSponsorLogin = () => {

@@ -1,35 +1,29 @@
 @import 'colors';
-#root {
-  font-family: 'Lemon/Milk Regular';
-  background: -moz-linear-gradient(
-    45deg,
-    #fbcdc2 0%,
-    #fbcdc2 20%,
-    #fbcdc2 40%,
-    #96d0f1 60%,
-    #96d0f1 100%
-  );
-  background: -webkit-linear-gradient(
-    45deg,
-    #fbcdc2 0%,
-    #fbcdc2 20%,
-    #fbcdc2 40%,
-    #96d0f1 60%,
-    #96d0f1 100%
-  );
-  background: linear-gradient(
-    45deg,
-    #fbcdc2 0%,
-    #fbcdc2 20%,
-    #fbcdc2 40%,
-    #96d0f1 60%,
-    #96d0f1 100%
-  );
-  height: 800px;
-  overflow: auto;
+
+#jukebox-background {
+  width: calc(100vw + 400px);
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0);
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+  align-items: center;
+  justify-content: right;
+  padding-right: 0;
+  transition: 0.25s ease all;
+
+  &.opening {
+    background: rgba(0, 0, 0, 0.7);
+    width: 100vw;
+  }
+
+  &.closing {
+    background: rgba(0, 0, 0, 0);
+    width: calc(100vw + 400px);
+  }
 }
 
 .Jukebox-display-tag {
@@ -101,26 +95,16 @@
   }
 }
 
-.Jukebox-queue-container-alternate {
-  visibility: hidden;
-  position: absolute;
-  right: 0px;
-  top: 5px;
+#jukebox-container {
   width: 400px;
-}
-
-.Jukebox-queue-container {
-  width: 400px;
-  border-radius: 12px;
-  height: 740px;
-  margin: 1rem;
+  height: 100%;
   padding: 1rem;
+  box-sizing: border-box;
   visibility: visible;
   transition: linear 0.5s;
   position: absolute;
   right: 0px;
   top: 0px;
-  z-index: 999;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -148,6 +132,7 @@
     #96d0f1 40%,
     #96d0f1 100%
   );
+
   .Jukebox-queue-accessories-container {
     display: flex;
     flex-direction: row;
