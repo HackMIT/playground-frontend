@@ -170,6 +170,7 @@ class Game extends Page {
 
       Object.entries(data.room.characters).forEach(([id, character]) => {
         this.scene.newCharacter(id, character.name, character.x, character.y);
+        this.characters.set(id, character);
       });
 
       this.elementNames = data.elementNames;
@@ -367,7 +368,21 @@ class Game extends Page {
   };
 
   handleFriendsButton = () => {
-    document.getElementById('chat').appendChild(friends.createFriendsPane());
+    if (this.friendsPaneVisible === true) {
+      // Hide the friends pane
+      document.getElementById('friends-pane').classList.add('invisible');
+      this.friendsPaneVisible = false;
+    } else if (this.friendsPaneVisible === false) {
+      // Make the friends pane visible
+      document.getElementById('friends-pane').classList.remove('invisible');
+      this.friendsPaneVisible = true;
+    } else {
+      // Never created friends pane before, create it now
+      document
+        .getElementById('chat')
+        .appendChild(friends.createFriendsPane(this.characters));
+      this.friendsPaneVisible = true;
+    }
   };
 
   handleSponsorLogin = () => {

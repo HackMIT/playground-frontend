@@ -18,9 +18,11 @@ class Socket {
       messages.forEach((msg) => {
         const data = JSON.parse(msg);
 
-        this.subscribers.forEach((handler, channels) => {
-          if (channels.includes(data.type) || channels[0] === '*') {
-            handler(data);
+        this.subscribers.forEach((handlers, channel) => {
+          if (channel === data.type || channel === '*') {
+            handlers.forEach((handler) => {
+              handler(data);
+            });
           }
         });
       });
@@ -32,7 +34,14 @@ class Socket {
       typeof inputChannels === 'string' ? [inputChannels] : inputChannels;
 
     channels.forEach((element) => {
-      this.subscribers.set(element, handler);
+      if (this.subscribers.has(element)) {
+        this.subscribers.set(
+          element,
+          this.subscribers.get(element).concat(handler)
+        );
+      } else {
+        this.subscribers.set(element, [handler]);
+      }
     });
   };
 }

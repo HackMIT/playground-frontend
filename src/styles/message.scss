@@ -1,0 +1,28 @@
+@import 'colors';
+
+#message-pane {
+  height: 300px;
+  position: absolute;
+  left: 200px;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+
+  .header {
+    background: #fff;
+    padding: 4px 8px;
+  }
+
+  .messages {
+    background: $blue_dark;
+    flex-grow: 1;
+  }
+
+  .input {
+    background: #fff;
+
+    input[type='text'] {
+      height: 32px;
+    }
+  }
+}

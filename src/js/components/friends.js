@@ -1,51 +1,53 @@
-import '../../styles/friends.scss';
+import message from './message';
+import socket from '../socket';
 
+import '../../styles/friends.scss';
 import closeIcon from '../../images/icons/close-white.svg';
+import messageIcon from '../../images/icons/message.svg';
 
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
 
 class FriendsPane {
   constructor() {
-    this.friends = [
-      {
-        name: 'Hannah Liu',
-        school: 'University of Texas, Houston',
-        teammate: false,
-        status: 0,
-      },
-      {
-        name: 'Jamie Fu',
-        school: 'University of Michigan',
-        teammate: true,
-        status: 0,
-      },
-      {
-        name: 'Justin Yu',
-        school: 'MIT',
-        teammate: false,
-        status: 1,
-      },
-      {
-        name: 'Angela Zhang',
-        school: 'University of Texas, Austin',
-        teammate: false,
-        status: 2,
-      },
-      {
-        name: 'Nadia Waid',
-        school: 'Iowa College',
-        teammate: false,
-        status: 0,
-      },
-    ];
+    this.friends = [];
+
+    socket.subscribe('join', this.handleSocketMessage);
   }
 
-  createFriendsPane = () => {
+  handleSocketMessage = (msg) => {
+    if (msg.type === 'join') {
+      this.friends.push({
+        id: msg.character.id,
+        name: msg.character.name,
+        school: 'MIT',
+        teammate: true,
+        status: 2,
+      });
+
+      this.updateFriendsList();
+    }
+  };
+
+  createFriendsPane = (characters) => {
+    console.log(characters);
+    characters.forEach((character) => {
+      this.friends.push({
+        id: character.id,
+        name: character.name,
+        school: 'MIT',
+        teammate: true,
+        status: 2,
+      });
+    });
+
+    const messagesPane = message.createMessagePane();
+
     return (
       <div id="friends-pane">
         <div id="friends-list">{this.friendsListContents()}</div>
         <div id="friends-pane-arrow" />
+        {messagesPane}
       </div>
     );
   };
@@ -101,12 +103,30 @@ class FriendsPane {
             <button>
               <img src={closeIcon} />
             </button>
+            <button onclick={() => this.handleChatButton(friend)}>
+              <img src={messageIcon} />
+            </button>
           </div>
         </div>
       );
     });
 
     return friendsListContainer;
+  };
+
+  updateFriendsList = () => {
+    if (document.getElementById('friends-list') === null) {
+      return;
+    }
+
+    document.getElementById('friends-list').innerHTML = '';
+    document
+      .getElementById('friends-list')
+      .appendChild(this.friendsListContents());
+  };
+
+  handleChatButton = (friend) => {
+    message.updateMessagesPane(friend);
   };
 }
 
