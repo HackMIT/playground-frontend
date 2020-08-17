@@ -4,6 +4,7 @@ import Hallway from './js/hallway';
 import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
+import friends from './js/components/friends';
 import jukebox from './jukebox';
 
 import './styles/index.scss';
@@ -58,6 +59,7 @@ class Game extends Page {
     this.addClickListener('game', this.handleGameClick);
     this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
+    this.addClickListener('friends-button', this.handleFriendsButton);
 
     this.handleWindowSize();
 
@@ -362,6 +364,10 @@ class Game extends Page {
 
   handleJukeboxButton = () => {
     jukebox.openJukeboxPane(document.body);
+  };
+
+  handleFriendsButton = () => {
+    document.getElementById('chat').appendChild(friends.createFriendsPane());
   };
 
   handleSponsorLogin = () => {

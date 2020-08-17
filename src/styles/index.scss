@@ -23,7 +23,8 @@ b {
   color: $blue-text;
 }
 
-p {
+p,
+span {
   font-family: Muli;
   color: $blue-text;
 }
@@ -333,7 +334,7 @@ body {
   transform: translate(-50%, -100%);
 }
 
-.name {
+#game > .name {
   color: #000;
   display: block;
   font-family: $font-family;
