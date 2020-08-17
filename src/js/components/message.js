@@ -26,6 +26,10 @@ class MessagePane {
     if (msg.type === 'message') {
       this.messages.push(msg);
     } else if (msg.type === 'messages') {
+      if (msg.recipient !== this.character.id) {
+        return;
+      }
+
       this.messages = msg.messages;
     }
 
@@ -34,6 +38,11 @@ class MessagePane {
 
   updateMessagesPane = (character) => {
     if (character !== undefined) {
+      socket.send({
+        type: 'get_messages',
+        recipient: character.id,
+      });
+
       document.getElementById('messages-header').innerHTML = '';
       document
         .getElementById('messages-header')

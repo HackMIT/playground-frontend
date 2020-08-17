@@ -30,7 +30,6 @@ class FriendsPane {
   };
 
   createFriendsPane = (characters) => {
-    console.log(characters);
     characters.forEach((character) => {
       this.friends.push({
         id: character.id,
