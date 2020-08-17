@@ -70,7 +70,7 @@
       }
     }
 
-    div {
+    .contents {
       overflow: hidden;
 
       .name {
@@ -83,6 +83,28 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+      }
+    }
+
+    .buttons {
+      background: linear-gradient(to left, $blue_dark, transparent);
+      position: absolute;
+      right: 0;
+      visibility: hidden;
+      display: flex;
+      flex-direction: row-reverse;
+      width: 50%;
+
+      button {
+        background: transparent;
+        outline: none;
+        border: none;
+      }
+    }
+
+    &:hover {
+      .buttons {
+        visibility: visible;
       }
     }
   }

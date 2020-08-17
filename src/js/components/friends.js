@@ -1,5 +1,7 @@
 import '../../styles/friends.scss';
 
+import closeIcon from '../../images/icons/close-white.svg';
+
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
 
@@ -91,9 +93,14 @@ class FriendsPane {
       friendsListContainer.appendChild(
         <div className="friend">
           <div className={`indicator ${status}`} />
-          <div>
+          <div className="contents">
             <p className="name">{friend.name}</p>
             <p className="school">{friend.school}</p>
+          </div>
+          <div className="buttons">
+            <button>
+              <img src={closeIcon} />
+            </button>
           </div>
         </div>
       );
