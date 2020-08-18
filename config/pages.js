@@ -1,22 +1,22 @@
 module.exports = [
   {
     path: 'index.html',
-    template: 'game'
+    template: 'game',
   },
   {
     path: 'character',
-    template: 'character'
+    template: 'character',
   },
   {
     path: 'login',
-    template: 'login'
+    template: 'login',
   },
   {
     path: 'sponsor',
-    template: 'sponsor'
+    template: 'sponsor',
   },
   {
-	path: 'register',
-	template: 'register'
-  }
+    path: 'register',
+    template: 'register',
+  },
 ];

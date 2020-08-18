@@ -250,13 +250,11 @@ class Editable {
   }
 
   sendUpdate() {
-    socket.send(
-      JSON.stringify({
-        type: this.updateEventName,
-        id: this.id,
-        [this.dataKeyName]: this.data,
-      })
-    );
+    socket.send({
+      type: this.updateEventName,
+      id: this.id,
+      [this.dataKeyName]: this.data,
+    });
   }
 
   applyUpdate(element) {

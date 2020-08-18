@@ -11,7 +11,9 @@
 }
 
 h1,
-h2 {
+h2,
+h3,
+h4 {
   font-family: LemonMilkMedium;
   color: $blue-text;
 }
@@ -21,7 +23,8 @@ b {
   color: $blue-text;
 }
 
-p {
+p,
+span {
   font-family: Muli;
   color: $blue-text;
 }
@@ -42,6 +45,10 @@ body {
   background-attachment: fixed;
   width: 100%;
   height: 100%;
+}
+
+.invisible {
+  visibility: hidden;
 }
 
 #outer {
@@ -115,9 +122,14 @@ body {
     width: 38px;
     height: 38px;
     margin: 0 4px;
+    padding: 9px;
 
     &:active {
       background: #1b2450;
+    }
+
+    img {
+      width: 100%;
     }
   }
 }
@@ -267,6 +279,17 @@ body {
   background-size: 100% 100%;
   position: relative;
   overflow: hidden;
+
+  #background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -100;
+  }
 
   #add-button {
     cursor: pointer;
@@ -464,7 +487,7 @@ body {
   transform: translate(-50%, -100%);
 }
 
-.name {
+#game > .name {
   color: #000;
   display: block;
   font-family: $font-family;
