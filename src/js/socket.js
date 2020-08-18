@@ -9,7 +9,7 @@ class Socket {
   }
 
   start() {
-    this.conn = new WebSocket('ws://192.168.0.51:8080/ws');
+    this.conn = new WebSocket('ws://localhost:8080/ws');
     this.conn.onopen = this.onopen;
     this.conn.onclose = this.onclose;
     this.conn.onmessage = (e) => {
