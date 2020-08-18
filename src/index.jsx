@@ -46,6 +46,8 @@ class Game extends Page {
     // Quick check for auth data
     if (localStorage.getItem('token') !== null) {
       document.getElementById('login-panel').style.display = 'none';
+    } else {
+      this.stopLoading();
     }
 
     this.scene = new Scene();
