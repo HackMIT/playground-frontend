@@ -67,7 +67,7 @@ class MessagePane {
 
     this.messages.forEach((msg) => {
       const senderName =
-        msg.sender === this.character.id ? this.character.name : 'Me';
+        msg.from === this.character.id ? this.character.name : 'Me';
       root.appendChild(<p>{`${senderName}: ${msg.text}`}</p>);
     });
 
@@ -84,7 +84,7 @@ class MessagePane {
     socket.send({
       type: 'message',
       text: e.target.value,
-      recipient: this.character.id,
+      to: this.character.id,
     });
 
     e.target.value = '';

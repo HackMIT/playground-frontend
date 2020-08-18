@@ -6,6 +6,7 @@ import socket from './js/socket';
 import createModal from './modal';
 import friends from './js/components/friends';
 import jukebox from './jukebox';
+import createLoadingScreen from './js/components/loading';
 
 import './styles/index.scss';
 import './styles/sponsor.scss';
@@ -29,6 +30,14 @@ const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%SLUG%.png';
 
 class Game extends Page {
+  constructor() {
+    super();
+
+    if (!this.loaded) {
+      document.getElementById('game').appendChild(createLoadingScreen());
+    }
+  }
+
   start = () => {
     if (!window.WebSocket) {
       // TODO: Handle error -- tell people their browser is incompatible
@@ -148,6 +157,7 @@ class Game extends Page {
   };
 
   handleSocketMessage = (data) => {
+    console.log(data);
     if (data.type === 'init') {
       this.characterId = data.character.id;
 
@@ -204,12 +214,23 @@ class Game extends Page {
         document.getElementById('game').classList.remove('sponsor');
       }
 
-      document.getElementById(
-        'game'
-      ).style.backgroundImage = `url('${BACKGROUND_IMAGE_URL.replace(
-        '%SLUG%',
-        this.room.slug
-      )}')`;
+      const img = new Image();
+
+      img.onload = () => {
+        this.loaded = true;
+
+        document.getElementById('background').src = img.src;
+        this.stopLoading();
+      };
+
+      img.src = BACKGROUND_IMAGE_URL.replace('%SLUG%', this.room.slug);
+
+      // document.getElementById(
+      //   'game'
+      // ).style.backgroundImage = `url('${BACKGROUND_IMAGE_URL.replace(
+      //   '%SLUG%',
+      //   this.room.slug
+      // )}')`;
 
       this.scene.fixCameraOnResize();
     } else if (data.type === 'move') {
@@ -275,6 +296,7 @@ class Game extends Page {
       this.hallways.get(data.id).applyUpdate(data.hallway);
     } else if (data.type === 'error') {
       if (data.code === 1) {
+        this.stopLoading();
         document.getElementById('login-panel').style.display = 'block';
       }
     } else if (data.type === 'join') {
@@ -411,6 +433,14 @@ class Game extends Page {
 
       outerElem.classList.remove('vertical');
     }
+  };
+
+  stopLoading = () => {
+    document.getElementById('loading').classList.add('closing');
+
+    setTimeout(() => {
+      document.getElementById('loading').remove();
+    }, 250);
   };
 }
 
