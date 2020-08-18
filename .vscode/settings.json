@@ -1,0 +1,7 @@
+{
+  "eslint.format.enable": true,
+  "eslint.packageManager": "yarn",
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "prettier.singleQuote": true
+}

@@ -1,0 +1,111 @@
+@import 'colors';
+
+#friends-pane {
+  background: $blue_dark;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 2px;
+  position: absolute;
+  width: 200px;
+  height: 300px;
+  transform: translate(-245px, -184px);
+}
+
+#friends-pane-arrow {
+  width: 0;
+  height: 0;
+  border-top: 12px solid $blue_dark;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: none;
+  position: absolute;
+  top: 300px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#friends-list {
+  height: 100%;
+  overflow-y: scroll;
+
+  .header {
+    background: #fff;
+    border-radius: 4px;
+    color: $blue_text;
+    font-size: 14px;
+    padding: 2px 4px;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    margin-top: 8px;
+
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+
+  .friend {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    padding: 4px 6px;
+
+    .indicator {
+      border-radius: 4px;
+      margin-right: 7px;
+      height: 8px;
+      width: 8px;
+
+      &.online {
+        background: #49c005;
+      }
+
+      &.away {
+        background: #eec923;
+      }
+
+      &.offline {
+        background: #cf2222;
+      }
+    }
+
+    .contents {
+      overflow: hidden;
+
+      .name {
+        color: #fff;
+      }
+
+      .school {
+        font-size: 12px;
+        color: #fff;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+    }
+
+    .buttons {
+      background: linear-gradient(to left, $blue_dark, transparent);
+      position: absolute;
+      right: 0;
+      visibility: hidden;
+      display: flex;
+      flex-direction: row-reverse;
+      width: 50%;
+
+      button {
+        background: transparent;
+        outline: none;
+        border: none;
+      }
+    }
+
+    &:hover {
+      .buttons {
+        visibility: visible;
+      }
+    }
+  }
+}

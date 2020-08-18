@@ -1,0 +1,171 @@
+@import 'colors';
+
+#jukebox-background {
+  width: calc(100vw + 400px);
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0);
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: left;
+  padding-right: 0;
+  transition: 0.25s ease all;
+
+  &.opening {
+    background: rgba(0, 0, 0, 0.7);
+    width: 100vw;
+  }
+
+  &.closing {
+    background: rgba(0, 0, 0, 0);
+    width: calc(100vw + 400px);
+  }
+}
+
+#jukebox-container {
+  width: 400px;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  #jukebox-header {
+    background: $accent_pink;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0.4rem 1rem;
+    width: 100%;
+
+    .spacer {
+      width: 20px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    button {
+      cursor: pointer;
+      outline: none;
+      border: none;
+      color: $blue_text;
+      background: transparent;
+      width: 20px;
+      height: 20px;
+
+      img {
+        width: 100%;
+      }
+    }
+  }
+
+  #player {
+    background: #000;
+    height: 225px;
+    width: 100%;
+
+    iframe {
+      border: none;
+    }
+  }
+
+  #jukebox-playing-now {
+    background: $blue_dark;
+    padding: 0.6rem 1rem;
+
+    h2 {
+      color: #fff;
+      font-size: 20px;
+    }
+
+    p {
+      color: #ccc;
+      font-size: 14px;
+    }
+  }
+
+  #jukebox-songs-queue {
+    background: $blue_light;
+    flex-grow: 1;
+
+    .jukebox-song {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 0.6rem 1rem;
+
+      img {
+        height: 50px;
+        width: 92px;
+        margin-right: 16px;
+        object-fit: cover;
+        object-position: center center;
+      }
+
+      div {
+        overflow: hidden;
+
+        .title {
+          color: $blue_text;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          width: 100%;
+        }
+
+        .duration {
+          font-size: 14px;
+          margin-top: 2px;
+        }
+      }
+    }
+  }
+
+  #jukebox-controls {
+    background: $blue_dark;
+    padding: 0.6rem 1rem 1rem;
+
+    p {
+      color: #fff;
+      font-size: 14px;
+    }
+
+    div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    input {
+      font-size: 14px;
+      border-radius: 2px;
+      border: none;
+      padding: 8px;
+      height: 33px;
+      box-sizing: border-box;
+      width: 100%;
+      margin-right: 8px;
+    }
+
+    button {
+      cursor: pointer;
+      height: 33px;
+      background: $accent_blue;
+      color: #fff;
+      outline: none;
+      border: none;
+      font-weight: 700;
+      padding: 0 12px;
+      border-radius: 2px;
+      width: 64px;
+    }
+  }
+}
