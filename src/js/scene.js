@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-import Character from './character';
+import Character from './Character';
 
 const d = 20; // this controls scale of camera
 
@@ -89,11 +89,11 @@ class Scene {
 
       const pageX = Math.round(
         (0.5 + vec.x / 2) *
-          (this.renderer.domElement.width / window.devicePixelRatio)
+        (this.renderer.domElement.width / window.devicePixelRatio)
       );
       const pageY = Math.round(
         (0.5 - vec.y / 2) *
-          (this.renderer.domElement.height / window.devicePixelRatio)
+        (this.renderer.domElement.height / window.devicePixelRatio)
       );
 
       return [pageX, pageY];

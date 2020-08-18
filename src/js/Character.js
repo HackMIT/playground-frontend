@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import AnimatedModel from './animatedModel';
+import AnimatedModel from './AnimatedModel';
 
 class Character {
   constructor(name, initX, initY, parent, reverseRaycaster) {
