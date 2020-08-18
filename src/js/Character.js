@@ -10,12 +10,17 @@ class Character {
     this.reverseRaycaster = reverseRaycaster;
 
     // load glb file
-    parent.loader.load('Fox.glb', (gltf) => {
-      gltf.scene.scale.set(0.04, 0.04, 0.04);
-      this.setModel(parent, gltf.scene, gltf.animations[1], initX, initY);
-    }, undefined, (e) => {
-      console.log(e);
-    });
+    parent.loader.load(
+      'character.glb',
+      (gltf) => {
+        gltf.scene.scale.set(0.65, 0.65, 0.65);
+        this.setModel(parent, gltf.scene, gltf.animations[0], initX, initY);
+      },
+      undefined,
+      (e) => {
+        console.log(e);
+      }
+    );
   }
 
   update(deltaTime) {
@@ -36,6 +41,7 @@ class Character {
 
   setModel(parentScene, model, animation, initX, initY) {
     const mixer = new THREE.AnimationMixer(model);
+    mixer.timeScale = 2.5;
     const walkCycle = mixer.clipAction(animation);
     walkCycle.enabled = false;
     walkCycle.play();
@@ -43,8 +49,12 @@ class Character {
     parentScene.scene.add(model);
 
     this.model = new AnimatedModel(
-      model, mixer, walkCycle,
-      parentScene.worldVectorForPos(initX, initY), this.name, this.reverseRaycaster,
+      model,
+      mixer,
+      walkCycle,
+      parentScene.worldVectorForPos(initX, initY),
+      this.name,
+      this.reverseRaycaster
     );
   }
 
