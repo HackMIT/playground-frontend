@@ -1,12 +1,10 @@
-import mapboxgl from 'mapbox-gl';
-
 import Scene from './js/scene';
 import Element from './js/element';
 import Hallway from './js/hallway';
 import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
-import createMap from './map';
+import mapInstance from './js/components/map';
 import friends from './js/components/friends';
 import jukebox from './jukebox';
 
@@ -32,8 +30,6 @@ import createElement from './utils/jsxHelper';
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%SLUG%.png';
 // eslint-disable-next-line
-const MAPBOX_API_KEY =
-  'pk.eyJ1IjoiaGFja21pdDIwIiwiYSI6ImNrZHVpaTk4dDE4Ym0yc255YzM3NGx0dGIifQ.XXstZ1xCBEqC-Wz4_EI8Pw';
 
 class Game extends Page {
   start = () => {
@@ -65,12 +61,9 @@ class Game extends Page {
     this.addClickListener('edit-button', this.handleEditButton);
     this.addClickListener('game', this.handleGameClick);
     this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
-<<<<<<< HEAD
     this.addClickListener('map', this.handleShowMap);
-=======
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
     this.addClickListener('friends-button', this.handleFriendsButton);
->>>>>>> c94db41708a7a65409cb579897c2984070b6b184
 
     this.handleWindowSize();
 
@@ -408,12 +401,9 @@ class Game extends Page {
 
   handleShowMap = () => {
     const mapElem = <div className="day-of-page" id="map-frame" />;
-
     createModal(mapElem);
 
-    mapboxgl.accessToken = MAPBOX_API_KEY;
-
-    createMap();
+    mapInstance.createMap(this.characterId);
   };
 
   handleWindowSize = () => {
