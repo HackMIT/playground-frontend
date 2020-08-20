@@ -1,45 +1,85 @@
 import './styles/settings.scss';
+import './images/settingsicon.svg';
+import './images/box.svg';
+import './images/box-filled.svg';
+import socket from './js/socket';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
-export default function createSettingsModal() {
-  return (
-    <div id="settings">
-      <div id="sign-in">
-        Sign in by using the following form (register by using postman oops):
-        <form id="sign-in-form">
-          Organization Name: <input id="name" /> <br />
-          Id: <input id="id" /> <br />
-          <input type="submit" id="sign-in-button" value="Sign in" />
-        </form>
-      </div>
+class Settings {
+  constructor() {
+    this.musicMuted = false;
+    this.soundMuted = false;
+  }
 
-      <br />
-      <br />
+  handleMusicButton = () => {
+    this.musicMuted = !this.musicMuted;
+    this.updateSettingsContent();
+  };
 
-      <div id="admin-panel">
-        <div id="data-dump"></div>
-        <div id="sponsor-name"></div>
-        <div id="secret-id"></div>
-        <div id="room-color"></div>
-        <form id="change-color">
-          <input id="new-color" value="New Color Hex Code" /> <br />
-          <input type="submit" id="change-color-submit" value="Change color" />
-        </form>
-        <br />
-        <br />
+  handleSoundButton = () => {
+    this.soundMuted = !this.soundMuted;
+    this.updateSettingsContent();
+  };
 
-        <div id="upload-logo">
-          <button id="upload-logo-button">
-            Upload new logo (not functional)
+  updateSettingsContent = () => {
+    const settingsList = document.getElementById('settings-list');
+    settingsList.innerHTML = '';
+    settingsList.appendChild(this.createSettingsContent());
+    socket.send(
+      JSON.stringify({
+        type: 'settings',
+        settings: {
+          musicMuted: this.musicMuted,
+          soundMuted: this.soundMuted,
+        },
+      })
+    );
+  };
+
+  createSettingsContent = () => {
+    return (
+      <div id="settings-text">
+        <div id="settings-option">
+          {this.musicMuted ? (
+            <img id="settings-box" src="images/box-filled.svg" />
+          ) : (
+            <img id="settings-box" src="images/box.svg" />
+          )}
+          <button id="settings-music" onclick={this.handleMusicButton}>
+            {this.musicMuted ? 'UNMUTE ALL MUSIC' : 'MUTE ALL MUSIC'}
           </button>
         </div>
-        <br />
-        <br />
-
-        <div id="hacker-queue">Hacker queue: some axios request</div>
+        <div>
+          <button id="settings-sound" onclick={this.handleSoundButton}>
+            {this.soundMuted ? 'UNMUTE ALL SOUND' : 'MUTE ALL SOUND'}
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
+
+  createSettingsModal = () => {
+    return (
+      <div id="settings">
+        <div id="root">
+          <div class="settings-page">
+            <div class="settings-header">
+              {/* <img class="settings-gear" src="images/settingsicon.svg" />
+                  <h1>SETTINGS</h1>
+                  <img class="settings-gear" src="images/settingsicon.svg" /> */}
+            </div>
+            <div class="settings-list" id="settings-list">
+              {this.createSettingsContent()}
+            </div>
+            <button class="settings-logout">LOGOUT</button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 }
+
+const settingsInstance = new Settings();
+export default settingsInstance;

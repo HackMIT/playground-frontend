@@ -4,7 +4,7 @@ import Hallway from './js/hallway';
 import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
-import createSettingsModal from './settings.jsx';
+import settings from './settings.jsx';
 
 import './styles/index.scss';
 import './styles/sponsor.scss';
@@ -154,7 +154,7 @@ class Game extends Page {
 
     for (let i = 0; i < messages.length; i += 1) {
       const data = JSON.parse(messages[i]);
-
+      console.log(data);
       if (data.type === 'init') {
         this.characterId = data.character.id;
 
@@ -381,7 +381,7 @@ class Game extends Page {
   };
 
   handleSettingsButton = () => {
-    createModal(createSettingsModal());
+    createModal(settings.createSettingsModal());
   };
 
   handleSponsorLogin = () => {

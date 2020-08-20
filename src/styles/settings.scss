@@ -19,8 +19,11 @@ h2 {
   font-family: LemonMilkMedium;
 }
 
+button {
+}
+
 #settings {
-  background: #1b4481;
+  background: $blue_light;
   color: $white !important;
   padding: 32px;
 }
@@ -30,39 +33,50 @@ h2 {
   width: 75%;
 }
 
-.settings-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: rgba(0, 0, 0, 0.3);
-}
+// .settings-page {
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   min-height: 100vh;
+//   // background-color: rgba(0, 0, 0, 0.3);
+// }
 
-.settings-container {
+// .settings-container {
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+//   align-items: center;
+//   min-height: 70vh;
+//   border-radius: 16px;
+//   // padding: 10vh 0;
+//   width: 560px;
+//   background-color: $blue_light;
+// }
+
+#settings-text {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 70vh;
-  border-radius: 16px;
-  // padding: 10vh 0;
-  width: 560px;
-  background-color: $blue_light;
 }
 
-.settings-text {
+#settings-option {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  flex-direction: row;
 }
 
-.settings-option {
+#settings-music,
+#settings-sound {
   cursor: pointer;
+  color: $white;
+  background-color: $blue_light;
+  border: none;
+  outline: none;
   margin: 1em 0;
 }
 
-.settings-option:hover {
+#settings-music:hover,
+#settings-sound:hover {
   color: $blue_text;
 }
 
