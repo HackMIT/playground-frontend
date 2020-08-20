@@ -29,7 +29,6 @@ import createElement from './utils/jsxHelper';
 // eslint-disable-next-line
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%SLUG%.png';
-// eslint-disable-next-line
 
 class Game extends Page {
   start = () => {

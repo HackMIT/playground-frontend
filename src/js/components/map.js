@@ -148,9 +148,11 @@ class Map {
             saveButton.addEventListener('click', () => {
               socket.send({
                 type: 'update_map',
-                lat: loc[0],
-                lng: loc[1],
-                name: characterId,
+                location: {
+                  lat: loc[0],
+                  lng: loc[1],
+                  name: characterId,
+                },
               });
             });
           });
