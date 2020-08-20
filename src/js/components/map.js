@@ -14,7 +14,7 @@ class Map {
   constructor() {
     this.coordinates = [];
     mapboxgl.accessToken = MAPBOX_API_KEY;
-    socket.subscribe('get-map', this.registerLocation);
+    socket.subscribe(['map'], this.registerLocation);
   }
 
   registerLocation = (data) => {
@@ -37,15 +37,15 @@ class Map {
         ]
       }
     */
-    data.array.forEach((element) => {
+    data.locations.forEach((element) => {
       const point = {
         type: 'Feature',
         geometry: {
           type: 'point',
-          coordinates: [element.long, element.lat],
+          coordinates: [element.lat, element.lng],
         },
       };
-      locs.append(point);
+      locs.push(point);
     });
 
     const src = {
@@ -57,6 +57,7 @@ class Map {
     };
 
     this.coordinates = src;
+    console.log(this.coordinates);
   };
 
   createMap = (characterId) => {
@@ -115,18 +116,18 @@ class Map {
             },
           });
 
-          // if (this.coordinates === []) {
-          //   console.log('here');
-          //   map.addSource('point', {
-          //     type: 'geojson',
-          //     data: {
-          //       type: 'FeatureCollection',
-          //       features: [],
-          //     },
-          //   });
-          // } else {
-          //   map.addSource(this.coordinates);
-          // }
+          if (this.coordinates.length === 0) {
+            console.log('the beginning');
+            map.addSource('point', {
+              type: 'geojson',
+              data: {
+                type: 'FeatureCollection',
+                features: [],
+              },
+            });
+          } else {
+            map.addSource(this.coordinates);
+          }
 
           // how they'll be represented on
           map.addLayer({
