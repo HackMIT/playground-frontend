@@ -14,50 +14,34 @@ class Map {
   constructor() {
     this.coordinates = [];
     mapboxgl.accessToken = MAPBOX_API_KEY;
-    socket.subscribe(['map'], this.registerLocation);
+    this.map = socket.subscribe(['map'], this.registerLocation);
   }
 
   registerLocation = (data) => {
-    // send update packet to backend
     // receive map packet from backend
     // update coordinates
-    console.log('registering');
-
     const locs = [];
-    console.log(data);
 
     // processing all map coordinates
-    /*
-      {
-        type: 'map',
-        locations: [
-          'lat':
-          'lng':
-          'name':
-        ]
-      }
-    */
     data.locations.forEach((element) => {
       const point = {
         type: 'Feature',
         geometry: {
-          type: 'point',
+          type: 'Point',
           coordinates: [element.lat, element.lng],
         },
+        properties: {},
       };
       locs.push(point);
     });
 
     const src = {
-      type: 'geojson',
-      data: {
-        type: 'FeatureCollection',
-        features: locs,
-      },
+      type: 'FeatureCollection',
+      features: locs,
     };
 
     this.coordinates = src;
-    console.log(this.coordinates);
+    // console.log(JSON.stringify(this.coordinates));
   };
 
   createMap = (characterId) => {
@@ -65,117 +49,108 @@ class Map {
       container: 'map-frame',
       style: 'mapbox://styles/mapbox/light-v10',
       center: [-71.0942, 42.3601],
-      zoom: 7.5,
+      zoom: 3,
     });
 
     const geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
       marker: {
-        color: '#001d55',
+        color: '#fbcdc2',
       },
       mapboxgl,
     });
 
     const navigationPanel = new mapboxgl.NavigationControl();
 
-    map.addControl(geocoder);
+    map.addControl(geocoder, 'top-left');
     map.addControl(saveLocationButton, 'bottom-right');
-    map.addControl(navigationPanel);
+    map.addControl(navigationPanel, 'top-left');
 
     map.on('load', () => {
-      // Add an image to use as a custom marker
-      map.loadImage(
-        'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
-        (error, image) => {
-          if (error) throw error;
-          map.addImage('custom-marker', image);
+      // get coordinate data
+      socket.send({
+        type: 'get_map',
+      });
 
-          // request hacker coordinates
+      // pending search
+      map.addSource('single-point', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: [],
+        },
+      });
+
+      // hackers who've already placed themselves
+      if (this.coordinates.length === 0) {
+        map.addSource('hackers', {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: [],
+          },
+        });
+      } else {
+        map.addSource(this.coordinates);
+      }
+
+      // how stored hackers will be represented
+      map.addLayer({
+        id: 'hackers',
+        type: 'circle',
+        source: 'hackers',
+        paint: {
+          'circle-color': '#001d55',
+          'circle-radius': 5,
+          'circle-stroke-color': '#ffdf3f',
+          'circle-stroke-width': 2,
+        },
+      });
+
+      // handle searched locations
+      geocoder.on('result', (e) => {
+        const loc = e.result.geometry.coordinates;
+        console.log(loc);
+        map.getSource('single-point').setData(e.result.geometry);
+        const saveButton = window.document.getElementById('save');
+        saveButton.style.display = 'block';
+        saveButton.addEventListener('click', () => {
           socket.send({
-            type: 'get_map',
-          });
-
-          // pending search
-          map.addSource('single-point', {
-            type: 'geojson',
-            data: {
-              type: 'FeatureCollection',
-              features: [],
+            type: 'update_map',
+            location: {
+              lat: loc[0],
+              lng: loc[1],
+              name: characterId,
             },
           });
-
-          // hackers who've already placed themselves: MAKE THIS URL RESPONSE LATER
-          // map.addSource('points', this.coordinates);
-          console.log(this.coordinates);
-
-          map.addSource('hackers', {
-            type: 'geojson',
-            data: {
-              type: 'FeatureCollection',
-              features: [],
-            },
-          });
-
-          if (this.coordinates.length === 0) {
-            console.log('the beginning');
-            map.addSource('point', {
-              type: 'geojson',
-              data: {
-                type: 'FeatureCollection',
-                features: [],
-              },
-            });
-          } else {
-            map.addSource(this.coordinates);
-          }
-
-          // how they'll be represented on
-          map.addLayer({
-            id: 'points',
-            type: 'symbol',
-            source: 'hackers',
-          });
-
-          console.log('added sources and layer');
-
-          // handle searched locations
-          geocoder.on('result', (e) => {
-            const loc = e.result.geometry.coordinates;
-            console.log(loc);
-            map.getSource('single-point').setData(e.result.geometry);
-            const saveButton = window.document.getElementById('save');
-            saveButton.style.display = 'block';
-            saveButton.addEventListener('click', () => {
-              socket.send({
-                type: 'update_map',
-                location: {
-                  lat: loc[0],
-                  lng: loc[1],
-                  name: characterId,
-                },
-              });
-            });
-          });
-
-          // remove "save location" button if nothing is searched
-          geocoder.on('clear', () => {
-            window.document.getElementById('save').style.display = 'none';
-          });
-        }
-      );
-
-      // TODO: this isn't working
-      // Change the cursor to a pointer when the it enters a feature in the 'symbols' layer.
-      map.on('mouseenter', 'hackers', () => {
-        console.log('hovering');
-        map.getCanvas().style.cursor = 'pointer';
+        });
       });
 
-      // Change it back to a pointer when it leaves.
-      map.on('mouseleave', 'hackers', () => {
-        console.log('left hover');
-        map.getCanvas().style.cursor = '';
+      // remove "save location" button if nothing is searched
+      geocoder.on('clear', () => {
+        window.document.getElementById('save').style.display = 'none';
       });
+
+      // update map constantly?
+      window.setInterval(() => {
+        map.getSource('hackers').setData(this.coordinates);
+      }, 100);
+    });
+
+    // center the map on the clicked coordinates
+    map.on('click', 'hackers', (e) => {
+      map.flyTo({
+        center: e.features[0].geometry.coordinates,
+      });
+    });
+
+    map.on('mouseenter', 'hackers', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', 'hackers', () => {
+      map.getCanvas().style.cursor = '';
     });
   };
 }
