@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-import Character from './Character';
+import Character from './character';
 
 const d = 20; // this controls scale of camera
 

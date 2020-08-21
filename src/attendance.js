@@ -4,7 +4,6 @@ import socket from './js/socket';
 
 socket.start();
 socket.subscribe('join', (msg) => {
-  console.log(msg);
   document.getElementById(
     'confirm-message'
   ).innerHTML = `Please confirm your attendance for the <strong>${msg.event} Workshop</strong>`;
@@ -40,11 +39,9 @@ function handleSocketOpen() {
 }
 
 function handleConfirm() {
-  const token = localStorage.getItem('token');
   socket.send({
     type: 'event',
-    name: eventID,
-    user: token,
+    id: eventID
   });
   swal({
     title: 'Confirmed!',
