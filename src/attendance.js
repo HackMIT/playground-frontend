@@ -3,17 +3,22 @@ import swal from 'sweetalert';
 import socket from './js/socket';
 
 socket.start();
+socket.subscribe('join', (msg) => {
+  console.log(msg);
+  document.getElementById(
+    'confirm-message'
+  ).innerHTML = `Please confirm your attendance for the <strong>${msg.event} Workshop</strong>`;
+})
 
 const baseURL = 'http://localhost:3000';
 const param = '/attendance?id=';
 const idURL = baseURL + param;
+const eventID = window.location.href.slice(idURL.length);
 
 function handleSocketOpen() {
-  document.getElementById(
-    'confirm-message'
-  ).innerHTML = `Please confirm your attendance for the <strong>Cack Jook Workshop</strong>`;
   const joinPacket = {
     type: 'join',
+    event: eventID
   };
 
   if (localStorage.getItem('token') !== null) {
@@ -35,11 +40,10 @@ function handleSocketOpen() {
 }
 
 function handleConfirm() {
-  const workshopID = window.location.href.slice(idURL.length);
   const token = localStorage.getItem('token');
   socket.send({
-    type: 'workshop',
-    name: workshopID,
+    type: 'event',
+    name: eventID,
     user: token,
   });
   swal({
