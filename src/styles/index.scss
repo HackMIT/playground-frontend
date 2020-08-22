@@ -101,11 +101,12 @@ body {
   input[type='text'] {
     color: #fff;
     font-family: Muli;
+    font-size: 14px;
     background: #051e52;
     text-align: left;
     border-radius: 8px;
-    height: 38px;
-    padding: 0 8px;
+    height: 40px;
+    padding: 0 10px;
     min-width: 320px;
     border: none;
     margin-left: 8px;
@@ -120,8 +121,8 @@ body {
     border-radius: 50%;
     outline: none;
     border: none;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     margin: 0 3px;
     padding: 8px;
 
@@ -129,9 +130,9 @@ body {
       border: 3px solid $chat_box_background;
       margin-left: 0;
       margin-right: 5px;
-      padding: 9px 9px 6px 6px;
-      width: 38px;
-      height: 38px;
+      padding: 10px 10px 7px 7px;
+      width: 42px;
+      height: 42px;
     }
 
     &:active {
@@ -369,6 +370,7 @@ body {
   text-align: center;
   transform: translate(-50%, 104px);
   width: 200%;
+  z-index: -1;
 }
 
 .mssg {

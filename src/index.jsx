@@ -18,12 +18,15 @@ import './styles/coffeechat.scss';
 
 import './coffeechat';
 
+import './images/icons/dance.svg';
 import './images/icons/edit.svg';
+import './images/icons/friends.svg';
 import './images/icons/home.svg';
 import './images/icons/home-white.svg';
 import './images/icons/music.svg';
 import './images/icons/portal.png';
 import './images/icons/send.svg';
+import './images/icons/settings.svg';
 import './images/icons/tree.svg';
 
 // eslint-disable-next-line
