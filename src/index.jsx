@@ -23,6 +23,7 @@ import './images/icons/home.svg';
 import './images/icons/home-white.svg';
 import './images/icons/music.svg';
 import './images/icons/portal.png';
+import './images/icons/send.svg';
 import './images/icons/tree.svg';
 
 // eslint-disable-next-line
@@ -73,6 +74,7 @@ class Game extends Page {
     this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
     this.addClickListener('friends-button', this.handleFriendsButton);
+    this.addClickListener('send-button', this.handleSendButton);
     this.addClickListener('igloo-button', this.handleIglooButton);
 
     this.handleWindowSize();
@@ -84,12 +86,7 @@ class Game extends Page {
     // Start sending chat events
     document.getElementById('chat-box').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
-        socket.send({
-          type: 'chat',
-          mssg: e.target.value,
-        });
-
-        e.target.value = '';
+        this.handleSendButton();
       }
     });
 
@@ -413,6 +410,15 @@ class Game extends Page {
         .appendChild(friends.createFriendsPane(this.characters));
       this.friendsPaneVisible = true;
     }
+  };
+
+  handleSendButton = () => {
+    socket.send({
+      type: 'chat',
+      mssg: document.getElementById('chat-box').value,
+    });
+
+    document.getElementById('chat-box').value = '';
   };
 
   handleIglooButton = () => {
