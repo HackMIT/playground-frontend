@@ -18,16 +18,17 @@ import './styles/coffeechat.scss';
 
 import './coffeechat';
 
-import './images/icons/add.svg';
-import './images/icons/add-hallway.svg';
 import './images/icons/edit.svg';
+import './images/icons/home.svg';
 import './images/icons/music.svg';
+import './images/icons/portal.png';
+import './images/icons/tree.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
 const BACKGROUND_IMAGE_URL =
-  'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%SLUG%.png';
+  'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
 
 class Game extends Page {
   constructor() {
@@ -176,9 +177,13 @@ class Game extends Page {
         element.remove();
       });
 
+      this.elements = new Map();
+
       this.hallways.forEach((hallway) => {
         hallway.remove();
       });
+
+      this.hallways = new Map();
 
       Object.entries(data.room.characters).forEach(([id, character]) => {
         this.scene.newCharacter(id, character.name, character.x, character.y);
@@ -225,15 +230,9 @@ class Game extends Page {
         this.stopLoading();
       };
 
-      img.src = BACKGROUND_IMAGE_URL.replace('%SLUG%', this.room.slug);
+      img.src = BACKGROUND_IMAGE_URL.replace('%PATH%', this.room.background);
 
-      // document.getElementById(
-      //   'game'
-      // ).style.backgroundImage = `url('${BACKGROUND_IMAGE_URL.replace(
-      //   '%SLUG%',
-      //   this.room.slug
-      // )}')`;
-
+      // TODO: Investigate whether there's a bug here where multiple listeners get registered
       this.scene.fixCameraOnResize();
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
@@ -247,6 +246,7 @@ class Game extends Page {
           );
 
           if (distance <= hallway.data.radius) {
+            // TODO: We shouldn't need the 'from' attribute in the teleport packet
             socket.send({
               type: 'teleport',
               from: this.room.slug,
@@ -258,21 +258,6 @@ class Game extends Page {
 
           return false;
         });
-        // eslint-disable-next-line
-        // for (const [id, hallway] of Object.entries(this.hallways)) {
-        //   const distance = Math.sqrt(
-        //     (hallway.data.x - data.x) ** 2 + (hallway.data.y - data.y) ** 2,
-        //   );
-
-        //   if (distance <= hallway.data.radius) {
-        //     socket.send(JSON.stringify({
-        //       type: 'teleport',
-        //       from: this.room.slug,
-        //       to: hallway.data.to,
-        //     }));
-
-        //     break;
-        //   }
       });
     } else if (data.type === 'element_add') {
       const elementElem = new Element(data.element, data.id, this.elementNames);
@@ -296,6 +281,12 @@ class Game extends Page {
       this.hallways.delete(data.id);
     } else if (data.type === 'hallway_update') {
       this.hallways.get(data.id).applyUpdate(data.hallway);
+    } else if (data.type === 'room_add') {
+      socket.send({
+        type: 'teleport',
+        from: this.room.slug,
+        to: data.id,
+      });
     } else if (data.type === 'error') {
       if (data.code === 1) {
         this.stopLoading();
@@ -355,7 +346,20 @@ class Game extends Page {
     });
   };
 
-  handleRoomAddButton = () => {};
+  handleRoomAddButton = () => {
+    const roomName = prompt('What should the room be called?');
+    const backgroundPath = prompt("What's this room's background path?");
+    const sponsor = prompt("Type 'true' if this is a sponsor room").includes(
+      'true'
+    );
+
+    socket.send({
+      type: 'room_add',
+      id: roomName,
+      background: backgroundPath,
+      sponsor,
+    });
+  };
 
   handleEditButton = () => {
     this.editing = !this.editing;
@@ -438,10 +442,16 @@ class Game extends Page {
   };
 
   stopLoading = () => {
-    document.getElementById('loading').classList.add('closing');
+    const loadingElem = document.getElementById('loading');
+
+    if (loadingElem === null) {
+      return;
+    }
+
+    loadingElem.classList.add('closing');
 
     setTimeout(() => {
-      document.getElementById('loading').remove();
+      loadingElem.remove();
     }, 250);
   };
 }
