@@ -89,11 +89,11 @@ class Scene {
 
       const pageX = Math.round(
         (0.5 + vec.x / 2) *
-          (this.renderer.domElement.width / window.devicePixelRatio)
+        (this.renderer.domElement.width / window.devicePixelRatio)
       );
       const pageY = Math.round(
         (0.5 - vec.y / 2) *
-          (this.renderer.domElement.height / window.devicePixelRatio)
+        (this.renderer.domElement.height / window.devicePixelRatio)
       );
 
       return [pageX, pageY];
