@@ -20,6 +20,7 @@ import './coffeechat';
 
 import './images/icons/edit.svg';
 import './images/icons/home.svg';
+import './images/icons/home-white.svg';
 import './images/icons/music.svg';
 import './images/icons/portal.png';
 import './images/icons/tree.svg';
@@ -72,6 +73,7 @@ class Game extends Page {
     this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
     this.addClickListener('friends-button', this.handleFriendsButton);
+    this.addClickListener('igloo-button', this.handleIglooButton);
 
     this.handleWindowSize();
 
@@ -411,6 +413,12 @@ class Game extends Page {
         .appendChild(friends.createFriendsPane(this.characters));
       this.friendsPaneVisible = true;
     }
+  };
+
+  handleIglooButton = () => {
+    socket.send({
+      type: 'teleport_home',
+    });
   };
 
   handleSponsorLogin = () => {
