@@ -1,6 +1,9 @@
 import socket from './socket';
 import deleteIcon from '../images/icons/delete.svg';
 
+// eslint-disable-next-line
+import createElement from '../utils/jsxHelper';
+
 class Editable {
   constructor(data, id, elementNames) {
     this.editable = false;
@@ -8,7 +11,7 @@ class Editable {
     this.data = data;
     this.id = id;
 
-    this.element = this.createElement(elementNames);
+    this.element = this.createDOMElement(elementNames);
   }
 
   set visible(newValue) {
@@ -24,40 +27,36 @@ class Editable {
     // TODO: Remove click listeners and stuff
   }
 
-  createElement(elementNames) {
-    const elementElem = document.createElement('div');
-    elementElem.classList.add('element');
-    elementElem.style.left = `${this.data.x * 100}%`;
-    elementElem.style.top = `${this.data.y * 100}%`;
-    elementElem.style.width = `${this.width * 100}%`;
+  createDOMElement(elementNames) {
+    const elementElem = (
+      <div
+        className="element"
+        onclick={() => this.onClick()}
+        style={`left: ${this.data.x * 100}%; top: ${
+          this.data.y * 100
+        }%; width: ${this.width * 100}%`}
+      />
+    );
 
-    const imgElem = document.createElement('img');
-    imgElem.classList.add('element-img');
-    imgElem.setAttribute('src', this.imagePath);
+    const imgElem = <img className="element-img" src={this.imagePath} />;
     elementElem.appendChild(imgElem);
 
-    const deleteButton = document.createElement('div');
-    deleteButton.classList.add('delete');
+    const deleteButton = <div className="delete" />;
     elementElem.appendChild(deleteButton);
 
-    const deleteButtonImg = document.createElement('img');
-    deleteButtonImg.setAttribute('src', deleteIcon);
+    const deleteButtonImg = (
+      <img src={deleteIcon} onclick={() => this.sendDelete()} />
+    );
     deleteButton.appendChild(deleteButtonImg);
 
-    deleteButton.onclick = () => {
-      this.sendDelete();
-    };
-
-    const pathSelect = document.createElement('select');
+    const pathSelect = <select value={this.name} />;
 
     for (let i = 0; i < elementNames.length; i += 1) {
-      const optionElem = document.createElement('option');
-      optionElem.value = elementNames[i];
-      [optionElem.text] = elementNames[i].split('.');
+      const optionElem = (
+        <option value={elementNames[i]} text={elementNames[i].split('.')[0]} />
+      );
       pathSelect.appendChild(optionElem);
     }
-
-    pathSelect.value = this.name;
 
     pathSelect.onchange = () => {
       this.onNameSelect(pathSelect.value);
@@ -65,9 +64,7 @@ class Editable {
 
     elementElem.appendChild(pathSelect);
 
-    const brResizeElem = document.createElement('div');
-    brResizeElem.classList.add('resizer');
-    brResizeElem.classList.add('bottom-right');
+    const brResizeElem = <div className="resizer bottom-right" />;
     elementElem.appendChild(brResizeElem);
 
     brResizeElem.onmousedown = (e) => {
@@ -236,6 +233,9 @@ class Editable {
     };
 
     elementElem.ondragstart = () => false;
+
+    this.configureElement(elementElem);
+    this.configureImage(imgElem);
 
     return elementElem;
   }

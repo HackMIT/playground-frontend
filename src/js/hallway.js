@@ -30,6 +30,15 @@ class Hallway extends Editable {
     this.data.radius = newValue / 2;
   }
 
+  // eslint-disable-next-line
+  configureElement() {}
+
+  // eslint-disable-next-line
+  configureImage() {}
+
+  // eslint-disable-next-line
+  onClick() {}
+
   onNameSelect(value) {
     const { data } = this;
     data.to = value;
