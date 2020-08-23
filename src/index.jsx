@@ -148,16 +148,17 @@ class Game extends Page {
       type: 'join',
     };
 
-    if (localStorage.getItem('token') !== null) {
-      joinPacket.token = localStorage.getItem('token');
-    } else if (window.location.hash.length > 1) {
+    if (window.location.hash.length > 1) {
       joinPacket.quillToken = document.location.hash.substring(1);
+    } else if (localStorage.getItem('token') !== null) {
+      joinPacket.token = localStorage.getItem('token');
     } else {
       // No auth data
       return;
     }
 
     // Connected to remote
+    console.log(joinPacket);
     socket.send(joinPacket);
   };
 
