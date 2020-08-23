@@ -87,7 +87,52 @@ class Game extends Page {
     socket.start();
 
     // Start sending chat events
-    document.getElementById('chat-box').addEventListener('keypress', (e) => {
+    const chatElem = document.getElementById('chat-box');
+
+    chatElem.addEventListener('keydown', (e) => {
+      // i hate javascript
+      if (
+        e.keyCode === 8 || // backspace key
+        e.keyCode === 13 || // enter key
+        e.keyCode === 16 || // shift key
+        e.keyCode === 17 || // ctrl key
+        e.keyCode === 18 || // option key
+        (e.keyCode >= 37 && e.keyCode <= 40) || // arrow keys
+        e.keyCode === 46 || // delete key
+        e.keyCode === 91 || // cmd key
+        e.keyCode === 93 // right cmd key
+      ) {
+        return;
+      }
+
+      // TODO: Get this value from config
+      if (e.target.value.length >= 400) {
+        e.preventDefault();
+      }
+    });
+
+    chatElem.addEventListener('input', (e) => {
+      // Replace non-ASCII characters
+      // TODO: Get this value from config
+      chatElem.value = chatElem.value.substring(0, 400);
+      chatElem.value = chatElem.value.replace(/[^ -~]/gi, '');
+
+      const lengthElem = document.getElementById('chat-length-indicator');
+
+      // TODO: Add this value to a config
+      if (e.target.value.length >= 200) {
+        if (lengthElem.classList.contains('invisible')) {
+          lengthElem.classList.remove('invisible');
+        }
+
+        // TODO: Add this value to a config
+        lengthElem.innerText = `${e.target.value.length} / 400`;
+      } else if (!lengthElem.classList.contains('invisible')) {
+        lengthElem.classList.add('invisible');
+      }
+    });
+
+    chatElem.addEventListener('keyup', (e) => {
       if (e.key === 'Enter') {
         this.handleSendButton();
       }
@@ -158,7 +203,6 @@ class Game extends Page {
     }
 
     // Connected to remote
-    console.log(joinPacket);
     socket.send(joinPacket);
   };
 
@@ -417,12 +461,22 @@ class Game extends Page {
   };
 
   handleSendButton = () => {
+    const chatElem = document.getElementById('chat-box');
+
+    // TODO: Get this value from config
+    if (chatElem.value.length >= 400) {
+      return;
+    }
+
+    // Replace all non-ASCII characters
+    chatElem.value = chatElem.value.replace(/[^ -~]/gi, '');
+
     socket.send({
       type: 'chat',
-      mssg: document.getElementById('chat-box').value,
+      mssg: chatElem.value,
     });
 
-    document.getElementById('chat-box').value = '';
+    chatElem.value = '';
   };
 
   handleIglooButton = () => {
