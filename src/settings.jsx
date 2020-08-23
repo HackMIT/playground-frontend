@@ -27,15 +27,13 @@ class Settings {
     const settingsList = document.getElementById('settings-list');
     settingsList.innerHTML = '';
     settingsList.appendChild(this.createSettingsContent());
-    socket.send(
-      JSON.stringify({
-        type: 'settings',
-        settings: {
-          musicMuted: this.musicMuted,
-          soundMuted: this.soundMuted,
-        },
-      })
-    );
+    socket.send({
+      type: 'settings',
+      settings: {
+        musicMuted: this.musicMuted,
+        soundMuted: this.soundMuted,
+      },
+    });
   };
 
   createSettingsContent = () => {
@@ -58,17 +56,18 @@ class Settings {
   };
 
   handleLogOff = () => {
-    console.log('log off');
     localStorage.setItem('token', null);
-    location.reload();
+    window.location.reload();
   };
 
-  createSettingsModal = () => {
+  createSettingsModal = (settings) => {
+    this.musicMuted = settings.musicMuted;
+    this.soundMuted = settings.soundMuted;
+
     return (
       <div id="settings">
         <div id="root">
           <div class="settings-header" id="settings-header">
-            {/* <img class="settings-gear" src="images/settingsicon.svg" /> */}
             <div id="settings-gear"></div>
             <h1>SETTINGS</h1>
             <div id="settings-gear"></div>

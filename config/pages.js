@@ -19,4 +19,8 @@ module.exports = [
     path: 'register',
     template: 'register',
   },
+  {
+    path: 'attendance',
+    template: 'attendance',
+  },
 ];

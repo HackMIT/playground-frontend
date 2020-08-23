@@ -15,7 +15,8 @@ module.exports = {
     character: [`${paths.src}/character.jsx`],
     login: [`${paths.src}/login.js`],
     sponsor: [`${paths.src}/sponsor.js`],
-    register: [`${paths.src}/register.js`]
+    register: [`${paths.src}/register.js`],
+    attendance: [`${paths.src}/attendance.js`],
   },
 
   /**
@@ -60,14 +61,17 @@ module.exports = {
      *
      * Generates an HTML file from a template.
      */
-    ...pages.map((page) => new HtmlWebpackPlugin({
-      title: 'HackMIT Playground',
-      // favicon: paths.static + '/favicon.png',
-      template: `${paths.src}/${page.template}.html`,
-      chunks: ['common', page.template],
-      filename: page.path,
-      inject: true,
-    })),
+    ...pages.map(
+      (page) =>
+        new HtmlWebpackPlugin({
+          title: 'HackMIT Playground',
+          // favicon: paths.static + '/favicon.png',
+          template: `${paths.src}/${page.template}.html`,
+          chunks: ['common', page.template],
+          filename: page.path,
+          inject: true,
+        })
+    ),
   ],
 
   /**
@@ -97,7 +101,10 @@ module.exports = {
         test: /\.(scss|css)$/,
         use: [
           'style-loader',
-          { loader: 'css-loader', options: { sourceMap: true, importLoaders: 1 } },
+          {
+            loader: 'css-loader',
+            options: { sourceMap: true, importLoaders: 1 },
+          },
           { loader: 'postcss-loader', options: { sourceMap: true } },
           { loader: 'sass-loader', options: { sourceMap: true } },
         ],
