@@ -17,41 +17,38 @@ h2 {
 h1,
 h2 {
   font-family: LemonMilkMedium;
-}
-
-button {
+  color: $white !important;
 }
 
 #settings {
   background: $blue_light;
   color: $white !important;
   padding: 32px;
+
+  #root {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 }
 
-.settings-header {
+#settings-header {
   display: flex;
-  width: 75%;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex-direction: row;
+  margin: 0 0 1em 0;
+
+  #settings-gear {
+    padding: 0 10px;
+    background-image: url(../images/settingsicon.svg);
+    background-size: 16em auto;
+    height: 2em;
+    width: 2em;
+    background-position: center;
+  }
 }
-
-// .settings-page {
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   min-height: 100vh;
-//   // background-color: rgba(0, 0, 0, 0.3);
-// }
-
-// .settings-container {
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-//   min-height: 70vh;
-//   border-radius: 16px;
-//   // padding: 10vh 0;
-//   width: 560px;
-//   background-color: $blue_light;
-// }
 
 #settings-text {
   display: flex;
@@ -63,10 +60,21 @@ button {
 #settings-option {
   display: flex;
   flex-direction: row;
+  align-items: center;
+  // padding: 0 20px 0 0;
+  width: 40%;
+  // justify-content: center;
+
+  #settings-box {
+    background-image: url(../images/box.svg);
+    background-size: cover;
+    height: 3em;
+    width: 4em;
+    background-position: center;
+  }
 }
 
-#settings-music,
-#settings-sound {
+#settings-button {
   cursor: pointer;
   color: $white;
   background-color: $blue_light;
@@ -75,25 +83,32 @@ button {
   margin: 1em 0;
 }
 
-#settings-music:hover,
-#settings-sound:hover {
+#settings-flexcenter {
+  display: flex;
+  justify-content: center;
+}
+
+#settings-button:hover {
   color: $blue_text;
 }
 
-.settings-logout {
-  color: #fff;
+#settings-logout {
+  display: flex;
+  justify-content: center;
+  color: #c0c0c0;
+  border: 2px solid #c0c0c0;
   cursor: pointer;
-  background: #24447c;
+  background: $white;
   text-align: center;
-  border-radius: 8px;
   outline: none;
-  border: none;
-  margin: 1em;
-  padding: 1em;
-  width: 100%;
+  // border: none;
+  margin: 2em 1em;
+  padding: 0.5em;
+  width: 16vw;
   //   height: 38px;
 
-  &:active {
-    background: #1b2450;
+  &:hover {
+    background: #c0c0c0;
+    color: $white;
   }
 }
