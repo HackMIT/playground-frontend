@@ -461,6 +461,7 @@ class Game extends Page {
 
   handleSendButton = () => {
     const chatElem = document.getElementById('chat-box');
+    const lengthElem = document.getElementById('chat-length-indicator');
 
     // TODO: Get this value from config
     if (chatElem.value.length >= 400) {
@@ -476,6 +477,10 @@ class Game extends Page {
     });
 
     chatElem.value = '';
+
+    if (!lengthElem.classList.contains('invisible')) {
+      lengthElem.classList.add('invisible');
+    }
   };
 
   handleIglooButton = () => {
