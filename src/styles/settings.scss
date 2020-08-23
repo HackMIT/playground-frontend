@@ -2,33 +2,33 @@
 @import 'colors';
 @import 'variables';
 
-* {
-  padding: 0;
-  margin: 0;
-  font-family: Muli;
-}
-
-p,
-h1,
-h2 {
-  color: $white;
-}
-
-h1,
-h2 {
-  font-family: LemonMilkMedium;
-  color: $white !important;
-}
-
 #settings {
   background: $blue_light;
   color: $white !important;
-  padding: 32px;
 
   #root {
+    padding: 32px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+  }
+
+  * {
+    padding: 0;
+    margin: 0;
+    font-family: Muli;
+  }
+
+  p,
+  h1,
+  h2 {
+    color: $white;
+  }
+
+  h1,
+  h2 {
+    font-family: LemonMilkMedium;
+    color: $white !important;
   }
 }
 
@@ -111,4 +111,10 @@ h2 {
     background: #c0c0c0;
     color: $white;
   }
+}
+
+#settings-clouds {
+  background-image: url(../images/settingsclouds.svg);
+  min-height: 200px;
+  background-size: cover;
 }

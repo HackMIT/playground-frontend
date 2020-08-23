@@ -1,6 +1,7 @@
 import './styles/settings.scss';
 import './images/settingsicon.svg';
 import './images/box.svg';
+import './images/settingsclouds.svg';
 import socket from './js/socket';
 
 // eslint-disable-next-line
@@ -56,6 +57,12 @@ class Settings {
     );
   };
 
+  handleLogOff = () => {
+    console.log('log off');
+    localStorage.setItem('token', null);
+    location.reload();
+  };
+
   createSettingsModal = () => {
     return (
       <div id="settings">
@@ -70,9 +77,12 @@ class Settings {
             {this.createSettingsContent()}
           </div>
           <div id="settings-flexcenter">
-            <button id="settings-logout">LOG OFF</button>
+            <button id="settings-logout" onclick={this.handleLogOff}>
+              LOG OFF
+            </button>
           </div>
         </div>
+        <div id="settings-clouds"></div>
       </div>
     );
   };
