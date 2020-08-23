@@ -279,7 +279,6 @@ class Game extends Page {
 
       img.src = BACKGROUND_IMAGE_URL.replace('%PATH%', this.room.background);
 
-      // TODO: Investigate whether there's a bug here where multiple listeners get registered
       this.scene.fixCameraOnResize();
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
