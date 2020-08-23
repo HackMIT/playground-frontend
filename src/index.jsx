@@ -18,16 +18,22 @@ import './styles/coffeechat.scss';
 
 import './coffeechat';
 
-import './images/icons/add.svg';
-import './images/icons/add-hallway.svg';
+import './images/icons/dance.svg';
 import './images/icons/edit.svg';
+import './images/icons/friends.svg';
+import './images/icons/home.svg';
+import './images/icons/home-white.svg';
 import './images/icons/music.svg';
+import './images/icons/portal.png';
+import './images/icons/send.svg';
+import './images/icons/settings.svg';
+import './images/icons/tree.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
 const BACKGROUND_IMAGE_URL =
-  'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%SLUG%.png';
+  'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
 
 class Game extends Page {
   constructor() {
@@ -46,6 +52,8 @@ class Game extends Page {
     // Quick check for auth data
     if (localStorage.getItem('token') !== null) {
       document.getElementById('login-panel').style.display = 'none';
+    } else {
+      this.stopLoading();
     }
 
     this.scene = new Scene();
@@ -69,6 +77,8 @@ class Game extends Page {
     this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
     this.addClickListener('friends-button', this.handleFriendsButton);
+    this.addClickListener('send-button', this.handleSendButton);
+    this.addClickListener('igloo-button', this.handleIglooButton);
 
     this.handleWindowSize();
 
@@ -77,14 +87,54 @@ class Game extends Page {
     socket.start();
 
     // Start sending chat events
-    document.getElementById('chat-box').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        socket.send({
-          type: 'chat',
-          mssg: e.target.value,
-        });
+    const chatElem = document.getElementById('chat-box');
 
-        e.target.value = '';
+    chatElem.addEventListener('keydown', (e) => {
+      // i hate javascript
+      if (
+        e.keyCode === 8 || // backspace key
+        e.keyCode === 13 || // enter key
+        e.keyCode === 16 || // shift key
+        e.keyCode === 17 || // ctrl key
+        e.keyCode === 18 || // option key
+        (e.keyCode >= 37 && e.keyCode <= 40) || // arrow keys
+        e.keyCode === 46 || // delete key
+        e.keyCode === 91 || // cmd key
+        e.keyCode === 93 // right cmd key
+      ) {
+        return;
+      }
+
+      // TODO: Get this value from config
+      if (e.target.value.length >= 400) {
+        e.preventDefault();
+      }
+    });
+
+    chatElem.addEventListener('input', (e) => {
+      // Replace non-ASCII characters
+      // TODO: Get this value from config
+      chatElem.value = chatElem.value.substring(0, 400);
+      chatElem.value = chatElem.value.replace(/[^ -~]/gi, '');
+
+      const lengthElem = document.getElementById('chat-length-indicator');
+
+      // TODO: Add this value to a config
+      if (e.target.value.length >= 200) {
+        if (lengthElem.classList.contains('invisible')) {
+          lengthElem.classList.remove('invisible');
+        }
+
+        // TODO: Add this value to a config
+        lengthElem.innerText = `${e.target.value.length} / 400`;
+      } else if (!lengthElem.classList.contains('invisible')) {
+        lengthElem.classList.add('invisible');
+      }
+    });
+
+    chatElem.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') {
+        this.handleSendButton();
       }
     });
 
@@ -143,10 +193,10 @@ class Game extends Page {
       type: 'join',
     };
 
-    if (localStorage.getItem('token') !== null) {
-      joinPacket.token = localStorage.getItem('token');
-    } else if (window.location.hash.length > 1) {
+    if (window.location.hash.length > 1) {
       joinPacket.quillToken = document.location.hash.substring(1);
+    } else if (localStorage.getItem('token') !== null) {
+      joinPacket.token = localStorage.getItem('token');
     } else {
       // No auth data
       return;
@@ -174,9 +224,13 @@ class Game extends Page {
         element.remove();
       });
 
+      this.elements = new Map();
+
       this.hallways.forEach((hallway) => {
         hallway.remove();
       });
+
+      this.hallways = new Map();
 
       Object.entries(data.room.characters).forEach(([id, character]) => {
         this.scene.newCharacter(id, character.name, character.x, character.y);
@@ -223,15 +277,9 @@ class Game extends Page {
         this.stopLoading();
       };
 
-      img.src = BACKGROUND_IMAGE_URL.replace('%SLUG%', this.room.slug);
+      img.src = BACKGROUND_IMAGE_URL.replace('%PATH%', this.room.background);
 
-      // document.getElementById(
-      //   'game'
-      // ).style.backgroundImage = `url('${BACKGROUND_IMAGE_URL.replace(
-      //   '%SLUG%',
-      //   this.room.slug
-      // )}')`;
-
+      // TODO: Investigate whether there's a bug here where multiple listeners get registered
       this.scene.fixCameraOnResize();
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
@@ -245,6 +293,7 @@ class Game extends Page {
           );
 
           if (distance <= hallway.data.radius) {
+            // TODO: We shouldn't need the 'from' attribute in the teleport packet
             socket.send({
               type: 'teleport',
               from: this.room.slug,
@@ -256,21 +305,6 @@ class Game extends Page {
 
           return false;
         });
-        // eslint-disable-next-line
-        // for (const [id, hallway] of Object.entries(this.hallways)) {
-        //   const distance = Math.sqrt(
-        //     (hallway.data.x - data.x) ** 2 + (hallway.data.y - data.y) ** 2,
-        //   );
-
-        //   if (distance <= hallway.data.radius) {
-        //     socket.send(JSON.stringify({
-        //       type: 'teleport',
-        //       from: this.room.slug,
-        //       to: hallway.data.to,
-        //     }));
-
-        //     break;
-        //   }
       });
     } else if (data.type === 'element_add') {
       const elementElem = new Element(data.element, data.id, this.elementNames);
@@ -294,6 +328,12 @@ class Game extends Page {
       this.hallways.delete(data.id);
     } else if (data.type === 'hallway_update') {
       this.hallways.get(data.id).applyUpdate(data.hallway);
+    } else if (data.type === 'room_add') {
+      socket.send({
+        type: 'teleport',
+        from: this.room.slug,
+        to: data.id,
+      });
     } else if (data.type === 'error') {
       if (data.code === 1) {
         this.stopLoading();
@@ -353,7 +393,20 @@ class Game extends Page {
     });
   };
 
-  handleRoomAddButton = () => {};
+  handleRoomAddButton = () => {
+    const roomName = prompt('What should the room be called?');
+    const backgroundPath = prompt("What's this room's background path?");
+    const sponsor = prompt("Type 'true' if this is a sponsor room").includes(
+      'true'
+    );
+
+    socket.send({
+      type: 'room_add',
+      id: roomName,
+      background: backgroundPath,
+      sponsor,
+    });
+  };
 
   handleEditButton = () => {
     this.editing = !this.editing;
@@ -407,6 +460,31 @@ class Game extends Page {
     }
   };
 
+  handleSendButton = () => {
+    const chatElem = document.getElementById('chat-box');
+
+    // TODO: Get this value from config
+    if (chatElem.value.length >= 400) {
+      return;
+    }
+
+    // Replace all non-ASCII characters
+    chatElem.value = chatElem.value.replace(/[^ -~]/gi, '');
+
+    socket.send({
+      type: 'chat',
+      mssg: chatElem.value,
+    });
+
+    chatElem.value = '';
+  };
+
+  handleIglooButton = () => {
+    socket.send({
+      type: 'teleport_home',
+    });
+  };
+
   handleSponsorLogin = () => {
     const joinPacket = {
       type: 'join',
@@ -436,10 +514,16 @@ class Game extends Page {
   };
 
   stopLoading = () => {
-    document.getElementById('loading').classList.add('closing');
+    const loadingElem = document.getElementById('loading');
+
+    if (loadingElem === null) {
+      return;
+    }
+
+    loadingElem.classList.add('closing');
 
     setTimeout(() => {
-      document.getElementById('loading').remove();
+      loadingElem.remove();
     }, 250);
   };
 }

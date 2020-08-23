@@ -5,6 +5,8 @@
 @import 'fonts';
 @import 'colors';
 
+$chat_input_height: 40px;
+
 * {
   padding: 0;
   margin: 0;
@@ -52,7 +54,6 @@ body {
 }
 
 #outer {
-  //width: 100%;
   width: 177.77vh;
   height: 100vh;
   margin: 0 auto;
@@ -86,7 +87,7 @@ body {
 }
 
 #chat {
-  background: #7b9fce;
+  background: $chat_box_background;
   border-radius: 8px;
   display: flex;
   height: 52px;
@@ -101,14 +102,29 @@ body {
   input[type='text'] {
     color: #fff;
     font-family: Muli;
-    background: #051e52;
+    font-size: 14px;
+    background: $chat_input_background;
     text-align: left;
     border-radius: 8px;
-    height: 38px;
-    padding: 0 8px;
-    min-width: 320px;
+    height: $chat_input_height;
+    padding: 0 10px;
+    width: 320px;
     border: none;
-    margin: 0 8px;
+    margin-left: 8px;
+    margin-right: -20px;
+  }
+
+  #chat-length-indicator {
+    background: $chat_input_background;
+    box-sizing: border-box;
+    color: #ddd;
+    font-size: 13px;
+    text-align: right;
+    line-height: $chat_input_height;
+    padding: 0 8px;
+    position: absolute;
+    left: calc(50% + 125px);
+    transform: translateX(-50%);
   }
 
   button {
@@ -119,10 +135,19 @@ body {
     border-radius: 50%;
     outline: none;
     border: none;
-    width: 38px;
-    height: 38px;
-    margin: 0 4px;
-    padding: 9px;
+    width: 36px;
+    height: 36px;
+    margin: 0 3px;
+    padding: 8px;
+
+    &#send-button {
+      border: 3px solid $chat_box_background;
+      margin-left: 0;
+      margin-right: 5px;
+      padding: 10px 10px 7px 7px;
+      width: 42px;
+      height: 42px;
+    }
 
     &:active {
       background: #1b2450;
@@ -497,6 +522,7 @@ body {
   text-align: center;
   transform: translate(-50%, 104px);
   width: 200%;
+  z-index: -1;
 }
 
 .mssg {

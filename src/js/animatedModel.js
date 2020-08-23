@@ -182,16 +182,22 @@ class AnimatedModel {
   }
 
   updateChat(msg) {
+    if (this.chatTimer !== undefined) {
+      clearTimeout(this.chatTimer);
+    }
+
     this.chatBubble.innerHTML = msg;
     this.gameDom.appendChild(this.chatBubble);
 
-    setTimeout(() => {
+    this.chatTimer = setTimeout(() => {
       this.chatBubble.remove();
     }, 5000);
   }
 
   setAnimation(dest, callback) {
-    if (this.Animation.destination && this.Animation.destination.equals(dest)) { return 0; }
+    if (this.Animation.destination && this.Animation.destination.equals(dest)) {
+      return 0;
+    }
     const time = this.Animation.init(this.modelGeometry.position, dest);
 
     // update roation (by finding vector we're traveling along, setting angle to that)
@@ -207,7 +213,10 @@ class AnimatedModel {
     angle *= dirCross / Math.abs(dirCross);
 
     // rotate around Y axis
-    this.modelGeometry.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
+    this.modelGeometry.setRotationFromAxisAngle(
+      new THREE.Vector3(0, 1, 0),
+      angle
+    );
     this.walkCycle.enabled = true;
 
     this.callback = callback;

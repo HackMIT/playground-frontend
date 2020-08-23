@@ -15,11 +15,10 @@ class Character {
 
     // load glb file
     parent.loader.load(
-      'Fox.glb',
+      'character.glb',
       (gltf) => {
-        gltf.scene.scale.set(0.04, 0.04, 0.04);
-        this.setModel(parent, gltf.scene, gltf.animations[1], initX, initY);
-        this.model.addHtmlElem(this.profileElem)
+        gltf.scene.scale.set(0.65, 0.65, 0.65);
+        this.setModel(parent, gltf.scene, gltf.animations[0], initX, initY);
       },
       undefined,
       (e) => {
@@ -46,6 +45,7 @@ class Character {
 
   setModel(parentScene, model, animation, initX, initY) {
     const mixer = new THREE.AnimationMixer(model);
+    mixer.timeScale = 2.5;
     const walkCycle = mixer.clipAction(animation);
     walkCycle.enabled = false;
     walkCycle.play();
