@@ -13,8 +13,6 @@ class Character {
     this.gameDom = document.getElementById('game');
     this.gameDom.appendChild(this.profileBox);
 
-    this.showProfile();
-
     // load glb file
     parent.loader.load(
       'character.glb',
