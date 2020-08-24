@@ -11,7 +11,9 @@ class Character {
 
     this.createCharacterProfile();
     this.gameDom = document.getElementById('game');
-    this.gameDom.appendChild(this.profileElem);
+    this.gameDom.appendChild(this.profileBox);
+
+    this.showProfile();
 
     // load glb file
     parent.loader.load(
@@ -60,64 +62,55 @@ class Character {
       this.name,
       this.reverseRaycaster
     );
+
+    this.model.addHtmlElem(this.profileBox)
+  }
+
+  showProfile() {
+    this.profileBox.style.display = 'block';
   }
 
 
   createCharacterProfile() {
+    this.profileBox = document.createElement("div")
+    this.profileBox.style.display = 'none';
+
+
     this.profileElem = document.createElement("div"); // span to text
     this.profileElem.className = 'profile';
-    this.elem.addEventListener('click', () => {
-        this.profileElem.style.display = 'block';
-    });
-    this.elem.appendChild(this.profileElem);
-    this.profileElem.style.display = 'none';
-    this.setupHTMLPosTrackingElem(this.profileElem);
+    this.profileBox.appendChild(this.profileElem);
+    this.profileElem.style.display = 'block';
 
     this.yellowElem = document.createElement("div"); // span to text
     this.yellowElem.className = 'yellow-background';
-    this.elem.addEventListener('click', () => {
-        this.yellowElem.style.display = 'block';
-    });
-    this.elem.appendChild(this.yellowElem);
-    this.yellowElem.style.display = 'none';
+    this.yellowElem.style.display = 'block';
+    this.profileBox.appendChild(this.yellowElem);
 
     this.whiteProfileElem = document.createElement("div"); 
     this.whiteProfileElem.className = 'profile-back';
-    this.elem.addEventListener('click', () => {
-        this.whiteProfileElem.style.display = 'block';
-    });
-    this.elem.appendChild(this.whiteProfileElem);
-    this.whiteProfileElem.style.display = 'none';
+    this.profileBox.appendChild(this.whiteProfileElem);
+    this.whiteProfileElem.style.display = 'block';
 
     this.closeButton = document.createElement("div"); // span to text
     this.closeButton.className = 'close-button';
     this.closeButton.innerHTML = 'X';
 
-    document.getElementById("close-button").addEventListener('click', () => {
-        this.profileElem.style.display = 'none';
-        this.yellowElem.style.display = 'none';
-        this.gradProfileElem.style.display = 'none';
-
-     })
+    this.closeButton.addEventListener('click', () => {
+      this.profileBox.style.display = 'none';
+    })
     this.whiteProfileElem.appendChild(this.closeButton);
-    this.closeButton.style.display = 'none';
+    this.closeButton.style.display = 'block';
 
     this.gradProfileElem = document.createElement("div"); 
     this.gradProfileElem.className = 'profile-gradient';
     this.gradProfileElem.innerHtml = 'This is a long long long bio. I have nothing to say but lets just fill it with as many words as I can. Yayy all filled.'
-    this.elem.addEventListener('click', () => {
-        this.gradProfileElem.style.display = 'block';
-    });
-    this.elem.appendChild(this.gradProfileElem);
-    this.gradProfileElem.style.display = 'none';
+    this.profileBox.appendChild(this.gradProfileElem);
+    this.gradProfileElem.style.display = 'block';
 
     this.gradBioElem = document.createElement("div"); 
     this.gradBioElem.className = 'bio-gradient';
-    this.elem.addEventListener('click', () => {
-        this.gradBioElem.style.display = 'block';
-    });
-    this.elem.appendChild(this.gradBioElem);
-    this.gradBioElem.style.display = 'none';
+    this.profileBox.appendChild(this.gradBioElem);
+    this.gradBioElem.style.display = 'profileBox';
 
     this.bio = document.createElement("div"); 
     this.bio.className = 'bio-text';
@@ -130,11 +123,8 @@ class Character {
 
     this.buttonContainer = document.createElement("div");
     this.buttonContainer.className = 'button-container';
-    this.elem.addEventListener('click', () => {
-        this.buttonContainer.style.display = 'block';
-    });
-    this.elem.appendChild(this.buttonContainer);
-    this.buttonContainer.style.display = 'none';
+    this.profileBox.appendChild(this.buttonContainer);
+    this.buttonContainer.style.display = 'block';
 
     this.buttons1 = document.createElement("div"); 
     this.buttons1.className = 'profile-button';
@@ -171,7 +161,7 @@ class Character {
 
     this.whiteProfileElem.appendChild(this.profile_name);
     this.whiteProfileElem.appendChild(this.school_name);
-    this.gradProfileElem.appendChild(this.location_name)
+    this.gradProfileElem.appendChild(this.location_name);
   }
 
 

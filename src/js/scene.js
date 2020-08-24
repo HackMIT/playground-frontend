@@ -127,9 +127,13 @@ class Scene {
     return this.characters[characterId].sendChat(msg);
   }
 
-  worldVectorForPos(x, y) {
+  updateMouseForPos(x, y) {
     this.mouse.x = x * 2 - 1;
     this.mouse.y = -1 * (y * 2 - 1);
+  }
+
+  worldVectorForPos(x, y) {
+    this.updateMouseForPos(x, y);
 
     return this.groundCollisionVector(this.raycaster);
   }
@@ -144,6 +148,21 @@ class Scene {
     this.raycaster.ray.intersectPlane(collisionPlane, intersectVector);
 
     return intersectVector;
+  }
+
+  // show profile if clicked on character
+  // called from click handler of main page
+  // returns true if a character was clicked on, false otherwise
+  handleClickEvent(x, y) {
+    this.updateMouseForPos(x, y);
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+
+    Object.values(this.characters).forEach((character) => {
+      var intersects = this.raycaster.intersectObject(character.model.modelGeometry, true);
+      if (intersects.length > 0) {
+        character.showProfile();
+      }
+    });
   }
 
   render() {

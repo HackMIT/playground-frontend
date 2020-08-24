@@ -32,7 +32,7 @@ class AnimatedModel {
     this.trackingElems = [];
 
     this.addHtmlElem(this.nametag);
-    this.addHtmlElem(this.chatbubble);
+    this.addHtmlElem(this.chatBubble);
   }
 
   deconstruct() {
@@ -56,129 +56,6 @@ class AnimatedModel {
     htmlElem.style.transitionProperty = 'top, left';
 
     this.trackingElems.push(htmlElem)
-  }
-
-  updateHtml() {
-    // NOTE TO ZOEY: these two first were from previous 2d
-    // where character was elem and its id was "game"
-
-    // this.elem.innerHTML = `<span class="name">${name}</span>`;
-    // document.getElementById("game").appendChild(this.elem);
-    this.profileElem = document.createElement("div"); // span to text
-    this.profileElem.className = 'profile';
-    this.elem.addEventListener('click', () => {
-        this.profileElem.style.display = 'block';
-    });
-    this.elem.appendChild(this.profileElem);
-    this.profileElem.style.display = 'none';
-    this.setupHTMLPosTrackingElem(this.profileElem);
-
-    this.yellowElem = document.createElement("div"); // span to text
-    this.yellowElem.className = 'yellow-background';
-    this.elem.addEventListener('click', () => {
-        this.yellowElem.style.display = 'block';
-    });
-    this.elem.appendChild(this.yellowElem);
-    this.yellowElem.style.display = 'none';
-
-    this.whiteProfileElem = document.createElement("div"); 
-    this.whiteProfileElem.className = 'profile-back';
-    this.elem.addEventListener('click', () => {
-        this.whiteProfileElem.style.display = 'block';
-    });
-    this.elem.appendChild(this.whiteProfileElem);
-    this.whiteProfileElem.style.display = 'none';
-
-    this.closeButton = document.createElement("div"); // span to text
-    this.closeButton.className = 'close-button';
-    this.closeButton.innerHTML = 'X';
-
-    // Note to ZOE: this is where i'm slightly confused
-    // the event listeners are not working
-    document.getElementById("close-button").addEventListener('click', () => {
-        this.profileElem.style.display = 'none';
-        this.yellowElem.style.display = 'none';
-        this.gradProfileElem.style.display = 'none';
-
-     })
-    this.whiteProfileElem.appendChild(this.closeButton);
-    this.closeButton.style.display = 'none';
-
-    this.gradProfileElem = document.createElement("div"); 
-    this.gradProfileElem.className = 'profile-gradient';
-    this.gradProfileElem.innerHtml = 'This is a long long long bio. I have nothing to say but lets just fill it with as many words as I can. Yayy all filled.'
-    this.elem.addEventListener('click', () => {
-        this.gradProfileElem.style.display = 'block';
-    });
-    this.elem.appendChild(this.gradProfileElem);
-    this.gradProfileElem.style.display = 'none';
-
-    this.gradBioElem = document.createElement("div"); 
-    this.gradBioElem.className = 'bio-gradient';
-    this.elem.addEventListener('click', () => {
-        this.gradBioElem.style.display = 'block';
-    });
-    this.elem.appendChild(this.gradBioElem);
-    this.gradBioElem.style.display = 'none';
-
-    this.bio = document.createElement("div"); 
-    this.bio.className = 'bio-text';
-    this.bio.innerHTML = 'This is a long long long bio. I have nothing to say but lets just fill it with as many words as I can. Yayy all filled.';
-    this.gradBioElem.appendChild(this.bio);
-
-    this.earth = document.createElement("div");
-    this.earth.className = "earth";
-    this.gradBioElem.appendChild(this.earth);
-
-    this.buttonContainer = document.createElement("div");
-    this.buttonContainer.className = 'button-container';
-    this.elem.addEventListener('click', () => {
-        this.buttonContainer.style.display = 'block';
-    });
-    this.elem.appendChild(this.buttonContainer);
-    this.buttonContainer.style.display = 'none';
-
-    this.buttons1 = document.createElement("div"); 
-    this.buttons1.className = 'profile-button';
-
-    this.buttons2 = document.createElement("div"); 
-    this.buttons2.className = 'profile-button';
-
-    this.buttons3 = document.createElement("div"); 
-    this.buttons3.className = 'profile-button';
-
-    this.buttons4 = document.createElement("div"); 
-    this.buttons4.className = 'profile-button';
-
-    this.buttons5 = document.createElement("div"); 
-    this.buttons5.className = 'profile-button';
-
-    this.buttonContainer.appendChild(this.buttons1);
-    this.buttonContainer.appendChild(this.buttons2);
-    this.buttonContainer.appendChild(this.buttons3);
-    this.buttonContainer.appendChild(this.buttons4);
-    this.buttonContainer.appendChild(this.buttons5);
-
-    this.profile_name = document.createElement("div"); 
-    this.profile_name.className = 'profile-text';
-    // NOTE TO ZOE: im not sure how to get the name 
-    // of the animated model from this file 
-    // so maybe this method should belong in character.js
-    // however i saw the document.appendChilds in this file
-    // so decided to add the code here
-    // this.profile_name.innerHTML = name;
-
-    this.school_name = document.createElement("div"); 
-    this.school_name.className = 'sub-text';
-    this.school_name.innerHTML = 'Massachusetts Institute of Tech';
-
-    this.location_name = document.createElement("div"); 
-    this.location_name.className = 'location-text';
-    this.location_name.innerHTML = 'Arizona, United States';
-
-    this.whiteProfileElem.appendChild(this.profile_name);
-    this.whiteProfileElem.appendChild(this.school_name);
-    this.gradProfileElem.appendChild(this.location_name)
   }
 
   updateChat(msg) {

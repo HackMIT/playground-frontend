@@ -176,16 +176,21 @@ class Game extends Page {
       return;
     }
 
-    // Send move packet
     const rect = document.getElementById('game').getBoundingClientRect();
     const x = (e.pageX - rect.x) / rect.width;
     const y = (e.pageY - rect.y) / rect.height;
 
+
+    // call click handler of game to check for characters clicked
+    this.scene.handleClickEvent(x, y);
+
+    // Send move packet
     socket.send({
       x,
       y,
       type: 'move',
     });
+
   };
 
   handleSocketOpen = () => {
