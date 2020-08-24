@@ -5,8 +5,8 @@ import AnimatedModel from './animatedModel';
 class Character {
   constructor(name, initX, initY, parent, reverseRaycaster) {
     this.name = name;
-    this.init_x = initX;
-    this.init_y = initY;
+    this.curX = initX;
+    this.curY = initY;
     this.reverseRaycaster = reverseRaycaster;
 
     // load glb file
@@ -30,8 +30,11 @@ class Character {
   }
 
   // returns time it'll take
-  moveTo(vector, callback) {
+  // x and y are just stored so the screen position doesn't have to be recalculated
+  moveTo(vector, callback, x, y) {
     this.model.setAnimation(vector, callback);
+    this.curX = x
+    this.curY = y
   }
 
   safeDelete(parent) {

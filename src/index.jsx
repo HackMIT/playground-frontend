@@ -8,6 +8,7 @@ import settings from './settings.jsx';
 import friends from './js/components/friends';
 import jukebox from './jukebox';
 import createLoadingScreen from './js/components/loading';
+import {pointInPolygon, lineIntersectsPolygon} from './js/geometry';
 
 import './styles/index.scss';
 import './styles/sponsor.scss';
@@ -35,6 +36,8 @@ import createElement from './utils/jsxHelper';
 
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
+
+const walls = [[[0.2, 0.2], [0.4, 0.4], [0.2, 0.4]], [[0.4, 0.4], [0.6, 0.4], [0.6, 0.6], [0.4, 0.6]]]
 
 class Game extends Page {
   constructor() {
@@ -156,6 +159,8 @@ class Game extends Page {
       return;
     }
 
+
+
     // Remove editable status from all elements
     let wasEditing = 0;
 
@@ -186,6 +191,19 @@ class Game extends Page {
     const rect = document.getElementById('game').getBoundingClientRect();
     const x = (e.pageX - rect.x) / rect.width;
     const y = (e.pageY - rect.y) / rect.height;
+
+    // calculate whether target location is valid (e.g. not inside walls)
+    const oldPos = this.scene.getCharacterPos(this.characterId);
+    // check if you're currently in the wall
+    const inWall = walls.some((wall) => pointInPolygon(oldPos, wall))
+    if (inWall) {
+      // if you're in the wall you're only allowed to move out 
+      // (this is so you can't get stuck in walls if something breaks) 
+      if (walls.some((wall) => pointInPolygon([x,y], wall))) { return; }
+    } else {
+      // check that you're not trying to move through a wall
+      if (walls.some((wall) => lineIntersectsPolygon([oldPos, [x, y]], wall))) { return; }
+    }
 
     socket.send({
       x,
@@ -293,6 +311,26 @@ class Game extends Page {
       img.src = BACKGROUND_IMAGE_URL.replace('%PATH%', this.room.background);
 
       this.scene.fixCameraOnResize();
+
+      // (this draws the walls, I'm just using it for testing)
+      walls.forEach(wall => {
+        var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.style.cssText = "position: absolute; height: 100%; width: 100%; top: 0; left: 0;";
+
+        var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+        let pt_str = "";
+        
+        let game = document.getElementById("game")
+        const rect = game.getBoundingClientRect();
+
+        wall.forEach(elem => {
+          pt_str += `${elem[0] * rect.width},${elem[1] * rect.height} `
+        });
+        polygon.setAttribute("points", pt_str);
+        polygon.setAttribute("style", "fill: red;");
+        svg.appendChild(polygon);
+        game.insertBefore(svg, game.firstChild);
+      });
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
         if (data.id !== this.characterId) {

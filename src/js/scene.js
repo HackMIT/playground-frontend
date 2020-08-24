@@ -107,7 +107,12 @@ class Scene {
   // move character with given id to x,y
   moveCharacter(id, x, y, callback) {
     const newPos = this.worldVectorForPos(x, y);
-    this.characters[id].moveTo(newPos, callback);
+    this.characters[id].moveTo(newPos, callback, x, y);
+  }
+
+  getCharacterPos(id) {
+    const character = this.characters[id];
+    return [character.curX, character.curY];
   }
 
   // delete character (remove from map and scene)
