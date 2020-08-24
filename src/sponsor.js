@@ -1,34 +1,39 @@
-import './styles/index.scss';
-import axios from 'axios';
+import createModal from './modal';
 
-const sponsorBaseURL = 'http://localhost:8080/sponsor/';
-let id = '';
+function sponsorModal() {
+  const sponsorQueue = document.createElement('div');
+  const queueHeader = document.createElement('h2');
+  const hackers = document.createElement('table');
 
-const signInForm = document.getElementById('sign-in-form');
-function handleSignIn(event) {
-  event.preventDefault();
-  axios.get(sponsorBaseURL + document.getElementById('id').value).then((res) => {
-    id = document.getElementById('id').value;
-    document.getElementById('data-dump').innerHTML = res.data;
-    document.getElementById('sponsor-name').innerHTML = `${res.data.Name} admin page`;
-    document.getElementById('secret-id').innerHTML = `Secret id: ${res.data.Id}`;
-    document.getElementById('room-color').innerHTML = `Room color: ${res.data.Color}`;
-  });
-}
-signInForm.addEventListener('submit', handleSignIn);
+  queueHeader.innerHTML = "Sponsor A's hacker queue"
 
-const colorForm = document.getElementById('change-color');
-function handleColorChange(event) {
-  event.preventDefault();
-  if (id !== '') {
-    const color = document.getElementById('new-color').value;
-    axios.put(sponsorBaseURL + id, {
-      color,
-    }).then(() => {
-      document.getElementById('room-color').innerHTML = `Room color: ${color}`;
-    });
-  } else {
-    alert('Sign in first');
+  // use conn to get the current queue
+  const currentQueue = [
+    { "name": "Jack Zhang", "id": "h48h398r" },
+    { "name": "Justin Cook", "id": "jbn3urh83" },
+    { "name": "Hannah Yu", "id": "bruh329rj3" },
+    { "name": "Jamie Liu", "id": "3mk1415njfa" },
+    { "name": "Nadia Fu", "id": "jf238ffg" },
+    { "name": "Angela Waid", "id": "0oa9r34hj" },
+  ]
+
+  for (let i = 0; i < currentQueue.length; i += 1) {
+    const row = document.createElement('tr');
+    const hacker = document.createElement('th');
+    hacker.innerHTML = currentQueue[i].name;
+    const removeButton = document.createElement('button');
+    removeButton.innerHTML = "Remove";
+
+    // add onclick for removeButton that sends message
+
+    row.appendChild(hacker);
+    row.appendChild(removeButton);
+    hackers.appendChild(row);
   }
-}
-colorForm.addEventListener('submit', handleColorChange);
+
+  sponsorQueue.appendChild(queueHeader);
+  sponsorQueue.appendChild(hackers);
+  createModal(sponsorQueue);
+};
+
+export default sponsorModal;

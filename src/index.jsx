@@ -4,6 +4,7 @@ import Hallway from './js/hallway';
 import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
+import sponsorModal from './sponsor';
 import friends from './js/components/friends';
 import jukebox from './jukebox';
 import createLoadingScreen from './js/components/loading';
@@ -72,6 +73,7 @@ class Game extends Page {
     this.addClickListener('add-hallway-button', this.handleHallwayAddButton);
     this.addClickListener('add-room-button', this.handleRoomAddButton);
     this.addClickListener('day-of-button', this.handleDayofButton);
+    this.addClickListener('sponsor-button', this.handleSponsorButton);
     this.addClickListener('edit-button', this.handleEditButton);
     this.addClickListener('game', this.handleGameClick);
     this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
@@ -368,6 +370,10 @@ class Game extends Page {
       />
     );
   };
+
+  handleSponsorButton = () => {
+    sponsorModal();
+  }
 
   handleElementAddButton = () => {
     socket.send({

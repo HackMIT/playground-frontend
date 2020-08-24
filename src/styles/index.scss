@@ -229,6 +229,15 @@ body {
     right: 24px;
   }
 
+  #sponsor-button {
+    position: absolute;
+    bottom: 90px;
+    right: 24px;
+    height: 64px;
+    width: 64px;
+    cursor: pointer;
+  }
+
   #day-of-button {
     position: absolute;
     bottom: 24px;
