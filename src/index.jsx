@@ -148,11 +148,7 @@ class Game extends Page {
 
   handleGameClick = (e) => {
     // When clicking on the page, send a move message to the server
-    if (
-      e.target.id !== 'three-canvas' &&
-      !e.target.classList.contains('element') &&
-      !e.target.classList.contains('element-img')
-    ) {
+    if (e.target.id !== 'three-canvas') {
       return;
     }
 
@@ -233,6 +229,7 @@ class Game extends Page {
       this.elements = [];
 
       this.hallways.forEach((hallway) => {
+        console.log(hallway);
         hallway.remove();
       });
 
@@ -250,12 +247,16 @@ class Game extends Page {
         const elementElem = new Element(element, id, data.elementNames);
         this.elements.push(elementElem);
 
-        document
-          .getElementById('game')
-          .insertBefore(
-            elementElem.element,
-            document.getElementById('three-container')
-          );
+        if (element.action > 0) {
+          document.getElementById('game').appendChild(elementElem.element);
+        } else {
+          document
+            .getElementById('game')
+            .insertBefore(
+              elementElem.element,
+              document.getElementById('three-container')
+            );
+        }
       });
 
       Object.entries(data.room.hallways).forEach(([id, hallway]) => {
