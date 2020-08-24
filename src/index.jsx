@@ -61,7 +61,7 @@ class Game extends Page {
 
     this.characterId = null;
     this.characters = new Map();
-    this.elements = new Map();
+    this.elements = [];
     this.hallways = new Map();
     this.room = null;
 
@@ -148,7 +148,11 @@ class Game extends Page {
 
   handleGameClick = (e) => {
     // When clicking on the page, send a move message to the server
-    if (e.target.id !== 'three-canvas') {
+    if (
+      e.target.id !== 'three-canvas' &&
+      !e.target.classList.contains('element') &&
+      !e.target.classList.contains('element-img')
+    ) {
       return;
     }
 
@@ -226,7 +230,7 @@ class Game extends Page {
         element.remove();
       });
 
-      this.elements = new Map();
+      this.elements = [];
 
       this.hallways.forEach((hallway) => {
         hallway.remove();
@@ -244,8 +248,14 @@ class Game extends Page {
 
       Object.entries(data.room.elements).forEach(([id, element]) => {
         const elementElem = new Element(element, id, data.elementNames);
-        document.getElementById('game').appendChild(elementElem.element);
-        this.elements.set(id, elementElem);
+        this.elements.push(elementElem);
+
+        document
+          .getElementById('game')
+          .insertBefore(
+            elementElem.element,
+            document.getElementById('three-container')
+          );
       });
 
       Object.entries(data.room.hallways).forEach(([id, hallway]) => {
@@ -309,14 +319,15 @@ class Game extends Page {
         });
       });
     } else if (data.type === 'element_add') {
-      const elementElem = new Element(data.element, data.id, this.elementNames);
-      document.getElementById('game').appendChild(elementElem.element);
-      this.elements.set(data.id, elementElem);
-    } else if (data.type === 'element_delete') {
-      this.elements.get(data.id).remove();
-      this.elements.delete(data.id);
+      const element = new Element(data.element, data.id, this.elementNames);
+      document.getElementById('game').appendChild(element.element);
+      this.elements.push(element);
+      // } else if (data.type === 'element_delete') {
+      //   this.elements.get(data.id).remove();
+      //   this.elements.delete(data.id);
     } else if (data.type === 'element_update') {
-      this.elements.get(data.id).applyUpdate(data.element);
+      const idx = this.elements.findIndex((elem) => elem.id === data.id);
+      this.elements[idx].applyUpdate(data.element);
     } else if (data.type === 'hallway_add') {
       this.hallways.set(
         data.id,

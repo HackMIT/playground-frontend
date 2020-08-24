@@ -247,7 +247,6 @@ body {
 .element {
   position: absolute;
   transform: translate(-50%, -50%);
-  z-index: 100;
 
   &.editable {
     cursor: grab;
@@ -321,6 +320,7 @@ body {
 #three-container {
   height: 100%;
   width: 100%;
+  position: relative;
 }
 
 #login-panel {
