@@ -28,17 +28,21 @@
   transform: translate(-50%, -50%);
 }
 
+#balloon {
+  z-index: 1001;
+}
+
 #cloud1 {
   left: calc(50% - 96px);
-  top: calc(50% + 96px);
-  width: 128px;
+  top: calc(50% + 52px);
+  width: 144px;
+  z-index: 1002;
 }
 
 #cloud2 {
   left: calc(50% + 96px);
   top: calc(50% - 96px);
-  width: 128px;
-  z-index: 1001;
+  width: 144px;
 }
 
 @keyframes bounce {
@@ -61,9 +65,9 @@
   width: 172px;
 }
 
-.loading-text {
+#loading p {
   color: #fff;
   font-size: 20px;
   text-transform: uppercase;
-  top: calc(50% + 172px);
+  top: calc(50% + 164px);
 }

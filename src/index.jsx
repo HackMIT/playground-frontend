@@ -41,7 +41,7 @@ class Game extends Page {
     super();
 
     if (!this.loaded) {
-      document.getElementById('game').appendChild(createLoadingScreen());
+      this.startLoading();
     }
   }
 
@@ -63,6 +63,7 @@ class Game extends Page {
     this.characters = new Map();
     this.elements = [];
     this.hallways = new Map();
+    this.loadingTasks = 0;
     this.room = null;
 
     this.editing = false;
@@ -244,8 +245,14 @@ class Game extends Page {
       this.roomNames = data.roomNames;
 
       Object.entries(data.room.elements).forEach(([id, element]) => {
+        this.loadingTasks += 1;
+
         const elementElem = new Element(element, id, data.elementNames);
         this.elements.push(elementElem);
+
+        elementElem.onload = () => {
+          this.finishedLoadingPart();
+        };
 
         if (element.action > 0) {
           document.getElementById('game').appendChild(elementElem.element);
@@ -261,6 +268,7 @@ class Game extends Page {
 
       Object.entries(data.room.hallways).forEach(([id, hallway]) => {
         this.hallways.set(id, new Hallway(hallway, id, data.roomNames));
+
         document
           .getElementById('game')
           .appendChild(this.hallways.get(id).element);
@@ -282,13 +290,14 @@ class Game extends Page {
         document.getElementById('game').classList.remove('sponsor');
       }
 
+      this.loadingTasks += 1;
       const img = new Image();
 
       img.onload = () => {
         this.loaded = true;
 
         document.getElementById('background').src = img.src;
-        this.stopLoading();
+        this.finishedLoadingPart();
       };
 
       img.src = BACKGROUND_IMAGE_URL.replace('%PATH%', this.room.background);
@@ -306,6 +315,8 @@ class Game extends Page {
           );
 
           if (distance <= hallway.data.radius) {
+            this.startLoading();
+
             // TODO: We shouldn't need the 'from' attribute in the teleport packet
             socket.send({
               type: 'teleport',
@@ -503,12 +514,16 @@ class Game extends Page {
   };
 
   handleIglooButton = () => {
+    this.startLoading();
+
     socket.send({
       type: 'teleport_home',
     });
   };
 
   handleSponsorLogin = () => {
+    this.startLoading();
+
     const joinPacket = {
       type: 'join',
       name: prompt("What's your name?"),
@@ -536,7 +551,22 @@ class Game extends Page {
     }
   };
 
+  startLoading = () => {
+    document.getElementById('game').appendChild(createLoadingScreen());
+  };
+
   stopLoading = () => {
+    this.loadingTasks = 1;
+    this.finishedLoadingPart();
+  };
+
+  finishedLoadingPart = () => {
+    this.loadingTasks -= 1;
+
+    if (this.loadingTasks > 0) {
+      return;
+    }
+
     const loadingElem = document.getElementById('loading');
 
     if (loadingElem === null) {

@@ -38,8 +38,20 @@ class Editable {
       />
     );
 
-    const imgElem = <img className="element-img" src={this.imagePath} />;
+    const imgElem = <img className="element-img" />;
     elementElem.appendChild(imgElem);
+
+    const img = new Image();
+
+    img.onload = () => {
+      imgElem.src = img.src;
+
+      if (this.onload !== undefined) {
+        this.onload();
+      }
+    };
+
+    img.src = this.imagePath;
 
     const deleteButton = <div className="delete" />;
     elementElem.appendChild(deleteButton);
