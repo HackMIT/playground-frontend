@@ -244,10 +244,10 @@ class Game extends Page {
       this.elementNames = data.elementNames;
       this.roomNames = data.roomNames;
 
-      Object.entries(data.room.elements).forEach(([id, element]) => {
+      data.room.elements.forEach((element) => {
         this.loadingTasks += 1;
 
-        const elementElem = new Element(element, id, data.elementNames);
+        const elementElem = new Element(element, element.id, data.elementNames);
         this.elements.push(elementElem);
 
         elementElem.onload = () => {
@@ -317,10 +317,8 @@ class Game extends Page {
           if (distance <= hallway.data.radius) {
             this.startLoading();
 
-            // TODO: We shouldn't need the 'from' attribute in the teleport packet
             socket.send({
               type: 'teleport',
-              from: this.room.slug,
               to: hallway.data.to,
             });
 
@@ -356,7 +354,6 @@ class Game extends Page {
     } else if (data.type === 'room_add') {
       socket.send({
         type: 'teleport',
-        from: this.room.slug,
         to: data.id,
       });
     } else if (data.type === 'error') {

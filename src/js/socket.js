@@ -1,3 +1,5 @@
+import constants from '../constants';
+
 class Socket {
   constructor() {
     this.conn = null;
@@ -9,7 +11,7 @@ class Socket {
   }
 
   start() {
-    this.conn = new WebSocket('wss://backend.play.hackmit.org/ws');
+    this.conn = new WebSocket(constants.ws_url);
     this.conn.onopen = this.onopen;
     this.conn.onclose = this.onclose;
     this.conn.onmessage = (e) => {

@@ -23,7 +23,10 @@ class MessagePane {
   };
 
   handleSocketMessage = (msg) => {
-    if (msg.type === 'message') {
+    if (
+      msg.type === 'message' &&
+      (msg.from === this.recipient || msg.to === this.recipient)
+    ) {
       this.messages.push(msg);
     } else if (msg.type === 'messages') {
       if (msg.recipient !== this.character.id) {
@@ -38,6 +41,8 @@ class MessagePane {
 
   updateMessagesPane = (character) => {
     if (character !== undefined) {
+      this.recipient = character.id;
+
       socket.send({
         type: 'get_messages',
         recipient: character.id,

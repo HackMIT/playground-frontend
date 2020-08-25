@@ -61,6 +61,7 @@ class Editable {
     );
     deleteButton.appendChild(deleteButtonImg);
 
+    console.log(this.name);
     const pathSelect = <select value={this.name} />;
 
     for (let i = 0; i < elementNames.length; i += 1) {
