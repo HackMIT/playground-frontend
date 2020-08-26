@@ -404,10 +404,26 @@ body {
   transform: translateY(-18px);
 }
 
-#jukebox-modal {
+#quarantine-modal {
   background: $blue_light;
   width: 32vw;
   color: $white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 32px;
+  text-align: center;
+
+  .white-text {
+    color: $white !important;
+  }
+}
+
+#jukebox-modal {
+  background: $blue_light;
+  color: $white;
+  width: 60vw;
   display: flex;
   justify-content: center;
   align-items: center;

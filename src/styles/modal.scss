@@ -59,6 +59,20 @@
   height: 100%;
 }
 
+.quarantine-modal {
+  display: flex;
+  background: rgba(0, 0, 0, 0);
+  align-items: center;
+  justify-content: center;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  position: relative;
+
+  * {
+    max-width: 100%;
+  }
+}
+
 .modal-close-button {
   position: absolute;
   z-index: 1;
