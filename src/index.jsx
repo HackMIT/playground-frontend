@@ -500,6 +500,20 @@ class Game extends Page {
     // Replace all non-ASCII characters
     chatElem.value = chatElem.value.replace(/[^ -~]/gi, '');
 
+    // Check if chat contains any covid-related words
+    const pattern = new RegExp(/(\s|^)(sick|achoo|sneeze|fever|sick|asymptomatic|symptoms)(\s|$|[.!?\\-])/i);
+    const matches = chatElem.value.match(pattern)
+
+    if (matches) {
+      socket.send({type: 'teleport_home'});
+      createModal(<div id="quarantine-modal">
+        <h1 className="white-text">Welcome Home!</h1>
+        <p className="white-text">You have been placed in quarantine for saying '{chatElem.value}'.</p>
+      </div>, "quarantine")
+      chatElem.value = '';
+      return;
+    }
+
     socket.send({
       type: 'chat',
       mssg: chatElem.value,
