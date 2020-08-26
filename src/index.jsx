@@ -5,6 +5,7 @@ import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
 import settings from './settings.jsx';
+import feedback from './feedback.jsx';
 import friends from './js/components/friends';
 import jukebox from './jukebox';
 import createLoadingScreen from './js/components/loading';
@@ -46,6 +47,8 @@ class Game extends Page {
   }
 
   start = () => {
+    this.showFeedback();
+
     if (!window.WebSocket) {
       // TODO: Handle error -- tell people their browser is incompatible
     }
@@ -546,6 +549,11 @@ class Game extends Page {
 
       outerElem.classList.remove('vertical');
     }
+  };
+
+  showFeedback = () => {
+    console.log('shit')
+    createModal(feedback.createFeedbackModal());
   };
 
   startLoading = () => {
