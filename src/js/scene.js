@@ -157,12 +157,24 @@ class Scene {
     this.updateMouseForPos(x, y);
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
-    Object.values(this.characters).forEach((character) => {
-      var intersects = this.raycaster.intersectObject(character.model.modelGeometry, true);
+    let success = false;
+
+    Object.values(this.characters).some((character) => {
+      const intersects = this.raycaster.intersectObject(
+        character.model.modelGeometry,
+        true
+      );
+
       if (intersects.length > 0) {
+        success = true;
         character.showProfile();
+        return true;
       }
+
+      return false;
     });
+
+    return success;
   }
 
   render() {

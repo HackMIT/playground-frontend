@@ -183,9 +183,13 @@ class Game extends Page {
     const x = (e.pageX - rect.x) / rect.width;
     const y = (e.pageY - rect.y) / rect.height;
 
-
     // call click handler of game to check for characters clicked
-    this.scene.handleClickEvent(x, y);
+    const success = this.scene.handleClickEvent(x, y);
+
+    if (success) {
+      // If we click on a character, don't move
+      return;
+    }
 
     // Send move packet
     socket.send({
@@ -193,7 +197,6 @@ class Game extends Page {
       y,
       type: 'move',
     });
-
   };
 
   handleSocketOpen = () => {
