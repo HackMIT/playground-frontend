@@ -398,3 +398,19 @@ body {
   font-size: 13px;
   transform: translateY(-18px);
 }
+
+#quarantine-modal {
+  background: $blue_light;
+  width: 32vw;
+  color: $white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 32px;
+  text-align: center;
+
+  .white-text {
+    color: $white !important;
+  }
+}
