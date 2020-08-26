@@ -83,8 +83,8 @@ class Scene {
   }
 
   // create a new character at 0,0
-  newCharacter(characterId, name, x, y) {
-    this.characters[characterId] = new Character(name, x, y, this, (vec) => {
+  newCharacter(id, character) {
+    this.characters[id] = new Character(character, this, (vec) => {
       vec.project(this.camera);
 
       const pageX = Math.round(

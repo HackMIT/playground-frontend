@@ -238,14 +238,13 @@ class Game extends Page {
       this.elements = [];
 
       this.hallways.forEach((hallway) => {
-        console.log(hallway);
         hallway.remove();
       });
 
       this.hallways = new Map();
 
       Object.entries(data.room.characters).forEach(([id, character]) => {
-        this.scene.newCharacter(id, character.name, character.x, character.y);
+        this.scene.newCharacter(id, character);
         this.characters.set(id, character);
       });
 
@@ -370,12 +369,7 @@ class Game extends Page {
         document.getElementById('login-panel').style.display = 'block';
       }
     } else if (data.type === 'join') {
-      this.scene.newCharacter(
-        data.character.id,
-        data.character.name,
-        data.character.x,
-        data.character.y
-      );
+      this.scene.newCharacter(data.character.id, data.character);
     } else if (data.type === 'leave') {
       if (data.character.id === this.characterId) {
         return;

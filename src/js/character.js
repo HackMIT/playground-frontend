@@ -1,17 +1,18 @@
 import * as THREE from 'three';
 
 import AnimatedModel from './animatedModel';
+import addFriendIcon from '../images/icons/add-friend.svg';
 import closeIcon from '../images/icons/close-white.svg';
 import earthIcon from '../images/icons/earth.svg';
+import flagIcon from '../images/icons/flag.svg';
+import messageIcon from '../images/icons/message.svg';
 
 // eslint-disable-next-line
 import createElement from '../utils/jsxHelper';
 
 class Character {
-  constructor(name, initX, initY, parent, reverseRaycaster) {
-    this.name = name;
-    this.init_x = initX;
-    this.init_y = initY;
+  constructor(data, parent, reverseRaycaster) {
+    this.data = data;
     this.reverseRaycaster = reverseRaycaster;
 
     this.createCharacterProfile();
@@ -23,7 +24,7 @@ class Character {
       'character.glb',
       (gltf) => {
         gltf.scene.scale.set(0.65, 0.65, 0.65);
-        this.setModel(parent, gltf.scene, gltf.animations[0], initX, initY);
+        this.setModel(parent, gltf.scene, gltf.animations[0], data.x, data.y);
       },
       undefined,
       (e) => {
@@ -62,7 +63,7 @@ class Character {
       mixer,
       walkCycle,
       parentScene.worldVectorForPos(initX, initY),
-      this.name,
+      this.data.name,
       this.reverseRaycaster
     );
 
@@ -84,8 +85,8 @@ class Character {
           <img src={closeIcon} />
         </button>
         <div className="profile-card">
-          <h2 className="name">Savannah Liu</h2>
-          <p className="school">Massachusetts Institute of Technology</p>
+          <h2 className="name">{this.data.name}</h2>
+          <p className="school">{this.data.school}</p>
           <div className="profile-badge">
             <div />
             <div className="bio-background">
@@ -104,13 +105,13 @@ class Character {
         </div>
         <div className="profile-buttons">
           <button>
-            <img src={closeIcon} />
+            <img src={addFriendIcon} />
           </button>
           <button>
-            <img src={closeIcon} />
+            <img src={messageIcon} />
           </button>
           <button>
-            <img src={closeIcon} />
+            <img src={flagIcon} />
           </button>
         </div>
       </div>
@@ -123,7 +124,7 @@ class Character {
       this.model.updateChat(msg);
     }
 
-    return this.name;
+    return this.data.name;
   }
 }
 

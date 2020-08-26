@@ -13,7 +13,7 @@ $profile_border_radius: 12px;
   display: flex;
   flex-direction: column;
   width: 270px;
-  padding: 8px;
+  padding: 8px 8px 10px;
   visibility: hidden;
 
   // TODO: This should be scale-dependent
@@ -32,6 +32,10 @@ $profile_border_radius: 12px;
     position: absolute;
     top: -6px;
     right: -6px;
+
+    &:active {
+      background: #2197ab;
+    }
 
     img {
       width: 12px;
@@ -130,7 +134,7 @@ $profile_border_radius: 12px;
   .profile-buttons {
     display: flex;
     justify-content: space-around;
-    margin-top: 8px;
+    margin-top: 10px;
 
     button {
       background: $accent_pink;
@@ -140,6 +144,10 @@ $profile_border_radius: 12px;
       outline: none;
       width: 32px;
       height: 32px;
+
+      &:active {
+        background: #f9b19f;
+      }
 
       img {
         width: 18px;
