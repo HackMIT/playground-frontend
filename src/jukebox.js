@@ -1,4 +1,5 @@
 import YouTubeIframeLoader from 'youtube-iframe';
+import swal from 'sweetalert';
 
 import socket from './js/socket';
 import closeIcon from './images/icons/close.svg';
@@ -11,11 +12,30 @@ class Jukebox {
   constructor() {
     this.songs = [];
 
-    socket.subscribe('song', (msg) => {
+    socket.subscribe(['song', 'error'], this.handleSocketMessage);
+  }
+
+  handleSocketMessage = (msg) => {
+    if (msg.type === 'song') {
+      if (msg.requiresWarning) {
+        swal("Warning!",
+             "You will be disqualified from HackMIT 2020 if you submit any inappropriate songs or videos. Please visit go.hackmit.org/coc for more details about our code of conduct.",
+             "warning");
+      }
       this.songs.push(msg);
       this.updateJukeboxPane();
-    });
-  }
+    } else if (msg.type === 'error') {
+      if (msg.code === 400) {
+        swal('Oops!', 'Your song must be less than 6 minutes long.', 'error');
+      } else if (msg.code === 401) {
+        swal(
+          'Oops!',
+          'You must wait at least 15 minutes between song submissions.',
+          'error'
+        );
+      }
+    }
+  };
 
   closeJukeboxPane = (e) => {
     const allowedIDs = ['jukebox-background', 'jukebox-close-button'];
@@ -130,9 +150,25 @@ class Jukebox {
   };
 
   handleSubmitButton = () => {
-    const url = document.getElementById('jukebox-song-input').value;
-    const urlParts = url.split('/');
-    const vidCode = urlParts[urlParts.length - 1];
+    // Get YouTube video code
+    let url;
+    try {
+      url = new URL(document.getElementById('jukebox-song-input').value);
+    } catch (err) {
+      swal('Oops!', 'Please input a valid YouTube video URL.', 'error');
+      return;
+    }
+
+    if (
+      url.hostname.toUpperCase() !== 'WWW.YOUTUBE.COM' &&
+      url.hostname.toUpperCase() !== 'YOUTUBE.COM'
+    ) {
+      swal('Oops!', 'Please input a valid YouTube video URL.', 'error');
+      return;
+    }
+
+    const splitUrl = url.search.split('=');
+    const vidCode = splitUrl[splitUrl.length - 1];
 
     socket.send({
       type: 'song',
