@@ -24,7 +24,6 @@ class AnimatedModel {
     this.chatBubble = document.createElement('div');
     this.chatBubble.className = 'text-bubble';
     this.chatBubble.innerHTML = '';
-    this.chatBubble.style.transform = 'translate(-50%, -100px)';
 
     this.setupHTMLPosTrackingElem(this.nametag);
     this.setupHTMLPosTrackingElem(this.chatBubble);
