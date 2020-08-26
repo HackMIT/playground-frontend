@@ -3,9 +3,12 @@
   "version": "0.1",
   "main": "index.js",
   "license": "MIT",
+  "homepage": "https://play.hackmit.org",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack-dev-server --config config/webpack.dev.js --host 0.0.0.0",
-    "build": "cross-env NODE_ENV=production webpack --config config/webpack.prod.js"
+    "build": "cross-env NODE_ENV=production webpack --config config/webpack.prod.js",
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

@@ -10,14 +10,14 @@ import createElement from '../../utils/jsxHelper';
 
 class FriendsPane {
   constructor() {
-    this.friends = [];
+    this.friends = new Map();
 
     socket.subscribe('join', this.handleSocketMessage);
   }
 
   handleSocketMessage = (msg) => {
     if (msg.type === 'join') {
-      this.friends.push({
+      this.friends.set(msg.character.id, {
         id: msg.character.id,
         name: msg.character.name,
         school: 'MIT',
@@ -31,7 +31,7 @@ class FriendsPane {
 
   createFriendsPane = (characters) => {
     characters.forEach((character) => {
-      this.friends.push({
+      this.friends.set(character.id, {
         id: character.id,
         name: character.name,
         school: 'MIT',
@@ -58,7 +58,9 @@ class FriendsPane {
       </div>
     );
 
-    this.friends.sort((a, b) => {
+    const friends = Array.from(this.friends.values());
+
+    friends.sort((a, b) => {
       if (a.teammate && !b.teammate) {
         return -1;
       }
@@ -80,7 +82,7 @@ class FriendsPane {
 
     let createdFriendsHeader = false;
 
-    this.friends.forEach((friend) => {
+    friends.forEach((friend) => {
       if (!friend.teammate && !createdFriendsHeader) {
         friendsListContainer.appendChild(<p className="header">Friends</p>);
         createdFriendsHeader = true;
