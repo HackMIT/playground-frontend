@@ -36,9 +36,9 @@ class AnimatedModel {
   }
 
   deconstruct() {
-    for (const elem of this.trackingElems) {   
-        elem.remove();
-    }
+    this.trackingElems.forEach((elem) => {
+      elem.remove();
+    });
 
     this.nametag.remove();
     this.chatBubble.remove();
@@ -55,7 +55,7 @@ class AnimatedModel {
     htmlElem.style.transitionTimingFunction = 'linear';
     htmlElem.style.transitionProperty = 'top, left';
 
-    this.trackingElems.push(htmlElem)
+    this.trackingElems.push(htmlElem);
   }
 
   updateChat(msg) {
@@ -102,11 +102,11 @@ class AnimatedModel {
     const objPt = dest.clone();
     const screenPt = this.reverseRaycaster(objPt);
 
-    for (const elem of this.trackingElems) {   
-        elem.style.transitionDuration =  `${time}s`; 
-        elem.style.left = `${screenPt[0]}px`;    
-        elem.style.top = `${screenPt[1]}px`;
-    }
+    this.trackingElems.forEach((elem) => {
+      elem.style.transitionDuration = `${time}s`;
+      elem.style.left = `${screenPt[0]}px`;
+      elem.style.top = `${screenPt[1]}px`;
+    });
 
     return time;
   }
