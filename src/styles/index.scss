@@ -161,6 +161,20 @@ body {
     img {
       width: 100%;
     }
+
+    &#friends-button {
+      position: relative;
+
+      .new-message-indicator {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #ff9797;
+      }
+    }
   }
 }
 

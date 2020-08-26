@@ -14,7 +14,7 @@ class MessagePane {
 
   createMessagePane = () => {
     return (
-      <div id="message-pane">
+      <div id="message-pane" style="visibility: hidden">
         <div className="header" id="messages-header"></div>
         <div className="messages" id="messages-container" />
         <div className="input" id="messages-input"></div>
@@ -49,9 +49,11 @@ class MessagePane {
       });
 
       document.getElementById('messages-header').innerHTML = '';
-      document
-        .getElementById('messages-header')
-        .appendChild(<p className="name">{character.name}</p>);
+      document.getElementById('messages-header').appendChild(
+        <p className="name">
+          {character.name} <small>active 25m ago</small>
+        </p>
+      );
 
       document.getElementById('messages-input').innerHTML = '';
       document
@@ -93,6 +95,14 @@ class MessagePane {
     });
 
     e.target.value = '';
+  };
+
+  hide = () => {
+    document.getElementById('message-pane').style.visibility = 'hidden';
+  };
+
+  show = () => {
+    document.getElementById('message-pane').style.visibility = 'inherit';
   };
 }
 

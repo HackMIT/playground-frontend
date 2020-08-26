@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 
 import AnimatedModel from './animatedModel';
+import socket from './socket';
+
 import addFriendIcon from '../images/icons/add-friend.svg';
 import closeIcon from '../images/icons/close-white.svg';
 import earthIcon from '../images/icons/earth.svg';
@@ -28,7 +30,7 @@ class Character {
       },
       undefined,
       (e) => {
-        console.log(e);
+        console.error(e);
       }
     );
   }
@@ -104,7 +106,14 @@ class Character {
           </div>
         </div>
         <div className="profile-buttons">
-          <button>
+          <button
+            onclick={() => {
+              socket.send({
+                type: 'friend_request',
+                recipientId: this.data.id,
+              });
+            }}
+          >
             <img src={addFriendIcon} />
           </button>
           <button>
