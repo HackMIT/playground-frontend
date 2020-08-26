@@ -99,7 +99,7 @@ body {
   left: 50%;
   transform: translate(-50%, 0);
 
-  input[type='text'] {
+  input {
     color: #fff;
     font-family: Muli;
     font-size: 14px;
@@ -127,14 +127,19 @@ body {
     transform: translateX(-50%);
   }
 
-  button {
+  button,
+  .chat-button {
     color: #fff;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: #24447c;
     text-align: center;
     border-radius: 50%;
     outline: none;
     border: none;
+    box-sizing: border-box;
     width: 36px;
     height: 36px;
     margin: 0 3px;
@@ -251,7 +256,6 @@ body {
 .element {
   position: absolute;
   transform: translate(-50%, -50%);
-  z-index: 100;
 
   &.editable {
     cursor: grab;
@@ -325,6 +329,7 @@ body {
 #three-container {
   height: 100%;
   width: 100%;
+  position: relative;
 }
 
 #login-panel {

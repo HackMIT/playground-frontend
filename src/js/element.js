@@ -1,4 +1,8 @@
 import Editable from './editable';
+import jukebox from '../jukebox';
+
+const NO_ACTION = 0;
+const JUKEBOX_OPEN_ACTION = 1;
 
 class Element extends Editable {
   dataKeyName = 'element';
@@ -21,6 +25,32 @@ class Element extends Editable {
 
   set width(newValue) {
     this.data.width = newValue;
+  }
+
+  configureElement(elem) {
+    // eslint-disable-next-line
+    elem.style.cursor = this.data.action === NO_ACTION ? 'default' : 'pointer';
+  }
+
+  configureImage(imgElem) {
+    if (this.data.changingImagePath) {
+      // TODO: Need to call clearInterval on this timer before getting rid of the element
+      setInterval(() => {
+        const pathOptions = this.data.changingPaths.split(',');
+
+        this.data.path =
+          pathOptions[Math.floor(Math.random() * pathOptions.length)];
+
+        // eslint-disable-next-line
+        imgElem.src = this.imagePath;
+      }, this.data.changingInterval);
+    }
+  }
+
+  onClick() {
+    if (this.data.action === JUKEBOX_OPEN_ACTION) {
+      jukebox.openJukeboxPane(document.body);
+    }
   }
 
   onNameSelect(value) {

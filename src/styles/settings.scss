@@ -1,0 +1,120 @@
+@import 'fonts';
+@import 'colors';
+@import 'variables';
+
+#settings {
+  background: $blue_light;
+  color: $white !important;
+
+  #root {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  * {
+    padding: 0;
+    margin: 0;
+    font-family: Muli;
+  }
+
+  p,
+  h1,
+  h2 {
+    color: $white;
+  }
+
+  h1,
+  h2 {
+    font-family: LemonMilkMedium;
+    color: $white !important;
+  }
+}
+
+#settings-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex-direction: row;
+  margin: 0 0 1em 0;
+
+  #settings-gear {
+    padding: 0 10px;
+    background-image: url(../images/settingsicon.svg);
+    background-size: 16em auto;
+    height: 2em;
+    width: 2em;
+    background-position: center;
+  }
+}
+
+#settings-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#settings-option {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  // padding: 0 20px 0 0;
+  width: 40%;
+  // justify-content: center;
+
+  #settings-box {
+    background-image: url(../images/box.svg);
+    background-size: cover;
+    height: 3em;
+    width: 4em;
+    background-position: center;
+  }
+}
+
+#settings-button {
+  cursor: pointer;
+  color: $white;
+  background-color: $blue_light;
+  border: none;
+  outline: none;
+  margin: 1em 0;
+}
+
+#settings-flexcenter {
+  display: flex;
+  justify-content: center;
+}
+
+#settings-button:hover {
+  color: $blue_text;
+}
+
+#settings-logout {
+  display: flex;
+  justify-content: center;
+  color: #c0c0c0;
+  border: 2px solid #c0c0c0;
+  cursor: pointer;
+  background: $white;
+  text-align: center;
+  outline: none;
+  // border: none;
+  margin: 2em 1em;
+  padding: 0.5em;
+  width: 16vw;
+  //   height: 38px;
+
+  &:hover {
+    background: #c0c0c0;
+    color: $white;
+  }
+}
+
+#settings-clouds {
+  background-image: url(../images/settingsclouds.svg);
+  min-height: 200px;
+  background-size: cover;
+}

@@ -10,7 +10,7 @@ class Scene {
     this.container = document.createElement('div');
     this.container.id = 'three-container';
     this.gameElem = document.getElementById('game');
-    this.gameElem.appendChild(this.container);
+    this.gameElem.insertBefore(this.container, this.gameElem.childNodes[0]);
 
     // Isometric Camera
     const aspect = this.container.clientWidth / this.container.clientHeight;
@@ -89,11 +89,11 @@ class Scene {
 
       const pageX = Math.round(
         (0.5 + vec.x / 2) *
-        (this.renderer.domElement.width / window.devicePixelRatio)
+          (this.renderer.domElement.width / window.devicePixelRatio)
       );
       const pageY = Math.round(
         (0.5 - vec.y / 2) *
-        (this.renderer.domElement.height / window.devicePixelRatio)
+          (this.renderer.domElement.height / window.devicePixelRatio)
       );
 
       return [pageX, pageY];

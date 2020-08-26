@@ -22,5 +22,5 @@ module.exports = [
   {
     path: 'attendance',
     template: 'attendance',
-  }
+  },
 ];

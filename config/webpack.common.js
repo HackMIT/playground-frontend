@@ -16,7 +16,7 @@ module.exports = {
     login: [`${paths.src}/login.js`],
     sponsor: [`${paths.src}/sponsor.js`],
     register: [`${paths.src}/register.js`],
-    attendance: [`${paths.src}/attendance.js`]
+    attendance: [`${paths.src}/attendance.js`],
   },
 
   /**

@@ -5,6 +5,7 @@ import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
 import sponsorModal from './sponsor';
+import settings from './settings.jsx';
 import friends from './js/components/friends';
 import jukebox from './jukebox';
 import createLoadingScreen from './js/components/loading';
@@ -41,7 +42,7 @@ class Game extends Page {
     super();
 
     if (!this.loaded) {
-      document.getElementById('game').appendChild(createLoadingScreen());
+      this.startLoading();
     }
   }
 
@@ -61,8 +62,9 @@ class Game extends Page {
 
     this.characterId = null;
     this.characters = new Map();
-    this.elements = new Map();
+    this.elements = [];
     this.hallways = new Map();
+    this.loadingTasks = 0;
     this.room = null;
 
     this.editing = false;
@@ -75,6 +77,7 @@ class Game extends Page {
     this.addClickListener('day-of-button', this.handleDayofButton);
     this.addClickListener('sponsor-button', this.handleSponsorButton);
     this.addClickListener('edit-button', this.handleEditButton);
+    this.addClickListener('settings-button', this.handleSettingsButton);
     this.addClickListener('game', this.handleGameClick);
     this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
@@ -226,9 +229,10 @@ class Game extends Page {
         element.remove();
       });
 
-      this.elements = new Map();
+      this.elements = [];
 
       this.hallways.forEach((hallway) => {
+        console.log(hallway);
         hallway.remove();
       });
 
@@ -242,19 +246,37 @@ class Game extends Page {
       this.elementNames = data.elementNames;
       this.roomNames = data.roomNames;
 
-      Object.entries(data.room.elements).forEach(([id, element]) => {
-        const elementElem = new Element(element, id, data.elementNames);
-        document.getElementById('game').appendChild(elementElem.element);
-        this.elements.set(id, elementElem);
+      data.room.elements.forEach((element) => {
+        this.loadingTasks += 1;
+
+        const elementElem = new Element(element, element.id, data.elementNames);
+        this.elements.push(elementElem);
+
+        elementElem.onload = () => {
+          this.finishedLoadingPart();
+        };
+
+        if (element.action > 0) {
+          document.getElementById('game').appendChild(elementElem.element);
+        } else {
+          document
+            .getElementById('game')
+            .insertBefore(
+              elementElem.element,
+              document.getElementById('three-container')
+            );
+        }
       });
 
       Object.entries(data.room.hallways).forEach(([id, hallway]) => {
         this.hallways.set(id, new Hallway(hallway, id, data.roomNames));
+
         document
           .getElementById('game')
           .appendChild(this.hallways.get(id).element);
       });
 
+      this.settings = data.settings;
       this.room = data.room;
 
       if (this.room.sponsor) {
@@ -270,18 +292,18 @@ class Game extends Page {
         document.getElementById('game').classList.remove('sponsor');
       }
 
+      this.loadingTasks += 1;
       const img = new Image();
 
       img.onload = () => {
         this.loaded = true;
 
         document.getElementById('background').src = img.src;
-        this.stopLoading();
+        this.finishedLoadingPart();
       };
 
       img.src = BACKGROUND_IMAGE_URL.replace('%PATH%', this.room.background);
 
-      // TODO: Investigate whether there's a bug here where multiple listeners get registered
       this.scene.fixCameraOnResize();
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
@@ -295,10 +317,10 @@ class Game extends Page {
           );
 
           if (distance <= hallway.data.radius) {
-            // TODO: We shouldn't need the 'from' attribute in the teleport packet
+            this.startLoading();
+
             socket.send({
               type: 'teleport',
-              from: this.room.slug,
               to: hallway.data.to,
             });
 
@@ -309,14 +331,15 @@ class Game extends Page {
         });
       });
     } else if (data.type === 'element_add') {
-      const elementElem = new Element(data.element, data.id, this.elementNames);
-      document.getElementById('game').appendChild(elementElem.element);
-      this.elements.set(data.id, elementElem);
-    } else if (data.type === 'element_delete') {
-      this.elements.get(data.id).remove();
-      this.elements.delete(data.id);
+      const element = new Element(data.element, data.id, this.elementNames);
+      document.getElementById('game').appendChild(element.element);
+      this.elements.push(element);
+      // } else if (data.type === 'element_delete') {
+      //   this.elements.get(data.id).remove();
+      //   this.elements.delete(data.id);
     } else if (data.type === 'element_update') {
-      this.elements.get(data.id).applyUpdate(data.element);
+      const idx = this.elements.findIndex((elem) => elem.id === data.id);
+      this.elements[idx].applyUpdate(data.element);
     } else if (data.type === 'hallway_add') {
       this.hallways.set(
         data.id,
@@ -333,7 +356,6 @@ class Game extends Page {
     } else if (data.type === 'room_add') {
       socket.send({
         type: 'teleport',
-        from: this.room.slug,
         to: data.id,
       });
     } else if (data.type === 'error') {
@@ -444,6 +466,10 @@ class Game extends Page {
     }
   };
 
+  handleSettingsButton = () => {
+    createModal(settings.createSettingsModal(this.settings));
+  };
+
   handleJukeboxButton = () => {
     jukebox.openJukeboxPane(document.body);
   };
@@ -468,6 +494,7 @@ class Game extends Page {
 
   handleSendButton = () => {
     const chatElem = document.getElementById('chat-box');
+    const lengthElem = document.getElementById('chat-length-indicator');
 
     // TODO: Get this value from config
     if (chatElem.value.length >= 400) {
@@ -483,15 +510,23 @@ class Game extends Page {
     });
 
     chatElem.value = '';
+
+    if (!lengthElem.classList.contains('invisible')) {
+      lengthElem.classList.add('invisible');
+    }
   };
 
   handleIglooButton = () => {
+    this.startLoading();
+
     socket.send({
       type: 'teleport_home',
     });
   };
 
   handleSponsorLogin = () => {
+    this.startLoading();
+
     const joinPacket = {
       type: 'join',
       name: prompt("What's your name?"),
@@ -519,7 +554,22 @@ class Game extends Page {
     }
   };
 
+  startLoading = () => {
+    document.getElementById('game').appendChild(createLoadingScreen());
+  };
+
   stopLoading = () => {
+    this.loadingTasks = 1;
+    this.finishedLoadingPart();
+  };
+
+  finishedLoadingPart = () => {
+    this.loadingTasks -= 1;
+
+    if (this.loadingTasks > 0) {
+      return;
+    }
+
     const loadingElem = document.getElementById('loading');
 
     if (loadingElem === null) {
