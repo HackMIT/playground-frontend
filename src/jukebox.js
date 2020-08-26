@@ -16,7 +16,12 @@ class Jukebox {
   }
 
   handleSocketMessage = (msg) => {
-    if (msg.type === 'song') {
+    if (msg.type === 'song' && msg.remove) {
+      const index = this.songs.findIndex(x => x.id === msg.id);
+      this.songs.splice(index, 1);
+      this.updateJukeboxPane();
+    }
+    else if (msg.type === 'song') {
       if (msg.requiresWarning) {
         swal("Warning!",
              "You will be disqualified from HackMIT 2020 if you submit any inappropriate songs or videos. Please visit go.hackmit.org/coc for more details about our code of conduct.",
@@ -83,6 +88,7 @@ class Jukebox {
           <div>
             <p className="title">{song.title}</p>
             <p className="duration">{`${minutesStr}:${secondsStr}`}</p>
+            <button id="remove" onclick={() => this.handleRemoveButton(song)}>Remove</button>
           </div>
         </div>
       );
@@ -175,6 +181,12 @@ class Jukebox {
       vidCode,
     });
   };
+
+  handleRemoveButton = (songPacket) => {
+    const newSongPacket = { ...songPacket};
+    newSongPacket.remove = true;
+    socket.send(newSongPacket);
+  }
 
   updateJukeboxPane = () => {
     document.getElementById('jukebox-playing-now').innerHTML = '';
