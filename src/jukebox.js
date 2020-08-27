@@ -12,10 +12,13 @@ class Jukebox {
   constructor() {
     this.songs = [];
 
-    socket.subscribe(['song', 'error'], this.handleSocketMessage);
+    socket.subscribe(['song', 'error', 'songs'], this.handleSocketMessage);
   }
 
   handleSocketMessage = (msg) => {
+    if (msg.type === 'songs') {
+      this.songs = msg.songs;
+    }
     if (msg.type === 'song' && msg.remove) {
       const index = this.songs.findIndex(x => x.id === msg.id);
       this.songs.splice(index, 1);
@@ -81,7 +84,6 @@ class Jukebox {
       const secondsStr = (song.duration - Math.floor(song.duration / 60) * 60)
         .toString()
         .padStart(2, '0');
-
       rootElem.appendChild(
         <div className="jukebox-song">
           <img src={song.thumbnailUrl} />
@@ -134,6 +136,7 @@ class Jukebox {
     );
 
     rootElem.appendChild(jukeboxElem);
+    this.updateJukeboxPane();
 
     setTimeout(() => {
       jukeboxElem.classList.add('opening');
@@ -144,14 +147,13 @@ class Jukebox {
           width: '640',
           videoId: 'nb6ou_k4OzM',
           playerVars: {
-            // autoplay: 1,
+            autoplay: 1,
             controls: 0,
             start: 18,
           },
         });
       });
 
-      this.updateJukeboxPane();
     }, 1);
   };
 
@@ -182,13 +184,19 @@ class Jukebox {
     });
   };
 
-  handleRemoveButton = (songPacket) => {
-    const newSongPacket = { ...songPacket};
+  handleRemoveButton = (song) => {
+    const newSongPacket = { ...song};
     newSongPacket.remove = true;
+    newSongPacket.type = 'song';
     socket.send(newSongPacket);
   }
 
   updateJukeboxPane = () => {
+    // Get updated songs from queue
+    socket.send({
+      type: 'get_songs',
+    });
+
     document.getElementById('jukebox-playing-now').innerHTML = '';
     document
       .getElementById('jukebox-playing-now')
