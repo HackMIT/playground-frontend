@@ -9,6 +9,9 @@ import friends from './js/components/friends';
 import jukebox from './jukebox';
 import createLoadingScreen from './js/components/loading';
 
+// eslint-disable-next-line
+import statusManager from './js/managers/status';
+
 import './styles/index.scss';
 import './styles/sponsor.scss';
 import './images/Code_Icon.svg';
@@ -483,7 +486,7 @@ class Game extends Page {
       // Never created friends pane before, create it now
       document
         .getElementById('chat')
-        .appendChild(friends.createFriendsPane(this.characters));
+        .appendChild(friends.createFriendsPane(this.friends));
       this.friendsPaneVisible = true;
     }
   };

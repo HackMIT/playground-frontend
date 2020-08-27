@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import AnimatedModel from './animatedModel';
+import characterManager from './managers/character';
 import socket from './socket';
 
 import addFriendIcon from '../images/icons/add-friend.svg';
@@ -16,10 +17,6 @@ class Character {
   constructor(data, parent, reverseRaycaster) {
     this.data = data;
     this.reverseRaycaster = reverseRaycaster;
-
-    this.createCharacterProfile();
-    this.gameDom = document.getElementById('game');
-    this.gameDom.appendChild(this.profileBox);
 
     // load glb file
     parent.loader.load(
@@ -68,8 +65,6 @@ class Character {
       this.data.name,
       this.reverseRaycaster
     );
-
-    this.model.addHtmlElem(this.profileBox);
   }
 
   hideProfile() {
@@ -77,10 +72,52 @@ class Character {
   }
 
   showProfile() {
+    if (this.profileBox === undefined) {
+      this.createCharacterProfile();
+      this.gameDom = document.getElementById('game');
+      this.gameDom.appendChild(this.profileBox);
+      this.model.addHtmlElem(this.profileBox);
+    }
+
     this.profileBox.style.visibility = 'inherit';
   }
 
   createCharacterProfile() {
+    let buttons;
+
+    if (this.data.id === characterManager.getCharacterId()) {
+      buttons = <div />;
+    } else if (characterManager.isFriend(this.data.id)) {
+      buttons = (
+        <div className="profile-buttons">
+          <button>
+            <img src={messageIcon} />
+          </button>
+          <button>
+            <img src={flagIcon} />
+          </button>
+        </div>
+      );
+    } else {
+      buttons = (
+        <div className="profile-buttons">
+          <button
+            onclick={() => {
+              socket.send({
+                type: 'friend_request',
+                recipientId: this.data.id,
+              });
+            }}
+          >
+            <img src={addFriendIcon} />
+          </button>
+          <button>
+            <img src={flagIcon} />
+          </button>
+        </div>
+      );
+    }
+
     this.profileBox = (
       <div className="profile-container">
         <button className="close-button" onclick={() => this.hideProfile()}>
@@ -105,24 +142,7 @@ class Character {
             </div>
           </div>
         </div>
-        <div className="profile-buttons">
-          <button
-            onclick={() => {
-              socket.send({
-                type: 'friend_request',
-                recipientId: this.data.id,
-              });
-            }}
-          >
-            <img src={addFriendIcon} />
-          </button>
-          <button>
-            <img src={messageIcon} />
-          </button>
-          <button>
-            <img src={flagIcon} />
-          </button>
-        </div>
+        {buttons}
       </div>
     );
   }

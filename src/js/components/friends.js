@@ -1,3 +1,5 @@
+import characterManager from '../managers/character';
+
 import message from './message';
 import socket from '../socket';
 
@@ -11,60 +13,13 @@ import createElement from '../../utils/jsxHelper';
 
 class FriendsPane {
   constructor() {
-    this.friends = new Map();
-
-    socket.subscribe(['friends', 'friend_update'], this.handleSocketMessage);
+    socket.subscribe(['friend_update', 'status'], () => {
+      // Quick hack -- we need the friend_update subscriber in characterManager to run first
+      setTimeout(() => this.updateFriendsList(), 100);
+    });
   }
 
-  handleSocketMessage = (msg) => {
-    switch (msg.type) {
-      case 'friends': {
-        this.friends = new Map();
-
-        msg.friends.forEach((friend) => {
-          this.friends.set(friend.id, friend);
-        });
-
-        this.updateFriendsList();
-
-        break;
-      }
-      case 'friend_update': {
-        if (!this.friends.has(msg.friend.id)) {
-          this.friends.set(msg.friend.id, msg.friend);
-        } else {
-          const friend = this.friends.get(msg.friend.id);
-          friend.teammate = msg.friend.teammate;
-          friend.pending = msg.friend.pending;
-          this.friends.set(msg.friend.id, friend);
-        }
-
-        this.updateFriendsList();
-        break;
-      }
-      case 'join':
-        this.friends.set(msg.character.id, {
-          id: msg.character.id,
-          name: msg.character.name,
-          school: 'MIT',
-          teammate: true,
-          status: 2,
-        });
-
-        this.updateFriendsList();
-        break;
-      default:
-        break;
-    }
-  };
-
-  createFriendsPane = (characters) => {
-    console.log(characters);
-
-    socket.send({
-      type: 'get_friends',
-    });
-
+  createFriendsPane = () => {
     const messagesPane = message.createMessagePane();
 
     return (
@@ -77,9 +32,9 @@ class FriendsPane {
   };
 
   friendsListContents = () => {
-    const friendsListContainer = <div></div>;
+    const friendsListContainer = <div />;
 
-    const friends = Array.from(this.friends.values());
+    const friends = Array.from(characterManager.getFriends().values());
 
     friends.sort((a, b) => {
       if (a.teammate && !b.teammate) {
