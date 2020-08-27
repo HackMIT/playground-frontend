@@ -381,16 +381,19 @@ body {
 // make prettier
 .text-bubble {
   background-color: #fff;
-  border: 1px solid #000;
+  border: none;
+  font-family: Muli;
   border-radius: 4px;
   display: block;
-  font-family: $font-family;
   font-size: 13px;
   left: 50%;
   padding: 8px 16px;
   position: absolute;
-  top: 0;
-  transform: translate(-50%, -100%);
+  // TODO: This needs to update with scaling
+  transform: translate(-50%, calc(-100% - 80px));
+  max-width: 120px;
+  text-align: left;
+  overflow-wrap: break-word;
 }
 
 #game > .name {
@@ -417,6 +420,22 @@ body {
   background: $blue_light;
   width: 32vw;
   color: $white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 32px;
+  text-align: center;
+
+  .white-text {
+    color: $white !important;
+  }
+}
+
+#jukebox-modal {
+  background: $blue_light;
+  color: $white;
+  width: 60vw;
   display: flex;
   justify-content: center;
   align-items: center;
