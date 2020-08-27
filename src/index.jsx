@@ -330,6 +330,8 @@ class Game extends Page {
             socket.send({
               type: 'teleport',
               to: hallway.data.to,
+              x: hallway.data.toX,
+              y: hallway.data.toY,
             });
 
             return true;
@@ -473,10 +475,17 @@ class Game extends Page {
     jukebox.openJukeboxPane(document.body);
 
     // No inappropriate songs warning
-    createModal(<div id="jukebox-modal">
-      <h1 className="white-text">Welcome to the Jukebox!</h1>
-      <p className="white-text">Here you can add songs to the queue for all hackers to listen to. If you select any inappropriate songs, you will be disqualified. Please see our Code of Conduct for more information.</p>
-    </div>, "quarantine")
+    createModal(
+      <div id="jukebox-modal">
+        <h1 className="white-text">Welcome to the Jukebox!</h1>
+        <p className="white-text">
+          Here you can add songs to the queue for all hackers to listen to. If
+          you select any inappropriate songs, you will be disqualified. Please
+          see our Code of Conduct for more information.
+        </p>
+      </div>,
+      'quarantine'
+    );
   };
 
   handleFriendsButton = () => {
