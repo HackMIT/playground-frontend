@@ -37,7 +37,10 @@ import createElement from './utils/jsxHelper';
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
 
-const walls = [[[0.2, 0.2], [0.4, 0.4], [0.2, 0.4]], [[0.4, 0.4], [0.6, 0.4], [0.6, 0.6], [0.4, 0.6]]]
+const walls = []
+
+// const walls = [[[0.2, 0.2], [0.4, 0.4], [0.2, 0.4]], [[0.4, 0.4], [0.6, 0.4], [0.6, 0.6], [0.4, 0.6]]]
+// ^ an example of a trianlge and a rectangle (coordinates are in [0,1]^2)
 
 class Game extends Page {
   constructor() {
@@ -312,25 +315,26 @@ class Game extends Page {
 
       this.scene.fixCameraOnResize();
 
-      // (this draws the walls, I'm just using it for testing)
-      walls.forEach(wall => {
-        var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svg.style.cssText = "position: absolute; height: 100%; width: 100%; top: 0; left: 0;";
+      // uncomment this to have the walls drawn in red (for testing)
+      // walls.forEach(wall => {
+      //   var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      //   svg.style.cssText = "position: absolute; height: 100%; width: 100%; top: 0; left: 0;";
 
-        var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
-        let pt_str = "";
+      //   var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      //   let pt_str = "";
         
-        let game = document.getElementById("game")
-        const rect = game.getBoundingClientRect();
+      //   let game = document.getElementById("game")
+      //   const rect = game.getBoundingClientRect();
 
-        wall.forEach(elem => {
-          pt_str += `${elem[0] * rect.width},${elem[1] * rect.height} `
-        });
-        polygon.setAttribute("points", pt_str);
-        polygon.setAttribute("style", "fill: red;");
-        svg.appendChild(polygon);
-        game.insertBefore(svg, game.firstChild);
-      });
+      //   wall.forEach(elem => {
+      //     pt_str += `${elem[0] * rect.width},${elem[1] * rect.height} `
+      //   });
+      //   polygon.setAttribute("points", pt_str);
+      //   polygon.setAttribute("style", "fill: red;");
+      //   svg.appendChild(polygon);
+      //   game.insertBefore(svg, game.firstChild);
+      // });
+
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
         if (data.id !== this.characterId) {
