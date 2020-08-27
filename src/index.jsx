@@ -1,3 +1,5 @@
+import hotkeys from 'hotkeys-js';
+
 import Scene from './js/scene';
 import Element from './js/element';
 import Hallway from './js/hallway';
@@ -91,6 +93,12 @@ class Game extends Page {
     socket.onopen = this.handleSocketOpen;
     socket.subscribe('*', this.handleSocketMessage);
     socket.start();
+
+    // Listen for hotkeys
+    hotkeys('t, enter, /', (e) => {
+      e.preventDefault();
+      document.getElementById('chat-box').focus();
+    });
 
     // Start sending chat events
     const chatElem = document.getElementById('chat-box');

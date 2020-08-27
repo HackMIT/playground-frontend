@@ -78,8 +78,10 @@ class MessagePane {
       root.appendChild(<p>{`${senderName}: ${msg.text}`}</p>);
     });
 
-    document.getElementById('messages-container').innerHTML = '';
-    document.getElementById('messages-container').appendChild(root);
+    const container = document.getElementById('messages-container');
+    container.innerHTML = '';
+    container.appendChild(root);
+    container.scrollTop = container.scrollHeight - container.clientHeight;
   };
 
   handleKeyDown = (e) => {

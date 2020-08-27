@@ -24,6 +24,7 @@
   .messages {
     background: $blue_dark;
     flex-grow: 1;
+    overflow-y: scroll;
 
     p {
       color: #fff;
