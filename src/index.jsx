@@ -60,7 +60,7 @@ class Game extends Page {
     this.addClickListener('edit-button', this.handleEditButton);
     this.addClickListener('game', this.handleGameClick);
     this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
-    this.addClickListener('map', this.handleShowMap);
+    this.addClickListener('map-button', this.handleShowMap);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
     this.addClickListener('friends-button', this.handleFriendsButton);
 
@@ -304,7 +304,7 @@ class Game extends Page {
     createModal(
       <iframe
         id="day-of-iframe"
-        className="day-of-page"
+        className="modal-frame"
         src="https://dayof.hackmit.org"
       />
     );
@@ -399,7 +399,7 @@ class Game extends Page {
   };
 
   handleShowMap = () => {
-    const mapElem = <div className="day-of-page" id="map-frame" />;
+    const mapElem = <div className="modal-frame" id="map-frame" />;
     createModal(mapElem);
 
     mapInstance.createMap(this.characterId);

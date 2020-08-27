@@ -23,8 +23,8 @@ class SaveLocationButton {
       <button
         id={idName}
         textContent="I'm here!"
-        style="margin-right:10px; display:none;"
-      ></button>
+        style={{ marginRight: "10px", display: "none" }}
+      />
     );
     return el;
   };
