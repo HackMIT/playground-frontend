@@ -180,6 +180,7 @@ class Scene {
   render() {
     requestAnimationFrame(this.render.bind(this));
     const deltaTime = this.clock.getDelta();
+
     if (this.render !== undefined) {
       this.renderer.render(this.scene, this.camera);
     }

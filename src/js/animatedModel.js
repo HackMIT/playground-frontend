@@ -5,7 +5,7 @@ import '../styles/profile.scss';
 class AnimatedModel {
   constructor(modelGeometry, mixer, walkCycle, start, name, reverseRaycaster) {
     this.modelGeometry = modelGeometry;
-    this.Animation = new LinearAnimation();
+    this.animation = new LinearAnimation();
     this.mixer = mixer;
     this.walkCycle = walkCycle;
     this.reverseRaycaster = reverseRaycaster;
@@ -71,10 +71,13 @@ class AnimatedModel {
   }
 
   setAnimation(dest, callback) {
-    if (this.Animation.destination && this.Animation.destination.equals(dest)) {
+    if (this.animation.destination && this.animation.destination.equals(dest)) {
       return 0;
     }
-    const time = this.Animation.init(this.modelGeometry.position, dest);
+
+    this.animating = true;
+
+    const time = this.animation.init(this.modelGeometry.position, dest);
 
     // update roation (by finding vector we're traveling along, setting angle to that)
     const bearing = dest.clone();
@@ -111,16 +114,22 @@ class AnimatedModel {
   }
 
   update(timeDelta) {
+    if (!this.animating) {
+      return;
+    }
+
     // position animation
-    this.Animation.update(timeDelta, this.modelGeometry.position);
+    this.animation.update(timeDelta, this.modelGeometry.position);
 
     // internal animation (e.g. walking)
     this.mixer.update(timeDelta);
 
-    if (this.Animation.finished()) {
+    if (this.animation.finished()) {
       this.walkCycle.enabled = false;
 
       if (this.callback !== null) {
+        this.animating = false;
+
         this.callback();
         this.callback = null;
       }
