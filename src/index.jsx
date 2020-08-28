@@ -47,8 +47,6 @@ class Game extends Page {
   }
 
   start = () => {
-    this.showFeedback();
-
     if (!window.WebSocket) {
       // TODO: Handle error -- tell people their browser is incompatible
     }
@@ -276,6 +274,10 @@ class Game extends Page {
           .getElementById('game')
           .appendChild(this.hallways.get(id).element);
       });
+
+      if (data.openFeedback) {
+        this.showFeedback();
+      }
 
       this.settings = data.settings;
       this.room = data.room;
@@ -552,7 +554,6 @@ class Game extends Page {
   };
 
   showFeedback = () => {
-    console.log('shit')
     createModal(feedback.createFeedbackModal());
   };
 
