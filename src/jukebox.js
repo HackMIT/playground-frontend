@@ -11,6 +11,7 @@ import createElement from './utils/jsxHelper';
 class Jukebox {
   constructor() {
     this.songs = [];
+    this.currentSong = null; 
 
     socket.subscribe(['song', 'error', 'songs'], this.handleSocketMessage);
   }
@@ -19,7 +20,11 @@ class Jukebox {
     if (msg.type === 'songs') {
       this.songs = msg.songs;
     }
-    if (msg.type === 'song' && msg.remove) {
+    else if (msg.type === 'song' && msg.playing) {
+      this.currentSong = msg
+      this.updatedJukeboxPane();
+    }
+    else if (msg.type === 'song' && msg.remove) {
       const index = this.songs.findIndex(x => x.id === msg.id);
       this.songs.splice(index, 1);
       this.updateJukeboxPane();
@@ -137,15 +142,21 @@ class Jukebox {
 
     rootElem.appendChild(jukeboxElem);
     this.updateJukeboxPane();
+    jukeboxElem.classList.add('opening');
 
+    this.updateYouTubePlayer(this.currentSong);
+  };
+
+  updateYouTubePlayer = (song) => {
     setTimeout(() => {
-      jukeboxElem.classList.add('opening');
+
+      console.log(song);
 
       YouTubeIframeLoader.load((YT) => {
         this.player = new YT.Player('player', {
           height: '390',
           width: '640',
-          videoId: 'nb6ou_k4OzM',
+          videoId: song.ID,
           playerVars: {
             autoplay: 1,
             controls: 0,
