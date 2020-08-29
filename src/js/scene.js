@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import Stats from 'stats.js';
 
 import Character from './character';
 
@@ -31,6 +32,9 @@ class Scene {
     this.mouse = new THREE.Vector2();
     this.clock = new THREE.Clock();
     this.scene = new THREE.Scene();
+    this.stats = new Stats();
+    this.stats.showPanel(0);
+    document.body.appendChild(this.stats.dom);
 
     const light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
     this.scene.add(light);
@@ -78,8 +82,6 @@ class Scene {
       this.container.clientWidth,
       this.container.clientHeight
     );
-
-    this.render();
   }
 
   // create a new character at 0,0
@@ -179,15 +181,18 @@ class Scene {
 
   render() {
     requestAnimationFrame(this.render.bind(this));
+
     const deltaTime = this.clock.getDelta();
+
+    Object.keys(this.characters).forEach((id) => {
+      this.characters[id].update(deltaTime);
+    });
 
     if (this.render !== undefined) {
       this.renderer.render(this.scene, this.camera);
     }
 
-    Object.keys(this.characters).forEach((id) => {
-      this.characters[id].update(deltaTime);
-    });
+    this.stats.update();
   }
 }
 

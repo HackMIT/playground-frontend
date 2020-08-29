@@ -272,7 +272,7 @@ class Game extends Page {
           this.finishedLoadingPart();
         };
 
-        if (element.action > 0) {
+        if (true || element.action > 0) {
           document.getElementById('game').appendChild(elementElem.element);
         } else {
           document
