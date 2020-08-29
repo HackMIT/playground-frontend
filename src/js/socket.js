@@ -7,6 +7,7 @@ class Socket {
   }
 
   send(data) {
+    console.log("message sent");
     this.conn.send(JSON.stringify(data));
   }
 

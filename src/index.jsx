@@ -1,14 +1,20 @@
+import hotkeys from 'hotkeys-js';
+
 import Scene from './js/scene';
 import Element from './js/element';
 import Hallway from './js/hallway';
 import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
-import sponsorModal from './sponsor';
 import settings from './settings.jsx';
+import queueHacker from './queueHacker.jsx';
+import queueSponsor from './queueSponsor.jsx';
 import friends from './js/components/friends';
 import jukebox from './jukebox';
 import createLoadingScreen from './js/components/loading';
+
+// eslint-disable-next-line
+import statusManager from './js/managers/status';
 
 import './styles/index.scss';
 import './styles/sponsor.scss';
@@ -75,8 +81,9 @@ class Game extends Page {
     this.addClickListener('add-hallway-button', this.handleHallwayAddButton);
     this.addClickListener('add-room-button', this.handleRoomAddButton);
     this.addClickListener('day-of-button', this.handleDayofButton);
-    this.addClickListener('sponsor-button', this.handleSponsorButton);
     this.addClickListener('edit-button', this.handleEditButton);
+    this.addClickListener('queue-hacker-button', this.handleQueueHackerButton);
+    this.addClickListener('queue-sponsor-button', this.handleQueueSponsorButton);
     this.addClickListener('settings-button', this.handleSettingsButton);
     this.addClickListener('game', this.handleGameClick);
     this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
@@ -90,6 +97,12 @@ class Game extends Page {
     socket.onopen = this.handleSocketOpen;
     socket.subscribe('*', this.handleSocketMessage);
     socket.start();
+
+    // Listen for hotkeys
+    hotkeys('t, enter, /', (e) => {
+      e.preventDefault();
+      document.getElementById('chat-box').focus();
+    });
 
     // Start sending chat events
     const chatElem = document.getElementById('chat-box');
@@ -181,11 +194,19 @@ class Game extends Page {
       return;
     }
 
-    // Send move packet
     const rect = document.getElementById('game').getBoundingClientRect();
     const x = (e.pageX - rect.x) / rect.width;
     const y = (e.pageY - rect.y) / rect.height;
 
+    // call click handler of game to check for characters clicked
+    const success = this.scene.handleClickEvent(x, y);
+
+    if (success) {
+      // If we click on a character, don't move
+      return;
+    }
+
+    // Send move packet
     socket.send({
       x,
       y,
@@ -232,14 +253,13 @@ class Game extends Page {
       this.elements = [];
 
       this.hallways.forEach((hallway) => {
-        console.log(hallway);
         hallway.remove();
       });
 
       this.hallways = new Map();
 
       Object.entries(data.room.characters).forEach(([id, character]) => {
-        this.scene.newCharacter(id, character.name, character.x, character.y);
+        this.scene.newCharacter(id, character);
         this.characters.set(id, character);
       });
 
@@ -322,6 +342,8 @@ class Game extends Page {
             socket.send({
               type: 'teleport',
               to: hallway.data.to,
+              x: hallway.data.toX,
+              y: hallway.data.toY,
             });
 
             return true;
@@ -364,12 +386,7 @@ class Game extends Page {
         document.getElementById('login-panel').style.display = 'block';
       }
     } else if (data.type === 'join') {
-      this.scene.newCharacter(
-        data.character.id,
-        data.character.name,
-        data.character.x,
-        data.character.y
-      );
+      this.scene.newCharacter(data.character.id, data.character);
     } else if (data.type === 'leave') {
       if (data.character.id === this.characterId) {
         return;
@@ -392,10 +409,6 @@ class Game extends Page {
       />
     );
   };
-
-  handleSponsorButton = () => {
-    sponsorModal();
-  }
 
   handleElementAddButton = () => {
     socket.send({
@@ -470,8 +483,29 @@ class Game extends Page {
     createModal(settings.createSettingsModal(this.settings));
   };
 
+  handleQueueSponsorButton = () => {
+    createModal(queueSponsor.createQueueModal(), "queue", queueSponsor.onClose);
+  };
+
+  handleQueueHackerButton = () => {
+    createModal(queueHacker.createQueueModal(), "queue", queueHacker.onClose);
+  };
+
   handleJukeboxButton = () => {
     jukebox.openJukeboxPane(document.body);
+
+    // No inappropriate songs warning
+    createModal(
+      <div id="jukebox-modal">
+        <h1 className="white-text">Welcome to the Jukebox!</h1>
+        <p className="white-text">
+          Here you can add songs to the queue for all hackers to listen to. If
+          you select any inappropriate songs, you will be disqualified. Please
+          see our Code of Conduct for more information.
+        </p>
+      </div>,
+      'quarantine'
+    );
   };
 
   handleFriendsButton = () => {
@@ -487,7 +521,7 @@ class Game extends Page {
       // Never created friends pane before, create it now
       document
         .getElementById('chat')
-        .appendChild(friends.createFriendsPane(this.characters));
+        .appendChild(friends.createFriendsPane(this.friends));
       this.friendsPaneVisible = true;
     }
   };
@@ -497,12 +531,33 @@ class Game extends Page {
     const lengthElem = document.getElementById('chat-length-indicator');
 
     // TODO: Get this value from config
-    if (chatElem.value.length >= 400) {
+    if (chatElem.value.length >= 400 || chatElem.value.length === 0) {
       return;
     }
 
     // Replace all non-ASCII characters
     chatElem.value = chatElem.value.replace(/[^ -~]/gi, '');
+
+    // Check if chat contains any covid-related words
+    const pattern = new RegExp(
+      /(\s|^)(sick|achoo|sneeze|fever|sick|asymptomatic|symptoms)(\s|$|[.!?\\-])/i
+    );
+    const matches = chatElem.value.match(pattern);
+
+    if (matches) {
+      socket.send({ type: 'teleport_home' });
+      createModal(
+        <div id="quarantine-modal">
+          <h1 className="white-text">Welcome Home!</h1>
+          <p className="white-text">
+            You have been placed in quarantine for saying '{chatElem.value}'.
+          </p>
+        </div>,
+        'quarantine'
+      );
+      chatElem.value = '';
+      return;
+    }
 
     socket.send({
       type: 'chat',

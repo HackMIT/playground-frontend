@@ -161,6 +161,20 @@ body {
     img {
       width: 100%;
     }
+
+    &#friends-button {
+      position: relative;
+
+      .new-message-indicator {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #ff9797;
+      }
+    }
   }
 }
 
@@ -234,7 +248,16 @@ body {
     right: 24px;
   }
 
-  #sponsor-button {
+  #queue-hacker-button {
+    position: absolute;
+    bottom: 156px;
+    right: 24px;
+    height: 64px;
+    width: 64px;
+    cursor: pointer;
+  }
+
+  #queue-sponsor-button {
     position: absolute;
     bottom: 90px;
     right: 24px;
@@ -376,16 +399,19 @@ body {
 // make prettier
 .text-bubble {
   background-color: #fff;
-  border: 1px solid #000;
+  border: none;
+  font-family: Muli;
   border-radius: 4px;
   display: block;
-  font-family: $font-family;
   font-size: 13px;
   left: 50%;
   padding: 8px 16px;
   position: absolute;
-  top: 0;
-  transform: translate(-50%, -100%);
+  // TODO: This needs to update with scaling
+  transform: translate(-50%, calc(-100% - 80px));
+  max-width: 120px;
+  text-align: left;
+  overflow-wrap: break-word;
 }
 
 #game > .name {
@@ -406,4 +432,36 @@ body {
   font-family: $font-family;
   font-size: 13px;
   transform: translateY(-18px);
+}
+
+#quarantine-modal {
+  background: $blue_light;
+  width: 32vw;
+  color: $white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 32px;
+  text-align: center;
+
+  .white-text {
+    color: $white !important;
+  }
+}
+
+#jukebox-modal {
+  background: $blue_light;
+  color: $white;
+  width: 60vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 32px;
+  text-align: center;
+
+  .white-text {
+    color: $white !important;
+  }
 }
