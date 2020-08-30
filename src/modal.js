@@ -4,7 +4,6 @@ import createElement from './utils/jsxHelper';
 import './styles/modal.scss';
 
 function createModal(contentElem) {
-  console.log(contentElem, 'added');
   const modalElem = (
     <div id="modal-background" className="modal-background">
       <div className="modal-content">
