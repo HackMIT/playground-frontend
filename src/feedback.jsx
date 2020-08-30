@@ -15,7 +15,7 @@ class Feedback {
             <h1>How's Your HackMIT Experience?</h1>
           </div>
           <div id="feedback-text">
-            Give us some feedback: <a href="https://youtu.be/Ms7dpaA5iyw" target="_blank">gO/fEeDBaCk</a>
+            Give us some feedback<a href="https://docs.google.com/forms/d/e/1FAIpQLSeMGME3ZJi-qO0P4uXegbHZNd6VMfozrHoQSpXZrPjpaSDDjA/viewform" target="_blank">here</a>.
           </div>
         </div>
         <div id="feedback-clouds"></div>
