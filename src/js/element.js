@@ -27,6 +27,14 @@ class Element extends Editable {
     this.data.width = newValue;
   }
 
+  remove() {
+    super.remove();
+
+    if (this.data.changingImagePath) {
+      clearInterval(this.changingImageInterval);
+    }
+  }
+
   configureElement(elem) {
     // eslint-disable-next-line
     elem.style.cursor = this.data.action === NO_ACTION ? 'default' : 'pointer';
@@ -35,7 +43,7 @@ class Element extends Editable {
   configureImage(imgElem) {
     if (this.data.changingImagePath) {
       // TODO: Need to call clearInterval on this timer before getting rid of the element
-      setInterval(() => {
+      this.changingImageInterval = setInterval(() => {
         const pathOptions = this.data.changingPaths.split(',');
 
         this.data.path =

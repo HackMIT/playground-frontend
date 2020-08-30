@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 import LinearAnimation from './animations';
+import '../styles/profile.scss';
 
 class AnimatedModel {
   constructor(modelGeometry, mixer, walkCycle, start, name, reverseRaycaster) {
     this.modelGeometry = modelGeometry;
-    this.Animation = new LinearAnimation();
+    this.animation = new LinearAnimation();
     this.mixer = mixer;
     this.walkCycle = walkCycle;
     this.reverseRaycaster = reverseRaycaster;
@@ -24,33 +25,36 @@ class AnimatedModel {
     this.chatBubble = document.createElement('div');
     this.chatBubble.className = 'text-bubble';
     this.chatBubble.innerHTML = '';
-    this.chatBubble.style.transform = 'translate(-50%, -100px)';
-
-    this.setupHTMLPosTrackingElem(this.nametag);
-    this.setupHTMLPosTrackingElem(this.chatBubble);
 
     this.gameDom.appendChild(this.nametag);
+
+    this.trackingElems = [];
+
+    this.addHtmlElem(this.nametag);
+    this.addHtmlElem(this.chatBubble);
   }
 
   deconstruct() {
+    this.trackingElems.forEach((elem) => {
+      elem.remove();
+    });
+
     this.nametag.remove();
     this.chatBubble.remove();
     this.walkCycle.enabled = false;
   }
 
-  setupHTMLPosTrackingElem(htmlElem) {
+  // adds an html element that will follow the character around
+  addHtmlElem(htmlElem) {
     const screenPt = this.reverseRaycaster(this.modelGeometry.position.clone());
-    // eslint-disable-next-line
     htmlElem.style.left = `${screenPt[0]}px`;
-    // eslint-disable-next-line
     htmlElem.style.top = `${screenPt[1]}px`;
 
-    // eslint-disable-next-line
     htmlElem.style.position = 'absolute';
-    // eslint-disable-next-line
     htmlElem.style.transitionTimingFunction = 'linear';
-    // eslint-disable-next-line
     htmlElem.style.transitionProperty = 'top, left';
+
+    this.trackingElems.push(htmlElem);
   }
 
   updateChat(msg) {
@@ -67,10 +71,13 @@ class AnimatedModel {
   }
 
   setAnimation(dest, callback) {
-    if (this.Animation.destination && this.Animation.destination.equals(dest)) {
+    if (this.animation.destination && this.animation.destination.equals(dest)) {
       return 0;
     }
-    const time = this.Animation.init(this.modelGeometry.position, dest);
+
+    this.animating = true;
+
+    const time = this.animation.init(this.modelGeometry.position, dest);
 
     // update roation (by finding vector we're traveling along, setting angle to that)
     const bearing = dest.clone();
@@ -93,32 +100,36 @@ class AnimatedModel {
 
     this.callback = callback;
 
-    // move nametag/chatbubble
+    // move html elems tied to this model
     const objPt = dest.clone();
     const screenPt = this.reverseRaycaster(objPt);
 
-    this.nametag.style.transitionDuration = `${time}s`;
-    this.nametag.style.left = `${screenPt[0]}px`;
-    this.nametag.style.top = `${screenPt[1]}px`;
-
-    this.chatBubble.style.transitionDuration = `${time}s`;
-    this.chatBubble.style.left = `${screenPt[0]}px`;
-    this.chatBubble.style.top = `${screenPt[1]}px`;
+    this.trackingElems.forEach((elem) => {
+      elem.style.transitionDuration = `${time}s`;
+      elem.style.left = `${screenPt[0]}px`;
+      elem.style.top = `${screenPt[1]}px`;
+    });
 
     return time;
   }
 
   update(timeDelta) {
+    if (!this.animating) {
+      return;
+    }
+
     // position animation
-    this.Animation.update(timeDelta, this.modelGeometry.position);
+    this.animation.update(timeDelta, this.modelGeometry.position);
 
     // internal animation (e.g. walking)
     this.mixer.update(timeDelta);
 
-    if (this.Animation.finished()) {
+    if (this.animation.finished()) {
       this.walkCycle.enabled = false;
 
       if (this.callback !== null) {
+        this.animating = false;
+
         this.callback();
         this.callback = null;
       }
