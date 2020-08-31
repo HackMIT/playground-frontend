@@ -18,14 +18,20 @@ class Character {
     this.data = data;
     this.reverseRaycaster = reverseRaycaster;
 
-    const scale = data.id === 'tim' ? 0.04 : 0.65;
+    const scale = data.id === 'tim' ? 0.04 : 1.3;
 
     // load glb file
     parent.loader.load(
       data.id === 'tim' ? 'beaver.glb' : 'character.glb',
       (gltf) => {
         gltf.scene.scale.set(scale, scale, scale);
-        this.setModel(parent, gltf.scene, gltf.animations[0], data.x, data.y);
+        this.setModel(
+          parent,
+          gltf.scene,
+          gltf.animations[data.id === 'tim' ? 0 : 1],
+          data.x,
+          data.y
+        );
       },
       undefined,
       (e) => {
