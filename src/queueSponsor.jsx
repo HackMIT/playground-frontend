@@ -5,8 +5,10 @@ import createElement from './utils/jsxHelper';
 
 class QueueSponsor {
   constructor() {
-    this.currentQueue = null;
+    this.currentQueue = [];
     this.subscribed = false;
+    this.finishedLoading = false;
+    this.sponsorId = 'macrosoft';
     socket.subscribe(['queue_pop', 'queue_push', 'queue_remove', 'queue_subscribe'],
       this.handleSocketMessage);
   }
@@ -20,7 +22,7 @@ class QueueSponsor {
   };
 
   handleSocketMessage = (msg) => {
-    if (this.subscribed && msg.sponsorId === "macrosoft") {
+    if (this.subscribed && msg.sponsorId === this.sponsorId) {
       if (msg.type === 'queue_pop') {
         if (this.currentQueue.length > 0) {
           this.currentQueue.shift()
@@ -28,15 +30,13 @@ class QueueSponsor {
       } else if (msg.type === 'queue_push') {
         this.currentQueue.push(msg.character)
       } else if (msg.type === 'queue_remove') {
-        let index = -1
-        for (let i = 0; i < this.currentQueue.length; i += 1) {
-          if (this.currentQueue[i].id === msg.characterId) index = i
-        }
+        let index = this.currentQueue.find(item => item.id === msg.characterId);
         if (index !== -1) {
           this.currentQueue.splice(index, 1)
         }
       } else if (msg.type === 'queue_subscribe') {
         this.currentQueue = msg.characters
+        this.finishedLoading = true;
       }
       this.updateQueueContent();
     }
@@ -44,29 +44,27 @@ class QueueSponsor {
 
   subscribe = () => {
     this.subscribed = true;
-    const queueSubscribe = {
+    socket.send({
       type: 'queue_subscribe',
-      sponsorId: "macrosoft"
-    };
-    socket.send(queueSubscribe);
+      sponsorId: this.sponsorId
+    });
   };
 
   unsubscribe = () => {
     this.subscribed = false;
-    this.currentQueue = null;
-    const queueUnsubscribe = {
+    this.currentQueue = [];
+    this.finishedLoading = false;
+    socket.send({
       type: 'queue_unsubscribe',
-      sponsorId: "macrosoft"
-    };
-    socket.send(queueUnsubscribe);
+      sponsorId: this.sponsorId
+    });
   };
 
   handleQueuePop = () => {
-    const queuePop = {
+    socket.send({
       type: 'queue_pop',
-      sponsorId: "macrosoft"
-    };
-    socket.send(queuePop);
+      sponsorId: this.sponsorId
+    });
   };
 
   createQueueContent = () => {
@@ -104,7 +102,7 @@ class QueueSponsor {
   createQueueModal = () => {
     this.subscribe();
 
-    if (this.currentQueue === null) {
+    if (!this.finishedLoading) {
       return (
         <div id="settings">
           <div id="root">
@@ -135,9 +133,7 @@ class QueueSponsor {
     );
   };
 
-  onClose = () => {
-    this.unsubscribe();
-  };
+  onClose = this.unsubscribe;
 
 }
 
