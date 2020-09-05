@@ -51,7 +51,7 @@ module.exports = {
     new CopyWebpackPlugin([
       {
         from: paths.static,
-        to: 'assets',
+        to: '',
         ignore: ['*.DS_Store'],
       },
     ]),

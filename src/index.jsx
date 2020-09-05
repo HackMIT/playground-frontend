@@ -11,6 +11,7 @@ import friends from './js/components/friends';
 import jukebox from './jukebox';
 import createLoadingScreen from './js/components/loading';
 
+import notificationsManager from './js/managers/notifications';
 // eslint-disable-next-line
 import statusManager from './js/managers/status';
 
@@ -93,6 +94,8 @@ class Game extends Page {
     socket.onopen = this.handleSocketOpen;
     socket.subscribe('*', this.handleSocketMessage);
     socket.start();
+
+    notificationsManager.start();
 
     // Listen for hotkeys
     hotkeys('t, enter, /', (e) => {

@@ -39,7 +39,7 @@ class Scene {
     const light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
     this.scene.add(light);
 
-    this.loader = new GLTFLoader().setPath('assets/models/');
+    this.loader = new GLTFLoader().setPath('models/');
 
     this.characters = new Map();
 
