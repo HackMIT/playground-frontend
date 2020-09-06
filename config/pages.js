@@ -8,8 +8,8 @@ module.exports = [
     template: 'character',
   },
   {
-    path: 'login',
-    template: 'login',
+    path: 'quillsso',
+    template: 'quillsso',
   },
   {
     path: 'sponsor',

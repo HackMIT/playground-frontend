@@ -351,16 +351,20 @@ body {
   transform: translate(-50%, -50%);
   width: 400px;
 
-  a {
+  a,
+  button {
+    border: none;
     border-radius: 3px;
     color: #fff;
     cursor: pointer;
     display: block;
-    margin: 16px 16px 0;
+    font-size: 16px;
+    margin-top: 16px;
     padding: 10px 0;
     text-decoration: none;
+    width: 100%;
 
-    &.hacker {
+    &.green {
       background: #43a047;
 
       &:hover {
@@ -368,12 +372,46 @@ body {
       }
     }
 
-    &.sponsor {
+    &.blue {
       background: #039be5;
 
       &:hover {
         background: #0288d1;
       }
+    }
+
+    &.red {
+      background: #db5a42;
+
+      &:hover {
+        background: #d64329;
+      }
+    }
+  }
+
+  p {
+    font-size: 14px;
+    margin: 8px;
+  }
+
+  input {
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    box-sizing: border-box;
+    font-size: 14px;
+    margin: 16px 0 8px;
+    padding: 12px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .buttons-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    button:first-of-type {
+      margin-right: 16px;
     }
   }
 }

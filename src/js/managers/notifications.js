@@ -1,11 +1,22 @@
-const GCM_ENDPOINT = 'https://android.googleapis.com/gcm/send';
+import socket from '../socket';
 
 class NotificationsManager {
   constructor() {
     this.isPushEnabled = false;
   }
 
+  urlB64ToUint8Array = (base64String) => {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding)
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
+
+    const rawData = window.atob(base64);
+    return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+  };
+
   start = () => {
+    // If no service workers, notifications aren't supported
     if (!('serviceWorker' in navigator)) {
       return;
     }
@@ -59,19 +70,21 @@ class NotificationsManager {
   };
 
   subscribe = () => {
-    navigator.serviceWorker.ready.then((serviceWorkerRegistration) => {
-      serviceWorkerRegistration.pushManager
+    navigator.serviceWorker.getRegistration().then((registration) => {
+      registration.pushManager
         .subscribe({
           userVisibleOnly: true,
+          applicationServerKey: this.urlB64ToUint8Array(
+            'BB584OYloNsGGb3p4lIv4hb0J4ZPgd3WlqhEVA_e9DuZsJ2XMaBOplUlnPIAXSna8gDchIHtF9_MNzMfd9jTEtQ'
+          ),
         })
         .then((subscription) => {
           // The subscription was successful
           this.isPushEnabled = true;
 
-          // TODO: Send the subscription subscription.endpoint
-          // to your server and save it to send a push message
-          // at a later date
-          return this.sendSubscriptionToServer(subscription);
+          const json = JSON.stringify(subscription.toJSON(), null, 2);
+          // success: send json to server
+          console.log(json);
         })
         .catch((e) => {
           if (Notification.permission === 'denied') {
@@ -117,38 +130,12 @@ class NotificationsManager {
   };
 
   sendSubscriptionToServer = (subscription) => {
-    // TODO: Send the subscription.endpoint
-    // to your server and save it to send a
-    // push message at a later date
-    //
-    // For compatibly of Chrome 43, get the endpoint via
-    // endpointWorkaround(subscription)
-    console.log('TODO: Implement sendSubscriptionToServer()');
+    socket.send({
+      type: 'register',
+      browserSubscription: subscription,
+    });
 
-    const mergedEndpoint = this.endpointWorkaround(subscription);
-
-    // This is just for demo purposes / an easy to test by
-    // generating the appropriate cURL command
-    this.showCurlCommand(mergedEndpoint);
-  };
-
-  // NOTE: This code is only suitable for GCM endpoints,
-  // When another browser has a working version, alter
-  // this to send a PUSH request directly to the endpoint
-  showCurlCommand = (mergedEndpoint) => {
-    // The curl command to trigger a push message straight from GCM
-    if (mergedEndpoint.indexOf(GCM_ENDPOINT) !== 0) {
-      window.Demo.debug.log(
-        "This browser isn't currently supported for this demo"
-      );
-      return;
-    }
-
-    const endpointSections = mergedEndpoint.split('/');
-    const subscriptionId = endpointSections[endpointSections.length - 1];
-
-    const curlCommand = `curl --header "Authorization: key=asdf" --header Content-Type:"application/json" ${GCM_ENDPOINT} -d "{\\"registration_ids\\":[\\"${subscriptionId}\\"]}"`;
-    console.log(curlCommand);
+    console.log(JSON.stringify(subscription));
   };
 }
 
