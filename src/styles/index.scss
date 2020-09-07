@@ -376,17 +376,30 @@ body {
     }
 
     &.checkbox {
-      display: flex;
       margin: 8px 0;
+      display: flex;
       justify-content: left;
-      align-items: center;
+      align-items: top;
 
-      input {
+      input[type='checkbox'] {
         margin-right: 12px;
+        margin-top: 3px;
+
+        &:checked ~ div input[type='text'] {
+          display: block;
+        }
       }
 
-      p {
+      p,
+      div {
         flex-grow: 1;
+      }
+
+      input[type='text'] {
+        display: none;
+        font-size: 14px;
+        margin: 4px 0;
+        padding: 8px;
       }
     }
   }
@@ -457,6 +470,16 @@ body {
 
     button:first-of-type {
       margin-right: 16px;
+    }
+  }
+
+  #error-text {
+    color: #f75939;
+    margin-bottom: -4px;
+    display: none;
+
+    &.visible {
+      display: block;
     }
   }
 }

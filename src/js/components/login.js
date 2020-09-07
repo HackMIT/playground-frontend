@@ -139,7 +139,7 @@ class LoginPanel {
             <h1>Create account</h1>
             <div className="field">
               <p>Name</p>
-              <input type="text" placeholder="Ben Bitdiddle" />
+              <input type="text" placeholder="Ben Bitdiddle" id="name-field" />
             </div>
             <h2>Notifications</h2>
             <p className="small">
@@ -156,13 +156,67 @@ class LoginPanel {
               <p>Slack alerts</p>
             </div>
             <div className="field checkbox">
-              <input type="checkbox" />
-              <p>Text messages (US Only)</p>
+              <input type="checkbox" id="phone-checkbox" />
+              <div>
+                <p>Text messages (US Only)</p>
+                <input
+                  type="text"
+                  placeholder="(917) 555-1234"
+                  id="phone-field"
+                />
+              </div>
             </div>
             <div className="field checkbox">
               <input type="checkbox" />
               <p>Browser notifications</p>
             </div>
+            <p id="error-text">Please enter a valid phone number.</p>
+            <button
+              className="green"
+              onclick={() => {
+                const showError = (error) => {
+                  document.getElementById('error-text').innerText = error;
+                  document
+                    .getElementById('error-text')
+                    .classList.add('visible');
+                };
+
+                const data = {
+                  type: 'register',
+                };
+
+                const nameField = document.getElementById('name-field');
+                if (nameField.value.length > 0) {
+                  data.name = nameField.value;
+                } else {
+                  showError('Please enter your name.');
+                  return;
+                }
+
+                if (document.getElementById('phone-checkbox').checked) {
+                  // Remove all non-numeric characters
+                  let phoneNumber = document
+                    .getElementById('phone-field')
+                    .value.replace(/\D/g, '');
+
+                  // If they inserted the 1 before their phone number, remove it
+                  if (phoneNumber.length === 11 && phoneNumber[0] === '1') {
+                    phoneNumber = phoneNumber.substring(1, phoneNumber.length);
+                  }
+
+                  if (phoneNumber.length === 10) {
+                    data.phoneNumber = `+1${data.phoneNumber}`;
+                  } else {
+                    showError('Please enter a valid phone number.');
+                    return;
+                  }
+                }
+
+                socket.send(data);
+              }}
+            >
+              Submit
+            </button>
           </div>
         );
       default:
