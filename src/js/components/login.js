@@ -13,6 +13,8 @@ const CODE_OF_CONDUCT = 4;
 
 class LoginPanel {
   constructor() {
+    this.name = '';
+    this.nameFieldDisabled = false;
     this.state = INITIAL_STATE;
 
     socket.subscribe('init', this.handleInitPacket);
@@ -140,7 +142,13 @@ class LoginPanel {
             <h1>Create account</h1>
             <div className="field">
               <p>Name</p>
-              <input type="text" placeholder="Ben Bitdiddle" id="name-field" />
+              <input
+                type="text"
+                placeholder="Ben Bitdiddle"
+                id="name-field"
+                defaultValue={this.name}
+                disabled={this.nameFieldDisabled}
+              />
             </div>
             <h2>Notifications</h2>
             <p className="small">
@@ -207,10 +215,10 @@ class LoginPanel {
                     showError('Please enter a valid phone number.');
                     return;
                   }
-
-                  this.state = CODE_OF_CONDUCT;
-                  this.update();
                 }
+
+                this.state = CODE_OF_CONDUCT;
+                this.update();
               }}
             >
               Submit
@@ -269,7 +277,12 @@ class LoginPanel {
     this.update();
   }
 
-  handleInitPacket = () => {
+  handleInitPacket = (data) => {
+    if (data.character.name.length > 0 && data.character.name !== 'Player') {
+      this.name = data.character.name;
+      this.nameFieldDisabled = true;
+    }
+
     this.state = CREATE_ACCOUNT;
     this.update();
   };

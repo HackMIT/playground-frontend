@@ -8,16 +8,12 @@ module.exports = [
     template: 'character',
   },
   {
-    path: 'quillsso',
+    path: 'login',
     template: 'quillsso',
   },
   {
     path: 'sponsor',
     template: 'sponsor',
-  },
-  {
-    path: 'register',
-    template: 'register',
   },
   {
     path: 'attendance',

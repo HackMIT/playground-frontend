@@ -15,7 +15,6 @@ module.exports = {
     character: [`${paths.src}/character.jsx`],
     game: [`${paths.src}/index.jsx`],
     quillsso: [`${paths.src}/quillsso.js`],
-    register: [`${paths.src}/register.js`],
     sponsor: [`${paths.src}/sponsor.js`],
   },
 

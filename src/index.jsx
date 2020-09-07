@@ -86,7 +86,6 @@ class Game extends Page {
     this.addClickListener('edit-button', this.handleEditButton);
     this.addClickListener('settings-button', this.handleSettingsButton);
     this.addClickListener('game', this.handleGameClick);
-    // this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
     this.addClickListener('friends-button', this.handleFriendsButton);
     this.addClickListener('send-button', this.handleSendButton);
@@ -221,6 +220,7 @@ class Game extends Page {
 
     if (window.location.hash.length > 1) {
       joinPacket.quillToken = document.location.hash.substring(1);
+      window.history.replaceState({}, document.title, '.');
     } else if (localStorage.getItem('token') !== null) {
       joinPacket.token = localStorage.getItem('token');
     } else {
@@ -237,6 +237,7 @@ class Game extends Page {
     if (data.type === 'init') {
       if (data.firstTime) {
         // If firstTime is true, components/login.js is handling this
+        loginPanel.show();
         return;
       }
 
