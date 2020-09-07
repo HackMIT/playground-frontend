@@ -7,6 +7,7 @@ import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
 import settings from './settings.jsx';
+import achievements from './achievements.jsx';
 import friends from './js/components/friends';
 import jukebox from './jukebox';
 import createLoadingScreen from './js/components/loading';
@@ -74,7 +75,7 @@ class Game extends Page {
     this.editing = false;
     this.elementNames = [];
     this.roomNames = [];
-
+    this.addClickListener('achievements-button',this.handleAchievementsButton)
     this.addClickListener('add-button', this.handleElementAddButton);
     this.addClickListener('add-hallway-button', this.handleHallwayAddButton);
     this.addClickListener('add-room-button', this.handleRoomAddButton);
@@ -477,6 +478,10 @@ class Game extends Page {
 
   handleSettingsButton = () => {
     createModal(settings.createSettingsModal(this.settings));
+  };
+
+  handleAchievementsButton=()=>{
+    createModal(achievements.createAchievementsModal());
   };
 
   handleJukeboxButton = () => {
