@@ -235,6 +235,11 @@ class Game extends Page {
   handleSocketMessage = (data) => {
     console.log(data);
     if (data.type === 'init') {
+      if (data.firstTime) {
+        // If firstTime is true, components/login.js is handling this
+        return;
+      }
+
       this.characterId = data.character.id;
 
       if (data.token !== undefined) {
@@ -572,18 +577,6 @@ class Game extends Page {
     socket.send({
       type: 'teleport_home',
     });
-  };
-
-  handleSponsorLogin = () => {
-    this.startLoading();
-
-    const joinPacket = {
-      type: 'join',
-      name: prompt("What's your name?"),
-    };
-
-    // Connected to remote
-    socket.send(joinPacket);
   };
 
   handleWindowSize = () => {

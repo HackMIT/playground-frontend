@@ -351,6 +351,46 @@ body {
   transform: translate(-50%, -50%);
   width: 400px;
 
+  h1 {
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-size: 20px;
+    margin-top: 16px;
+  }
+
+  .field {
+    p {
+      font-size: 14px;
+      margin: 0;
+      text-align: left;
+    }
+
+    input {
+      text-align: left;
+
+      &[type='text'] {
+        margin-top: 0;
+      }
+    }
+
+    &.checkbox {
+      display: flex;
+      margin: 8px 0;
+      justify-content: left;
+      align-items: center;
+
+      input {
+        margin-right: 12px;
+      }
+
+      p {
+        flex-grow: 1;
+      }
+    }
+  }
+
   a,
   button {
     border: none;
@@ -392,9 +432,14 @@ body {
   p {
     font-size: 14px;
     margin: 8px;
+
+    &.small {
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
   }
 
-  input {
+  input[type='text'] {
     border: 1px solid #ccc;
     border-radius: 2px;
     box-sizing: border-box;

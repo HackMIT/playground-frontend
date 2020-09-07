@@ -8,10 +8,13 @@ const SPONSOR = 1;
 const INITIAL_STATE = 0;
 const GET_EMAIL = 1;
 const CHECK_EMAIL = 2;
+const CREATE_ACCOUNT = 3;
 
 class LoginPanel {
   constructor() {
-    this.state = 0;
+    this.state = INITIAL_STATE;
+
+    socket.subscribe('init', this.handleInitPacket);
   }
 
   show = () => {
@@ -130,6 +133,38 @@ class LoginPanel {
             </div>
           </div>
         );
+      case CREATE_ACCOUNT:
+        return (
+          <div>
+            <h1>Create account</h1>
+            <div className="field">
+              <p>Name</p>
+              <input type="text" placeholder="Ben Bitdiddle" />
+            </div>
+            <h2>Notifications</h2>
+            <p className="small">
+              We recommend you enable all of these. We'll only alert you if it's
+              very urgent, like when you have a scheduled chat with a sponsor,
+              or if you need to present at our closing ceremony.
+            </p>
+            <div className="field checkbox">
+              <input type="checkbox" checked disabled />
+              <p>Emails to {this.email}</p>
+            </div>
+            <div className="field checkbox">
+              <input type="checkbox" />
+              <p>Slack alerts</p>
+            </div>
+            <div className="field checkbox">
+              <input type="checkbox" />
+              <p>Text messages (US Only)</p>
+            </div>
+            <div className="field checkbox">
+              <input type="checkbox" />
+              <p>Browser notifications</p>
+            </div>
+          </div>
+        );
       default:
         return <div />;
     }
@@ -139,8 +174,12 @@ class LoginPanel {
     this.state = GET_EMAIL;
     this.role = role;
     this.update();
-    console.log('updated');
   }
+
+  handleInitPacket = () => {
+    this.state = CREATE_ACCOUNT;
+    this.update();
+  };
 }
 
 const friendsPaneInstance = new LoginPanel();
