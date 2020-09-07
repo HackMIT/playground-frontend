@@ -9,6 +9,7 @@ const INITIAL_STATE = 0;
 const GET_EMAIL = 1;
 const CHECK_EMAIL = 2;
 const CREATE_ACCOUNT = 3;
+const CODE_OF_CONDUCT = 4;
 
 class LoginPanel {
   constructor() {
@@ -37,7 +38,7 @@ class LoginPanel {
           <div>
             <h1>Log into Playground</h1>
             <a
-              className="green"
+              className="green button"
               href="https://my.hackmit.org/login?sso=http://localhost:3000/login"
             >
               Hacker Login
@@ -181,13 +182,9 @@ class LoginPanel {
                     .classList.add('visible');
                 };
 
-                const data = {
-                  type: 'register',
-                };
-
                 const nameField = document.getElementById('name-field');
                 if (nameField.value.length > 0) {
-                  data.name = nameField.value;
+                  this.name = nameField.value;
                 } else {
                   showError('Please enter your name.');
                   return;
@@ -205,17 +202,59 @@ class LoginPanel {
                   }
 
                   if (phoneNumber.length === 10) {
-                    data.phoneNumber = `+1${data.phoneNumber}`;
+                    this.phoneNumber = `+1${phoneNumber}`;
                   } else {
                     showError('Please enter a valid phone number.');
                     return;
                   }
-                }
 
-                socket.send(data);
+                  this.state = CODE_OF_CONDUCT;
+                  this.update();
+                }
               }}
             >
               Submit
+            </button>
+          </div>
+        );
+      case CODE_OF_CONDUCT:
+        return (
+          <div>
+            <h1>Code of Conduct</h1>
+            <p>
+              Our team spent countless hours building the HackMIT Playground to
+              create a unique and special event for you.{' '}
+              <strong>
+                All forms of abuse of our platform will not be tolerated.
+              </strong>{' '}
+              By checking the box below, you agree to follow our{' '}
+              <a href="http://go.hackmit.org/code-of-conduct" target="_blank">
+                code of conduct
+              </a>{' '}
+              throughout the weekend.
+            </p>
+            <div className="field checkbox centered extra-vspace">
+              <input
+                type="checkbox"
+                onchange={(e) => {
+                  document.getElementById('finish-button').disabled = !e.target
+                    .checked;
+                }}
+              />
+              <p>
+                I have read and agree to follow the HackMIT{' '}
+                <a href="http://go.hackmit.org/code-of-conduct" target="_blank">
+                  code of conduct
+                </a>
+              </p>
+            </div>
+            <button
+              id="finish-button"
+              className="green"
+              disabled
+              onclick={() => this.finish()}
+            >
+              Finish
             </button>
           </div>
         );
@@ -233,6 +272,22 @@ class LoginPanel {
   handleInitPacket = () => {
     this.state = CREATE_ACCOUNT;
     this.update();
+  };
+
+  finish = () => {
+    const data = {
+      type: 'register',
+    };
+
+    if (this.name !== undefined) {
+      data.name = this.name;
+    }
+
+    if (this.phoneNumber !== undefined) {
+      data.phoneNumber = this.phoneNumber;
+    }
+
+    socket.send(data);
   };
 }
 

@@ -381,6 +381,19 @@ body {
       justify-content: left;
       align-items: top;
 
+      &.extra-vspace {
+        margin-top: 16px;
+      }
+
+      &.centered {
+        justify-content: center;
+
+        p,
+        div {
+          flex-grow: initial;
+        }
+      }
+
       input[type='checkbox'] {
         margin-right: 12px;
         margin-top: 3px;
@@ -404,7 +417,7 @@ body {
     }
   }
 
-  a,
+  a.button,
   button {
     border: none;
     border-radius: 3px;
@@ -416,6 +429,11 @@ body {
     padding: 10px 0;
     text-decoration: none;
     width: 100%;
+
+    &:disabled {
+      background: #ccc !important;
+      cursor: default;
+    }
 
     &.green {
       background: #43a047;
