@@ -9,15 +9,11 @@ module.exports = [
   },
   {
     path: 'login',
-    template: 'login',
+    template: 'quillsso',
   },
   {
     path: 'sponsor',
     template: 'sponsor',
-  },
-  {
-    path: 'register',
-    template: 'register',
   },
   {
     path: 'attendance',

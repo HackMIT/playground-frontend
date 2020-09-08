@@ -11,12 +11,11 @@ module.exports = {
    * The first place Webpack looks to start building the bundle.
    */
   entry: {
-    game: [`${paths.src}/index.jsx`],
-    character: [`${paths.src}/character.jsx`],
-    login: [`${paths.src}/login.js`],
-    sponsor: [`${paths.src}/sponsor.js`],
-    register: [`${paths.src}/register.js`],
     attendance: [`${paths.src}/attendance.js`],
+    character: [`${paths.src}/character.jsx`],
+    game: [`${paths.src}/index.jsx`],
+    quillsso: [`${paths.src}/quillsso.js`],
+    sponsor: [`${paths.src}/sponsor.js`],
   },
 
   /**
@@ -51,7 +50,7 @@ module.exports = {
     new CopyWebpackPlugin([
       {
         from: paths.static,
-        to: 'assets',
+        to: '',
         ignore: ['*.DS_Store'],
       },
     ]),
