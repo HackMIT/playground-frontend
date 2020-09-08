@@ -12,7 +12,7 @@ class Feedback {
       <div id="feedback">
         <div id="root">
           <div class="feedback-header" id="feedback-header">
-            <h1>How's Your HackMIT Experience?</h1>
+            <h1>How was your HackMIT experience?</h1>
           </div>
           {/* TODO: CHANGE FEEDBACK FORM LINK BASED ON WHETHER USER IS A SPONSOR OR A HACKER */}
           <div id="feedback-text">

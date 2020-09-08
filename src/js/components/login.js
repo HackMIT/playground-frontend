@@ -3,7 +3,7 @@ import socket from '../socket';
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
 
-const SPONSOR = 1;
+const SPONSOR = 2;
 
 const INITIAL_STATE = 0;
 const GET_EMAIL = 1;
@@ -90,6 +90,7 @@ class LoginPanel {
                   socket.send({
                     type: 'email_code',
                     email: this.email,
+                    role: this.role,
                   });
                 }}
               >
