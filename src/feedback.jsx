@@ -14,9 +14,16 @@ class Feedback {
           <div class="feedback-header" id="feedback-header">
             <h1>How's Your HackMIT Experience?</h1>
           </div>
-          {/*TODO: CHANGE FEEDBACK FORM LINK BASED ON WHETHER USER IS A SPONSOR OR A HACKER */}
+          {/* TODO: CHANGE FEEDBACK FORM LINK BASED ON WHETHER USER IS A SPONSOR OR A HACKER */}
           <div id="feedback-text">
-            Give us some feedback<a href="https://docs.google.com/forms/d/e/1FAIpQLSeMGME3ZJi-qO0P4uXegbHZNd6VMfozrHoQSpXZrPjpaSDDjA/viewform" target="_blank">here</a>.
+            Give us some feedback
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSeMGME3ZJi-qO0P4uXegbHZNd6VMfozrHoQSpXZrPjpaSDDjA/viewform"
+              target="_blank"
+            >
+              here
+            </a>
+            .
           </div>
         </div>
         <div id="feedback-clouds"></div>
