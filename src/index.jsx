@@ -7,6 +7,7 @@ import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
 import settings from './settings.jsx';
+import map from './js/components/map'
 import feedback from './feedback.jsx';
 import queueHacker from './queueHacker.jsx';
 import queueSponsor from './queueSponsor.jsx';
@@ -98,6 +99,7 @@ class Game extends Page {
     this.addClickListener('friends-button', this.handleFriendsButton);
     this.addClickListener('send-button', this.handleSendButton);
     this.addClickListener('igloo-button', this.handleIglooButton);
+    this.addClickListener('dance-button', this.handleDanceButton);
 
     this.handleWindowSize();
 
@@ -599,6 +601,10 @@ class Game extends Page {
       type: 'teleport_home',
     });
   };
+
+  handleDanceButton = () => {
+    createModal(map.createMapModal());
+  }
 
   handleWindowSize = () => {
     const outerElem = document.getElementById('outer');
