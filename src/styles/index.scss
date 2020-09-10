@@ -174,7 +174,11 @@ body {
         border-radius: 50%;
         background: #ff9797;
       }
+
     }
+  }
+  .dance-pane-button{
+    background: #7b9fce;
   }
 }
 
@@ -269,9 +273,20 @@ body {
   #day-of-button {
     position: absolute;
     bottom: 24px;
-    right: 24px;
+    left: 24px;
     height: 64px;
     width: 64px;
+    cursor: pointer;
+  }
+
+  #map-button {
+    border: none;
+    position: absolute;
+    background: transparent;
+    bottom: 40px;
+    right: 30px;
+    height: 40px;
+    width: 40px;
     cursor: pointer;
   }
 }
