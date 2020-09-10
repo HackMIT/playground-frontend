@@ -1,6 +1,5 @@
 import '../../styles/map.scss';
 
-// eslint-disable-next-line
 import socket from '../socket';
 
 // eslint-disable-next-line
@@ -8,6 +7,13 @@ import createElement from '../../utils/jsxHelper';
 
 import '../../images/map/Ground.svg';
 import townSquare from '../../images/map/town_square.svg';
+import townSquare2 from '../../images/map/town_square2.svg';
+import nonprofit from '../../images/map/Nonprofit.svg';
+import personalRoom from '../../images/map/personal_room.svg';
+import sponsorTown from '../../images/map/sponsor_town.svg';
+import speakerSign from '../../images/map/speaker_sign.svg';
+import workshopSign from '../../images/map/workshop_sign.svg';
+import eventSign from '../../images/map/event_sign.svg';
 
 class Map {
   createMapModal = () => {
@@ -16,7 +22,41 @@ class Map {
         <div id="map-container">
           <button id="town-square" onclick={() => this.teleport('home')}>
             <img src={townSquare} />
+            <p class="label">{'Town Square'}</p>
           </button>
+          <button id="town-square-2" onclick={() => this.teleport('home')}>
+            <img src={townSquare2} />
+            <p class="label">{'Town Square'}</p>
+          </button>
+          <button id="nonprofit" onclick={() => this.teleport('nonprofits')}>
+            <img src={nonprofit} />
+            <p class="label">{'Nonprofits'}</p>
+          </button>
+          <button id="personal-room" onclick={() => this.teleport('home')}>
+            <img src={personalRoom} />
+            <p class="label">{'Personal Room'}</p>
+          </button>
+          <button id="sponsor-town" onclick={() => this.teleport('sponsor')}>
+            <img src={sponsorTown} />
+            <p class="label">{'Sponsor Town'}</p>
+          </button>
+          <button id="speaker-sign" onclick={() => this.link('https://hackmit.org/')}>
+            <img src={speakerSign} />
+            <p class="label">{'Speakers'}</p>
+          </button>
+          <button id="workshop-sign" onclick={() => this.link('https://hackmit.org/')}>
+            <img src={workshopSign} />
+            <p class="label">{'Workshops'}</p>
+          </button>
+          <button id="event-sign" onclick={() => this.link('https://hackmit.org/')}>
+            <img src={eventSign} />
+            <div>
+              <p class="label">{'Events'}</p>
+            </div>
+
+          </button>
+
+
         </div>
       </div>
     );
@@ -30,6 +70,11 @@ class Map {
       to: room,
     });
   };
+
+  link = (url) => {
+    document.getElementById('modal-background').remove();
+    window.open(url);
+  }
 }
 
 const mapInstance = new Map();
