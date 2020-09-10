@@ -1,5 +1,5 @@
 const dev = {
-  ws_url: 'wss://backend.play.hackmit.org/ws',
+  ws_url: 'ws://localhost:5000/ws',
   quill_redirect_url: 'http://localhost:3000',
 };
 

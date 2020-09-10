@@ -94,11 +94,6 @@ class Game extends Page {
     this.addClickListener('add-room-button', this.handleRoomAddButton);
     this.addClickListener('day-of-button', this.handleDayofButton);
     this.addClickListener('edit-button', this.handleEditButton);
-    // this.addClickListener('queue-hacker-button', this.handleQueueHackerButton);
-    // this.addClickListener(
-    //   'queue-sponsor-button',
-    //   this.handleQueueSponsorButton
-    // );
     this.addClickListener('settings-button', this.handleSettingsButton);
     this.addClickListener('game', this.handleGameClick);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
@@ -539,7 +534,6 @@ class Game extends Page {
   };
 
   handleFriendsButton = () => {
-    console.log(this)
     if (this.friendsPaneVisible === true) {
       // Hide the friends pane
       document.getElementById('friends-pane').classList.add('invisible');
@@ -612,19 +606,15 @@ class Game extends Page {
   };
 
   handleDanceButton = () => {
-    console.log('clicked')
     if (this.dancePaneVisible === true) {
-      console.log('true')
       // Hide the dance pane
       document.getElementById('dance-pane').classList.add('invisible');
       this.dancePaneVisible = false;
     } else if (this.dancePaneVisible === false) {
-      console.log('false')
       // make the dance pane visible
       document.getElementById('dance-pane').classList.remove('invisible');
       this.dancePaneVisible = true;
     } else {
-      console.log('else')
       // Never created friends pane before, create it now
       document
         .getElementById('chat')

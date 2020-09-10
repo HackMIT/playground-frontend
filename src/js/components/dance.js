@@ -1,12 +1,11 @@
-// import message from './message';
+
 import '../../styles/dance.scss';
 
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
+
 class DancePane {
   createDancePane = () => {
-    // const messagesPane = message.createMessagePane();
-
     return (
       <div id="dance-pane">
         <div id="dance-buttons-div">
@@ -18,7 +17,6 @@ class DancePane {
           </button>
         </div>
         <div id="dance-pane-arrow" />
-        {/* {messagesPane} */}
       </div>
     );
   };
