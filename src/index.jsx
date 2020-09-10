@@ -290,15 +290,15 @@ class Game extends Page {
           this.finishedLoadingPart();
         };
 
+        const threeContainer = document.getElementById('three-container');
+
         if (element.action > 0) {
-          document.getElementById('game').appendChild(elementElem.element);
+          threeContainer.appendChild(elementElem.element);
         } else {
-          document
-            .getElementById('game')
-            .insertBefore(
-              elementElem.element,
-              document.getElementById('three-container')
-            );
+          threeContainer.insertBefore(
+            elementElem.element,
+            document.getElementById('three-canvas')
+          );
         }
       });
 

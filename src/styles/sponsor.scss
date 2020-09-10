@@ -1,7 +1,12 @@
 #game {
   &.sponsor {
-    height: 90vh;
+    height: calc(97.5vh * (9 / 16) + 52px);
     width: 97.5vh;
+
+    #three-container,
+    #background {
+      height: calc(97.5vh * (9 / 16));
+    }
   }
 }
 
