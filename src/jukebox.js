@@ -22,12 +22,12 @@ class Jukebox {
     }
     else if (msg.type === 'song' && msg.playing) {
       this.currentSong = msg
-      this.updatedJukeboxPane();
+      this.updateJukeboxPane(msg.song);
     }
     else if (msg.type === 'song' && msg.remove) {
       const index = this.songs.findIndex(x => x.id === msg.id);
       this.songs.splice(index, 1);
-      this.updateJukeboxPane();
+      this.updateJukeboxPane(msg);
     }
     else if (msg.type === 'song') {
       if (msg.requiresWarning) {
@@ -69,11 +69,11 @@ class Jukebox {
     }, 250);
   };
 
-  createPlayingNowContents = () => {
+  createPlayingNowContents = (song) => {
     return (
       <div>
-        <p>Playing now (00:00 / 03:48):</p>
-        <h2>Dominic Fike "3 Nights" (Official Audio)</h2>
+        <p>Playing now:</p>
+        <h2>{song.title}</h2>
       </div>
     );
   };
@@ -202,7 +202,7 @@ class Jukebox {
     socket.send(newSongPacket);
   }
 
-  updateJukeboxPane = () => {
+  updateJukeboxPane = (song) => {
     // Get updated songs from queue
     socket.send({
       type: 'get_songs',
@@ -211,7 +211,7 @@ class Jukebox {
     document.getElementById('jukebox-playing-now').innerHTML = '';
     document
       .getElementById('jukebox-playing-now')
-      .appendChild(this.createPlayingNowContents());
+      .appendChild(this.createPlayingNowContents(song));
 
     document.getElementById('jukebox-songs-queue').innerHTML = '';
     document
