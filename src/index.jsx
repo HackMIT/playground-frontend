@@ -7,10 +7,15 @@ import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
 import settings from './settings.jsx';
+import feedback from './feedback.jsx';
+import queueHacker from './queueHacker.jsx';
+import queueSponsor from './queueSponsor.jsx';
 import friends from './js/components/friends';
 import jukebox from './jukebox';
+import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 
+import notificationsManager from './js/managers/notifications';
 // eslint-disable-next-line
 import statusManager from './js/managers/status';
 
@@ -55,9 +60,11 @@ class Game extends Page {
       // TODO: Handle error -- tell people their browser is incompatible
     }
 
+    loginPanel.update();
+
     // Quick check for auth data
     if (localStorage.getItem('token') !== null) {
-      document.getElementById('login-panel').style.display = 'none';
+      loginPanel.hide();
     } else {
       this.stopLoading();
     }
@@ -80,9 +87,13 @@ class Game extends Page {
     this.addClickListener('add-room-button', this.handleRoomAddButton);
     this.addClickListener('day-of-button', this.handleDayofButton);
     this.addClickListener('edit-button', this.handleEditButton);
+    this.addClickListener('queue-hacker-button', this.handleQueueHackerButton);
+    this.addClickListener(
+      'queue-sponsor-button',
+      this.handleQueueSponsorButton
+    );
     this.addClickListener('settings-button', this.handleSettingsButton);
     this.addClickListener('game', this.handleGameClick);
-    this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
     this.addClickListener('friends-button', this.handleFriendsButton);
     this.addClickListener('send-button', this.handleSendButton);
@@ -217,6 +228,7 @@ class Game extends Page {
 
     if (window.location.hash.length > 1) {
       joinPacket.quillToken = document.location.hash.substring(1);
+      window.history.replaceState({}, document.title, '.');
     } else if (localStorage.getItem('token') !== null) {
       joinPacket.token = localStorage.getItem('token');
     } else {
@@ -231,12 +243,18 @@ class Game extends Page {
   handleSocketMessage = (data) => {
     console.log(data);
     if (data.type === 'init') {
+      if (data.firstTime) {
+        // If firstTime is true, components/login.js is handling this
+        loginPanel.show();
+        return;
+      }
+
       this.characterId = data.character.id;
 
       if (data.token !== undefined) {
         localStorage.setItem('token', data.token);
         window.history.pushState(null, null, ' ');
-        document.getElementById('login-panel').style.display = 'none';
+        loginPanel.hide();
       }
 
       // Delete stuff from previous room
@@ -272,15 +290,15 @@ class Game extends Page {
           this.finishedLoadingPart();
         };
 
-        if (true || element.action > 0) {
-          document.getElementById('game').appendChild(elementElem.element);
+        const threeContainer = document.getElementById('three-container');
+
+        if (element.action > 0) {
+          threeContainer.appendChild(elementElem.element);
         } else {
-          document
-            .getElementById('game')
-            .insertBefore(
-              elementElem.element,
-              document.getElementById('three-container')
-            );
+          threeContainer.insertBefore(
+            elementElem.element,
+            document.getElementById('three-canvas')
+          );
         }
       });
 
@@ -291,6 +309,10 @@ class Game extends Page {
           .getElementById('game')
           .appendChild(this.hallways.get(id).element);
       });
+
+      if (data.openFeedback) {
+        this.showFeedback();
+      }
 
       this.settings = data.settings;
       this.room = data.room;
@@ -321,6 +343,9 @@ class Game extends Page {
       img.src = BACKGROUND_IMAGE_URL.replace('%PATH%', this.room.background);
 
       this.scene.fixCameraOnResize();
+
+      // Start notifications manager
+      notificationsManager.start();
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
         if (data.id !== this.characterId) {
@@ -379,7 +404,7 @@ class Game extends Page {
     } else if (data.type === 'error') {
       if (data.code === 1) {
         this.stopLoading();
-        document.getElementById('login-panel').style.display = 'block';
+        loginPanel.show();
       }
     } else if (data.type === 'join') {
       this.scene.newCharacter(data.character.id, data.character);
@@ -479,6 +504,14 @@ class Game extends Page {
     createModal(settings.createSettingsModal(this.settings));
   };
 
+  handleQueueSponsorButton = () => {
+    createModal(queueSponsor.createQueueModal(), 'queue', queueSponsor.onClose);
+  };
+
+  handleQueueHackerButton = () => {
+    createModal(queueHacker.createQueueModal(), 'queue', queueHacker.onClose);
+  };
+
   handleJukeboxButton = () => {
     jukebox.openJukeboxPane(document.body);
 
@@ -567,18 +600,6 @@ class Game extends Page {
     });
   };
 
-  handleSponsorLogin = () => {
-    this.startLoading();
-
-    const joinPacket = {
-      type: 'join',
-      name: prompt("What's your name?"),
-    };
-
-    // Connected to remote
-    socket.send(joinPacket);
-  };
-
   handleWindowSize = () => {
     const outerElem = document.getElementById('outer');
 
@@ -595,6 +616,10 @@ class Game extends Page {
 
       outerElem.classList.remove('vertical');
     }
+  };
+
+  showFeedback = () => {
+    createModal(feedback.createFeedbackModal());
   };
 
   startLoading = () => {

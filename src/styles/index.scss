@@ -248,6 +248,24 @@ body {
     right: 24px;
   }
 
+  #queue-hacker-button {
+    position: absolute;
+    bottom: 156px;
+    right: 24px;
+    height: 64px;
+    width: 64px;
+    cursor: pointer;
+  }
+
+  #queue-sponsor-button {
+    position: absolute;
+    bottom: 90px;
+    right: 24px;
+    height: 64px;
+    width: 64px;
+    cursor: pointer;
+  }
+
   #day-of-button {
     position: absolute;
     bottom: 24px;
@@ -351,16 +369,91 @@ body {
   transform: translate(-50%, -50%);
   width: 400px;
 
-  a {
+  h1 {
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-size: 20px;
+    margin-top: 16px;
+  }
+
+  .field {
+    p {
+      font-size: 14px;
+      margin: 0;
+      text-align: left;
+    }
+
+    input {
+      text-align: left;
+
+      &[type='text'] {
+        margin-top: 0;
+      }
+    }
+
+    &.checkbox {
+      margin: 8px 0;
+      display: flex;
+      justify-content: left;
+      align-items: top;
+
+      &.extra-vspace {
+        margin-top: 16px;
+      }
+
+      &.centered {
+        justify-content: center;
+
+        p,
+        div {
+          flex-grow: initial;
+        }
+      }
+
+      input[type='checkbox'] {
+        margin-right: 12px;
+        margin-top: 3px;
+
+        &:checked ~ div input[type='text'] {
+          display: block;
+        }
+      }
+
+      p,
+      div {
+        flex-grow: 1;
+      }
+
+      input[type='text'] {
+        display: none;
+        font-size: 14px;
+        margin: 4px 0;
+        padding: 8px;
+      }
+    }
+  }
+
+  a.button,
+  button {
+    border: none;
     border-radius: 3px;
     color: #fff;
     cursor: pointer;
     display: block;
-    margin: 16px 16px 0;
+    font-size: 16px;
+    margin-top: 16px;
     padding: 10px 0;
     text-decoration: none;
+    width: 100%;
 
-    &.hacker {
+    &:disabled {
+      background: #ccc !important;
+      cursor: default;
+    }
+
+    &.green {
       background: #43a047;
 
       &:hover {
@@ -368,12 +461,61 @@ body {
       }
     }
 
-    &.sponsor {
+    &.blue {
       background: #039be5;
 
       &:hover {
         background: #0288d1;
       }
+    }
+
+    &.red {
+      background: #db5a42;
+
+      &:hover {
+        background: #d64329;
+      }
+    }
+  }
+
+  p {
+    font-size: 14px;
+    margin: 8px;
+
+    &.small {
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+  }
+
+  input[type='text'] {
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    box-sizing: border-box;
+    font-size: 14px;
+    margin: 16px 0 8px;
+    padding: 12px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .buttons-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    button:first-of-type {
+      margin-right: 16px;
+    }
+  }
+
+  #error-text {
+    color: #f75939;
+    margin-bottom: -4px;
+    display: none;
+
+    &.visible {
+      display: block;
     }
   }
 }

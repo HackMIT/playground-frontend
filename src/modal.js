@@ -3,7 +3,7 @@ import createElement from './utils/jsxHelper';
 
 import './styles/modal.scss';
 
-function createModal(contentElem, modalType) {
+function createModal(contentElem, modalType, onClose) {
   let modalElem;
   if (modalType === "quarantine") {
     modalElem = (
@@ -12,6 +12,17 @@ function createModal(contentElem, modalType) {
           <span className="modal-close-button" onclick={() => document.getElementById('modal-background').remove()}>
             &times;
           </span>
+          {contentElem}
+        </div>
+      </div>
+    );
+  } else if (modalType === "queue") {
+    modalElem = (
+      <div id="modal-background" className="modal-background">
+        <div className="modal-content">
+          <span className="modal-close-button" onclick={() => { onClose(); document.getElementById('modal-background').remove() }}>
+            &times;
+        </span>
           {contentElem}
         </div>
       </div>

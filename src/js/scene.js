@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import Stats from 'stats.js';
 
 import Character from './character';
 
@@ -32,14 +31,11 @@ class Scene {
     this.mouse = new THREE.Vector2();
     this.clock = new THREE.Clock();
     this.scene = new THREE.Scene();
-    this.stats = new Stats();
-    this.stats.showPanel(0);
-    document.body.appendChild(this.stats.dom);
 
     const light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
     this.scene.add(light);
 
-    this.loader = new GLTFLoader().setPath('assets/models/');
+    this.loader = new GLTFLoader().setPath('models/');
 
     this.characters = new Map();
 
@@ -191,8 +187,6 @@ class Scene {
     if (this.render !== undefined) {
       this.renderer.render(this.scene, this.camera);
     }
-
-    this.stats.update();
   }
 }
 
