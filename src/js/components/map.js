@@ -32,7 +32,7 @@ class Map {
             <img src={nonprofit} />
             <p class="label">{'Nonprofits'}</p>
           </button>
-          <button id="personal-room" onclick={() => this.teleport('home')}>
+          <button id="personal-room" onclick={() => this.teleportPersonal()}>
             <img src={personalRoom} />
             <p class="label">{'Personal Room'}</p>
           </button>
@@ -72,6 +72,14 @@ class Map {
     socket.send({
       type: 'teleport',
       to: room,
+    });
+  };
+
+  teleportPersonal = () => {
+    document.getElementById('modal-background').remove();
+
+    socket.send({
+      type: 'teleport_home'
     });
   };
 

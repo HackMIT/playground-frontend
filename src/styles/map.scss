@@ -19,11 +19,19 @@
       transform: translate(-50%, -50%);
       width: 100%;
 
+      img {
+        &:hover{
+          transform: translateY(-5%);
+          cursor: grabbing;
+        }
+      }
+
       p {
         display: flex;
         align-items: center;
         justify-content: center;
         background: white;
+        border: 1px solid black;
         position: absolute;
         width: fit-content;
         max-width: initial;
@@ -42,7 +50,6 @@
         & > p {
           visibility: visible;
           opacity: 0.85;
-          border: 1px solid black;
         }
       }
 
@@ -50,88 +57,48 @@
         top: 20%;
         left: 52%;
         width: 20%;
-
-        &:hover {
-          top: 19%;
-          cursor: grabbing;
-        }
       }
 
       &#town-square-2 {
         top: 53%;
         left: 65%;
         width: 17%;
-
-        &:hover {
-          top: 52%;
-          cursor: grabbing;
-        }
       }
 
       &#nonprofit {
         top: 38%;
         left: 82%;
         width: 17%;
-
-        &:hover {
-          top: 37%;
-          cursor: grabbing;
-        }
       }
 
       &#personal-room {
         top: 68%;
         left: 34%;
         width: 17%;
-
-        &:hover {
-          top: 67%;
-          cursor: grabbing;
-        }
       }
 
       &#sponsor-town {
         top: 40%;
         left: 20%;
         width: 17%;
-
-        &:hover {
-          top: 39%;
-          cursor: grabbing;
-        }
       }
 
       &#speaker-sign {
         top: 53%;
         left: 45%;
         width: 3%;
-
-        &:hover {
-          top: 52%;
-          cursor: grabbing;
-        }
       }
 
       &#workshop-sign {
         top: 29%;
         left: 70%;
         width: 4%;
-
-        &:hover {
-          top: 28%;
-          cursor: grabbing;
-        }
       }
 
       &#event-sign {
         top: 26%;
         left: 34%;
         width: 4%;
-
-        &:hover {
-          top: 25%;
-          cursor: grabbing;
-        }
       }
     }
   }
