@@ -40,23 +40,27 @@ class Map {
             <img src={sponsorTown} />
             <p class="label">{'Sponsor Town'}</p>
           </button>
-          <button id="speaker-sign" onclick={() => this.link('https://hackmit.org/')}>
+          <button
+            id="speaker-sign"
+            onclick={() => this.link('https://hackmit.org/')}
+          >
             <img src={speakerSign} />
             <p class="label">{'Speakers'}</p>
           </button>
-          <button id="workshop-sign" onclick={() => this.link('https://hackmit.org/')}>
+          <button
+            id="workshop-sign"
+            onclick={() => this.link('https://hackmit.org/')}
+          >
             <img src={workshopSign} />
             <p class="label">{'Workshops'}</p>
           </button>
-          <button id="event-sign" onclick={() => this.link('https://hackmit.org/')}>
+          <button
+            id="event-sign"
+            onclick={() => this.link('https://hackmit.org/')}
+          >
             <img src={eventSign} />
-            <div>
-              <p class="label">{'Events'}</p>
-            </div>
-
+            <p class="label">{'Events'}</p>
           </button>
-
-
         </div>
       </div>
     );
@@ -74,7 +78,7 @@ class Map {
   link = (url) => {
     document.getElementById('modal-background').remove();
     window.open(url);
-  }
+  };
 }
 
 const mapInstance = new Map();
