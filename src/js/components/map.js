@@ -36,7 +36,7 @@ class Map {
             <img src={personalRoom} />
             <p class="label">{'Personal Room'}</p>
           </button>
-          <button id="sponsor-town" onclick={() => this.teleport('sponsor')}>
+          <button id="sponsor-town" onclick={() => this.teleport('plat_area')}>
             <img src={sponsorTown} />
             <p class="label">{'Sponsor Town'}</p>
           </button>
