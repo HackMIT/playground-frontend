@@ -16,10 +16,12 @@ import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 
 import notificationsManager from './js/managers/notifications';
+
 // eslint-disable-next-line
 import statusManager from './js/managers/status';
 
 import './styles/index.scss';
+import './styles/notifications.scss';
 import './styles/sponsor.scss';
 import './images/Code_Icon.svg';
 import './images/Coffee_Icon.svg';
@@ -29,6 +31,7 @@ import './styles/coffeechat.scss';
 
 import './coffeechat';
 
+import './images/icons/megaphone.svg';
 import './images/icons/dance.svg';
 import './images/icons/edit.svg';
 import './images/icons/friends.svg';
