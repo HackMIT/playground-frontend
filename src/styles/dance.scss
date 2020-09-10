@@ -1,7 +1,7 @@
 @import 'colors';
 
 #dance-pane {
-  background: $blue_dark;
+  background: #24447c;
   border-radius: 4px;
   box-sizing: border-box;
   padding: 2px;
@@ -14,17 +14,19 @@
   justify-content: center;
 }
 
-#dance-buttons{
+
+#dance-buttons-div{
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
 }
 
+
 #dance-pane-arrow {
   width: 0;
   height: 0;
-  border-top: 12px solid $blue_dark;
+  border-top: 12px solid #24447c;
   border-left: 12px solid transparent;
   border-right: 12px solid transparent;
   border-bottom: none;

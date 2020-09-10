@@ -9,11 +9,11 @@ class DancePane {
 
     return (
       <div id="dance-pane">
-        <div id="dance-buttons">
-          <button id="dance-button-1">
+        <div id="dance-buttons-div">
+          <button className="dance-pane-button" id="dance-button-1">
             <img src="/images/icons/dance.svg" />
           </button>
-          <button id="dance-button-2">
+          <button className="dance-pane-button" id="dance-button-2">
             <img src="/images/icons/dance.svg" />
           </button>
         </div>
