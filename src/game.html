@@ -15,104 +15,94 @@
   <link rel="icon" href="/favicon.ico">
 </head>
 
-  <body>
-    <div id="outer">
-      <div id="main">
-        <div id="game">
-          <img id="background" />
-          <div id="notifications-pane" class="hidden">
-            <img src="/images/icons/megaphone.svg" />
-            <div class="notification-text-container">
-              <p id="notification-text">
-                This is a test notification. This is a test notification. This
-                is a test notification. This is a test notification. This is a
-                test notification. This is a test notification. This is a test
-                notification. This is a test notification. This is a test
-                notification.
-              </p>
-            </div>
-          </div>
-          <img id="edit-button" src="/images/icons/edit.svg" />
-          <img id="add-button" src="/images/icons/tree.svg" />
-          <img id="add-hallway-button" src="/images/icons/portal.png" />
-          <img id="add-room-button" src="/images/icons/home.svg" />
-          <img
-            id="queue-hacker-button"
-            src="https://img.icons8.com/plasticine/2x/books.png"
-          />
-          <img
-            id="queue-sponsor-button"
-            src="https://img.icons8.com/plasticine/2x/books.png"
-          />
-          <img
-            id="day-of-button"
-            src="https://img.icons8.com/plasticine/2x/books.png"
-          />
-          <div id="chat" class="ChatBottom">
-            <button id="dance-button">
-              <img src="/images/icons/dance.svg" />
-            </button>
-            <button id="friends-button">
-              <div class="new-message-indicator"></div>
-              <img src="/images/icons/friends.svg" />
-            </button>
-            <button id="jukebox-button">
-              <img src="/images/icons/music.svg" />
-            </button>
-            <input
-              id="chat-box"
-              type="text"
-              placeholder="Send a message to the room"
-            />
-            <p id="chat-length-indicator" class="invisible"></p>
-            <button id="send-button">
-              <img src="/images/icons/send.svg" />
-            </button>
-            <button id="settings-button">
-              <img src="/images/icons/settings.svg" />
-            </button>
-            <button id="igloo-button">
-              <img src="/images/icons/home-white.svg" />
-            </button>
+<body>
+  <div id="outer">
+    <div id="main">
+      <div id="game">
+        <img id="background" />
+        <div id="notifications-pane" class="hidden">
+          <img src="/images/icons/megaphone.svg" />
+          <div class="notification-text-container">
+            <p id="notification-text">
+              This is a test notification. This is a test notification. This
+              is a test notification. This is a test notification. This is a
+              test notification. This is a test notification. This is a test
+              notification. This is a test notification. This is a test
+              notification.
+            </p>
           </div>
         </div>
-      </div>
-      <div id="sponsor-pane">
-        <h2>Welcome to</h2>
-        <img id="sponsor-name" src="/images/sponsor_text.svg" />
-        <div id="sponsor-pane-actions">
-          <div class="action">
-            <div class="icon-container">
-              <img src="/images/Code_Icon.svg" />
-            </div>
-            <span>View Challenges</span>
-          </div>
-          <div class="action" onClick="window.onCoffeeChat()">
-            <div class="icon-container">
-              <img src="/images/Coffee_Icon.svg" />
-            </div>
-            <span>Schedule Coffee Chat</span>
-          </div>
-          <div class="action">
-            <div class="icon-container">
-              <img src="/images/Site_Icon.svg" />
-            </div>
-            <span>Visit Website</span>
-          </div>
+        <img id="edit-button" src="/images/icons/edit.svg" />
+        <img id="add-button" src="/images/icons/tree.svg" />
+        <img id="add-hallway-button" src="/images/icons/portal.png" />
+        <img id="add-room-button" src="/images/icons/home.svg" />
+        <!-- <img id="queue-hacker-button" src="https://img.icons8.com/plasticine/2x/books.png" />
+        <img id="queue-sponsor-button" src="https://img.icons8.com/plasticine/2x/books.png" /> -->
+        <img id="day-of-button" src="/images/icons/guidebook.svg" />
+        <button id="map-button">
+          <img src="/images/icons/map.svg" />
+        </button>
+        <div id="chat" class="ChatBottom">
+          <button id="dance-button">
+            <img src="/images/icons/dance.svg" />
+          </button>
+          <button id="friends-button">
+            <div class="new-message-indicator"></div>
+            <img src="/images/icons/friends.svg" />
+          </button>
+          <button id="jukebox-button">
+            <img src="/images/icons/music.svg" />
+          </button>
+          <input id="chat-box" type="text" placeholder="Send a message to the room" />
+          <p id="chat-length-indicator" class="invisible"></p>
+          <button id="send-button">
+            <img src="/images/icons/send.svg" />
+          </button>
+          <button id="settings-button">
+            <img src="/images/icons/settings.svg" />
+          </button>
+          <button id="igloo-button">
+            <img src="/images/icons/home-white.svg" />
+          </button>
         </div>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
-          cursus eu diam nec malesuada. Duis facilisis ante in leo faucibus
-          luctus. Donec felis sem, accumsan a consectetur nec, venenatis et
-          magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-          aliquam nibh vitae risus faucibus laoreet. Ut eleifend lobortis
-          nisl, at tristique tortor mollis sit amet. Donec malesuada libero
-          placerat, gravida lectus nec, congue ex. Donec a leo at enim posuere
-          tempor et at urna. Phasellus leo est, aliquam sit amet porta sit
-          amet, interdum feugiat nisi.
-        </p>
       </div>
     </div>
+    <div id="sponsor-pane">
+      <h2>Welcome to</h2>
+      <img id="sponsor-name" src="/images/sponsor_text.svg" />
+      <div id="sponsor-pane-actions">
+        <div class="action">
+          <div class="icon-container">
+            <img src="/images/Code_Icon.svg" />
+          </div>
+          <span>View Challenges</span>
+        </div>
+        <div class="action" onClick="window.onCoffeeChat()">
+          <div class="icon-container">
+            <img src="/images/Coffee_Icon.svg" />
+          </div>
+          <span>Schedule Coffee Chat</span>
+        </div>
+        <div class="action">
+          <div class="icon-container">
+            <img src="/images/Site_Icon.svg" />
+          </div>
+          <span>Visit Website</span>
+        </div>
+      </div>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
+        cursus eu diam nec malesuada. Duis facilisis ante in leo faucibus
+        luctus. Donec felis sem, accumsan a consectetur nec, venenatis et
+        magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
+        aliquam nibh vitae risus faucibus laoreet. Ut eleifend lobortis
+        nisl, at tristique tortor mollis sit amet. Donec malesuada libero
+        placerat, gravida lectus nec, congue ex. Donec a leo at enim posuere
+        tempor et at urna. Phasellus leo est, aliquam sit amet porta sit
+        amet, interdum feugiat nisi.
+      </p>
+    </div>
+  </div>
   </div>
 
   <div id="login-panel"></div>

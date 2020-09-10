@@ -7,11 +7,12 @@ import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
 import settings from './settings.jsx';
-import map from './js/components/map'
+import map from './js/components/map';
 import feedback from './feedback.jsx';
 import queueHacker from './queueHacker.jsx';
 import queueSponsor from './queueSponsor.jsx';
 import friends from './js/components/friends';
+import dance from './js/components/dance';
 import jukebox from './jukebox';
 import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
@@ -43,6 +44,8 @@ import './images/icons/portal.png';
 import './images/icons/send.svg';
 import './images/icons/settings.svg';
 import './images/icons/tree.svg';
+import './images/icons/map.svg';
+import './images/icons/guidebook.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
@@ -91,11 +94,11 @@ class Game extends Page {
     this.addClickListener('add-room-button', this.handleRoomAddButton);
     this.addClickListener('day-of-button', this.handleDayofButton);
     this.addClickListener('edit-button', this.handleEditButton);
-    this.addClickListener('queue-hacker-button', this.handleQueueHackerButton);
-    this.addClickListener(
-      'queue-sponsor-button',
-      this.handleQueueSponsorButton
-    );
+    // this.addClickListener('queue-hacker-button', this.handleQueueHackerButton);
+    // this.addClickListener(
+    //   'queue-sponsor-button',
+    //   this.handleQueueSponsorButton
+    // );
     this.addClickListener('settings-button', this.handleSettingsButton);
     this.addClickListener('game', this.handleGameClick);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
@@ -103,6 +106,7 @@ class Game extends Page {
     this.addClickListener('send-button', this.handleSendButton);
     this.addClickListener('igloo-button', this.handleIglooButton);
     this.addClickListener('dance-button', this.handleDanceButton);
+    this.addClickListener('map-button', this.handleMapButton);
 
     this.handleWindowSize();
 
@@ -535,6 +539,7 @@ class Game extends Page {
   };
 
   handleFriendsButton = () => {
+    console.log(this)
     if (this.friendsPaneVisible === true) {
       // Hide the friends pane
       document.getElementById('friends-pane').classList.add('invisible');
@@ -551,6 +556,7 @@ class Game extends Page {
       this.friendsPaneVisible = true;
     }
   };
+
 
   handleSendButton = () => {
     const chatElem = document.getElementById('chat-box');
@@ -606,6 +612,28 @@ class Game extends Page {
   };
 
   handleDanceButton = () => {
+    console.log('clicked')
+    if (this.dancePaneVisible === true) {
+      console.log('true')
+      // Hide the dance pane
+      document.getElementById('dance-pane').classList.add('invisible');
+      this.dancePaneVisible = false;
+    } else if (this.dancePaneVisible === false) {
+      console.log('false')
+      // make the dance pane visible
+      document.getElementById('dance-pane').classList.remove('invisible');
+      this.dancePaneVisible = true;
+    } else {
+      console.log('else')
+      // Never created friends pane before, create it now
+      document
+        .getElementById('chat')
+        .appendChild(dance.createDancePane(this.friends));
+      this.dancePaneVisible = true;
+    }
+  }
+
+  handleMapButton = () => {
     createModal(map.createMapModal());
   }
 

@@ -1,0 +1,35 @@
+@import 'colors';
+
+#dance-pane {
+  background: $blue_dark;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 2px;
+  position: absolute;
+  width: 100px;
+  height: 50px;
+  transform: translate(-272px, -60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#dance-buttons{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+#dance-pane-arrow {
+  width: 0;
+  height: 0;
+  border-top: 12px solid $blue_dark;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: none;
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+}
