@@ -15,40 +15,66 @@
   <link rel="icon" href="/favicon.ico">
 </head>
 
-<body>
-  <div id="outer">
-    <div id="main">
-      <div id="game">
-        <img id="background" />
-        <img id="edit-button" src="/images/icons/edit.svg" />
-        <img id="add-button" src="/images/icons/tree.svg" />
-        <img id="add-hallway-button" src="/images/icons/portal.png" />
-        <img id="add-room-button" src="/images/icons/home.svg" />
-        <img id="queue-hacker-button" src="https://img.icons8.com/plasticine/2x/books.png" />
-        <img id="queue-sponsor-button" src="https://img.icons8.com/plasticine/2x/books.png" />
-        <img id="day-of-button" src="https://img.icons8.com/plasticine/2x/books.png" />
-        <div id="chat" class="ChatBottom">
-          <button id='dance-button'>
-            <img src="/images/icons/dance.svg" />
-          </button>
-          <button id="friends-button">
-            <div class="new-message-indicator"></div>
-            <img src="/images/icons/friends.svg" />
-          </button>
-          <button id="jukebox-button">
-            <img src="/images/icons/music.svg" />
-          </button>
-          <input id="chat-box" type="text" placeholder="Send a message to the room" />
-          <p id="chat-length-indicator" class="invisible"></p>
-          <button id="send-button">
-            <img src="/images/icons/send.svg" />
-          </button>
-          <button id="settings-button">
-            <img src="/images/icons/settings.svg" />
-          </button>
-          <button id="igloo-button">
-            <img src="/images/icons/home-white.svg" />
-          </button>
+  <body>
+    <div id="outer">
+      <div id="main">
+        <div id="game">
+          <img id="background" />
+          <div id="notifications-pane" class="hidden">
+            <img src="/images/icons/megaphone.svg" />
+            <div class="notification-text-container">
+              <p id="notification-text">
+                This is a test notification. This is a test notification. This
+                is a test notification. This is a test notification. This is a
+                test notification. This is a test notification. This is a test
+                notification. This is a test notification. This is a test
+                notification.
+              </p>
+            </div>
+          </div>
+          <img id="edit-button" src="/images/icons/edit.svg" />
+          <img id="add-button" src="/images/icons/tree.svg" />
+          <img id="add-hallway-button" src="/images/icons/portal.png" />
+          <img id="add-room-button" src="/images/icons/home.svg" />
+          <img
+            id="queue-hacker-button"
+            src="https://img.icons8.com/plasticine/2x/books.png"
+          />
+          <img
+            id="queue-sponsor-button"
+            src="https://img.icons8.com/plasticine/2x/books.png"
+          />
+          <img
+            id="day-of-button"
+            src="https://img.icons8.com/plasticine/2x/books.png"
+          />
+          <div id="chat" class="ChatBottom">
+            <button id="dance-button">
+              <img src="/images/icons/dance.svg" />
+            </button>
+            <button id="friends-button">
+              <div class="new-message-indicator"></div>
+              <img src="/images/icons/friends.svg" />
+            </button>
+            <button id="jukebox-button">
+              <img src="/images/icons/music.svg" />
+            </button>
+            <input
+              id="chat-box"
+              type="text"
+              placeholder="Send a message to the room"
+            />
+            <p id="chat-length-indicator" class="invisible"></p>
+            <button id="send-button">
+              <img src="/images/icons/send.svg" />
+            </button>
+            <button id="settings-button">
+              <img src="/images/icons/settings.svg" />
+            </button>
+            <button id="igloo-button">
+              <img src="/images/icons/home-white.svg" />
+            </button>
+          </div>
         </div>
       </div>
       <div id="sponsor-pane">

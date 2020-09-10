@@ -17,10 +17,12 @@ import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 
 import notificationsManager from './js/managers/notifications';
+
 // eslint-disable-next-line
 import statusManager from './js/managers/status';
 
 import './styles/index.scss';
+import './styles/notifications.scss';
 import './styles/sponsor.scss';
 import './images/Code_Icon.svg';
 import './images/Coffee_Icon.svg';
@@ -30,6 +32,7 @@ import './styles/coffeechat.scss';
 
 import './coffeechat';
 
+import './images/icons/megaphone.svg';
 import './images/icons/dance.svg';
 import './images/icons/edit.svg';
 import './images/icons/friends.svg';
@@ -292,15 +295,15 @@ class Game extends Page {
           this.finishedLoadingPart();
         };
 
+        const threeContainer = document.getElementById('three-container');
+
         if (element.action > 0) {
-          document.getElementById('game').appendChild(elementElem.element);
+          threeContainer.appendChild(elementElem.element);
         } else {
-          document
-            .getElementById('game')
-            .insertBefore(
-              elementElem.element,
-              document.getElementById('three-container')
-            );
+          threeContainer.insertBefore(
+            elementElem.element,
+            document.getElementById('three-canvas')
+          );
         }
       });
 
