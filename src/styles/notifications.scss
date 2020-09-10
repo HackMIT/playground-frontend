@@ -6,10 +6,16 @@
   box-sizing: content-box;
   min-height: 42px;
   padding: 16px;
+  transition: 0.15s ease all;
 
   display: flex;
+  opacity: 1;
   justify-content: left;
   align-items: top;
+
+  &.hidden {
+    opacity: 0;
+  }
 
   img {
     height: 42px;

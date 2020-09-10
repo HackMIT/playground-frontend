@@ -16,6 +16,7 @@ import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 
 import notificationsManager from './js/managers/notifications';
+
 // eslint-disable-next-line
 import statusManager from './js/managers/status';
 
