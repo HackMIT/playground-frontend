@@ -3,6 +3,7 @@ import mapInstance from './components/worldMap';
 
 import Editable from './editable';
 import jukebox from '../jukebox';
+import socket from './socket';
 
 // eslint-disable-next-line
 import createElement from '../utils/jsxHelper';
@@ -19,7 +20,13 @@ class Element extends Editable {
   updateEventName = 'element_update';
 
   get imagePath() {
-    return `https://hackmit-playground-2020.s3.amazonaws.com/elements/${this.data.path}`;
+    let { path } = this.data;
+
+    if (this.data.toggleable) {
+      path = this.data.path.split(',')[this.data.state];
+    }
+
+    return `https://hackmit-playground-2020.s3.amazonaws.com/elements/${path}`;
   }
 
   get name() {
@@ -43,13 +50,15 @@ class Element extends Editable {
   }
 
   configureElement(elem) {
-    // eslint-disable-next-line
-    elem.style.cursor = this.data.action === NO_ACTION ? 'default' : 'pointer';
+    if (this.data.action !== NO_ACTION || this.data.toggleable) {
+      elem.style.cursor = 'pointer';
+    } else {
+      elem.style.cursor = 'default';
+    }
   }
 
   configureImage(imgElem) {
     if (this.data.changingImagePath) {
-      // TODO: Need to call clearInterval on this timer before getting rid of the element
       this.changingImageInterval = setInterval(() => {
         const pathOptions = this.data.changingPaths.split(',');
 
@@ -60,10 +69,19 @@ class Element extends Editable {
         imgElem.src = this.imagePath;
       }, this.data.changingInterval);
     }
+
+    if (this.data.action !== NO_ACTION || this.data.toggleable) {
+      imgElem.setAttribute('data-interactable', true);
+    }
   }
 
   onClick() {
-    if (this.data.action === JUKEBOX_OPEN_ACTION) {
+    if (this.data.toggleable) {
+      socket.send({
+        type: 'element_toggle',
+        id: this.data.id,
+      });
+    } else if (this.data.action === JUKEBOX_OPEN_ACTION) {
       jukebox.openJukeboxPane(document.body);
     } else if (this.data.action === MAP_OPEN_ACTION) {
       const mapElem = <div className="modal-frame" id="map-frame" />;

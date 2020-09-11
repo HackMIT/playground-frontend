@@ -181,9 +181,11 @@ class Game extends Page {
   handleGameClick = (e) => {
     // When clicking on the page, send a move message to the server
     console.log(e.target);
+    console.log(e.target.hasAttribute('data-interactable'));
     if (
-      e.target.id !== 'three-canvas' &&
-      e.target.parentElement.parentElement.id !== 'three-container'
+      (e.target.id !== 'three-canvas' &&
+        !e.target.classList.contains('element-img')) ||
+      e.target.hasAttribute('data-interactable')
     ) {
       return;
     }
