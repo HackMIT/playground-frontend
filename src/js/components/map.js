@@ -24,9 +24,12 @@ class Map {
             <img src={townSquare} />
             <p class="label">{'Town Square'}</p>
           </button>
-          <button id="town-square-2" onclick={() => this.teleport('home')}>
+          <button
+            id="town-square-2"
+            onclick={() => this.teleport('plaza', 0.5694, 0.6962)}
+          >
             <img src={townSquare2} />
-            <p class="label">{'Town Square'}</p>
+            <p class="label">{'Hacker Plaza'}</p>
           </button>
           <button id="nonprofit" onclick={() => this.teleport('nonprofits')}>
             <img src={nonprofit} />
@@ -66,12 +69,14 @@ class Map {
     );
   };
 
-  teleport = (room) => {
+  teleport = (room, x = 0.5, y = 0.5) => {
     document.getElementById('modal-background').remove();
 
     socket.send({
       type: 'teleport',
       to: room,
+      x,
+      y,
     });
   };
 
@@ -79,7 +84,7 @@ class Map {
     document.getElementById('modal-background').remove();
 
     socket.send({
-      type: 'teleport_home'
+      type: 'teleport_home',
     });
   };
 
