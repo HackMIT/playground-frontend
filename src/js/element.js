@@ -59,11 +59,22 @@ class Element extends Editable {
 
   configureImage(imgElem) {
     if (this.data.changingImagePath) {
+      let state = 0;
+
       this.changingImageInterval = setInterval(() => {
         const pathOptions = this.data.changingPaths.split(',');
 
-        this.data.path =
-          pathOptions[Math.floor(Math.random() * pathOptions.length)];
+        if (this.data.changingRandomly) {
+          this.data.path =
+            pathOptions[Math.floor(Math.random() * pathOptions.length)];
+        } else {
+          if (state === pathOptions.length) {
+            state = 0;
+          }
+
+          this.data.path = pathOptions[state];
+          state += 1;
+        }
 
         // eslint-disable-next-line
         imgElem.src = this.imagePath;
