@@ -250,6 +250,9 @@ body {
     position: absolute;
     top: 24px;
     right: 24px;
+
+    //DELETE THIS LATER
+    display: none;
   }
 
   #queue-hacker-button {
@@ -270,25 +273,54 @@ body {
     cursor: pointer;
   }
 
-  #day-of-button {
+  #top-bar {
+    display: grid; 
+    grid-template-columns: 1fr 80px 1fr; 
+    background: rgba(255, 255, 255, .7);
     position: absolute;
-    bottom: 24px;
-    left: 24px;
-    height: 64px;
-    width: 64px;
-    cursor: pointer;
+    top: 0%;
+    width: 100%;
+
+    #top-bar-logo {
+      background: transparent;
+      width: 100%;
+      align-items: center;
+      grid-column-start: 2;
+    }
+
   }
 
-  #map-button {
-    border: none;
-    position: absolute;
-    background: transparent;
-    bottom: 40px;
-    right: 30px;
-    height: 40px;
-    width: 40px;
-    cursor: pointer;
+  #top-bar-button-container {
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      background: none;
+      border: none;
+      margin-left: 20px;
+      margin-right: 20px;
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+    }
+
+    #day-of-button {
+      width: 8%;
+      height: auto;
+    }
+
+    #map-button {
+      width: 8%;
+      height: auto;
+    }  
+
+    #schedule-button {
+      width: 8%;
+      height: auto;
+    }
   }
+  
 }
 
 .element {

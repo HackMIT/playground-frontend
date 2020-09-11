@@ -46,6 +46,8 @@ import './images/icons/settings.svg';
 import './images/icons/tree.svg';
 import './images/icons/map.svg';
 import './images/icons/guidebook.svg';
+import './images/icons/schedule.svg';
+import './images/logo.png';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
