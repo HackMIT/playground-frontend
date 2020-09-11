@@ -109,6 +109,7 @@ class Game extends Page {
     this.handleWindowSize();
 
     socket.onopen = this.handleSocketOpen;
+    socket.onclose = this.handleSocketClose;
     socket.subscribe('*', this.handleSocketMessage);
     socket.start();
 
@@ -260,6 +261,13 @@ class Game extends Page {
 
     // Connected to remote
     socket.send(joinPacket);
+  };
+
+  handleSocketClose = () => {
+    notificationsManager.displayMessage(
+      "You've been disconnected from the HackMIT playground. Please refresh the page to try to reconnect.",
+      30000
+    );
   };
 
   handleSocketMessage = (data) => {
