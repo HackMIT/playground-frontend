@@ -11,6 +11,7 @@ class Settings {
   constructor() {
     this.musicMuted = false;
     this.soundMuted = false;
+    this.twitterHandle = null;
   }
 
   handleMusicButton = () => {
@@ -55,6 +56,19 @@ class Settings {
     );
   };
 
+  checkTweets = () => {
+    const elem = document.getElementById('settings-twitter')
+    this.twitterHandle = elem.value
+    elem.value = ""
+    socket.send({
+      type: 'settings', 
+      checkTwitter: true,
+      settings: {
+        twitterHandle: this.twitterHandle
+      }
+    })
+  }
+
   handleLogOff = () => {
     localStorage.setItem('token', null);
     window.location.reload();
@@ -74,6 +88,11 @@ class Settings {
           </div>
           <div class="settings-list" id="settings-list">
             {this.createSettingsContent()}
+          </div>
+          <div id="settings-input">
+            <label>Tweet with #HackMIT to earn an achievement: </label>
+            <input id="settings-twitter" type="text" placeholder="Twitter handle"></input>
+            <button onclick={this.checkTweets}>CHECK TWEETS</button>
           </div>
           <div id="settings-flexcenter">
             <button id="settings-logout" onclick={this.handleLogOff}>
