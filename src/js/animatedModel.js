@@ -69,6 +69,15 @@ class AnimatedModel {
     this.trackingElems.push(htmlElem);
   }
 
+  getPosition() {
+    const screenPt = this.reverseRaycaster(this.modelGeometry.position.clone());
+
+    return {
+      x: screenPt[0],
+      y: screenPt[1],
+    };
+  }
+
   updateChat(msg) {
     if (this.chatTimer !== undefined) {
       clearTimeout(this.chatTimer);

@@ -120,6 +120,15 @@ class Game extends Page {
       document.getElementById('chat-box').focus();
     });
 
+    hotkeys('esc', () => {
+      // Close all character profiles
+      Array.from(document.getElementsByClassName('profile-container')).forEach(
+        (elem) => {
+          elem.style.visibility = 'hidden';
+        }
+      );
+    });
+
     // Start sending chat events
     const chatElem = document.getElementById('chat-box');
 

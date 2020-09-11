@@ -14,10 +14,11 @@ $profile_border_radius: 12px;
   flex-direction: column;
   width: 270px;
   padding: 8px 8px 10px;
+  position: absolute;
   visibility: hidden;
 
   // TODO: This should be scale-dependent
-  transform: translate(-50%, calc(-50% - 250px));
+  transform: translate(-50%, calc(-50% - 230px));
 
   .close-button {
     background: $blue_light;
