@@ -103,12 +103,15 @@ class Game extends Page {
     this.addClickListener('igloo-button', this.handleIglooButton);
     this.addClickListener('dance-button', this.handleDanceButton);
     this.addClickListener('map-button', this.handleMapButton);
+    this.addClickListener('queue-button', this.handleQueueButton);
 
     this.handleWindowSize();
 
     socket.onopen = this.handleSocketOpen;
     socket.subscribe('*', this.handleSocketMessage);
     socket.start();
+
+    queueManager.start();
 
     // Listen for hotkeys
     hotkeys('t, enter, /', (e) => {
@@ -326,15 +329,13 @@ class Game extends Page {
       this.settings = data.settings;
       this.room = data.room;
 
-      if (this.room.sponsor) {
+      if (this.room.sponsorId.length > 0) {
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
           'sponsor-name'
         ).innerHTML = `<span>${this.room.slug}</span>${this.room.slug}`;
         document.getElementById('outer').classList.add('sponsor');
         document.getElementById('game').classList.add('sponsor');
-
-        [, this.sponsorId] = this.room.id.split(':');
       } else {
         document.getElementById('sponsor-pane').classList.remove('active');
         document.getElementById('outer').classList.remove('sponsor');
@@ -357,7 +358,6 @@ class Game extends Page {
 
       // Start managers
       notificationsManager.start();
-      queueManager.start();
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
         if (data.id !== this.characterId) {
@@ -516,11 +516,7 @@ class Game extends Page {
     createModal(settings.createSettingsModal(this.settings));
   };
 
-  handleQueueSponsorButton = () => {
-    createModal(queueSponsor.createQueueModal(), 'queue', queueSponsor.onClose);
-  };
-
-  handleQueueHackerButton = () => {
+  handleQueueButton = () => {
     // TODO: 2 should be a constant for sponsor
     if (characterManager.character.role === 2) {
       createModal(
@@ -532,7 +528,7 @@ class Game extends Page {
       queueSponsor.subscribe();
     } else {
       // if (characterManager.character.role === 1 /* hacker */) {
-      queueManager.join(this.sponsorId);
+      queueManager.join(this.room.sponsor);
     }
   };
 
@@ -570,7 +566,6 @@ class Game extends Page {
       this.friendsPaneVisible = true;
     }
   };
-
 
   handleSendButton = () => {
     const chatElem = document.getElementById('chat-box');
@@ -641,11 +636,11 @@ class Game extends Page {
         .appendChild(dance.createDancePane(this.friends));
       this.dancePaneVisible = true;
     }
-  }
+  };
 
   handleMapButton = () => {
     createModal(map.createMapModal());
-  }
+  };
 
   handleWindowSize = () => {
     const outerElem = document.getElementById('outer');
