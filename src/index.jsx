@@ -180,8 +180,6 @@ class Game extends Page {
 
   handleGameClick = (e) => {
     // When clicking on the page, send a move message to the server
-    console.log(e.target);
-    console.log(e.target.hasAttribute('data-interactable'));
     if (
       (e.target.id !== 'three-canvas' &&
         !e.target.classList.contains('element-img')) ||
@@ -361,6 +359,8 @@ class Game extends Page {
 
       // Start managers
       notificationsManager.start();
+    } else if (data.type === 'dance') {
+      this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
         if (data.id !== this.characterId) {

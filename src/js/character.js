@@ -28,7 +28,8 @@ class Character {
         this.setModel(
           parent,
           gltf.scene,
-          gltf.animations[data.id === 'tim' ? 0 : 1],
+          gltf.animations,
+          data.id === 'tim' ? 0 : 1,
           data.x,
           data.y
         );
@@ -46,6 +47,10 @@ class Character {
     }
   }
 
+  dance(dance) {
+    this.model.setDanceAnimation(dance);
+  }
+
   // returns time it'll take
   moveTo(vector, callback) {
     this.model.setAnimation(vector, callback);
@@ -56,19 +61,26 @@ class Character {
     parent.scene.remove(this.model.modelGeometry);
   }
 
-  setModel(parentScene, model, animation, initX, initY) {
+  setModel(parentScene, model, actions, walkActionIndex, initX, initY) {
     const mixer = new THREE.AnimationMixer(model);
     mixer.timeScale = 2.5;
-    const walkCycle = mixer.clipAction(animation);
-    walkCycle.enabled = false;
-    walkCycle.play();
+
+    const animationCycles = actions.map((x) => {
+      const cycle = mixer.clipAction(x);
+      cycle.enabled = false;
+      cycle.play();
+      return cycle;
+    });
+
+    // animationCycles[walkActionIndex].play();
 
     parentScene.scene.add(model);
 
     this.model = new AnimatedModel(
       model,
       mixer,
-      walkCycle,
+      animationCycles,
+      walkActionIndex,
       parentScene.worldVectorForPos(initX, initY),
       this.data.name,
       this.reverseRaycaster

@@ -108,6 +108,10 @@ class Scene {
     this.characters[id].moveTo(newPos, callback);
   }
 
+  danceCharacter(id, dance) {
+    this.characters[id].dance(dance);
+  }
+
   // delete character (remove from map and scene)
   deleteCharacter(id) {
     this.characters[id].safeDelete(this);
