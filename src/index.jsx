@@ -9,15 +9,16 @@ import createModal from './modal';
 import settings from './settings.jsx';
 import map from './js/components/map';
 import feedback from './feedback.jsx';
-import queueHacker from './queueHacker.jsx';
-import queueSponsor from './queueSponsor.jsx';
+import queueSponsor from './js/components/sponsorPanel.jsx';
 import friends from './js/components/friends';
 import dance from './js/components/dance';
 import jukebox from './jukebox';
 import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 
+import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
+import queueManager from './js/managers/queue';
 
 // eslint-disable-next-line
 import statusManager from './js/managers/status';
@@ -52,6 +53,7 @@ import './images/logo.png';
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
+// eslint-disable-next-line
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
 
@@ -104,12 +106,15 @@ class Game extends Page {
     this.addClickListener('igloo-button', this.handleIglooButton);
     this.addClickListener('dance-button', this.handleDanceButton);
     this.addClickListener('map-button', this.handleMapButton);
+    this.addClickListener('queue-button', this.handleQueueButton);
 
     this.handleWindowSize();
 
     socket.onopen = this.handleSocketOpen;
     socket.subscribe('*', this.handleSocketMessage);
     socket.start();
+
+    queueManager.start();
 
     // Listen for hotkeys
     hotkeys('t, enter, /', (e) => {
@@ -177,7 +182,11 @@ class Game extends Page {
 
   handleGameClick = (e) => {
     // When clicking on the page, send a move message to the server
-    if (e.target.id !== 'three-canvas') {
+    if (
+      (e.target.id !== 'three-canvas' &&
+        !e.target.classList.contains('element-img')) ||
+      e.target.hasAttribute('data-interactable')
+    ) {
       return;
     }
 
@@ -323,7 +332,7 @@ class Game extends Page {
       this.settings = data.settings;
       this.room = data.room;
 
-      if (this.room.sponsor) {
+      if (this.room.sponsorId.length > 0) {
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
           'sponsor-name'
@@ -350,8 +359,10 @@ class Game extends Page {
 
       this.scene.fixCameraOnResize();
 
-      // Start notifications manager
+      // Start managers
       notificationsManager.start();
+    } else if (data.type === 'dance') {
+      this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
         if (data.id !== this.characterId) {
@@ -431,7 +442,7 @@ class Game extends Page {
     createModal(
       <iframe
         id="day-of-iframe"
-        className="day-of-page"
+        className="modal-frame"
         src="https://dayof.hackmit.org"
       />
     );
@@ -510,12 +521,20 @@ class Game extends Page {
     createModal(settings.createSettingsModal(this.settings));
   };
 
-  handleQueueSponsorButton = () => {
-    createModal(queueSponsor.createQueueModal(), 'queue', queueSponsor.onClose);
-  };
+  handleQueueButton = () => {
+    // TODO: 2 should be a constant for sponsor
+    if (characterManager.character.role === 2) {
+      createModal(
+        queueSponsor.createQueueModal(),
+        'queue',
+        queueSponsor.onClose
+      );
 
-  handleQueueHackerButton = () => {
-    createModal(queueHacker.createQueueModal(), 'queue', queueHacker.onClose);
+      queueSponsor.subscribe();
+    } else {
+      // if (characterManager.character.role === 1 /* hacker */) {
+      queueManager.join(this.room.sponsor);
+    }
   };
 
   handleJukeboxButton = () => {
@@ -552,7 +571,6 @@ class Game extends Page {
       this.friendsPaneVisible = true;
     }
   };
-
 
   handleSendButton = () => {
     const chatElem = document.getElementById('chat-box');
@@ -623,11 +641,11 @@ class Game extends Page {
         .appendChild(dance.createDancePane(this.friends));
       this.dancePaneVisible = true;
     }
-  }
+  };
 
   handleMapButton = () => {
     createModal(map.createMapModal());
-  }
+  };
 
   handleWindowSize = () => {
     const outerElem = document.getElementById('outer');

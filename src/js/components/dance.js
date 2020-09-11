@@ -1,3 +1,4 @@
+import socket from '../socket';
 
 import '../../styles/dance.scss';
 
@@ -9,7 +10,16 @@ class DancePane {
     return (
       <div id="dance-pane">
         <div id="dance-buttons-div">
-          <button className="dance-pane-button" id="dance-button-1">
+          <button
+            className="dance-pane-button"
+            id="dance-button-1"
+            onclick={() => {
+              socket.send({
+                type: 'dance',
+                dance: 0,
+              });
+            }}
+          >
             <img src="/images/icons/dance.svg" />
           </button>
           <button className="dance-pane-button" id="dance-button-2">

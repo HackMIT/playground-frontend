@@ -20,9 +20,11 @@
       width: 100%;
 
       img {
-        &:hover{
+        transition: 0.25s ease all;
+
+        &:hover {
           transform: translateY(-5%);
-          cursor: grabbing;
+          cursor: pointer;
         }
       }
 
@@ -42,14 +44,14 @@
         top: 100%;
         left: 50%;
         transform: translateX(-50%);
-        -webkit-transition: visibility 0s, opacity 0.3s linear;
-        transition: visibility 0s, opacity 0.3s linear;
+        -webkit-transition: visibility 0s, opacity 0.5s ease;
+        transition: visibility 0s, opacity 0.5s ease;
       }
 
       &:hover {
-        & > p {
+        p {
           visibility: visible;
-          opacity: 0.85;
+          opacity: 1;
         }
       }
 
