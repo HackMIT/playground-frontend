@@ -12,6 +12,15 @@ $chat_input_height: 40px;
   margin: 0;
 }
 
+body {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 h1,
 h2,
 h3,
@@ -174,10 +183,9 @@ body {
         border-radius: 50%;
         background: #ff9797;
       }
-
     }
   }
-  .dance-pane-button{
+  .dance-pane-button {
     background: #7b9fce;
   }
 }
