@@ -8,14 +8,15 @@ import socket from './js/socket';
 import createModal from './modal';
 import settings from './settings.jsx';
 import feedback from './feedback.jsx';
-import queueHacker from './queueHacker.jsx';
-import queueSponsor from './queueSponsor.jsx';
+import queueSponsor from './js/components/sponsorPanel.jsx';
 import friends from './js/components/friends';
 import jukebox from './jukebox';
 import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 
+import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
+import queueManager from './js/managers/queue';
 
 // eslint-disable-next-line
 import statusManager from './js/managers/status';
@@ -174,7 +175,11 @@ class Game extends Page {
 
   handleGameClick = (e) => {
     // When clicking on the page, send a move message to the server
-    if (e.target.id !== 'three-canvas') {
+    console.log(e.target);
+    if (
+      e.target.id !== 'three-canvas' &&
+      e.target.parentElement.parentElement.id !== 'three-container'
+    ) {
       return;
     }
 
@@ -327,6 +332,8 @@ class Game extends Page {
         ).innerHTML = `<span>${this.room.slug}</span>${this.room.slug}`;
         document.getElementById('outer').classList.add('sponsor');
         document.getElementById('game').classList.add('sponsor');
+
+        [, this.sponsorId] = this.room.id.split(':');
       } else {
         document.getElementById('sponsor-pane').classList.remove('active');
         document.getElementById('outer').classList.remove('sponsor');
@@ -347,8 +354,9 @@ class Game extends Page {
 
       this.scene.fixCameraOnResize();
 
-      // Start notifications manager
+      // Start managers
       notificationsManager.start();
+      queueManager.start();
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
         if (data.id !== this.characterId) {
@@ -512,7 +520,19 @@ class Game extends Page {
   };
 
   handleQueueHackerButton = () => {
-    createModal(queueHacker.createQueueModal(), 'queue', queueHacker.onClose);
+    // TODO: 2 should be a constant for sponsor
+    if (characterManager.character.role === 2) {
+      createModal(
+        queueSponsor.createQueueModal(),
+        'queue',
+        queueSponsor.onClose
+      );
+
+      queueSponsor.subscribe();
+    } else {
+      // if (characterManager.character.role === 1 /* hacker */) {
+      queueManager.join(this.sponsorId);
+    }
   };
 
   handleJukeboxButton = () => {

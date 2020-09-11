@@ -10,21 +10,25 @@ class NotificationsPane {
     socket.subscribe('notification', this.handleSocketMessage);
   };
 
-  handleSocketMessage = (msg) => {
-    if (msg.type !== 'notification') {
-      return;
-    }
-
+  displayMessage = (msg, duration = 7000) => {
     if (this.hideTimer !== undefined) {
       clearInterval(this.hideTimer);
     }
 
     document.getElementById('notifications-pane').classList.remove('hidden');
-    document.getElementById('notification-text').innerText = msg.data.text;
+    document.getElementById('notification-text').innerText = msg;
 
     this.hideTimer = setTimeout(() => {
       document.getElementById('notifications-pane').classList.add('hidden');
-    }, 7000);
+    }, duration);
+  };
+
+  handleSocketMessage = (msg) => {
+    if (msg.type !== 'notification') {
+      return;
+    }
+
+    this.displayMessage(msg.data.text);
   };
 }
 
