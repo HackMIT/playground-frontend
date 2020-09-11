@@ -1,7 +1,7 @@
 // import characterManager from './js/managers/character';
 import socket from '../socket';
 
-import '../../styles/sponsor_panel.scss';
+import '../../styles/sponsorPanel.scss';
 
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
