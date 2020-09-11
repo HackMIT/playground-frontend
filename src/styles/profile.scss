@@ -1,0 +1,158 @@
+@charset "utf-8";
+
+@import 'variables';
+
+@import 'fonts';
+@import 'colors';
+
+$profile_border_radius: 12px;
+
+.profile-container {
+  background: $blue_dark;
+  border-radius: $profile_border_radius;
+  display: flex;
+  flex-direction: column;
+  width: 270px;
+  padding: 8px 8px 10px;
+  visibility: hidden;
+
+  // TODO: This should be scale-dependent
+  transform: translate(-50%, calc(-50% - 250px));
+
+  .close-button {
+    background: $blue_light;
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+    width: 28px;
+    height: 28px;
+
+    position: absolute;
+    top: -6px;
+    right: -6px;
+
+    &:active {
+      background: #2197ab;
+    }
+
+    img {
+      width: 12px;
+      margin: 8px;
+    }
+  }
+
+  .profile-card {
+    background: #fff;
+    border: 2px solid $accent_yellow;
+    border-radius: $profile_border_radius;
+    padding: 6px 12px 12px;
+    text-align: center;
+
+    .name {
+      font-size: 20px;
+    }
+
+    .school {
+      font-size: 10px;
+      margin-top: -2px;
+    }
+
+    .profile-badge {
+      background: linear-gradient(
+        135deg,
+        rgba(150, 208, 241, 1) 0%,
+        rgba(251, 205, 194, 1) 100%
+      );
+      border-radius: $profile_border_radius;
+      height: 200px;
+      margin-top: 8px;
+
+      display: grid;
+      grid-template-columns: 100%;
+      grid-template-rows: 1fr auto;
+
+      .bio-background {
+        background: rgba(255, 255, 255, 0.7);
+        padding: 8px;
+        position: relative;
+
+        .bio {
+          font-size: 12px;
+          text-align: left;
+        }
+
+        .earth {
+          float: right;
+          width: 32px;
+          height: 32px;
+          margin: -24px 4px 0;
+        }
+
+        .line1 {
+          position: absolute;
+          width: 20px;
+          height: 2px;
+          background: rgb(245, 220, 93);
+          top: -4px;
+          right: 25px;
+          transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .location-container {
+          position: absolute;
+          top: -11px;
+          transform: translateY(-50%);
+          display: grid;
+          grid-template-columns: auto 1fr;
+          align-items: center;
+          width: 182px;
+
+          .location {
+            color: #fff;
+            display: inline-block;
+            font-family: LemonMilkRegular;
+            font-size: 11px;
+            letter-spacing: 0.07em;
+            margin-right: 4px;
+            text-transform: uppercase;
+          }
+
+          .line2 {
+            display: inline-block;
+            width: 100%;
+            height: 2px;
+            background: rgb(245, 220, 93);
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+  }
+
+  .profile-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+
+    button {
+      background: $accent_pink;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      outline: none;
+      width: 32px;
+      height: 32px;
+
+      &:active {
+        background: #f9b19f;
+      }
+
+      img {
+        width: 18px;
+        margin: 7px;
+      }
+    }
+  }
+}

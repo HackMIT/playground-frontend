@@ -1,7 +1,10 @@
+import characterManager from '../managers/character';
+
 import message from './message';
 import socket from '../socket';
 
 import '../../styles/friends.scss';
+import addFriendIcon from '../../images/icons/add-friend.svg';
 import closeIcon from '../../images/icons/close-white.svg';
 import messageIcon from '../../images/icons/message.svg';
 
@@ -10,36 +13,13 @@ import createElement from '../../utils/jsxHelper';
 
 class FriendsPane {
   constructor() {
-    this.friends = [];
-
-    socket.subscribe('join', this.handleSocketMessage);
+    socket.subscribe(['friend_update', 'status'], () => {
+      // Quick hack -- we need the friend_update subscriber in characterManager to run first
+      setTimeout(() => this.updateFriendsList(), 100);
+    });
   }
 
-  handleSocketMessage = (msg) => {
-    if (msg.type === 'join') {
-      this.friends.push({
-        id: msg.character.id,
-        name: msg.character.name,
-        school: 'MIT',
-        teammate: true,
-        status: 2,
-      });
-
-      this.updateFriendsList();
-    }
-  };
-
-  createFriendsPane = (characters) => {
-    characters.forEach((character) => {
-      this.friends.push({
-        id: character.id,
-        name: character.name,
-        school: 'MIT',
-        teammate: true,
-        status: 2,
-      });
-    });
-
+  createFriendsPane = () => {
     const messagesPane = message.createMessagePane();
 
     return (
@@ -52,19 +32,25 @@ class FriendsPane {
   };
 
   friendsListContents = () => {
-    const friendsListContainer = (
-      <div>
-        <p className="header">Teammates</p>
-      </div>
-    );
+    const friendsListContainer = <div />;
 
-    this.friends.sort((a, b) => {
+    const friends = Array.from(characterManager.getFriends().values());
+
+    friends.sort((a, b) => {
       if (a.teammate && !b.teammate) {
         return -1;
       }
 
       if (b.teammate && !a.teammate) {
         return 1;
+      }
+
+      if (a.pending && !b.pending) {
+        return 1;
+      }
+
+      if (b.pending && !a.pending) {
+        return -1;
       }
 
       if (a.status > b.status) {
@@ -78,12 +64,26 @@ class FriendsPane {
       return 0;
     });
 
+    let createdTeammatesHeader = false;
     let createdFriendsHeader = false;
+    let createdRequestsHeader = false;
 
-    this.friends.forEach((friend) => {
-      if (!friend.teammate && !createdFriendsHeader) {
+    friends.forEach((friend) => {
+      if (friend.teammate && !createdTeammatesHeader) {
+        friendsListContainer.appendChild(<p className="header">Teammates</p>);
+        createdTeammatesHeader = true;
+      }
+
+      if (!friend.teammate && !friend.pending && !createdFriendsHeader) {
         friendsListContainer.appendChild(<p className="header">Friends</p>);
         createdFriendsHeader = true;
+      }
+
+      if (friend.pending && !createdRequestsHeader) {
+        friendsListContainer.appendChild(
+          <p className="header">Pending Requests</p>
+        );
+        createdRequestsHeader = true;
       }
 
       let status = 'online';
@@ -91,13 +91,25 @@ class FriendsPane {
       if (friend.status === 1) status = 'away';
       else if (friend.status === 2) status = 'offline';
 
-      friendsListContainer.appendChild(
-        <div className="friend">
-          <div className={`indicator ${status}`} />
-          <div className="contents">
-            <p className="name">{friend.name}</p>
-            <p className="school">{friend.school}</p>
+      let buttons;
+
+      if (friend.pending) {
+        buttons = (
+          <div className="buttons">
+            <button
+              onclick={() => {
+                socket.send({
+                  type: 'friend_request',
+                  recipientId: friend.id,
+                });
+              }}
+            >
+              <img src={addFriendIcon} />
+            </button>
           </div>
+        );
+      } else {
+        buttons = (
           <div className="buttons">
             <button>
               <img src={closeIcon} />
@@ -106,6 +118,17 @@ class FriendsPane {
               <img src={messageIcon} />
             </button>
           </div>
+        );
+      }
+
+      friendsListContainer.appendChild(
+        <div className="friend">
+          <div className={`indicator ${status}`} />
+          <div className="contents">
+            <p className="name">{friend.name}</p>
+            <p className="school">{friend.school}</p>
+          </div>
+          {buttons}
         </div>
       );
     });
@@ -125,6 +148,14 @@ class FriendsPane {
   };
 
   handleChatButton = (friend) => {
+    if (this.selectedId === friend.id) {
+      message.hide();
+      return;
+    }
+
+    this.selectedId = friend.id;
+
+    message.show();
     message.updateMessagesPane(friend);
   };
 }

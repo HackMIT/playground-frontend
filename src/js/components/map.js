@@ -1,174 +1,96 @@
-import mapboxgl from 'mapbox-gl';
-import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-import 'mapbox-gl/dist/mapbox-gl.css';
-
 import '../../styles/map.scss';
-import socket from '../socket';
-import saveLocationButton from './saveLocationButton';
 
-const MAPBOX_API_KEY =
-  'pk.eyJ1IjoiaGFja21pdDIwIiwiYSI6ImNrZHVpaTk4dDE4Ym0yc255YzM3NGx0dGIifQ.XXstZ1xCBEqC-Wz4_EI8Pw';
-const mapstyle = {
-    style: 'mapbox://styles/mapbox/light-v10', 
-    center: [-71.0942, 42.3601],
-    zoom: 3,
-    marker_color: '#fbcdc2',
-    layer: {
-      circle_color: '#001d55',
-      circle_radius: 5,
-      circle_stroke_color: '#ffdf3f',
-      circle_stroke_width: 2
-    }
-}
+import socket from '../socket';
+
+// eslint-disable-next-line
+import createElement from '../../utils/jsxHelper';
+
+import '../../images/map/Ground.svg';
+import townSquare from '../../images/map/town_square.svg';
+import townSquare2 from '../../images/map/town_square2.svg';
+import nonprofit from '../../images/map/Nonprofit.svg';
+import personalRoom from '../../images/map/personal_room.svg';
+import sponsorTown from '../../images/map/sponsor_town.svg';
+import speakerSign from '../../images/map/speaker_sign.svg';
+import workshopSign from '../../images/map/workshop_sign.svg';
+import eventSign from '../../images/map/event_sign.svg';
 
 class Map {
-  constructor() {
-    this.coordinates = [];
-    mapboxgl.accessToken = MAPBOX_API_KEY;
-    socket.subscribe('map', this.registerLocation);
-    this.mapLoaded = false;
-    this.locationsRetrieved = false;
-  }
-
-  registerLocation = (data) => {
-
-    if (this.mapLoaded) {
-      this.checksLoad(data.locations);
-    } else {
-      this.locations = data.locations;
-    }
-    this.locationsRetrieved = true;
-  
+  createMapModal = () => {
+    return (
+      <div id="map">
+        <div id="map-container">
+          <button id="town-square" onclick={() => this.teleport('home')}>
+            <img src={townSquare} />
+            <p class="label">{'Town Square'}</p>
+          </button>
+          <button
+            id="town-square-2"
+            onclick={() => this.teleport('plaza', 0.5694, 0.6962)}
+          >
+            <img src={townSquare2} />
+            <p class="label">{'Hacker Plaza'}</p>
+          </button>
+          <button id="nonprofit" onclick={() => this.teleport('nonprofits')}>
+            <img src={nonprofit} />
+            <p class="label">{'Nonprofits'}</p>
+          </button>
+          <button id="personal-room" onclick={() => this.teleportPersonal()}>
+            <img src={personalRoom} />
+            <p class="label">{'Personal Room'}</p>
+          </button>
+          <button id="sponsor-town" onclick={() => this.teleport('plat_area')}>
+            <img src={sponsorTown} />
+            <p class="label">{'Sponsor Town'}</p>
+          </button>
+          <button
+            id="speaker-sign"
+            onclick={() => this.link('https://hackmit.org/')}
+          >
+            <img src={speakerSign} />
+            <p class="label">{'Speakers'}</p>
+          </button>
+          <button
+            id="workshop-sign"
+            onclick={() => this.link('https://hackmit.org/')}
+          >
+            <img src={workshopSign} />
+            <p class="label">{'Workshops'}</p>
+          </button>
+          <button
+            id="event-sign"
+            onclick={() => this.link('https://hackmit.org/')}
+          >
+            <img src={eventSign} />
+            <p class="label">{'Events'}</p>
+          </button>
+        </div>
+      </div>
+    );
   };
 
-  checksLoad = (locations) => {
+  teleport = (room, x = 0.5, y = 0.5) => {
+    document.getElementById('modal-background').remove();
 
-    this.map.getSource('hackers').setData({
-      type: 'FeatureCollection',
-      features: locations.map((location) => {
-        return {
-          type: 'Feature',
-          geometry: {
-            type: 'Point',
-            coordinates: [location.lat, location.lng],
-          },
-          properties: {},
-        };
-      }), 
+    socket.send({
+      type: 'teleport',
+      to: room,
+      x,
+      y,
     });
+  };
 
-  }
+  teleportPersonal = () => {
+    document.getElementById('modal-background').remove();
 
-  createMap = (characterId) => {
-    this.map = new mapboxgl.Map({
-      container: 'map-frame',
-      style: mapstyle.style,
-      center: mapstyle.center,
-      zoom: mapstyle.zoom,
+    socket.send({
+      type: 'teleport_home',
     });
+  };
 
-    const geocoder = new MapboxGeocoder({
-      accessToken: mapboxgl.accessToken,
-      marker: {
-        color: mapstyle.marker_color,
-      },
-      mapboxgl,
-    });
-
-    const navigationPanel = new mapboxgl.NavigationControl();
-
-    this.map.addControl(geocoder, 'top-left');
-    this.map.addControl(saveLocationButton, 'bottom-right');
-    this.map.addControl(navigationPanel, 'top-left');
-
-    this.map.on('load', () => {
-      // get coordinate data
-      socket.send({
-        type: 'get_map',
-      });
-
-      // pending search
-      this.map.addSource('single-point', {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: [],
-        },
-      });
-
-      // hackers who've already placed themselves
-      if (this.coordinates.length === 0) {
-        this.map.addSource('hackers', {
-          type: 'geojson',
-          data: {
-            type: 'FeatureCollection',
-            features: [],
-          },
-        });
-      } else {
-        this.map.addSource(this.coordinates);
-      }
-
-      // how stored hackers will be represented
-      this.map.addLayer({
-        id: 'hackers',
-        type: 'circle',
-        source: 'hackers',
-        paint: {
-          'circle-color': mapstyle.layer.circle_color,
-          'circle-radius': mapstyle.layer.circle_radius,
-          'circle-stroke-color': mapstyle.layer.circle_stroke_color,
-          'circle-stroke-width': mapstyle.layer.circle_stroke_width,
-        },
-      });
-
-      // handle searched locations
-      geocoder.on('result', (e) => {
-        const loc = e.result.geometry.coordinates;
-        this.map.getSource('single-point').setData(e.result.geometry);
-        const saveButton = window.document.getElementById('save');
-        saveButton.style.display = 'block';
-        saveButton.addEventListener('click', () => {
-          socket.send({
-            type: 'update_map',
-            location: {
-              lat: loc[0],
-              lng: loc[1],
-              name: characterId,
-            },
-          });
-        });
-      });
-
-      // remove "save location" button if nothing is searched
-      geocoder.on('clear', () => {
-        window.document.getElementById('save').style.display = 'none';
-      });
-
-      // TODO: registerLocation finishes after this is called so coordinates aren't in right format yet
-      if (this.locationsRetrieved) {
-        this.checksLoad(this.locations);
-      }
-
-      this.mapLoaded = true;
-    });
-
-    // center the map on the clicked coordinates
-    this.map.on('click', 'hackers', (e) => {
-      this.map.flyTo({
-        center: e.features[0].geometry.coordinates,
-      });
-    });
-
-    this.map.on('mouseenter', 'hackers', () => {
-      this.map.getCanvas().style.cursor = 'pointer';
-    });
-
-    // Change it back to a pointer when it leaves.
-    this.map.on('mouseleave', 'hackers', () => {
-      this.map.getCanvas().style.cursor = '';
-    });
+  link = (url) => {
+    document.getElementById('modal-background').remove();
+    window.open(url);
   };
 }
 

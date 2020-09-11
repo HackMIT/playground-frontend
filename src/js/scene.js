@@ -10,7 +10,7 @@ class Scene {
     this.container = document.createElement('div');
     this.container.id = 'three-container';
     this.gameElem = document.getElementById('game');
-    this.gameElem.appendChild(this.container);
+    this.gameElem.insertBefore(this.container, this.gameElem.childNodes[0]);
 
     // Isometric Camera
     const aspect = this.container.clientWidth / this.container.clientHeight;
@@ -35,7 +35,7 @@ class Scene {
     const light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
     this.scene.add(light);
 
-    this.loader = new GLTFLoader().setPath('assets/models/');
+    this.loader = new GLTFLoader().setPath('models/');
 
     this.characters = new Map();
 
@@ -78,13 +78,11 @@ class Scene {
       this.container.clientWidth,
       this.container.clientHeight
     );
-
-    this.render();
   }
 
   // create a new character at 0,0
-  newCharacter(characterId, name, x, y) {
-    this.characters[characterId] = new Character(name, x, y, this, (vec) => {
+  newCharacter(id, character) {
+    this.characters[id] = new Character(character, this, (vec) => {
       vec.project(this.camera);
 
       const pageX = Math.round(
@@ -127,9 +125,13 @@ class Scene {
     return this.characters[characterId].sendChat(msg);
   }
 
-  worldVectorForPos(x, y) {
+  updateMouseForPos(x, y) {
     this.mouse.x = x * 2 - 1;
     this.mouse.y = -1 * (y * 2 - 1);
+  }
+
+  worldVectorForPos(x, y) {
+    this.updateMouseForPos(x, y);
 
     return this.groundCollisionVector(this.raycaster);
   }
@@ -146,16 +148,45 @@ class Scene {
     return intersectVector;
   }
 
+  // show profile if clicked on character
+  // called from click handler of main page
+  // returns true if a character was clicked on, false otherwise
+  handleClickEvent(x, y) {
+    this.updateMouseForPos(x, y);
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+
+    let success = false;
+
+    Object.values(this.characters).some((character) => {
+      const intersects = this.raycaster.intersectObject(
+        character.model.modelGeometry,
+        true
+      );
+
+      if (intersects.length > 0) {
+        success = true;
+        character.showProfile();
+        return true;
+      }
+
+      return false;
+    });
+
+    return success;
+  }
+
   render() {
     requestAnimationFrame(this.render.bind(this));
+
     const deltaTime = this.clock.getDelta();
-    if (this.render !== undefined) {
-      this.renderer.render(this.scene, this.camera);
-    }
 
     Object.keys(this.characters).forEach((id) => {
       this.characters[id].update(deltaTime);
     });
+
+    if (this.render !== undefined) {
+      this.renderer.render(this.scene, this.camera);
+    }
   }
 }
 

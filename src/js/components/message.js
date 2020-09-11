@@ -14,7 +14,7 @@ class MessagePane {
 
   createMessagePane = () => {
     return (
-      <div id="message-pane">
+      <div id="message-pane" style="visibility: hidden">
         <div className="header" id="messages-header"></div>
         <div className="messages" id="messages-container" />
         <div className="input" id="messages-input"></div>
@@ -23,7 +23,10 @@ class MessagePane {
   };
 
   handleSocketMessage = (msg) => {
-    if (msg.type === 'message') {
+    if (
+      msg.type === 'message' &&
+      (msg.from === this.recipient || msg.to === this.recipient)
+    ) {
       this.messages.push(msg);
     } else if (msg.type === 'messages') {
       if (msg.recipient !== this.character.id) {
@@ -38,15 +41,19 @@ class MessagePane {
 
   updateMessagesPane = (character) => {
     if (character !== undefined) {
+      this.recipient = character.id;
+
       socket.send({
         type: 'get_messages',
         recipient: character.id,
       });
 
       document.getElementById('messages-header').innerHTML = '';
-      document
-        .getElementById('messages-header')
-        .appendChild(<p className="name">{character.name}</p>);
+      document.getElementById('messages-header').appendChild(
+        <p className="name">
+          {character.name} <small>active 25m ago</small>
+        </p>
+      );
 
       document.getElementById('messages-input').innerHTML = '';
       document
@@ -67,12 +74,14 @@ class MessagePane {
 
     this.messages.forEach((msg) => {
       const senderName =
-        msg.sender === this.character.id ? this.character.name : 'Me';
+        msg.from === this.character.id ? this.character.name : 'Me';
       root.appendChild(<p>{`${senderName}: ${msg.text}`}</p>);
     });
 
-    document.getElementById('messages-container').innerHTML = '';
-    document.getElementById('messages-container').appendChild(root);
+    const container = document.getElementById('messages-container');
+    container.innerHTML = '';
+    container.appendChild(root);
+    container.scrollTop = container.scrollHeight - container.clientHeight;
   };
 
   handleKeyDown = (e) => {
@@ -84,10 +93,18 @@ class MessagePane {
     socket.send({
       type: 'message',
       text: e.target.value,
-      recipient: this.character.id,
+      to: this.character.id,
     });
 
     e.target.value = '';
+  };
+
+  hide = () => {
+    document.getElementById('message-pane').style.visibility = 'hidden';
+  };
+
+  show = () => {
+    document.getElementById('message-pane').style.visibility = 'inherit';
   };
 }
 

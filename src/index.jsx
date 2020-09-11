@@ -1,14 +1,30 @@
+import hotkeys from 'hotkeys-js';
+
 import Scene from './js/scene';
 import Element from './js/element';
 import Hallway from './js/hallway';
 import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
-import mapInstance from './js/components/map';
+import settings from './settings.jsx';
+import map from './js/components/map';
+import feedback from './feedback.jsx';
+import queueSponsor from './js/components/sponsorPanel.jsx';
 import friends from './js/components/friends';
+import dance from './js/components/dance';
 import jukebox from './jukebox';
+import loginPanel from './js/components/login';
+import createLoadingScreen from './js/components/loading';
+
+import characterManager from './js/managers/character';
+import notificationsManager from './js/managers/notifications';
+import queueManager from './js/managers/queue';
+
+// eslint-disable-next-line
+import statusManager from './js/managers/status';
 
 import './styles/index.scss';
+import './styles/notifications.scss';
 import './styles/sponsor.scss';
 import './images/Code_Icon.svg';
 import './images/Coffee_Icon.svg';
@@ -18,35 +34,57 @@ import './styles/coffeechat.scss';
 
 import './coffeechat';
 
-import './images/icons/add.svg';
-import './images/icons/add-hallway.svg';
+import './images/icons/megaphone.svg';
+import './images/icons/dance.svg';
 import './images/icons/edit.svg';
+import './images/icons/friends.svg';
+import './images/icons/home.svg';
+import './images/icons/home-white.svg';
 import './images/icons/music.svg';
+import './images/icons/portal.png';
+import './images/icons/send.svg';
+import './images/icons/settings.svg';
+import './images/icons/tree.svg';
+import './images/icons/map.svg';
+import './images/icons/guidebook.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
 // eslint-disable-next-line
 const BACKGROUND_IMAGE_URL =
-  'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%SLUG%.png';
+  'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
 
 class Game extends Page {
+  constructor() {
+    super();
+
+    if (!this.loaded) {
+      this.startLoading();
+    }
+  }
+
   start = () => {
     if (!window.WebSocket) {
       // TODO: Handle error -- tell people their browser is incompatible
     }
 
+    loginPanel.update();
+
     // Quick check for auth data
     if (localStorage.getItem('token') !== null) {
-      document.getElementById('login-panel').style.display = 'none';
+      loginPanel.hide();
+    } else {
+      this.stopLoading();
     }
 
     this.scene = new Scene();
 
     this.characterId = null;
     this.characters = new Map();
-    this.elements = new Map();
+    this.elements = [];
     this.hallways = new Map();
+    this.loadingTasks = 0;
     this.room = null;
 
     this.editing = false;
@@ -58,11 +96,15 @@ class Game extends Page {
     this.addClickListener('add-room-button', this.handleRoomAddButton);
     this.addClickListener('day-of-button', this.handleDayofButton);
     this.addClickListener('edit-button', this.handleEditButton);
+    this.addClickListener('settings-button', this.handleSettingsButton);
     this.addClickListener('game', this.handleGameClick);
-    this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
-    this.addClickListener('map-button', this.handleShowMap);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
     this.addClickListener('friends-button', this.handleFriendsButton);
+    this.addClickListener('send-button', this.handleSendButton);
+    this.addClickListener('igloo-button', this.handleIglooButton);
+    this.addClickListener('dance-button', this.handleDanceButton);
+    this.addClickListener('map-button', this.handleMapButton);
+    this.addClickListener('queue-button', this.handleQueueButton);
 
     this.handleWindowSize();
 
@@ -70,15 +112,63 @@ class Game extends Page {
     socket.subscribe('*', this.handleSocketMessage);
     socket.start();
 
-    // Start sending chat events
-    document.getElementById('chat-box').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        socket.send({
-          type: 'chat',
-          mssg: e.target.value,
-        });
+    queueManager.start();
 
-        e.target.value = '';
+    // Listen for hotkeys
+    hotkeys('t, enter, /', (e) => {
+      e.preventDefault();
+      document.getElementById('chat-box').focus();
+    });
+
+    // Start sending chat events
+    const chatElem = document.getElementById('chat-box');
+
+    chatElem.addEventListener('keydown', (e) => {
+      // i hate javascript
+      if (
+        e.keyCode === 8 || // backspace key
+        e.keyCode === 13 || // enter key
+        e.keyCode === 16 || // shift key
+        e.keyCode === 17 || // ctrl key
+        e.keyCode === 18 || // option key
+        (e.keyCode >= 37 && e.keyCode <= 40) || // arrow keys
+        e.keyCode === 46 || // delete key
+        e.keyCode === 91 || // cmd key
+        e.keyCode === 93 // right cmd key
+      ) {
+        return;
+      }
+
+      // TODO: Get this value from config
+      if (e.target.value.length >= 400) {
+        e.preventDefault();
+      }
+    });
+
+    chatElem.addEventListener('input', (e) => {
+      // Replace non-ASCII characters
+      // TODO: Get this value from config
+      chatElem.value = chatElem.value.substring(0, 400);
+      chatElem.value = chatElem.value.replace(/[^ -~]/gi, '');
+
+      const lengthElem = document.getElementById('chat-length-indicator');
+
+      // TODO: Add this value to a config
+      if (e.target.value.length >= 200) {
+        if (lengthElem.classList.contains('invisible')) {
+          lengthElem.classList.remove('invisible');
+        }
+
+        // TODO: Add this value to a config
+        lengthElem.innerText = `${e.target.value.length} / 400`;
+      } else if (!lengthElem.classList.contains('invisible')) {
+        lengthElem.classList.add('invisible');
+      }
+    });
+
+    chatElem.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') {
+        this.handleSendButton();
       }
     });
 
@@ -90,7 +180,11 @@ class Game extends Page {
 
   handleGameClick = (e) => {
     // When clicking on the page, send a move message to the server
-    if (e.target.id !== 'three-canvas') {
+    console.log(e.target);
+    if (
+      e.target.id !== 'three-canvas' &&
+      e.target.parentElement.parentElement.id !== 'three-container'
+    ) {
       return;
     }
 
@@ -120,11 +214,19 @@ class Game extends Page {
       return;
     }
 
-    // Send move packet
     const rect = document.getElementById('game').getBoundingClientRect();
     const x = (e.pageX - rect.x) / rect.width;
     const y = (e.pageY - rect.y) / rect.height;
 
+    // call click handler of game to check for characters clicked
+    const success = this.scene.handleClickEvent(x, y);
+
+    if (success) {
+      // If we click on a character, don't move
+      return;
+    }
+
+    // Send move packet
     socket.send({
       x,
       y,
@@ -137,10 +239,11 @@ class Game extends Page {
       type: 'join',
     };
 
-    if (localStorage.getItem('token') !== null) {
-      joinPacket.token = localStorage.getItem('token');
-    } else if (window.location.hash.length > 1) {
+    if (window.location.hash.length > 1) {
       joinPacket.quillToken = document.location.hash.substring(1);
+      window.history.replaceState({}, document.title, '.');
+    } else if (localStorage.getItem('token') !== null) {
+      joinPacket.token = localStorage.getItem('token');
     } else {
       // No auth data
       return;
@@ -151,13 +254,20 @@ class Game extends Page {
   };
 
   handleSocketMessage = (data) => {
+    console.log(data);
     if (data.type === 'init') {
+      if (data.firstTime) {
+        // If firstTime is true, components/login.js is handling this
+        loginPanel.show();
+        return;
+      }
+
       this.characterId = data.character.id;
 
       if (data.token !== undefined) {
         localStorage.setItem('token', data.token);
         window.history.pushState(null, null, ' ');
-        document.getElementById('login-panel').style.display = 'none';
+        loginPanel.hide();
       }
 
       // Delete stuff from previous room
@@ -167,34 +277,60 @@ class Game extends Page {
         element.remove();
       });
 
+      this.elements = [];
+
       this.hallways.forEach((hallway) => {
         hallway.remove();
       });
 
+      this.hallways = new Map();
+
       Object.entries(data.room.characters).forEach(([id, character]) => {
-        this.scene.newCharacter(id, character.name, character.x, character.y);
+        this.scene.newCharacter(id, character);
         this.characters.set(id, character);
       });
 
       this.elementNames = data.elementNames;
       this.roomNames = data.roomNames;
 
-      Object.entries(data.room.elements).forEach(([id, element]) => {
-        const elementElem = new Element(element, id, data.elementNames);
-        document.getElementById('game').appendChild(elementElem.element);
-        this.elements.set(id, elementElem);
+      data.room.elements.forEach((element) => {
+        this.loadingTasks += 1;
+
+        const elementElem = new Element(element, element.id, data.elementNames);
+        this.elements.push(elementElem);
+
+        elementElem.onload = () => {
+          this.finishedLoadingPart();
+        };
+
+        const threeContainer = document.getElementById('three-container');
+
+        if (element.action > 0) {
+          threeContainer.appendChild(elementElem.element);
+        } else {
+          threeContainer.insertBefore(
+            elementElem.element,
+            document.getElementById('three-canvas')
+          );
+        }
       });
 
       Object.entries(data.room.hallways).forEach(([id, hallway]) => {
         this.hallways.set(id, new Hallway(hallway, id, data.roomNames));
+
         document
           .getElementById('game')
           .appendChild(this.hallways.get(id).element);
       });
 
+      if (data.openFeedback) {
+        this.showFeedback();
+      }
+
+      this.settings = data.settings;
       this.room = data.room;
 
-      if (this.room.sponsor) {
+      if (this.room.sponsorId.length > 0) {
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
           'sponsor-name'
@@ -207,14 +343,22 @@ class Game extends Page {
         document.getElementById('game').classList.remove('sponsor');
       }
 
-      document.getElementById(
-        'game'
-      ).style.backgroundImage = `url('${BACKGROUND_IMAGE_URL.replace(
-        '%SLUG%',
-        this.room.slug
-      )}')`;
+      this.loadingTasks += 1;
+      const img = new Image();
+
+      img.onload = () => {
+        this.loaded = true;
+
+        document.getElementById('background').src = img.src;
+        this.finishedLoadingPart();
+      };
+
+      img.src = BACKGROUND_IMAGE_URL.replace('%PATH%', this.room.background);
 
       this.scene.fixCameraOnResize();
+
+      // Start managers
+      notificationsManager.start();
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
         if (data.id !== this.characterId) {
@@ -227,10 +371,13 @@ class Game extends Page {
           );
 
           if (distance <= hallway.data.radius) {
+            this.startLoading();
+
             socket.send({
               type: 'teleport',
-              from: this.room.slug,
               to: hallway.data.to,
+              x: hallway.data.toX,
+              y: hallway.data.toY,
             });
 
             return true;
@@ -238,31 +385,17 @@ class Game extends Page {
 
           return false;
         });
-        // eslint-disable-next-line
-        // for (const [id, hallway] of Object.entries(this.hallways)) {
-        //   const distance = Math.sqrt(
-        //     (hallway.data.x - data.x) ** 2 + (hallway.data.y - data.y) ** 2,
-        //   );
-
-        //   if (distance <= hallway.data.radius) {
-        //     socket.send(JSON.stringify({
-        //       type: 'teleport',
-        //       from: this.room.slug,
-        //       to: hallway.data.to,
-        //     }));
-
-        //     break;
-        //   }
       });
     } else if (data.type === 'element_add') {
-      const elementElem = new Element(data.element, data.id, this.elementNames);
-      document.getElementById('game').appendChild(elementElem.element);
-      this.elements.set(data.id, elementElem);
-    } else if (data.type === 'element_delete') {
-      this.elements.get(data.id).remove();
-      this.elements.delete(data.id);
+      const element = new Element(data.element, data.id, this.elementNames);
+      document.getElementById('game').appendChild(element.element);
+      this.elements.push(element);
+      // } else if (data.type === 'element_delete') {
+      //   this.elements.get(data.id).remove();
+      //   this.elements.delete(data.id);
     } else if (data.type === 'element_update') {
-      this.elements.get(data.id).applyUpdate(data.element);
+      const idx = this.elements.findIndex((elem) => elem.id === data.id);
+      this.elements[idx].applyUpdate(data.element);
     } else if (data.type === 'hallway_add') {
       this.hallways.set(
         data.id,
@@ -276,17 +409,18 @@ class Game extends Page {
       this.hallways.delete(data.id);
     } else if (data.type === 'hallway_update') {
       this.hallways.get(data.id).applyUpdate(data.hallway);
+    } else if (data.type === 'room_add') {
+      socket.send({
+        type: 'teleport',
+        to: data.id,
+      });
     } else if (data.type === 'error') {
       if (data.code === 1) {
-        document.getElementById('login-panel').style.display = 'block';
+        this.stopLoading();
+        loginPanel.show();
       }
     } else if (data.type === 'join') {
-      this.scene.newCharacter(
-        data.character.id,
-        data.character.name,
-        data.character.x,
-        data.character.y
-      );
+      this.scene.newCharacter(data.character.id, data.character);
     } else if (data.type === 'leave') {
       if (data.character.id === this.characterId) {
         return;
@@ -334,7 +468,20 @@ class Game extends Page {
     });
   };
 
-  handleRoomAddButton = () => {};
+  handleRoomAddButton = () => {
+    const roomName = prompt('What should the room be called?');
+    const backgroundPath = prompt("What's this room's background path?");
+    const sponsor = prompt("Type 'true' if this is a sponsor room").includes(
+      'true'
+    );
+
+    socket.send({
+      type: 'room_add',
+      id: roomName,
+      background: backgroundPath,
+      sponsor,
+    });
+  };
 
   handleEditButton = () => {
     this.editing = !this.editing;
@@ -366,8 +513,41 @@ class Game extends Page {
     }
   };
 
+  handleSettingsButton = () => {
+    createModal(settings.createSettingsModal(this.settings));
+  };
+
+  handleQueueButton = () => {
+    // TODO: 2 should be a constant for sponsor
+    if (characterManager.character.role === 2) {
+      createModal(
+        queueSponsor.createQueueModal(),
+        'queue',
+        queueSponsor.onClose
+      );
+
+      queueSponsor.subscribe();
+    } else {
+      // if (characterManager.character.role === 1 /* hacker */) {
+      queueManager.join(this.room.sponsor);
+    }
+  };
+
   handleJukeboxButton = () => {
     jukebox.openJukeboxPane(document.body);
+
+    // No inappropriate songs warning
+    createModal(
+      <div id="jukebox-modal">
+        <h1 className="white-text">Welcome to the Jukebox!</h1>
+        <p className="white-text">
+          Here you can add songs to the queue for all hackers to listen to. If
+          you select any inappropriate songs, you will be disqualified. Please
+          see our Code of Conduct for more information.
+        </p>
+      </div>,
+      'quarantine'
+    );
   };
 
   handleFriendsButton = () => {
@@ -383,26 +563,84 @@ class Game extends Page {
       // Never created friends pane before, create it now
       document
         .getElementById('chat')
-        .appendChild(friends.createFriendsPane(this.characters));
+        .appendChild(friends.createFriendsPane(this.friends));
       this.friendsPaneVisible = true;
     }
   };
 
-  handleSponsorLogin = () => {
-    const joinPacket = {
-      type: 'join',
-      name: prompt("What's your name?"),
-    };
+  handleSendButton = () => {
+    const chatElem = document.getElementById('chat-box');
+    const lengthElem = document.getElementById('chat-length-indicator');
 
-    // Connected to remote
-    socket.send(joinPacket);
+    // TODO: Get this value from config
+    if (chatElem.value.length >= 400 || chatElem.value.length === 0) {
+      return;
+    }
+
+    // Replace all non-ASCII characters
+    chatElem.value = chatElem.value.replace(/[^ -~]/gi, '');
+
+    // Check if chat contains any covid-related words
+    const pattern = new RegExp(
+      /(\s|^)(sick|achoo|sneeze|fever|sick|asymptomatic|symptoms)(\s|$|[.!?\\-])/i
+    );
+    const matches = chatElem.value.match(pattern);
+
+    if (matches) {
+      socket.send({ type: 'teleport_home' });
+      createModal(
+        <div id="quarantine-modal">
+          <h1 className="white-text">Welcome Home!</h1>
+          <p className="white-text">
+            You have been placed in quarantine for saying '{chatElem.value}'.
+          </p>
+        </div>,
+        'quarantine'
+      );
+      chatElem.value = '';
+      return;
+    }
+
+    socket.send({
+      type: 'chat',
+      mssg: chatElem.value,
+    });
+
+    chatElem.value = '';
+
+    if (!lengthElem.classList.contains('invisible')) {
+      lengthElem.classList.add('invisible');
+    }
   };
 
-  handleShowMap = () => {
-    const mapElem = <div className="modal-frame" id="map-frame" />;
-    createModal(mapElem);
+  handleIglooButton = () => {
+    this.startLoading();
 
-    mapInstance.createMap(this.characterId);
+    socket.send({
+      type: 'teleport_home',
+    });
+  };
+
+  handleDanceButton = () => {
+    if (this.dancePaneVisible === true) {
+      // Hide the dance pane
+      document.getElementById('dance-pane').classList.add('invisible');
+      this.dancePaneVisible = false;
+    } else if (this.dancePaneVisible === false) {
+      // make the dance pane visible
+      document.getElementById('dance-pane').classList.remove('invisible');
+      this.dancePaneVisible = true;
+    } else {
+      // Never created friends pane before, create it now
+      document
+        .getElementById('chat')
+        .appendChild(dance.createDancePane(this.friends));
+      this.dancePaneVisible = true;
+    }
+  };
+
+  handleMapButton = () => {
+    createModal(map.createMapModal());
   };
 
   handleWindowSize = () => {
@@ -421,6 +659,39 @@ class Game extends Page {
 
       outerElem.classList.remove('vertical');
     }
+  };
+
+  showFeedback = () => {
+    createModal(feedback.createFeedbackModal());
+  };
+
+  startLoading = () => {
+    document.getElementById('game').appendChild(createLoadingScreen());
+  };
+
+  stopLoading = () => {
+    this.loadingTasks = 1;
+    this.finishedLoadingPart();
+  };
+
+  finishedLoadingPart = () => {
+    this.loadingTasks -= 1;
+
+    if (this.loadingTasks > 0) {
+      return;
+    }
+
+    const loadingElem = document.getElementById('loading');
+
+    if (loadingElem === null) {
+      return;
+    }
+
+    loadingElem.classList.add('closing');
+
+    setTimeout(() => {
+      loadingElem.remove();
+    }, 250);
   };
 }
 

@@ -5,6 +5,8 @@
 @import 'fonts';
 @import 'colors';
 
+$chat_input_height: 40px;
+
 * {
   padding: 0;
   margin: 0;
@@ -52,7 +54,6 @@ body {
 }
 
 #outer {
-  //width: 100%;
   width: 177.77vh;
   height: 100vh;
   margin: 0 auto;
@@ -86,7 +87,7 @@ body {
 }
 
 #chat {
-  background: #7b9fce;
+  background: $chat_box_background;
   border-radius: 8px;
   display: flex;
   height: 52px;
@@ -98,31 +99,60 @@ body {
   left: 50%;
   transform: translate(-50%, 0);
 
-  input[type='text'] {
+  input {
     color: #fff;
     font-family: Muli;
-    background: #051e52;
+    font-size: 14px;
+    background: $chat_input_background;
     text-align: left;
     border-radius: 8px;
-    height: 38px;
-    padding: 0 8px;
-    min-width: 320px;
+    height: $chat_input_height;
+    padding: 0 10px;
+    width: 320px;
     border: none;
-    margin: 0 8px;
+    margin-left: 8px;
+    margin-right: -20px;
   }
 
-  button {
+  #chat-length-indicator {
+    background: $chat_input_background;
+    box-sizing: border-box;
+    color: #ddd;
+    font-size: 13px;
+    text-align: right;
+    line-height: $chat_input_height;
+    padding: 0 8px;
+    position: absolute;
+    left: calc(50% + 125px);
+    transform: translateX(-50%);
+  }
+
+  button,
+  .chat-button {
     color: #fff;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: #24447c;
     text-align: center;
     border-radius: 50%;
     outline: none;
     border: none;
-    width: 38px;
-    height: 38px;
-    margin: 0 4px;
-    padding: 9px;
+    box-sizing: border-box;
+    width: 36px;
+    height: 36px;
+    margin: 0 3px;
+    padding: 8px;
+
+    &#send-button {
+      border: 3px solid $chat_box_background;
+      margin-left: 0;
+      margin-right: 5px;
+      padding: 10px 10px 7px 7px;
+      width: 42px;
+      height: 42px;
+    }
 
     &:active {
       background: #1b2450;
@@ -131,6 +161,24 @@ body {
     img {
       width: 100%;
     }
+
+    &#friends-button {
+      position: relative;
+
+      .new-message-indicator {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #ff9797;
+      }
+
+    }
+  }
+  .dance-pane-button{
+    background: #7b9fce;
   }
 }
 
@@ -141,6 +189,17 @@ body {
   background-size: 100% 100%;
   position: relative;
   overflow: hidden;
+
+  #background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -100;
+  }
 
   #add-button {
     cursor: pointer;
@@ -193,12 +252,41 @@ body {
     right: 24px;
   }
 
-  #day-of-button {
+  #queue-hacker-button {
     position: absolute;
-    bottom: 24px;
+    bottom: 156px;
     right: 24px;
     height: 64px;
     width: 64px;
+    cursor: pointer;
+  }
+
+  #queue-sponsor-button {
+    position: absolute;
+    bottom: 90px;
+    right: 24px;
+    height: 64px;
+    width: 64px;
+    cursor: pointer;
+  }
+
+  #day-of-button {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    height: 64px;
+    width: 64px;
+    cursor: pointer;
+  }
+
+  #map-button {
+    border: none;
+    position: absolute;
+    background: transparent;
+    bottom: 40px;
+    right: 30px;
+    height: 40px;
+    width: 40px;
     cursor: pointer;
   }
 }
@@ -206,7 +294,6 @@ body {
 .element {
   position: absolute;
   transform: translate(-50%, -50%);
-  z-index: 100;
 
   &.editable {
     cursor: grab;
@@ -280,6 +367,7 @@ body {
 #three-container {
   height: 100%;
   width: 100%;
+  position: relative;
 }
 
 #login-panel {
@@ -296,16 +384,91 @@ body {
   transform: translate(-50%, -50%);
   width: 400px;
 
-  a {
+  h1 {
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-size: 20px;
+    margin-top: 16px;
+  }
+
+  .field {
+    p {
+      font-size: 14px;
+      margin: 0;
+      text-align: left;
+    }
+
+    input {
+      text-align: left;
+
+      &[type='text'] {
+        margin-top: 0;
+      }
+    }
+
+    &.checkbox {
+      margin: 8px 0;
+      display: flex;
+      justify-content: left;
+      align-items: top;
+
+      &.extra-vspace {
+        margin-top: 16px;
+      }
+
+      &.centered {
+        justify-content: center;
+
+        p,
+        div {
+          flex-grow: initial;
+        }
+      }
+
+      input[type='checkbox'] {
+        margin-right: 12px;
+        margin-top: 3px;
+
+        &:checked ~ div input[type='text'] {
+          display: block;
+        }
+      }
+
+      p,
+      div {
+        flex-grow: 1;
+      }
+
+      input[type='text'] {
+        display: none;
+        font-size: 14px;
+        margin: 4px 0;
+        padding: 8px;
+      }
+    }
+  }
+
+  a.button,
+  button {
+    border: none;
     border-radius: 3px;
     color: #fff;
     cursor: pointer;
     display: block;
-    margin: 16px 16px 0;
+    font-size: 16px;
+    margin-top: 16px;
     padding: 10px 0;
     text-decoration: none;
+    width: 100%;
 
-    &.hacker {
+    &:disabled {
+      background: #ccc !important;
+      cursor: default;
+    }
+
+    &.green {
       background: #43a047;
 
       &:hover {
@@ -313,12 +476,61 @@ body {
       }
     }
 
-    &.sponsor {
+    &.blue {
       background: #039be5;
 
       &:hover {
         background: #0288d1;
       }
+    }
+
+    &.red {
+      background: #db5a42;
+
+      &:hover {
+        background: #d64329;
+      }
+    }
+  }
+
+  p {
+    font-size: 14px;
+    margin: 8px;
+
+    &.small {
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+  }
+
+  input[type='text'] {
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    box-sizing: border-box;
+    font-size: 14px;
+    margin: 16px 0 8px;
+    padding: 12px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .buttons-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    button:first-of-type {
+      margin-right: 16px;
+    }
+  }
+
+  #error-text {
+    color: #f75939;
+    margin-bottom: -4px;
+    display: none;
+
+    &.visible {
+      display: block;
     }
   }
 }
@@ -326,16 +538,19 @@ body {
 // make prettier
 .text-bubble {
   background-color: #fff;
-  border: 1px solid #000;
+  border: none;
+  font-family: Muli;
   border-radius: 4px;
   display: block;
-  font-family: $font-family;
   font-size: 13px;
   left: 50%;
   padding: 8px 16px;
   position: absolute;
-  top: 0;
-  transform: translate(-50%, -100%);
+  // TODO: This needs to update with scaling
+  transform: translate(-50%, calc(-100% - 80px));
+  max-width: 120px;
+  text-align: left;
+  overflow-wrap: break-word;
 }
 
 #game > .name {
@@ -348,6 +563,7 @@ body {
   text-align: center;
   transform: translate(-50%, 104px);
   width: 200%;
+  z-index: -1;
 }
 
 .mssg {
@@ -355,4 +571,36 @@ body {
   font-family: $font-family;
   font-size: 13px;
   transform: translateY(-18px);
+}
+
+#quarantine-modal {
+  background: $blue_light;
+  width: 32vw;
+  color: $white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 32px;
+  text-align: center;
+
+  .white-text {
+    color: $white !important;
+  }
+}
+
+#jukebox-modal {
+  background: $blue_light;
+  color: $white;
+  width: 60vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 32px;
+  text-align: center;
+
+  .white-text {
+    color: $white !important;
+  }
 }

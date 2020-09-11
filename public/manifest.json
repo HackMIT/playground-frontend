@@ -1,0 +1,12 @@
+{
+  "name": "HackMIT Playground",
+  "short_name": "Playground",
+  "icons": [
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": "./index.html?homescreen=1",
+  "display": "standalone"
+}

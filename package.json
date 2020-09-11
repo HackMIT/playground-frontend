@@ -3,9 +3,12 @@
   "version": "0.1",
   "main": "index.js",
   "license": "MIT",
+  "homepage": "https://play.hackmit.org",
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack-dev-server --config config/webpack.dev.js",
-    "build": "cross-env NODE_ENV=production webpack --config config/webpack.prod.js"
+    "start": "cross-env NODE_ENV=development webpack-dev-server --config config/webpack.dev.js --host 0.0.0.0",
+    "build": "cross-env NODE_ENV=production webpack --config config/webpack.prod.js",
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
@@ -47,9 +50,11 @@
     "fs": "^0.0.1-security",
     "mapbox-gl": "^1.12.0",
     "modal": "^1.2.0",
+    "hotkeys-js": "^3.8.1",
     "moment": "^2.27.0",
     "path": "^0.12.7",
     "router": "^1.3.5",
+    "sweetalert": "^2.1.2",
     "three": "^0.118.3",
     "youtube-iframe": "^1.0.3"
   }

@@ -1,0 +1,73 @@
+@import 'colors';
+
+#loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: $blue_light;
+  z-index: 1000;
+  opacity: 1;
+  transition: 0.25s ease all;
+
+  &.closing {
+    opacity: 0;
+  }
+}
+
+#cloud1,
+#cloud2,
+#balloon,
+#loading p {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#balloon {
+  z-index: 1001;
+}
+
+#cloud1 {
+  left: calc(50% - 96px);
+  top: calc(50% + 52px);
+  width: 144px;
+  z-index: 1002;
+}
+
+#cloud2 {
+  left: calc(50% + 96px);
+  top: calc(50% - 96px);
+  width: 144px;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translate(-50%, -55%);
+  }
+
+  50% {
+    transform: translate(-50%, -45%);
+  }
+
+  100% {
+    transform: translate(-50%, -55%);
+  }
+}
+
+#balloon {
+  animation: bounce 2s infinite;
+  animation-timing-function: ease-in-out;
+  width: 172px;
+}
+
+#loading p {
+  color: #fff;
+  font-size: 20px;
+  text-transform: uppercase;
+  top: calc(50% + 164px);
+}
