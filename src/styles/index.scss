@@ -87,7 +87,6 @@ body {
       grid-column-start: 2;
       transform: translateY(10px);
       width: $top_bar_logo_width;
-      z-index: 10;
     }
 
     #top-bar-button-container {
@@ -114,6 +113,7 @@ body {
       top: $top_bar_height - 1;
       transform: translateX(-50%);
       width: 84px;
+      z-index: -1;
     }
   }
 

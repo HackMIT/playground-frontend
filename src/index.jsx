@@ -9,7 +9,7 @@ import createModal from './modal';
 import settings from './settings.jsx';
 import map from './js/components/map';
 import feedback from './feedback.jsx';
-import queueSponsor from './js/components/sponsorPanel.jsx';
+import queueSponsor from './js/components/sponsorPanel';
 import friends from './js/components/friends';
 import dance from './js/components/dance';
 import jukebox from './jukebox';

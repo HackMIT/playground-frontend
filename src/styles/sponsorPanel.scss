@@ -24,6 +24,43 @@
       }
     }
 
+    #options {
+      .field {
+        margin-bottom: 12px;
+
+        p {
+          font-size: 13px;
+          margin-bottom: 4px;
+        }
+
+        input,
+        textarea {
+          border: 2px solid $blue_dark;
+          border-radius: 4px;
+          font-size: 14px;
+          padding: 8px;
+          width: 100%;
+        }
+      }
+
+      button {
+        background: #43a047;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        cursor: pointer;
+        display: block;
+        font-size: 14px;
+        margin: 20px auto 0;
+        outline: none;
+        padding: 12px 16px;
+
+        &:hover {
+          background: #388e3c;
+        }
+      }
+    }
+
     #queue {
       display: flex;
       flex-direction: column;

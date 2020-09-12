@@ -10,7 +10,11 @@ class SponsorPanel {
   constructor() {
     this.queue = [];
     this.sponsorId = 'cmt'; // characterManager.getSponsorId();
-    socket.subscribe('queue_update_sponsor', this.handleSocketMessage);
+
+    socket.subscribe(
+      ['queue_update_sponsor', 'sponsor'],
+      this.handleSocketMessage
+    );
   }
 
   updateQueueContent = () => {
@@ -27,6 +31,11 @@ class SponsorPanel {
       case 'queue_update_sponsor':
         this.queue = msg.subscribers;
         break;
+      case 'sponsor':
+        document.getElementById('sponsor-description-field').value =
+          msg.sponsor.description;
+        document.getElementById('sponsor-url-field').value = msg.sponsor.url;
+        break;
       default:
         break;
     }
@@ -35,6 +44,11 @@ class SponsorPanel {
   };
 
   subscribe = () => {
+    socket.send({
+      type: 'get_sponsor',
+      id: this.sponsorId,
+    });
+
     socket.send({
       type: 'queue_subscribe',
       sponsorId: this.sponsorId,
@@ -80,13 +94,51 @@ class SponsorPanel {
   };
 
   createQueueModal = () => {
+    console.log(this.description);
     return (
       <div id="sponsor-panel">
         <h1>Sponsor Panel</h1>
         <div id="table">
           <div id="options">
             <h2>Company Details</h2>
-            <input type="text" placeholder="Description" />
+            <div className="field">
+              <p>
+                Description: A brief description of your company, to be
+                displayed on the right side of the screen when hackers enter
+                your room. Make sure to include the times your queue will be
+                open.
+              </p>
+              <textarea
+                id="sponsor-description-field"
+                placeholder="Company A is working hard to bring financial literacy to those who need it most. Talk to us to learn more about our challenges and recruiting opportunities! Our queue will be open all of Friday night and 9am-1pm EDT on Saturday."
+                rows="6"
+              />
+            </div>
+            <div className="field">
+              <p>
+                URL: The URL hackers will be redirected to when clicking on the
+                "Visit Website" button. Feel free to use this to share
+                recruitment opportunities.
+              </p>
+              <input
+                id="sponsor-url-field"
+                type="text"
+                placeholder="https://company.com/jobs"
+              />
+            </div>
+            <button
+              onclick={() => {
+                socket.send({
+                  type: 'update_sponsor',
+                  description: document.getElementById(
+                    'sponsor-description-field'
+                  ).value,
+                  url: document.getElementById('sponsor-url-field').value,
+                });
+              }}
+            >
+              Submit
+            </button>
           </div>
           <div className="spacer" />
           <div id="queue">{this.createQueueContent()}</div>
