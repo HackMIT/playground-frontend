@@ -32,9 +32,20 @@ class FriendsPane {
   };
 
   friendsListContents = () => {
-    const friendsListContainer = <div />;
+    let friendsListContainer = <div />;
 
     const friends = Array.from(characterManager.getFriends().values());
+
+    if (friends.length === 0) {
+      friendsListContainer = <div id="no-friends-container" />
+      friendsListContainer.appendChild(
+        <p id="no-friends">
+          You have no friends :(
+          <br />
+          Try clicking someone to make a friend!</p>
+      )
+      return friendsListContainer;
+    }
 
     friends.sort((a, b) => {
       if (a.teammate && !b.teammate) {
