@@ -18,6 +18,8 @@
     grid-template-columns: 47.5% 5% 47.5%;
 
     div {
+      overflow-y: scroll;
+
       h2 {
         margin-bottom: 8px;
         text-align: center;
@@ -35,6 +37,7 @@
 
         input,
         textarea {
+          box-sizing: border-box;
           border: 2px solid $blue_dark;
           border-radius: 4px;
           font-size: 14px;

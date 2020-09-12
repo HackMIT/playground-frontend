@@ -1,4 +1,3 @@
-// import characterManager from './js/managers/character';
 import socket from '../socket';
 
 import '../../styles/sponsorPanel.scss';
@@ -9,7 +8,7 @@ import createElement from '../../utils/jsxHelper';
 class SponsorPanel {
   constructor() {
     this.queue = [];
-    this.sponsorId = 'cmt'; // characterManager.getSponsorId();
+    this.sponsorId = '';
 
     socket.subscribe(
       ['queue_update_sponsor', 'sponsor'],
@@ -43,7 +42,10 @@ class SponsorPanel {
     this.updateQueueContent();
   };
 
-  subscribe = () => {
+  subscribe = (sponsorId) => {
+    console.log(sponsorId);
+    this.sponsorId = sponsorId;
+
     socket.send({
       type: 'get_sponsor',
       id: this.sponsorId,
@@ -94,7 +96,6 @@ class SponsorPanel {
   };
 
   createQueueModal = () => {
-    console.log(this.description);
     return (
       <div id="sponsor-panel">
         <h1>Sponsor Panel</h1>
@@ -116,6 +117,18 @@ class SponsorPanel {
             </div>
             <div className="field">
               <p>
+                Challenges: A description of the challenge(s) you're offering
+                this weekend, including any relevant details, criteria, and
+                prizes.
+              </p>
+              <textarea
+                id="sponsor-challenges-field"
+                placeholder="We're looking for the best hacks that teach financial literacy!&#10;&#10;Prize: $100 Amazon gift card for each team member"
+                rows="6"
+              />
+            </div>
+            <div className="field">
+              <p>
                 URL: The URL hackers will be redirected to when clicking on the
                 "Visit Website" button. Feel free to use this to share
                 recruitment opportunities.
@@ -132,6 +145,9 @@ class SponsorPanel {
                   type: 'update_sponsor',
                   description: document.getElementById(
                     'sponsor-description-field'
+                  ).value,
+                  challenges: document.getElementById(
+                    'sponsor-challenges-field'
                   ).value,
                   url: document.getElementById('sponsor-url-field').value,
                 });

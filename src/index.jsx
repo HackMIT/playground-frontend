@@ -105,6 +105,7 @@ class Game extends Page {
     this.addClickListener('dance-button', this.handleDanceButton);
     this.addClickListener('map-button', this.handleMapButton);
     this.addClickListener('queue-button', this.handleQueueButton);
+    this.addClickListener('website-button', this.handleWebsiteButton);
 
     this.handleWindowSize();
 
@@ -356,6 +357,15 @@ class Game extends Page {
         ).innerHTML = `<span>${this.room.slug}</span>${this.room.slug}`;
         document.getElementById('outer').classList.add('sponsor');
         document.getElementById('game').classList.add('sponsor');
+
+        document.getElementById('challenges-button').style.display =
+          this.room.sponsor.challenges.length > 0 ? 'inline-block' : 'none';
+        document.getElementById(
+          'sponsor-description'
+        ).innerText = this.room.sponsor.description;
+        document.getElementById(
+          'queue-button-text'
+        ).innerText = `Talk to ${this.room.sponsor.name}`;
       } else {
         document.getElementById('sponsor-pane').classList.remove('active');
         document.getElementById('outer').classList.remove('sponsor');
@@ -547,11 +557,15 @@ class Game extends Page {
         queueSponsor.onClose
       );
 
-      queueSponsor.subscribe();
+      queueSponsor.subscribe(this.room.sponsor.id);
     } else {
       // if (characterManager.character.role === 1 /* hacker */) {
       queueManager.join(this.room.sponsor);
     }
+  };
+
+  handleWebsiteButton = () => {
+    window.open(this.room.sponsor.url, '_blank');
   };
 
   handleJukeboxButton = () => {
