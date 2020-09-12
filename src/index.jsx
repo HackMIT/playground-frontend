@@ -30,9 +30,6 @@ import './images/Code_Icon.svg';
 import './images/Coffee_Icon.svg';
 import './images/Site_Icon.svg';
 import './images/sponsor_text.svg';
-import './styles/coffeechat.scss';
-
-import './coffeechat';
 
 import './images/icons/megaphone.svg';
 import './images/icons/dance.svg';
@@ -49,6 +46,7 @@ import './images/icons/map.svg';
 import './images/icons/guidebook.svg';
 import './images/icons/schedule.svg';
 import './images/logo.png';
+import './images/swoopy.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
