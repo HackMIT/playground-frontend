@@ -12,6 +12,15 @@ $chat_input_height: 40px;
   margin: 0;
 }
 
+body {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 h1,
 h2,
 h3,
@@ -176,6 +185,9 @@ body {
       }
     }
   }
+  .dance-pane-button {
+    background: #7b9fce;
+  }
 }
 
 #game {
@@ -269,9 +281,20 @@ body {
   #day-of-button {
     position: absolute;
     bottom: 24px;
-    right: 24px;
+    left: 24px;
     height: 64px;
     width: 64px;
+    cursor: pointer;
+  }
+
+  #map-button {
+    border: none;
+    position: absolute;
+    background: transparent;
+    bottom: 40px;
+    right: 30px;
+    height: 40px;
+    width: 40px;
     cursor: pointer;
   }
 }

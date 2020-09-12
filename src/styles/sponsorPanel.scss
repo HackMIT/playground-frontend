@@ -1,0 +1,50 @@
+@import 'colors';
+
+#sponsor-panel {
+  background: $blue_light;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 32px;
+
+  h1 {
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  #table {
+    display: grid;
+    grid-template-columns: 47.5% 5% 47.5%;
+
+    div {
+      h2 {
+        margin-bottom: 8px;
+        text-align: center;
+      }
+    }
+
+    #queue {
+      display: flex;
+      flex-direction: column;
+
+      .hacker {
+        background: #fff;
+        border-radius: 4px;
+        padding: 8px 12px;
+
+        button {
+          background: $accent_pink;
+          border: none;
+          border-radius: 4px;
+          color: $blue_dark;
+          cursor: pointer;
+          font-size: 16px;
+          margin-top: 8px;
+          outline: none;
+          padding: 8px;
+        }
+      }
+    }
+  }
+}

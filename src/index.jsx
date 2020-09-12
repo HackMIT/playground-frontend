@@ -7,19 +7,24 @@ import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
 import settings from './settings.jsx';
+import map from './js/components/map';
 import feedback from './feedback.jsx';
-import queueHacker from './queueHacker.jsx';
-import queueSponsor from './queueSponsor.jsx';
+import queueSponsor from './js/components/sponsorPanel.jsx';
 import friends from './js/components/friends';
+import dance from './js/components/dance';
 import jukebox from './jukebox';
 import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 
+import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
+import queueManager from './js/managers/queue';
+
 // eslint-disable-next-line
 import statusManager from './js/managers/status';
 
 import './styles/index.scss';
+import './styles/notifications.scss';
 import './styles/sponsor.scss';
 import './images/Code_Icon.svg';
 import './images/Coffee_Icon.svg';
@@ -29,6 +34,7 @@ import './styles/coffeechat.scss';
 
 import './coffeechat';
 
+import './images/icons/megaphone.svg';
 import './images/icons/dance.svg';
 import './images/icons/edit.svg';
 import './images/icons/friends.svg';
@@ -39,10 +45,13 @@ import './images/icons/portal.png';
 import './images/icons/send.svg';
 import './images/icons/settings.svg';
 import './images/icons/tree.svg';
+import './images/icons/map.svg';
+import './images/icons/guidebook.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
+// eslint-disable-next-line
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
 
@@ -87,28 +96,38 @@ class Game extends Page {
     this.addClickListener('add-room-button', this.handleRoomAddButton);
     this.addClickListener('day-of-button', this.handleDayofButton);
     this.addClickListener('edit-button', this.handleEditButton);
-    this.addClickListener('queue-hacker-button', this.handleQueueHackerButton);
-    this.addClickListener(
-      'queue-sponsor-button',
-      this.handleQueueSponsorButton
-    );
     this.addClickListener('settings-button', this.handleSettingsButton);
     this.addClickListener('game', this.handleGameClick);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
     this.addClickListener('friends-button', this.handleFriendsButton);
     this.addClickListener('send-button', this.handleSendButton);
     this.addClickListener('igloo-button', this.handleIglooButton);
+    this.addClickListener('dance-button', this.handleDanceButton);
+    this.addClickListener('map-button', this.handleMapButton);
+    this.addClickListener('queue-button', this.handleQueueButton);
 
     this.handleWindowSize();
 
     socket.onopen = this.handleSocketOpen;
+    socket.onclose = this.handleSocketClose;
     socket.subscribe('*', this.handleSocketMessage);
     socket.start();
+
+    queueManager.start();
 
     // Listen for hotkeys
     hotkeys('t, enter, /', (e) => {
       e.preventDefault();
       document.getElementById('chat-box').focus();
+    });
+
+    hotkeys('esc', () => {
+      // Close all character profiles
+      Array.from(document.getElementsByClassName('profile-container')).forEach(
+        (elem) => {
+          elem.style.visibility = 'hidden';
+        }
+      );
     });
 
     // Start sending chat events
@@ -171,7 +190,11 @@ class Game extends Page {
 
   handleGameClick = (e) => {
     // When clicking on the page, send a move message to the server
-    if (e.target.id !== 'three-canvas') {
+    if (
+      (e.target.id !== 'three-canvas' &&
+        !e.target.classList.contains('element-img')) ||
+      e.target.hasAttribute('data-interactable')
+    ) {
       return;
     }
 
@@ -238,6 +261,13 @@ class Game extends Page {
 
     // Connected to remote
     socket.send(joinPacket);
+  };
+
+  handleSocketClose = () => {
+    notificationsManager.displayMessage(
+      "You've been disconnected from the HackMIT playground. Please refresh the page to try to reconnect.",
+      30000
+    );
   };
 
   handleSocketMessage = (data) => {
@@ -317,7 +347,7 @@ class Game extends Page {
       this.settings = data.settings;
       this.room = data.room;
 
-      if (this.room.sponsor) {
+      if (this.room.sponsorId.length > 0) {
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
           'sponsor-name'
@@ -344,8 +374,10 @@ class Game extends Page {
 
       this.scene.fixCameraOnResize();
 
-      // Start notifications manager
+      // Start managers
       notificationsManager.start();
+    } else if (data.type === 'dance') {
+      this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
         if (data.id !== this.characterId) {
@@ -425,7 +457,7 @@ class Game extends Page {
     createModal(
       <iframe
         id="day-of-iframe"
-        className="day-of-page"
+        className="modal-frame"
         src="https://dayof.hackmit.org"
       />
     );
@@ -504,12 +536,20 @@ class Game extends Page {
     createModal(settings.createSettingsModal(this.settings));
   };
 
-  handleQueueSponsorButton = () => {
-    createModal(queueSponsor.createQueueModal(), 'queue', queueSponsor.onClose);
-  };
+  handleQueueButton = () => {
+    // TODO: 2 should be a constant for sponsor
+    if (characterManager.character.role === 2) {
+      createModal(
+        queueSponsor.createQueueModal(),
+        'queue',
+        queueSponsor.onClose
+      );
 
-  handleQueueHackerButton = () => {
-    createModal(queueHacker.createQueueModal(), 'queue', queueHacker.onClose);
+      queueSponsor.subscribe();
+    } else {
+      // if (characterManager.character.role === 1 /* hacker */) {
+      queueManager.join(this.room.sponsor);
+    }
   };
 
   handleJukeboxButton = () => {
@@ -598,6 +638,28 @@ class Game extends Page {
     socket.send({
       type: 'teleport_home',
     });
+  };
+
+  handleDanceButton = () => {
+    if (this.dancePaneVisible === true) {
+      // Hide the dance pane
+      document.getElementById('dance-pane').classList.add('invisible');
+      this.dancePaneVisible = false;
+    } else if (this.dancePaneVisible === false) {
+      // make the dance pane visible
+      document.getElementById('dance-pane').classList.remove('invisible');
+      this.dancePaneVisible = true;
+    } else {
+      // Never created friends pane before, create it now
+      document
+        .getElementById('chat')
+        .appendChild(dance.createDancePane(this.friends));
+      this.dancePaneVisible = true;
+    }
+  };
+
+  handleMapButton = () => {
+    createModal(map.createMapModal());
   };
 
   handleWindowSize = () => {

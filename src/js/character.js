@@ -28,7 +28,8 @@ class Character {
         this.setModel(
           parent,
           gltf.scene,
-          gltf.animations[data.id === 'tim' ? 0 : 1],
+          gltf.animations,
+          data.id === 'tim' ? 0 : 1,
           data.x,
           data.y
         );
@@ -46,6 +47,10 @@ class Character {
     }
   }
 
+  dance(dance) {
+    this.model.setDanceAnimation(dance);
+  }
+
   // returns time it'll take
   moveTo(vector, callback) {
     this.model.setAnimation(vector, callback);
@@ -56,19 +61,26 @@ class Character {
     parent.scene.remove(this.model.modelGeometry);
   }
 
-  setModel(parentScene, model, animation, initX, initY) {
+  setModel(parentScene, model, actions, walkActionIndex, initX, initY) {
     const mixer = new THREE.AnimationMixer(model);
     mixer.timeScale = 2.5;
-    const walkCycle = mixer.clipAction(animation);
-    walkCycle.enabled = false;
-    walkCycle.play();
+
+    const animationCycles = actions.map((x) => {
+      const cycle = mixer.clipAction(x);
+      cycle.enabled = false;
+      cycle.play();
+      return cycle;
+    });
+
+    // animationCycles[walkActionIndex].play();
 
     parentScene.scene.add(model);
 
     this.model = new AnimatedModel(
       model,
       mixer,
-      walkCycle,
+      animationCycles,
+      walkActionIndex,
       parentScene.worldVectorForPos(initX, initY),
       this.data.name,
       this.reverseRaycaster
@@ -80,13 +92,34 @@ class Character {
   }
 
   showProfile() {
-    if (this.profileBox === undefined) {
-      this.createCharacterProfile();
-      this.gameDom = document.getElementById('game');
-      this.gameDom.appendChild(this.profileBox);
-      this.model.addHtmlElem(this.profileBox);
+    if (
+      this.profileBox !== undefined &&
+      this.profileBox.style.visibility === 'inherit'
+    ) {
+      // If clicking on an already open character, just close theirs and exit
+      this.profileBox.style.visibility = 'hidden';
+      return;
     }
 
+    Array.from(document.getElementsByClassName('profile-container')).forEach(
+      (elem) => {
+        elem.style.visibility = 'hidden';
+      }
+    );
+
+    if (this.profileBox === undefined) {
+      this.createCharacterProfile();
+
+      this.gameDom = document.getElementById('game');
+      this.gameDom.appendChild(this.profileBox);
+    }
+
+    let { x, y } = this.model.getPosition();
+    x = Math.min(Math.max(x, 200), window.innerWidth - 200);
+    y = Math.max(y, 400);
+
+    this.profileBox.style.left = `${x}px`;
+    this.profileBox.style.top = `${y}px`;
     this.profileBox.style.visibility = 'inherit';
   }
 
