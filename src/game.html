@@ -19,6 +19,21 @@
 
   <body>
     <div id="outer">
+      <div id="top-bar">
+        <img id="top-bar-logo" src="/images/logo.png" />
+        <div id="top-bar-button-container">
+          <button id="day-of-button">
+            <img src="/images/icons/guidebook.svg" />
+          </button>
+          <button id="map-button">
+            <img src="/images/icons/map.svg" />
+          </button>
+          <button id="schedule-button">
+            <img src="/images/icons/schedule.svg" />
+          </button>
+        </div>
+      </div>
+
       <div id="main">
         <div id="game">
           <img id="background" />
@@ -34,89 +49,76 @@
               </p>
             </div>
           </div>
+
+          <img id="edit-button" src="/images/icons/edit.svg" />
+          <img id="add-button" src="/images/icons/tree.svg" />
+          <img id="add-hallway-button" src="/images/icons/portal.png" />
+          <img id="add-room-button" src="/images/icons/home.svg" />
         </div>
 
-        <div id="top-bar">
-          <img id="top-bar-logo" src="/images/logo.png" />
-          <div id="top-bar-button-container">
-            <button id="day-of-button">
-              <img src="/images/icons/guidebook.svg" />
-            </button>
-            <button id="map-button">
-              <img src="/images/icons/map.svg" />
-            </button>
-            <button id="schedule-button">
-              <img src="/images/icons/schedule.svg" />
-            </button>
+          <div id="sponsor-pane">
+            <h2>Welcome to</h2>
+            <img id="sponsor-name" src="/images/sponsor_text.svg" />
+            <div id="sponsor-pane-actions">
+              <div class="action">
+                <div class="icon-container">
+                  <img src="/images/Code_Icon.svg" />
+                </div>
+                <span>View Challenges</span>
+              </div>
+              <div class="action" id="queue-button">
+                <div class="icon-container">
+                  <img id="queue-button-icon" src="/images/Coffee_Icon.svg" />
+                </div>
+                <span id="queue-button-text">Talk to CMT</span>
+              </div>
+              <div class="action">
+                <div class="icon-container">
+                  <img src="/images/Site_Icon.svg" />
+                </div>
+                <span>Visit Website</span>
+              </div>
+            </div>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
+              cursus eu diam nec malesuada. Duis facilisis ante in leo faucibus
+              luctus. Donec felis sem, accumsan a consectetur nec, venenatis et
+              magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Sed aliquam nibh vitae risus faucibus laoreet. Ut eleifend
+              lobortis nisl, at tristique tortor mollis sit amet. Donec
+              malesuada libero placerat, gravida lectus nec, congue ex. Donec a
+              leo at enim posuere tempor et at urna. Phasellus leo est, aliquam
+              sit amet porta sit amet, interdum feugiat nisi.
+            </p>
           </div>
-        </div>
+      </div>
 
-        <img id="edit-button" src="/images/icons/edit.svg" />
-        <img id="add-button" src="/images/icons/tree.svg" />
-        <img id="add-hallway-button" src="/images/icons/portal.png" />
-        <img id="add-room-button" src="/images/icons/home.svg" />
         <div id="chat" class="ChatBottom">
-            <button id="dance-button">
-              <img src="/images/icons/dance.svg" />
-            </button>
-            <button id="friends-button">
-              <div class="new-message-indicator"></div>
-              <img src="/images/icons/friends.svg" />
-            </button>
-            <button id="jukebox-button">
-              <img src="/images/icons/music.svg" />
-            </button>
-            <input
-              id="chat-box"
-              type="text"
-              placeholder="Send a message to the room"
-            />
-            <p id="chat-length-indicator" class="invisible"></p>
-            <button id="send-button">
-              <img src="/images/icons/send.svg" />
-            </button>
-            <button id="settings-button">
-              <img src="/images/icons/settings.svg" />
-            </button>
-            <button id="igloo-button">
-              <img src="/images/icons/home-white.svg" />
-            </button>
-          </div>
-        </div>
-        <div id="sponsor-pane">
-          <h2>Welcome to</h2>
-          <img id="sponsor-name" src="/images/sponsor_text.svg" />
-          <div id="sponsor-pane-actions">
-            <div class="action">
-              <div class="icon-container">
-                <img src="/images/Code_Icon.svg" />
-              </div>
-              <span>View Challenges</span>
-            </div>
-            <div class="action" id="queue-button">
-              <div class="icon-container">
-                <img id="queue-button-icon" src="/images/Coffee_Icon.svg" />
-              </div>
-              <span id="queue-button-text">Talk to CMT</span>
-            </div>
-            <div class="action">
-              <div class="icon-container">
-                <img src="/images/Site_Icon.svg" />
-              </div>
-              <span>Visit Website</span>
-            </div>
-          </div>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
-            cursus eu diam nec malesuada. Duis facilisis ante in leo faucibus
-            luctus. Donec felis sem, accumsan a consectetur nec, venenatis et
-            magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-            aliquam nibh vitae risus faucibus laoreet. Ut eleifend lobortis
-            nisl, at tristique tortor mollis sit amet. Donec malesuada libero
-            placerat, gravida lectus nec, congue ex. Donec a leo at enim posuere
-            tempor et at urna. Phasellus leo est, aliquam sit amet porta sit
-            amet, interdum feugiat nisi.
-          </p>
+          <button id="dance-button">
+            <img src="/images/icons/dance.svg" />
+          </button>
+          <button id="friends-button">
+            <div class="new-message-indicator"></div>
+            <img src="/images/icons/friends.svg" />
+          </button>
+          <button id="jukebox-button">
+            <img src="/images/icons/music.svg" />
+          </button>
+          <input
+            id="chat-box"
+            type="text"
+            placeholder="Send a message to the room"
+          />
+          <p id="chat-length-indicator" class="invisible"></p>
+          <button id="send-button">
+            <img src="/images/icons/send.svg" />
+          </button>
+          <button id="settings-button">
+            <img src="/images/icons/settings.svg" />
+          </button>
+          <button id="igloo-button">
+            <img src="/images/icons/home-white.svg" />
+          </button>
         </div>
       </div>
     </div>

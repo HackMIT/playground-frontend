@@ -5,6 +5,8 @@
 @import 'fonts';
 @import 'colors';
 
+$top_bar_height: 64px;
+$chat_bar_height: 52px;
 $chat_input_height: 40px;
 
 * {
@@ -54,35 +56,61 @@ body {
 }
 
 #outer {
-  width: 177.77vh;
+  width: 100vw;
   height: 100vh;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 
-  &.vertical {
-    width: 100vw;
-    height: 56.25vw;
-    position: absolute;
-    transform: translate(-50%, -50%);
-    left: 50%;
-    top: 50%;
-  }
+  #top-bar {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    background: rgba(255, 255, 255, 0.7);
+    height: $top_bar_height;
+    width: 100%;
 
-  &.sponsor {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    #main {
-      display: flex;
+    #top-bar-logo {
+      background: transparent;
+      height: 100%;
       align-items: center;
-      justify-content: space-around;
-      flex-grow: 1;
+      grid-column-start: 2;
+    }
+
+    #top-bar-button-container {
+      display: flex;
+      justify-content: flex-end;
+
+      button {
+        background: none;
+        border: none;
+        margin-left: 20px;
+        margin-right: 20px;
+        width: 32px;
+
+        &:hover {
+          transform: translateY(-2px);
+        }
+      }
     }
   }
 
   #main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    height: 100%;
+  }
+
+  &.vertical #game {
+    width: 100vw;
+    max-height: 56.25vw;
+  }
+
+  #game {
+    width: calc((100vh - #{$top_bar_height} - #{$chat_bar_height}) * (16 / 9));
+    height: calc(100vh - #{$top_bar_height} - #{$chat_bar_height});
   }
 }
 
@@ -90,14 +118,10 @@ body {
   background: $chat_box_background;
   border-radius: 8px;
   display: flex;
-  height: 52px;
+  height: $chat_bar_height;
   align-items: center;
   justify-content: space-around;
   padding: 0 16px;
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translate(-50%, 0);
 
   input {
     color: #fff;
@@ -174,10 +198,9 @@ body {
         border-radius: 50%;
         background: #ff9797;
       }
-
     }
   }
-  .dance-pane-button{
+  .dance-pane-button {
     background: #7b9fce;
   }
 }
@@ -189,6 +212,7 @@ body {
   background-size: 100% 100%;
   position: relative;
   overflow: hidden;
+  display: flex;
 
   #background {
     position: absolute;
@@ -269,55 +293,6 @@ body {
     width: 64px;
     cursor: pointer;
   }
-
-  #top-bar {
-    display: grid; 
-    grid-template-columns: 1fr 80px 1fr; 
-    background: rgba(255, 255, 255, .7);
-    position: absolute;
-    top: 0%;
-    width: 100%;
-
-    #top-bar-logo {
-      background: transparent;
-      width: 100%;
-      align-items: center;
-      grid-column-start: 2;
-    }
-
-  }
-
-  #top-bar-button-container {
-    display: flex;
-    justify-content: flex-end;
-
-    button {
-      background: none;
-      border: none;
-      margin-left: 20px;
-      margin-right: 20px;
-
-      &:hover {
-        transform: translateY(-2px);
-      }
-    }
-
-    #day-of-button {
-      width: 8%;
-      height: auto;
-    }
-
-    #map-button {
-      width: 8%;
-      height: auto;
-    }  
-
-    #schedule-button {
-      width: 8%;
-      height: auto;
-    }
-  }
-  
 }
 
 .element {

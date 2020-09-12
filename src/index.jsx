@@ -216,7 +216,9 @@ class Game extends Page {
       return;
     }
 
-    const rect = document.getElementById('game').getBoundingClientRect();
+    const rect = document
+      .getElementById('three-canvas')
+      .getBoundingClientRect();
     const x = (e.pageX - rect.x) / rect.width;
     const y = (e.pageY - rect.y) / rect.height;
 
@@ -650,7 +652,13 @@ class Game extends Page {
   handleWindowSize = () => {
     const outerElem = document.getElementById('outer');
 
-    if (window.innerWidth < window.innerHeight * (16 / 9)) {
+    let width = window.innerWidth;
+
+    if (this.room !== null && this.room.sponsorId.length > 0) {
+      width -= 340 + 24 * 3;
+    }
+
+    if (width < (window.innerHeight - (52 + 64)) * (16 / 9)) {
       if (outerElem.classList.contains('vertical')) {
         return;
       }
