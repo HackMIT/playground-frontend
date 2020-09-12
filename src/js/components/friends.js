@@ -39,7 +39,7 @@ class FriendsPane {
     if (friends.length === 0) {
       friendsListContainer = <div id="no-friends-container" />
       friendsListContainer.appendChild(
-        <p id="no-friends">
+        <p>
           You have no friends :(
           <br />
           Try clicking someone to make a friend!</p>
