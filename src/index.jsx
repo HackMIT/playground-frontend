@@ -438,6 +438,17 @@ class Game extends Page {
         this.stopLoading();
         loginPanel.show();
       }
+      if (data.code === 2) {
+        this.stopLoading();
+        createModal(
+          <div id="jukebox-modal">
+            <h1 className="white-text">Oops!</h1>
+            <p className="white-text">
+              You must be a college student to enter the nightclub.
+            </p>
+          </div>
+        );
+      }
     } else if (data.type === 'join') {
       this.scene.newCharacter(data.character.id, data.character);
     } else if (data.type === 'leave') {
