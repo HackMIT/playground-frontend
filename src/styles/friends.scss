@@ -11,6 +11,18 @@
   transform: translate(-230px, -184px);
 }
 
+#no-friends-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+
+  p {
+    color: white;
+    text-align: center;
+  }
+}
+
 #friends-pane-arrow {
   width: 0;
   height: 0;
