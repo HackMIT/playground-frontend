@@ -69,6 +69,9 @@ class QueueManager {
           text = `It's your turn to talk to ${this.sponsor.name}! Chat with them now at ${msg.url}`;
           duration = 30000;
 
+          const audio = new Audio('/audio/notification.mp3');
+          audio.play();
+
           this.reset(this.sponsor);
         } else if (this.sponsor === undefined) {
           // Show full message the first time they join the queue
