@@ -110,7 +110,7 @@ class Achievements {
       and room specially designed for you to interact and learn more about them. Visit 3-4 companies and at least\
        one non-profit and come get your badge!',
         img: '../images/red_arrow.svg',
-        sticker:'../images/company.svg'
+        sticker:'../images/company.jgp'
       },
       {
         title: 'PEER EXPO',
@@ -118,7 +118,7 @@ class Achievements {
           'Meet people from around the world and see their amazing projects! \
         Visit at least 3 other teams in Peer Expo and claim your sticker.',
         img: '../images/blue_arrow.svg',
-        sticker:'../images/peerexpo.svg'
+        sticker:'../images/peerexpo.jpg'
       },
       {
         title: 'HANGOUTS',
@@ -128,7 +128,7 @@ class Achievements {
           HackMIT 2020 is larger than ever! That means more people to interact with, more connections to make, more friendships to form.\
            Meet at least 5 other people to claim your sticker, one of them from a different country from you!',
         img: '../images/red_arrow.svg',
-        sticker:'../images/meet.svg'
+        sticker:'../images/meet.jpg'
       },
     ];
     // eslint-disable-next-line no-console
