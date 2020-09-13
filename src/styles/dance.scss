@@ -4,11 +4,11 @@
   background: #24447c;
   border-radius: 4px;
   box-sizing: border-box;
-  padding: 2px;
+  padding: 5px;
   position: absolute;
-  width: 100px;
-  height: 50px;
-  transform: translate(-272px, -60px);
+  width: fit-content;
+  height: fit-content;
+  transform: translate(-272px, -73px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,10 +16,10 @@
 
 
 #dance-buttons-div{
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-row-gap: 4px;
 }
 
 
@@ -31,7 +31,7 @@
   border-right: 12px solid transparent;
   border-bottom: none;
   position: absolute;
-  top: 50px;
+  top: 86px;
   left: 50%;
   transform: translateX(-50%);
 }
