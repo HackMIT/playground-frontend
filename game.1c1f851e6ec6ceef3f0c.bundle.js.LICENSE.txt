@@ -8,8 +8,4 @@
  * Licensed under the MIT license.
  */
 
-//! moment.js
-
-//! moment.js language configuration
-
-//! moment.js locale configuration
+/*! http://mths.be/base64 v0.1.0 by @mathias | MIT license */
