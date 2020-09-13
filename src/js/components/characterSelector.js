@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+
+import socket from '../socket';
 
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
@@ -11,15 +12,18 @@ class CharacterSelector {
   constructor() {
     this.activeTab = 'skin';
 
+    // pink: FF69B4
     this.options = {
       eyes: ['#634e34', '#2e536f', '#3d671d', '#1c7847', '#497665', '#ff0000'],
       skin: ['#8d5524', '#c68642', '#e0ac69', '#f1c27d', '#ffdbac'],
       shirt: ['#d6e2f9', '#75c05c', '#e4c3a4', '#f7f1d3', '#b93434'],
+      pants: ['#ecf0f1'],
     };
 
     [this.eyeColor] = this.options.eyes;
     [this.skinColor] = this.options.skin;
     [this.shirtColor] = this.options.shirt;
+    [this.pantsColor] = this.options.pants;
   }
 
   get color() {
@@ -30,6 +34,8 @@ class CharacterSelector {
         return this.eyeColor;
       case 'shirt':
         return this.shirtColor;
+      case 'pants':
+        return this.pantsColor;
       default:
         break;
     }
@@ -48,8 +54,18 @@ class CharacterSelector {
       this.eyeColor = newValue;
     } else if (this.activeTab === 'shirt') {
       this.shirtColor = newValue;
+    } else if (this.activeTab === 'pants') {
+      this.pantsColor = newValue;
     }
   }
+
+  cleanup = () => {
+    console.log('goodbye');
+    // this.renderCalls = [];
+    // this.scene = null;
+    // this.renderer = null;
+    window.cancelAnimationFrame(this.renderId);
+  };
 
   updatePaneContent = () => {
     const paneElem = document.getElementById('character-selector-pane');
@@ -103,6 +119,7 @@ class CharacterSelector {
         Head: this.getColor(this.skinColor),
         Face: this.getColor(this.eyeColor),
         Shirt: this.getColor(this.shirtColor),
+        Skin: this.getColor(this.pantsColor),
       };
 
       gltfData.materials = gltfData.materials.map((mat) => {
@@ -158,57 +175,60 @@ class CharacterSelector {
     this.updatePaneContent();
   };
 
+  render = () => {
+    this.renderId = requestAnimationFrame(this.render);
+    const timeDelta = this.clock.getDelta();
+    this.renderCalls.forEach((callback) => {
+      callback(timeDelta);
+    });
+  };
+
   createModal = () => {
-    const backgroundColor = 0x666666;
+    if (this.scene === undefined) {
+      const backgroundColor = 0x666666;
 
-    /* //////////////////////////////////////// */
+      /* //////////////////////////////////////// */
 
-    const clock = new THREE.Clock();
+      this.clock = new THREE.Clock();
+      this.renderCalls = [];
 
-    this.renderCalls = [];
-    const render = () => {
-      requestAnimationFrame(render);
-      const timeDelta = clock.getDelta();
-      this.renderCalls.forEach((callback) => {
-        callback(timeDelta);
-      });
-    };
-    render();
+      /* //////////////////////////////////////// */
 
-    /* //////////////////////////////////////// */
+      const width = 240;
+      const height = 320;
 
-    const width = 240;
-    const height = 320;
+      this.scene = new THREE.Scene();
 
-    this.scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(80, width / height, 0.1, 800);
+      camera.position.set(0, 2.15, 2.5);
+      camera.rotation.x = -0.2;
 
-    const camera = new THREE.PerspectiveCamera(80, width / height, 0.1, 800);
-    camera.position.set(0, 2.15, 2.5);
-    camera.rotation.x = -0.2;
+      this.renderer = new THREE.WebGLRenderer({ antialias: true });
+      this.renderer.setPixelRatio(window.devicePixelRatio);
+      this.renderer.setSize(width, height);
+      this.renderer.setClearColor(backgroundColor);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(width, height);
-    renderer.setClearColor(backgroundColor);
+      // renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      // renderer.toneMappingExposure = 0.8;
+      // renderer.outputEncoding = THREE.sRGBEncoding;
 
-    // renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    // renderer.toneMappingExposure = 0.8;
-    // renderer.outputEncoding = THREE.sRGBEncoding;
+      const renderScene = () => {
+        this.renderer.render(this.scene, camera);
+      };
 
-    const renderScene = () => {
-      renderer.render(this.scene, camera);
-    };
+      this.renderCalls.push(renderScene);
 
-    this.renderCalls.push(renderScene);
+      /* ////////////////////////////////////////////////////////////////////////// */
 
-    /* ////////////////////////////////////////////////////////////////////////// */
+      const light = new THREE.HemisphereLight(0xffffbb, 0x141434, 1.5);
+      this.scene.add(light);
 
-    const light = new THREE.HemisphereLight(0xffffbb, 0x141434, 1.5);
-    this.scene.add(light);
+      /* ////////////////////////////////////////////////////////////////////////// */
 
-    /* ////////////////////////////////////////////////////////////////////////// */
+      this.setCharacter();
+    }
 
-    this.setCharacter();
+    this.render();
 
     const tabElements = ['Skin', 'Eyes', 'Shirt', 'Pants'].map((tabName) => {
       return (
@@ -225,10 +245,26 @@ class CharacterSelector {
         <div id="character-selector-tabs">{tabElements}</div>
         <div id="character-selector-content">
           <div id="character-selector-canvas-container">
-            {renderer.domElement}
+            {this.renderer.domElement}
           </div>
           <div id="character-selector-pane">{this.createPaneContent()}</div>
         </div>
+        <button
+          onclick={() => {
+            socket.send({
+              type: 'wardrobe_change',
+              eyeColor: this.eyeColor,
+              skinColor: this.skinColor,
+              shirtColor: this.shirtColor,
+              pantsColor: this.pantsColor,
+            });
+
+            this.cleanup();
+            document.getElementById('modal-background').remove();
+          }}
+        >
+          Submit
+        </button>
       </div>
     );
   };

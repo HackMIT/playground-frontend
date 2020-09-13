@@ -102,6 +102,20 @@ class Scene {
     // }
   }
 
+  updateClothes(id, data) {
+    const characterData = this.characters[id].data;
+
+    Object.keys(data).forEach((key) => {
+      characterData[key] = data[key];
+    });
+
+    this.characters[id].safeDelete(this);
+    delete this.characters[id];
+
+    console.log(characterData);
+    this.newCharacter(id, characterData);
+  }
+
   // move character with given id to x,y
   moveCharacter(id, x, y, callback) {
     const newPos = this.worldVectorForPos(x, y);

@@ -1,3 +1,4 @@
+import characterSelector from './components/characterSelector';
 import createModal from '../modal';
 import mapInstance from './components/worldMap';
 
@@ -11,6 +12,7 @@ import createElement from '../utils/jsxHelper';
 const NO_ACTION = 0;
 const JUKEBOX_OPEN_ACTION = 1;
 const MAP_OPEN_ACTION = 2;
+const WARDROBE_OPEN_ACTION = 3;
 
 class Element extends Editable {
   dataKeyName = 'element';
@@ -99,6 +101,8 @@ class Element extends Editable {
       createModal(mapElem);
 
       mapInstance.createMap(this.characterId);
+    } else if (this.data.action === WARDROBE_OPEN_ACTION) {
+      createModal(characterSelector.createModal());
     }
   }
 

@@ -390,7 +390,9 @@ class Game extends Page {
       // Start managers
       notificationsManager.start();
 
-      createModal(characterSelector.createModal());
+      if (data.character.shirtColor === '#d6e2f8') {
+        createModal(characterSelector.createModal());
+      }
     } else if (data.type === 'dance') {
       this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
@@ -462,6 +464,8 @@ class Game extends Page {
       this.scene.deleteCharacter(data.character.id);
     } else if (data.type === 'chat') {
       this.scene.sendChat(data.id, data.mssg);
+    } else if (data.type === 'wardrobe_change') {
+      this.scene.updateClothes(data.characterId, data);
     } else {
       console.log(`received unknown packet: ${data.type}`);
       console.log(data);

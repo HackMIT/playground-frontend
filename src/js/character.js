@@ -45,10 +45,13 @@ class Character {
       req.open('GET', 'models/character.gltf', true);
       req.onload = () => {
         const gltfData = JSON.parse(req.response);
+        console.log(data);
 
         const matColors = {
-          Skin: [1, 0, 0],
-          Face: [1, 0, 0],
+          Head: this.getColor(data.skinColor),
+          Face: this.getColor(data.eyeColor),
+          Shirt: this.getColor(data.shirtColor),
+          Skin: this.getColor(data.pantsColor),
         };
 
         gltfData.materials = gltfData.materials.map((mat) => {
@@ -77,27 +80,18 @@ class Character {
 
       req.send();
     }
-
-    // parent.loader.load(
-    //   data.id === 'tim' ? 'beaver.glb' : 'character.glb',
-    //   (gltf) => {
-    //     console.log(gltf);
-    //     gltf.scene.scale.set(scale, scale, scale);
-    //     this.setModel(
-    //       parent,
-    //       gltf.scene,
-    //       gltf.animations,
-    //       data.id === 'tim' ? 0 : 1,
-    //       data.x,
-    //       data.y
-    //     );
-    //   },
-    //   undefined,
-    //   (e) => {
-    //     console.error(e);
-    //   }
-    // );
   }
+
+  getColor = (hex) => {
+    return hex
+      .replace(
+        /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
+        (m, r, g, b) => `#${r}${r}${g}${g}${b}${b}`
+      )
+      .substring(1)
+      .match(/.{2}/g)
+      .map((x) => parseInt(x, 16) / 255);
+  };
 
   update(deltaTime) {
     if (this.model !== undefined) {

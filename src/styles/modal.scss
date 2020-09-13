@@ -29,6 +29,7 @@
   background: rgba(0, 0, 0, 0);
   width: 60vw;
   height: 88vh;
+  display: flex;
   align-items: center;
   justify-content: center;
   animation-name: animatetop;
@@ -37,6 +38,10 @@
 
   * {
     max-width: 100%;
+  }
+
+  & > div {
+    width: 100%;
   }
 }
 
