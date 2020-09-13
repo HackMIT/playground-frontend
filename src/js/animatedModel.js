@@ -112,7 +112,6 @@ class AnimatedModel {
   }
 
   setAnimation(dest, callback) {
-    console.log(dest);
     if (this.animation.destination && this.animation.destination.equals(dest)) {
       return 0;
     }
@@ -138,7 +137,7 @@ class AnimatedModel {
       new THREE.Vector3(0, 1, 0),
       angle
     );
-    console.log(this.walkCycleIndex);
+
     this.animationCycles[this.walkCycleIndex].enabled = true;
 
     this.callback = callback;

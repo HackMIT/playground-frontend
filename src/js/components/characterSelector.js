@@ -60,10 +60,6 @@ class CharacterSelector {
   }
 
   cleanup = () => {
-    console.log('goodbye');
-    // this.renderCalls = [];
-    // this.scene = null;
-    // this.renderer = null;
     window.cancelAnimationFrame(this.renderId);
   };
 
@@ -239,6 +235,7 @@ class CharacterSelector {
     });
 
     tabElements[0].classList.add('selected');
+    this.activeTab = 'skin';
 
     return (
       <div id="character-selector">

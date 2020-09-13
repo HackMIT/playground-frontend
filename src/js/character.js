@@ -45,7 +45,6 @@ class Character {
       req.open('GET', 'models/character.gltf', true);
       req.onload = () => {
         const gltfData = JSON.parse(req.response);
-        console.log(data);
 
         const matColors = {
           Head: this.getColor(data.skinColor),

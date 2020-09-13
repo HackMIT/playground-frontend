@@ -43,7 +43,6 @@ class SponsorPanel {
   };
 
   subscribe = (sponsorId) => {
-    console.log(sponsorId);
     this.sponsorId = sponsorId;
 
     socket.send({

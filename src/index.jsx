@@ -466,9 +466,6 @@ class Game extends Page {
       this.scene.sendChat(data.id, data.mssg);
     } else if (data.type === 'wardrobe_change') {
       this.scene.updateClothes(data.characterId, data);
-    } else {
-      console.log(`received unknown packet: ${data.type}`);
-      console.log(data);
     }
   };
 
