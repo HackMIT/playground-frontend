@@ -46,25 +46,23 @@ class Character {
       req.onload = () => {
         const gltfData = JSON.parse(req.response);
 
-        if (data.id !== 'tim') {
-          const matColors = {
-            Skin: [1, 0, 0],
-            Face: [1, 0, 0],
-          };
+        const matColors = {
+          Skin: [1, 0, 0],
+          Face: [1, 0, 0],
+        };
 
-          gltfData.materials = gltfData.materials.map((mat) => {
-            if (Object.keys(matColors).includes(mat.name)) {
-              mat.pbrMetallicRoughness.baseColorFactor = matColors[
-                mat.name
-              ].concat(
-                // add 1 to array for alpha channel
-                1
-              );
-            }
+        gltfData.materials = gltfData.materials.map((mat) => {
+          if (Object.keys(matColors).includes(mat.name)) {
+            mat.pbrMetallicRoughness.baseColorFactor = matColors[
+              mat.name
+            ].concat(
+              // add 1 to array for alpha channel
+              1
+            );
+          }
 
-            return mat;
-          });
-        }
+          return mat;
+        });
 
         parent.loader.parse(
           JSON.stringify(gltfData),

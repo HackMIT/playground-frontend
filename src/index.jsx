@@ -15,6 +15,7 @@ import dance from './js/components/dance';
 import jukebox from './jukebox';
 import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
+import characterSelector from './js/components/characterSelector';
 
 import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
@@ -388,6 +389,8 @@ class Game extends Page {
 
       // Start managers
       notificationsManager.start();
+
+      createModal(characterSelector.createModal());
     } else if (data.type === 'dance') {
       this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
