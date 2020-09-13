@@ -1,3 +1,4 @@
+import constants from '../../constants';
 import socket from '../socket';
 
 // eslint-disable-next-line
@@ -41,7 +42,7 @@ class LoginPanel {
             <h1>Log into Playground</h1>
             <a
               className="green button"
-              href="https://my.hackmit.org/login?sso=http://localhost:3000/login"
+              href={`https://my.hackmit.org/login?sso=${constants.baseURL}/login`}
             >
               Hacker Login
             </a>

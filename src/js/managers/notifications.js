@@ -20,6 +20,11 @@ class NotificationsPane {
 
     this.hideTimer = setTimeout(() => {
       document.getElementById('notifications-pane').classList.add('hidden');
+
+      setTimeout(() => {
+        // Hide text after the notification animates out
+        document.getElementById('notification-text').innerText = '';
+      }, 250);
     }, duration);
   };
 

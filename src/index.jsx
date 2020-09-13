@@ -20,6 +20,7 @@ import characterSelector from './js/components/characterSelector';
 import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
 import queueManager from './js/managers/queue';
+import constants from './constants';
 
 // eslint-disable-next-line
 import statusManager from './js/managers/status';
@@ -107,6 +108,7 @@ class Game extends Page {
     this.addClickListener('map-button', this.handleMapButton);
     this.addClickListener('queue-button', this.handleQueueButton);
     this.addClickListener('website-button', this.handleWebsiteButton);
+    this.addClickListener('schedule-button', this.handleScheduleButton);
 
     this.handleWindowSize();
 
@@ -503,21 +505,6 @@ class Game extends Page {
     });
   };
 
-  handleRoomAddButton = () => {
-    const roomName = prompt('What should the room be called?');
-    const backgroundPath = prompt("What's this room's background path?");
-    const sponsor = prompt("Type 'true' if this is a sponsor room").includes(
-      'true'
-    );
-
-    socket.send({
-      type: 'room_add',
-      id: roomName,
-      background: backgroundPath,
-      sponsor,
-    });
-  };
-
   handleEditButton = () => {
     this.editing = !this.editing;
 
@@ -570,6 +557,10 @@ class Game extends Page {
 
   handleWebsiteButton = () => {
     window.open(this.room.sponsor.url, '_blank');
+  };
+
+  handleScheduleButton = () => {
+    window.open(constants.calendarURL, '_blank');
   };
 
   handleJukeboxButton = () => {
