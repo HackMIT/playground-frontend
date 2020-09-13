@@ -18,27 +18,87 @@ class Character {
     this.data = data;
     this.reverseRaycaster = reverseRaycaster;
 
-    const scale = data.id === 'tim' ? 0.04 : 1.3;
+    const onModelLoadSuccess = (gltf) => {
+      const scale = data.id === 'tim' ? 0.04 : 1.3;
+      gltf.scene.scale.set(scale, scale, scale);
+      this.setModel(
+        parent,
+        gltf.scene,
+        gltf.animations,
+        data.id === 'tim' ? 0 : 2,
+        data.x,
+        data.y
+      );
+    };
 
-    // load glb file
-    parent.loader.load(
-      data.id === 'tim' ? 'beaver.glb' : 'character.glb',
-      (gltf) => {
-        gltf.scene.scale.set(scale, scale, scale);
-        this.setModel(
-          parent,
-          gltf.scene,
-          gltf.animations,
-          data.id === 'tim' ? 0 : 1,
-          data.x,
-          data.y
+    if (data.id === 'tim') {
+      parent.loader.load(
+        'models/beaver.glb',
+        onModelLoadSuccess,
+        undefined,
+        (err) => {
+          console.error(err);
+        }
+      );
+    } else {
+      const req = new XMLHttpRequest();
+      req.open('GET', 'models/character.gltf', true);
+      req.onload = () => {
+        const gltfData = JSON.parse(req.response);
+
+        if (data.id !== 'tim') {
+          const matColors = {
+            Skin: [1, 0, 0],
+            Face: [1, 0, 0],
+          };
+
+          gltfData.materials = gltfData.materials.map((mat) => {
+            if (Object.keys(matColors).includes(mat.name)) {
+              mat.pbrMetallicRoughness.baseColorFactor = matColors[
+                mat.name
+              ].concat(
+                // add 1 to array for alpha channel
+                1
+              );
+            }
+
+            return mat;
+          });
+        }
+
+        parent.loader.parse(
+          JSON.stringify(gltfData),
+          'models/',
+          onModelLoadSuccess,
+          undefined,
+          (err) => {
+            console.error(err);
+          }
         );
-      },
-      undefined,
-      (e) => {
-        console.error(e);
-      }
-    );
+      };
+
+      req.send();
+    }
+
+    // parent.loader.load(
+    //   data.id === 'tim' ? 'beaver.glb' : 'character.glb',
+    //   (gltf) => {
+    //     console.log(gltf);
+    //     gltf.scene.scale.set(scale, scale, scale);
+    //     this.setModel(
+    //       parent,
+    //       gltf.scene,
+    //       gltf.animations,
+    //       data.id === 'tim' ? 0 : 1,
+    //       data.x,
+    //       data.y
+    //     );
+    //   },
+    //   undefined,
+    //   (e) => {
+    //     console.error(e);
+    //   }
+    // );
   }
 
   update(deltaTime) {
