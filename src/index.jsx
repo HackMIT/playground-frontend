@@ -1,4 +1,7 @@
+
+
 import hotkeys from 'hotkeys-js';
+import isMobile from 'ismobilejs';
 
 import Scene from './js/scene';
 import Element from './js/element';
@@ -53,6 +56,7 @@ import './images/swoopy.svg';
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
+
 // eslint-disable-next-line
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
@@ -67,8 +71,11 @@ class Game extends Page {
   }
 
   start = () => {
-    if (!window.WebSocket) {
-      // TODO: Handle error -- tell people their browser is incompatible
+    if (isMobile(window.navigator).any || !window.WebSocket) {
+      this.stopLoading();
+      loginPanel.hide();
+      document.getElementById("outer").innerHTML = "<div id=\"unsupported\">Unsupported device or browser</div>"
+      return;
     }
 
     loginPanel.update();
