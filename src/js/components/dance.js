@@ -25,6 +25,18 @@ class DancePane {
           <button className="dance-pane-button" id="dance-button-2">
             <img src="/images/icons/dance.svg" />
           </button>
+          <button className="dance-pane-button" id="dance-button-3">
+            <img src="/images/icons/dance.svg" />
+          </button>
+          <button className="dance-pane-button" id="dance-button-4">
+            <img src="/images/icons/dance.svg" />
+          </button>
+          <button className="dance-pane-button" id="dance-button-5">
+            <img src="/images/icons/dance.svg" />
+          </button>
+          <button className="dance-pane-button" id="dance-button-6">
+            <img src="/images/icons/dance.svg" />
+          </button>
         </div>
         <div id="dance-pane-arrow" />
       </div>
