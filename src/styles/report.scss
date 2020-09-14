@@ -1,0 +1,76 @@
+@import 'colors';
+
+#report-pane {
+  background: #fbcdc2;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 2px;
+  position: absolute;
+  width: fit-content;
+  height: 50px;
+  transform: translate(68px, -88px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: fit-content;
+
+  #report-div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    color: #24447c;
+    padding: 6px;
+    height: 66px;
+    
+    #report-input {
+      font-family: Muli;
+    }
+
+    #submit-report-button {
+      background: #43a047;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 15px;
+      outline: none;
+      margin-left: 5px;
+      padding: 5px;
+      width: fit-content;
+
+      &:hover {
+        background: #388e3c;
+      }
+
+      &:active {
+        background: #388e3c;
+        transform: translateY(1px);
+      }
+    }
+  }
+
+  #report-pane-arrow {
+    width: 0;
+    height: 0;
+    border-top: 12px solid #fbcdc2;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: none;
+    position: absolute;
+    top: 78px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  #reported-id {
+    display: none;
+  }
+}
+
+
+
+
+
+
+

@@ -664,7 +664,7 @@ class Game extends Page {
       // Never created friends pane before, create it now
       document
         .getElementById('chat')
-        .appendChild(dance.createDancePane(this.friends));
+        .appendChild(dance.createDancePane());
       this.dancePaneVisible = true;
     }
   };

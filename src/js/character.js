@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import AnimatedModel from './animatedModel';
 import characterManager from './managers/character';
 import socket from './socket';
+import report from './components/report';
 
 import addFriendIcon from '../images/icons/add-friend.svg';
 import closeIcon from '../images/icons/close-white.svg';
@@ -181,7 +182,7 @@ class Character {
       buttons = <div />;
     } else if (characterManager.isFriend(this.data.id)) {
       buttons = (
-        <div className="profile-buttons">
+        <div id="profile-buttons" className="profile-buttons">
           <button>
             <img src={messageIcon} />
           </button>
@@ -192,7 +193,7 @@ class Character {
       );
     } else {
       buttons = (
-        <div className="profile-buttons">
+        <div id="profile-buttons" className="profile-buttons">
           <button
             onclick={() => {
               socket.send({
@@ -203,7 +204,7 @@ class Character {
           >
             <img src={addFriendIcon} />
           </button>
-          <button>
+          <button id="report-button" onclick={() => { this.handleReportButton() }}>
             <img src={flagIcon} />
           </button>
         </div>
@@ -247,6 +248,25 @@ class Character {
 
     return this.data.name;
   }
+
+  handleReportButton = () => {
+    if (this.reportPaneVisible === true) {
+      // Hide the pane
+      document.getElementById('report-pane').classList.add('invisible');
+      this.reportPaneVisible = false;
+    } else if (this.reportPaneVisible === false) {
+      // make the pane visible
+      document.getElementById('report-pane').classList.remove('invisible');
+      this.reportPaneVisible = true;
+    } else {
+      // create it now
+      document
+        .getElementById('profile-buttons')
+        .appendChild(report.createReportPane());
+      this.reportPaneVisible = true;
+    }
+    document.getElementById('reported-id').value = this.data.id;
+  };
 }
 
 export default Character;
