@@ -13,21 +13,21 @@ class Jukebox {
     this.songs = [];
     this.currentSong = null; 
 
-    socket.subscribe(['song', 'error', 'songs'], this.handleSocketMessage);
+    socket.subscribe(['song', 'error', 'songs', 'playSong'], this.handleSocketMessage);
   }
 
   handleSocketMessage = (msg) => {
     if (msg.type === 'songs') {
       this.songs = msg.songs;
     }
-    else if (msg.type === 'song' && msg.playing) {
-      this.currentSong = msg
+    else if (msg.type === 'playSong') {
+      this.currentSong = msg.song
       this.updateJukeboxPane(msg.song);
     }
     else if (msg.type === 'song' && msg.remove) {
       const index = this.songs.findIndex(x => x.id === msg.id);
       this.songs.splice(index, 1);
-      this.updateJukeboxPane(msg);
+      this.updateJukeboxPane();
     }
     else if (msg.type === 'song') {
       if (msg.requiresWarning) {
@@ -70,10 +70,17 @@ class Jukebox {
   };
 
   createPlayingNowContents = (song) => {
+    let title;
+    if (song === undefined) {
+      title = "None";
+    }
+    else {
+      title = song.title;
+    }
     return (
       <div>
         <p>Playing now:</p>
-        <h2>{song.title}</h2>
+        <h2>{title}</h2>
       </div>
     );
   };
@@ -148,22 +155,27 @@ class Jukebox {
   };
 
   updateYouTubePlayer = (song) => {
+
+    if (song === undefined || song === null) {
+      return;
+    }
+
     setTimeout(() => {
 
-      console.log(song);
+    console.log(song);
 
-      YouTubeIframeLoader.load((YT) => {
-        this.player = new YT.Player('player', {
-          height: '390',
-          width: '640',
-          videoId: song.ID,
-          playerVars: {
-            autoplay: 1,
-            controls: 0,
-            start: 18,
-          },
-        });
+    YouTubeIframeLoader.load((YT) => {
+      this.player = new YT.Player('player', {
+        height: '390',
+        width: '640',
+        videoId: song.vidCode,
+        playerVars: {
+          autoplay: 1,
+          controls: 0,
+          start: song.start
+        },
       });
+    });
 
     }, 1);
   };
@@ -217,6 +229,7 @@ class Jukebox {
     document
       .getElementById('jukebox-songs-queue')
       .appendChild(this.createSongsQueueContents());
+    this.updateYouTubePlayer(this.currentSong);
   };
 }
 
