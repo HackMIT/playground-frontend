@@ -43,38 +43,30 @@
   flex-direction: column;
   align-items: center;
   margin: 1rem !important;
-
 }
 
 .Achievements-intro-tile-header {
-
-  font-family: LemonMilk;
-  font-weight: bold !important;
-  font-size: 2rem;
+  font-family: LemonMilk-Bold !important;
+  font-size: 4rem;
   color: white;
 }
 
 .Achievements-intro-tile-body {
-
   width: 650px;
-  // height: 200px;
   margin: 1rem !important;
   padding: 1rem !important;
   background-color: $accent_pink;
   border-radius: 12px;
   color: $blue_text;
 
-  // display: flex;
-  // flex-direction: column;
-  // align-items: center;
-  // justify-content: space-evenly;
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   .Achievement-intro-tile-body-title {
     margin-top: 1rem !important;
     font-size: 1.5rem;
     text-align: center;
-    font-family: LemonMilk;
-
+    font-family: LemonMilk-Bold !important;
   }
 
   .Achievement-intro-tile-body-text {
@@ -83,26 +75,37 @@
     padding: 1rem !important;
     display: table !important;
     visibility: visible !important;
-    // transform: translateY(10px) !important;
     height: auto !important;
-
     transition: all 1s ease visibility 1s !important;
-
   }
 
   .Achievement-intro-tile-body-text-hide {
-
     text-align: center;
     font-family: LemonMilk;
     padding: 1rem !important;
     visibility: hidden;
     display: block;
-    // transform: translateY(-10px);
     height: 0;
     transition: all 1s ease visibility 0s;
-
   }
 
+  .Achievements-records-container {
+    background-color: $blue_light;
+    height: 300px !important;
+    width: 500px;
+    visibility: visible !important;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border-radius: 12px;
+    margin: 1rem !important;
+  }
+  .Achievements-records-container-hide {
+    background-color: $blue_light;
+    height: 0px;
+    visibility: hidden;
+    width: 500px;
+  }
   .Achievements-body-closing-container {
     display: flex;
     flex-direction: column;
@@ -110,26 +113,22 @@
   }
 
   .Achievements-body-closing-container-tile {
-
     width: 3rem;
     margin-top: 1px !important;
     height: 0.3em;
     background-color: white;
-
   }
-
 }
 
 .Achievements-Tiles-Container {
-
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: scroll;
+  height: 400px;
 
   .Achievement-tile-container {
-
     width: 700px;
-    // height: 125px;
     display: flex;
     flex-direction: column;
     margin-top: 0.5rem !important;
@@ -137,7 +136,7 @@
     .Achievement-tile-header {
       font-weight: bold;
       color: $blue_text;
-      font-family: LemonMilk;
+      font-family: LemonMilk-Bold !important;
       font-size: 2rem;
       height: 85px;
       background-color: white;
@@ -146,14 +145,13 @@
       align-items: center;
 
       .Achievement-tile-arrow {
-
         width: 3rem;
         height: 100%;
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: center;
-
+        margin-right: 2rem !important;
 
         .Achievement-tile-arrow-container {
           transform: rotate(0deg);
@@ -168,18 +166,21 @@
           width: 2rem;
           height: 2rem;
         }
-
       }
-
-      .Achiement-tile-title {
+      .Achievement-tile-titleandsticker {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        width: 650px;
+      }
+      .Achievement-tile-title {
         display: flex;
         flex-direction: row;
         align-items: center;
         text-align: center;
-        font-weight: bold;
-
+        font-family: LemonMilk-Bold !important;
       }
-
     }
 
     .Achievement-tile-body {
@@ -206,14 +207,19 @@
       border-bottom-left-radius: 12px;
       border-bottom-right-radius: 12px;
     }
-
-    .Achievement-tile-sticker {
-
-      height: 2rem;
-      width: 2rem;
-
-    }
-
   }
-
+}
+.Achievement-tile-sticker {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 4rem;
+  width: 4rem;
+  margin: 1rem !important;
+}
+.Achievement-tile-sticker-container {
+  height: 4rem;
+  width: 4rem;
+  background-repeat: no-repeat;
+  border-radius: 100%;
 }
