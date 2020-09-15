@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[3],{87:function(o,n,t){o.exports=t(88)},88:function(o,n){var t=window.location.href.slice("http://localhost:3000/login?token=".length);window.location.href="".concat("http://localhost:3000","#").concat(t)}},[[87,0]]]);
