@@ -1,3 +1,5 @@
+import validator from 'email-validator';
+
 import socket from '../socket';
 
 import '../../styles/projectForm.scss';
@@ -111,42 +113,81 @@ class SponsorPanel {
           <p>Which challenges are you planning to submit to?</p>
           {challengeElems}
         </div>
-        <button onclick={() => this.handleSubmitButton()}>Submit</button>
+        <div id="form-errors"></div>
+        <button id="project-form-submit" onclick={() => this.handleSubmitButton()}>Submit</button>
       </div>
     );
   };
 
   handleSubmitButton = () => {
-    const packet = {
-      name: document.getElementById('name').value,
-      pitch: document.getElementById('pitch').value,
-      teammates: document
-        .getElementById('teammates')
-        .value.split(',')
-        .map((x) => x.trim()),
-      type: 'project_form',
-      zoom: document.getElementById('zoom').value,
-    };
-
+    document.getElementById('form-errors').innerHTML = '';
+    let submit = true;
     const selectedTrackElem = document.querySelector(
       'input[name="track"]:checked'
     );
 
-    if (selectedTrackElem) {
-      packet.track = selectedTrackElem.value;
-    }
-
     const selectedChallengeElems = document.querySelectorAll(
       'input[name="challenges"]:checked'
     );
+
+    const teamList = document
+      .getElementById('teammates')
+      .value.split(',')
+      .map((x) => x.trim());
+
+    if (teamList.length > 3) {
+      document.getElementById('form-errors').insertAdjacentHTML('beforeend',
+        '<p>Cannot have more than four people on a team!</p>')
+      submit = false;
+    }
+
+    teamList.forEach(email => {
+      if (!validator.validate(email)) {
+        document.getElementById('form-errors').insertAdjacentHTML('beforeend',
+          `<p>${email} is not a valid email!</p>`)
+        submit = false;
+      }
+    });
+
+    if (document.getElementById('name').value === '') {
+      document.getElementById('form-errors').insertAdjacentHTML('beforeend',
+        `<p>Enter a project name!</p>`)
+      submit = false;
+    }
+
+    if (document.getElementById('pitch').value === '') {
+      document.getElementById('form-errors').insertAdjacentHTML('beforeend',
+        `<p>Enter a project description!</p>`)
+      submit = false;
+    }
+
+    if (!selectedTrackElem) {
+      document.getElementById('form-errors').insertAdjacentHTML('beforeend',
+        '<p>Please select a track to submit to.</p>')
+      submit = false;
+    }
+
+    const packet = {
+      name: document.getElementById('name').value,
+      pitch: document.getElementById('pitch').value,
+      teammates: teamList,
+      type: 'project_form',
+      zoom: document.getElementById('zoom').value,
+    };
+
+    if (selectedTrackElem) {
+      packet.track = selectedTrackElem.value;
+    }
 
     if (selectedChallengeElems) {
       packet.challenges = Array.from(selectedChallengeElems).map(
         (elem) => elem.value
       );
     }
+    if (submit) {
+      socket.send(packet);
+    }
 
-    socket.send(packet);
   };
 }
 
