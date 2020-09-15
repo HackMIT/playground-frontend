@@ -52,6 +52,9 @@ import './images/icons/guidebook.svg';
 import './images/icons/schedule.svg';
 import './images/logo.png';
 import './images/swoopy.svg';
+import './images/icons/dab.svg';
+import './images/icons/wave.svg';
+import './images/icons/floss.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
@@ -116,6 +119,12 @@ class Game extends Page {
     this.addClickListener('queue-button', this.handleQueueButton);
     this.addClickListener('website-button', this.handleWebsiteButton);
     this.addClickListener('schedule-button', this.handleScheduleButton);
+    this.addClickListener('top-bar-logo', () => {
+      socket.send({
+        type: 'teleport',
+        to: 'home'
+      });
+    });
 
     this.handleWindowSize();
 
@@ -554,7 +563,19 @@ class Game extends Page {
   };
 
   handleSettingsButton = () => {
-    createModal(settings.createSettingsModal(this.settings));
+    if (characterManager.character.role === 2) {
+      createModal(
+        queueSponsor.createQueueModal(),
+        'queue',
+        queueSponsor.onClose
+      );
+
+      queueSponsor.subscribe(this.room.sponsorId);
+    }
+    else {
+      createModal(settings.createSettingsModal(this.settings));
+    }
+
   };
 
   handleQueueButton = () => {
