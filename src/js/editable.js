@@ -80,9 +80,7 @@ class Editable {
     elementElem.appendChild(brResizeElem);
 
     brResizeElem.onmousedown = (e) => {
-      const outerRect = document
-        .getElementById('outer')
-        .getBoundingClientRect();
+      const outerRect = document.getElementById('game').getBoundingClientRect();
 
       const startRect = elementElem.getBoundingClientRect();
       const startX =
@@ -183,9 +181,7 @@ class Editable {
       elementElem.classList.add('editing');
       elementElem.classList.add('moving');
 
-      const outerRect = document
-        .getElementById('outer')
-        .getBoundingClientRect();
+      const outerRect = document.getElementById('game').getBoundingClientRect();
 
       const shiftX =
         e.pageX -

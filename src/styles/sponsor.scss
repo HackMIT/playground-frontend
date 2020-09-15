@@ -2,10 +2,6 @@ $sponsor_pane_width: 340px;
 $horizontal_spacing: 24px;
 
 #outer.sponsor {
-  #game {
-    margin-left: $horizontal_spacing;
-  }
-
   &.vertical #game {
     width: calc(100vw - #{$horizontal_spacing} * 3 - #{$sponsor_pane_width});
     height: calc(
