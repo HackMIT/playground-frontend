@@ -75,13 +75,24 @@
 
 .modal-close-button {
   position: absolute;
-  z-index: 1;
-  top: 15px;
-  right: 35px;
+  z-index: 30;
+  top: 20px;
+  right: 20px;
+
   color: #f1f1f1;
-  font-size: 40px;
+  font-size: 30px;
   font-weight: bold;
+  font-display: auto;
+
+  border-radius: 50%;
+  background-color: rgb(240,160,142);
+  border: 2px solid rgb(240,160,142);
+  height: 40px;
+  width: 40px;
+
   transition: 0.3s;
+
+  
 }
 
 .modal-close-button:hover,

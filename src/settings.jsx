@@ -66,6 +66,7 @@ class Settings {
 
     return (
       <div id="settings">
+        <div id="inner"> {/*Eva's border code*/} </div>
         <div id="root">
           <div class="settings-header" id="settings-header">
             <div id="settings-gear"></div>
@@ -75,13 +76,17 @@ class Settings {
           <div class="settings-list" id="settings-list">
             {this.createSettingsContent()}
           </div>
+
           <div id="settings-flexcenter">
             <button id="settings-logout" onclick={this.handleLogOff}>
               LOG OFF
             </button>
           </div>
+
         </div>
-        <div id="settings-clouds"></div>
+
+        <div id = "settings-clouds"></div>
+
       </div>
     );
   };

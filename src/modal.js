@@ -9,9 +9,9 @@ function createModal(contentElem, modalType, onClose) {
     modalElem = (
       <div id="modal-background" className="modal-background">
         <div className="quarantine-modal">
-          <span className="modal-close-button" onclick={() => document.getElementById('modal-background').remove()}>
+          <button className="modal-close-button" onclick={() => document.getElementById('modal-background').remove()}>
             &times;
-          </span>
+          </button>
           {contentElem}
         </div>
       </div>
@@ -20,9 +20,9 @@ function createModal(contentElem, modalType, onClose) {
     modalElem = (
       <div id="modal-background" className="modal-background">
         <div className="modal-content">
-          <span className="modal-close-button" onclick={() => { onClose(); document.getElementById('modal-background').remove() }}>
+          <button className="modal-close-button" onclick={() => { onClose(); document.getElementById('modal-background').remove() }}>
             &times;
-        </span>
+        </button>
           {contentElem}
         </div>
       </div>
@@ -31,9 +31,9 @@ function createModal(contentElem, modalType, onClose) {
     modalElem = (
       <div id="modal-background" className="modal-background">
         <div className="modal-content">
-          <span className="modal-close-button" onclick={() => document.getElementById('modal-background').remove()}>
+          <button className="modal-close-button" onclick={() => document.getElementById('modal-background').remove()}>
             &times;
-        </span>
+        </button>
           {contentElem}
         </div>
       </div>
