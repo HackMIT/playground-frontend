@@ -116,6 +116,7 @@ class Game extends Page {
     this.addClickListener('queue-button', this.handleQueueButton);
     this.addClickListener('website-button', this.handleWebsiteButton);
     this.addClickListener('schedule-button', this.handleScheduleButton);
+    this.addClickListener('challenges-button', this.handleChallengesButton);
 
     this.handleWindowSize();
 
@@ -571,6 +572,21 @@ class Game extends Page {
       // if (characterManager.character.role === 1 /* hacker */) {
       queueManager.join(this.room.sponsor);
     }
+  };
+
+  handleChallengesButton = () => {
+    console.log(this.room.sponsor.challenges)
+    createModal(
+      <div id="challenges-modal">
+        <div id="challenges-content">
+          <h1>{this.room.sponsor.name} Challenges</h1>
+
+          {this.room.sponsor.challenges}
+
+        </div>
+      </div>
+    );
+
   };
 
   handleWebsiteButton = () => {
