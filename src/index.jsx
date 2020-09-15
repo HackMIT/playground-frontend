@@ -21,7 +21,6 @@ import characterSelector from './js/components/characterSelector';
 import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
 import queueManager from './js/managers/queue';
-import projectForm from './js/components/projectForm';
 import constants from './constants';
 
 // eslint-disable-next-line
@@ -669,12 +668,6 @@ class Game extends Page {
   };
 
   handleDanceButton = () => {
-    createModal(projectForm.createFormModal());
-
-    if (Math.random() < 1) {
-      return;
-    }
-
     if (this.dancePaneVisible === true) {
       // Hide the dance pane
       document.getElementById('dance-pane').classList.add('invisible');
