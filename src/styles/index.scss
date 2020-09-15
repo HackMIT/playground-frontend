@@ -5,11 +5,23 @@
 @import 'fonts';
 @import 'colors';
 
+$top_bar_height: 64px;
+$top_bar_logo_width: 64px;
+$chat_bar_height: 52px;
 $chat_input_height: 40px;
 
 * {
   padding: 0;
   margin: 0;
+}
+
+body {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 h1,
@@ -26,7 +38,8 @@ b {
 }
 
 p,
-span {
+span,
+div {
   font-family: Muli;
   color: $blue-text;
 }
@@ -53,36 +66,77 @@ body {
   visibility: hidden;
 }
 
+#unsupported {
+  margin: auto;
+}
+
 #outer {
-  width: 177.77vh;
+  width: 100vw;
   height: 100vh;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 
-  &.vertical {
-    width: 100vw;
-    height: 56.25vw;
-    position: absolute;
-    transform: translate(-50%, -50%);
-    left: 50%;
-    top: 50%;
-  }
+  #top-bar {
+    display: grid;
+    grid-template-columns: 1fr $top_bar_logo_width 1fr;
+    background: rgba(255, 255, 255, 0.6);
+    height: $top_bar_height;
+    width: 100%;
 
-  &.sponsor {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    #main {
-      display: flex;
+    #top-bar-logo {
+      background: transparent;
       align-items: center;
-      justify-content: space-around;
-      flex-grow: 1;
+      grid-column-start: 2;
+      transform: translateY(10px);
+      width: $top_bar_logo_width;
+    }
+
+    #top-bar-button-container {
+      display: flex;
+      justify-content: flex-end;
+
+      button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        margin-left: 20px;
+        margin-right: 20px;
+        width: 32px;
+
+        &:hover {
+          transform: translateY(-2px);
+        }
+      }
+    }
+
+    #swoopy {
+      position: absolute;
+      left: 50%;
+      top: $top_bar_height;
+      transform: translateX(-50%);
+      width: 84px;
+      z-index: -1;
     }
   }
 
   #main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    height: 100%;
+  }
+
+  &.vertical #game {
+    width: 100vw;
+    max-height: 56.25vw;
+  }
+
+  #game {
+    width: calc((100vh - #{$top_bar_height} - #{$chat_bar_height}) * (16 / 9));
+    height: calc(100vh - #{$top_bar_height} - #{$chat_bar_height});
   }
 }
 
@@ -90,14 +144,10 @@ body {
   background: $chat_box_background;
   border-radius: 8px;
   display: flex;
-  height: 52px;
+  height: $chat_bar_height;
   align-items: center;
   justify-content: space-around;
   padding: 0 16px;
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translate(-50%, 0);
 
   input {
     color: #fff;
@@ -176,6 +226,9 @@ body {
       }
     }
   }
+  .dance-pane-button {
+    background: #7b9fce;
+  }
 }
 
 #game {
@@ -185,6 +238,7 @@ body {
   background-size: 100% 100%;
   position: relative;
   overflow: hidden;
+  display: flex;
 
   #background {
     position: absolute;
@@ -248,9 +302,18 @@ body {
     right: 24px;
   }
 
-  #day-of-button {
+  #queue-hacker-button {
     position: absolute;
-    bottom: 24px;
+    bottom: 156px;
+    right: 24px;
+    height: 64px;
+    width: 64px;
+    cursor: pointer;
+  }
+
+  #queue-sponsor-button {
+    position: absolute;
+    bottom: 90px;
     right: 24px;
     height: 64px;
     width: 64px;
@@ -351,16 +414,91 @@ body {
   transform: translate(-50%, -50%);
   width: 400px;
 
-  a {
+  h1 {
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-size: 20px;
+    margin-top: 16px;
+  }
+
+  .field {
+    p {
+      font-size: 14px;
+      margin: 0;
+      text-align: left;
+    }
+
+    input {
+      text-align: left;
+
+      &[type='text'] {
+        margin-top: 0;
+      }
+    }
+
+    &.checkbox {
+      margin: 8px 0;
+      display: flex;
+      justify-content: left;
+      align-items: top;
+
+      &.extra-vspace {
+        margin-top: 16px;
+      }
+
+      &.centered {
+        justify-content: center;
+
+        p,
+        div {
+          flex-grow: initial;
+        }
+      }
+
+      input[type='checkbox'] {
+        margin-right: 12px;
+        margin-top: 3px;
+
+        &:checked ~ div input[type='text'] {
+          display: block;
+        }
+      }
+
+      p,
+      div {
+        flex-grow: 1;
+      }
+
+      input[type='text'] {
+        display: none;
+        font-size: 14px;
+        margin: 4px 0;
+        padding: 8px;
+      }
+    }
+  }
+
+  a.button,
+  button {
+    border: none;
     border-radius: 3px;
     color: #fff;
     cursor: pointer;
     display: block;
-    margin: 16px 16px 0;
+    font-size: 16px;
+    margin-top: 16px;
     padding: 10px 0;
     text-decoration: none;
+    width: 100%;
 
-    &.hacker {
+    &:disabled {
+      background: #ccc !important;
+      cursor: default;
+    }
+
+    &.green {
       background: #43a047;
 
       &:hover {
@@ -368,12 +506,61 @@ body {
       }
     }
 
-    &.sponsor {
+    &.blue {
       background: #039be5;
 
       &:hover {
         background: #0288d1;
       }
+    }
+
+    &.red {
+      background: #db5a42;
+
+      &:hover {
+        background: #d64329;
+      }
+    }
+  }
+
+  p {
+    font-size: 14px;
+    margin: 8px;
+
+    &.small {
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+  }
+
+  input[type='text'] {
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    box-sizing: border-box;
+    font-size: 14px;
+    margin: 16px 0 8px;
+    padding: 12px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .buttons-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    button:first-of-type {
+      margin-right: 16px;
+    }
+  }
+
+  #error-text {
+    color: #f75939;
+    margin-bottom: -4px;
+    display: none;
+
+    &.visible {
+      display: block;
     }
   }
 }

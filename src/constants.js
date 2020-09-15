@@ -1,12 +1,18 @@
+const config = {
+  calendarURL: 'https://go.hackmit.org/gcal',
+};
+
 const dev = {
-  ws_url: 'ws://localhost:5000/ws',
-  quill_redirect_url: 'http://localhost:3000',
+  baseURL: 'http://localhost:3000',
+  websocketURL: 'ws://localhost:5000/ws',
 };
 
 const prod = {
-  ws_url: 'wss://backend.play.hackmit.org/ws',
-  quill_redirect_url: 'https://play.hackmit.org',
+  baseURL: 'https://play.hackmit.org',
+  websocketURL: 'wss://backend.play.hackmit.org/ws',
 };
 
-const projectConfig = process.env.NODE_ENV === 'development' ? dev : prod;
-export default projectConfig;
+export default {
+  ...config,
+  ...(process.env.NODE_ENV === 'development' ? dev : prod),
+};

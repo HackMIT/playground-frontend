@@ -1,0 +1,37 @@
+@import 'colors';
+
+#dance-pane {
+  background: #24447c;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 5px;
+  position: absolute;
+  width: fit-content;
+  height: fit-content;
+  transform: translate(-272px, -73px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+#dance-buttons-div{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-row-gap: 4px;
+}
+
+
+#dance-pane-arrow {
+  width: 0;
+  height: 0;
+  border-top: 12px solid #24447c;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: none;
+  position: absolute;
+  top: 86px;
+  left: 50%;
+  transform: translateX(-50%);
+}

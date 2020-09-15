@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import AnimatedModel from './animatedModel';
 import characterManager from './managers/character';
 import socket from './socket';
+import report from './components/report';
 
 import addFriendIcon from '../images/icons/add-friend.svg';
 import closeIcon from '../images/icons/close-white.svg';
@@ -18,26 +19,88 @@ class Character {
     this.data = data;
     this.reverseRaycaster = reverseRaycaster;
 
-    const scale = data.id === 'tim' ? 0.04 : 0.65;
+    const onModelLoadSuccess = (gltf) => {
+      const scale = data.id === 'tim' ? 0.04 : 1.3;
+      gltf.scene.scale.set(scale, scale, scale);
+      this.setModel(
+        parent,
+        gltf.scene,
+        gltf.animations,
+        data.id === 'tim' ? 0 : 2,
+        data.x,
+        data.y
+      );
+    };
 
-    // load glb file
-    parent.loader.load(
-      data.id === 'tim' ? 'beaver.glb' : 'character.glb',
-      (gltf) => {
-        gltf.scene.scale.set(scale, scale, scale);
-        this.setModel(parent, gltf.scene, gltf.animations[0], data.x, data.y);
-      },
-      undefined,
-      (e) => {
-        console.error(e);
-      }
-    );
+    if (data.id === 'tim') {
+      parent.loader.load(
+        'models/beaver.glb',
+        onModelLoadSuccess,
+        undefined,
+        (err) => {
+          console.error(err);
+        }
+      );
+    } else {
+      const req = new XMLHttpRequest();
+      req.open('GET', 'models/character.gltf', true);
+      req.onload = () => {
+        const gltfData = JSON.parse(req.response);
+
+        const matColors = {
+          Head: this.getColor(data.skinColor),
+          Face: this.getColor(data.eyeColor),
+          Shirt: this.getColor(data.shirtColor),
+          Skin: this.getColor(data.pantsColor),
+        };
+
+        gltfData.materials = gltfData.materials.map((mat) => {
+          if (Object.keys(matColors).includes(mat.name)) {
+            mat.pbrMetallicRoughness.baseColorFactor = matColors[
+              mat.name
+            ].concat(
+              // add 1 to array for alpha channel
+              1
+            );
+          }
+
+          return mat;
+        });
+
+        parent.loader.parse(
+          JSON.stringify(gltfData),
+          'models/',
+          onModelLoadSuccess,
+          undefined,
+          (err) => {
+            console.error(err);
+          }
+        );
+      };
+
+      req.send();
+    }
   }
+
+  getColor = (hex) => {
+    return hex
+      .replace(
+        /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
+        (m, r, g, b) => `#${r}${r}${g}${g}${b}${b}`
+      )
+      .substring(1)
+      .match(/.{2}/g)
+      .map((x) => parseInt(x, 16) / 255);
+  };
 
   update(deltaTime) {
     if (this.model !== undefined) {
       this.model.update(deltaTime);
     }
+  }
+
+  dance(dance) {
+    this.model.setDanceAnimation(dance);
   }
 
   // returns time it'll take
@@ -50,19 +113,26 @@ class Character {
     parent.scene.remove(this.model.modelGeometry);
   }
 
-  setModel(parentScene, model, animation, initX, initY) {
+  setModel(parentScene, model, actions, walkActionIndex, initX, initY) {
     const mixer = new THREE.AnimationMixer(model);
     mixer.timeScale = 2.5;
-    const walkCycle = mixer.clipAction(animation);
-    walkCycle.enabled = false;
-    walkCycle.play();
+
+    const animationCycles = actions.map((x) => {
+      const cycle = mixer.clipAction(x);
+      cycle.enabled = false;
+      cycle.play();
+      return cycle;
+    });
+
+    // animationCycles[walkActionIndex].play();
 
     parentScene.scene.add(model);
 
     this.model = new AnimatedModel(
       model,
       mixer,
-      walkCycle,
+      animationCycles,
+      walkActionIndex,
       parentScene.worldVectorForPos(initX, initY),
       this.data.name,
       this.reverseRaycaster
@@ -74,13 +144,34 @@ class Character {
   }
 
   showProfile() {
-    if (this.profileBox === undefined) {
-      this.createCharacterProfile();
-      this.gameDom = document.getElementById('game');
-      this.gameDom.appendChild(this.profileBox);
-      this.model.addHtmlElem(this.profileBox);
+    if (
+      this.profileBox !== undefined &&
+      this.profileBox.style.visibility === 'inherit'
+    ) {
+      // If clicking on an already open character, just close theirs and exit
+      this.profileBox.style.visibility = 'hidden';
+      return;
     }
 
+    Array.from(document.getElementsByClassName('profile-container')).forEach(
+      (elem) => {
+        elem.style.visibility = 'hidden';
+      }
+    );
+
+    if (this.profileBox === undefined) {
+      this.createCharacterProfile();
+
+      this.gameDom = document.getElementById('game');
+      this.gameDom.appendChild(this.profileBox);
+    }
+
+    let { x, y } = this.model.getPosition();
+    x = Math.min(Math.max(x, 200), window.innerWidth - 200);
+    y = Math.max(y, 400);
+
+    this.profileBox.style.left = `${x}px`;
+    this.profileBox.style.top = `${y}px`;
     this.profileBox.style.visibility = 'inherit';
   }
 
@@ -91,7 +182,7 @@ class Character {
       buttons = <div />;
     } else if (characterManager.isFriend(this.data.id)) {
       buttons = (
-        <div className="profile-buttons">
+        <div id="profile-buttons" className="profile-buttons">
           <button>
             <img src={messageIcon} />
           </button>
@@ -102,7 +193,7 @@ class Character {
       );
     } else {
       buttons = (
-        <div className="profile-buttons">
+        <div id="profile-buttons" className="profile-buttons">
           <button
             onclick={() => {
               socket.send({
@@ -113,7 +204,7 @@ class Character {
           >
             <img src={addFriendIcon} />
           </button>
-          <button>
+          <button id="report-button" onclick={() => { this.handleReportButton() }}>
             <img src={flagIcon} />
           </button>
         </div>
@@ -157,6 +248,25 @@ class Character {
 
     return this.data.name;
   }
+
+  handleReportButton = () => {
+    if (this.reportPaneVisible === true) {
+      // Hide the pane
+      document.getElementById('report-pane').classList.add('invisible');
+      this.reportPaneVisible = false;
+    } else if (this.reportPaneVisible === false) {
+      // make the pane visible
+      document.getElementById('report-pane').classList.remove('invisible');
+      this.reportPaneVisible = true;
+    } else {
+      // create it now
+      document
+        .getElementById('profile-buttons')
+        .appendChild(report.createReportPane());
+      this.reportPaneVisible = true;
+    }
+    document.getElementById('reported-id').value = this.data.id;
+  };
 }
 
 export default Character;

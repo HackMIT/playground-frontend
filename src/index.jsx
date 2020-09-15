@@ -1,4 +1,5 @@
 import hotkeys from 'hotkeys-js';
+import isMobile from 'ismobilejs';
 
 import Scene from './js/scene';
 import Element from './js/element';
@@ -7,24 +8,33 @@ import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
 import settings from './settings.jsx';
-import achievements from './achievements.jsx';
+import map from './js/components/map';
+import feedback from './feedback.jsx';
+import queueSponsor from './js/components/sponsorPanel';
 import friends from './js/components/friends';
+import dance from './js/components/dance';
 import jukebox from './jukebox';
+import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
+import characterSelector from './js/components/characterSelector';
+
+import characterManager from './js/managers/character';
+import notificationsManager from './js/managers/notifications';
+import queueManager from './js/managers/queue';
+import constants from './constants';
 
 // eslint-disable-next-line
 import statusManager from './js/managers/status';
 
 import './styles/index.scss';
+import './styles/notifications.scss';
 import './styles/sponsor.scss';
 import './images/Code_Icon.svg';
 import './images/Coffee_Icon.svg';
 import './images/Site_Icon.svg';
 import './images/sponsor_text.svg';
-import './styles/coffeechat.scss';
 
-import './coffeechat';
-
+import './images/icons/megaphone.svg';
 import './images/icons/dance.svg';
 import './images/icons/edit.svg';
 import './images/icons/friends.svg';
@@ -35,10 +45,16 @@ import './images/icons/portal.png';
 import './images/icons/send.svg';
 import './images/icons/settings.svg';
 import './images/icons/tree.svg';
+import './images/icons/map.svg';
+import './images/icons/guidebook.svg';
+import './images/icons/schedule.svg';
+import './images/logo.png';
+import './images/swoopy.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
+// eslint-disable-next-line
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
 
@@ -52,13 +68,19 @@ class Game extends Page {
   }
 
   start = () => {
-    if (!window.WebSocket) {
-      // TODO: Handle error -- tell people their browser is incompatible
+    if (isMobile(window.navigator).any || !window.WebSocket) {
+      this.stopLoading();
+      loginPanel.hide();
+      document.getElementById('outer').innerHTML =
+        '<div id="unsupported">Unsupported device or browser</div>';
+      return;
     }
+
+    loginPanel.update();
 
     // Quick check for auth data
     if (localStorage.getItem('token') !== null) {
-      document.getElementById('login-panel').style.display = 'none';
+      loginPanel.hide();
     } else {
       this.stopLoading();
     }
@@ -75,7 +97,7 @@ class Game extends Page {
     this.editing = false;
     this.elementNames = [];
     this.roomNames = [];
-    this.addClickListener('achievements-button',this.handleAchievementsButton)
+    this.addClickListener('achievements-button', this.handleAchievementsButton);
     this.addClickListener('add-button', this.handleElementAddButton);
     this.addClickListener('add-hallway-button', this.handleHallwayAddButton);
     this.addClickListener('add-room-button', this.handleRoomAddButton);
@@ -83,22 +105,38 @@ class Game extends Page {
     this.addClickListener('edit-button', this.handleEditButton);
     this.addClickListener('settings-button', this.handleSettingsButton);
     this.addClickListener('game', this.handleGameClick);
-    this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
     this.addClickListener('friends-button', this.handleFriendsButton);
     this.addClickListener('send-button', this.handleSendButton);
     this.addClickListener('igloo-button', this.handleIglooButton);
+    this.addClickListener('dance-button', this.handleDanceButton);
+    this.addClickListener('map-button', this.handleMapButton);
+    this.addClickListener('queue-button', this.handleQueueButton);
+    this.addClickListener('website-button', this.handleWebsiteButton);
+    this.addClickListener('schedule-button', this.handleScheduleButton);
 
     this.handleWindowSize();
 
     socket.onopen = this.handleSocketOpen;
+    socket.onclose = this.handleSocketClose;
     socket.subscribe('*', this.handleSocketMessage);
     socket.start();
+
+    queueManager.start();
 
     // Listen for hotkeys
     hotkeys('t, enter, /', (e) => {
       e.preventDefault();
       document.getElementById('chat-box').focus();
+    });
+
+    hotkeys('esc', () => {
+      // Close all character profiles
+      Array.from(document.getElementsByClassName('profile-container')).forEach(
+        (elem) => {
+          elem.style.visibility = 'hidden';
+        }
+      );
     });
 
     // Start sending chat events
@@ -161,7 +199,11 @@ class Game extends Page {
 
   handleGameClick = (e) => {
     // When clicking on the page, send a move message to the server
-    if (e.target.id !== 'three-canvas') {
+    if (
+      (e.target.id !== 'three-canvas' &&
+        !e.target.classList.contains('element-img')) ||
+      e.target.hasAttribute('data-interactable')
+    ) {
       return;
     }
 
@@ -191,7 +233,9 @@ class Game extends Page {
       return;
     }
 
-    const rect = document.getElementById('game').getBoundingClientRect();
+    const rect = document
+      .getElementById('three-canvas')
+      .getBoundingClientRect();
     const x = (e.pageX - rect.x) / rect.width;
     const y = (e.pageY - rect.y) / rect.height;
 
@@ -218,6 +262,7 @@ class Game extends Page {
 
     if (window.location.hash.length > 1) {
       joinPacket.quillToken = document.location.hash.substring(1);
+      window.history.replaceState({}, document.title, '.');
     } else if (localStorage.getItem('token') !== null) {
       joinPacket.token = localStorage.getItem('token');
     } else {
@@ -229,15 +274,28 @@ class Game extends Page {
     socket.send(joinPacket);
   };
 
+  handleSocketClose = () => {
+    notificationsManager.displayMessage(
+      "You've been disconnected from the HackMIT playground. Please refresh the page to try to reconnect.",
+      30000
+    );
+  };
+
   handleSocketMessage = (data) => {
     console.log(data);
     if (data.type === 'init') {
+      if (data.firstTime) {
+        // If firstTime is true, components/login.js is handling this
+        loginPanel.show();
+        return;
+      }
+
       this.characterId = data.character.id;
 
       if (data.token !== undefined) {
         localStorage.setItem('token', data.token);
         window.history.pushState(null, null, ' ');
-        document.getElementById('login-panel').style.display = 'none';
+        loginPanel.hide();
       }
 
       // Delete stuff from previous room
@@ -273,15 +331,15 @@ class Game extends Page {
           this.finishedLoadingPart();
         };
 
-        if (true || element.action > 0) {
-          document.getElementById('game').appendChild(elementElem.element);
+        const threeContainer = document.getElementById('three-container');
+
+        if (element.action > 0) {
+          threeContainer.appendChild(elementElem.element);
         } else {
-          document
-            .getElementById('game')
-            .insertBefore(
-              elementElem.element,
-              document.getElementById('three-container')
-            );
+          threeContainer.insertBefore(
+            elementElem.element,
+            document.getElementById('three-canvas')
+          );
         }
       });
 
@@ -293,16 +351,29 @@ class Game extends Page {
           .appendChild(this.hallways.get(id).element);
       });
 
+      if (data.openFeedback) {
+        this.showFeedback();
+      }
+
       this.settings = data.settings;
       this.room = data.room;
 
-      if (this.room.sponsor) {
+      if (this.room.sponsorId.length > 0) {
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
           'sponsor-name'
         ).innerHTML = `<span>${this.room.slug}</span>${this.room.slug}`;
         document.getElementById('outer').classList.add('sponsor');
         document.getElementById('game').classList.add('sponsor');
+
+        document.getElementById('challenges-button').style.display =
+          this.room.sponsor.challenges.length > 0 ? 'inline-block' : 'none';
+        document.getElementById(
+          'sponsor-description'
+        ).innerText = this.room.sponsor.description;
+        document.getElementById(
+          'queue-button-text'
+        ).innerText = `Talk to ${this.room.sponsor.name}`;
       } else {
         document.getElementById('sponsor-pane').classList.remove('active');
         document.getElementById('outer').classList.remove('sponsor');
@@ -322,6 +393,15 @@ class Game extends Page {
       img.src = BACKGROUND_IMAGE_URL.replace('%PATH%', this.room.background);
 
       this.scene.fixCameraOnResize();
+
+      // Start managers
+      notificationsManager.start();
+
+      if (data.character.shirtColor === '#d6e2f8') {
+        createModal(characterSelector.createModal());
+      }
+    } else if (data.type === 'dance') {
+      this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
         if (data.id !== this.characterId) {
@@ -380,7 +460,18 @@ class Game extends Page {
     } else if (data.type === 'error') {
       if (data.code === 1) {
         this.stopLoading();
-        document.getElementById('login-panel').style.display = 'block';
+        loginPanel.show();
+      }
+      if (data.code === 2) {
+        this.stopLoading();
+        createModal(
+          <div id="jukebox-modal">
+            <h1 className="white-text">Oops!</h1>
+            <p className="white-text">
+              You must be a college student to enter the nightclub.
+            </p>
+          </div>
+        );
       }
     } else if (data.type === 'join') {
       this.scene.newCharacter(data.character.id, data.character);
@@ -391,9 +482,8 @@ class Game extends Page {
       this.scene.deleteCharacter(data.character.id);
     } else if (data.type === 'chat') {
       this.scene.sendChat(data.id, data.mssg);
-    } else {
-      console.log(`received unknown packet: ${data.type}`);
-      console.log(data);
+    } else if (data.type === 'wardrobe_change') {
+      this.scene.updateClothes(data.characterId, data);
     }
   };
 
@@ -401,7 +491,7 @@ class Game extends Page {
     createModal(
       <iframe
         id="day-of-iframe"
-        className="day-of-page"
+        className="modal-frame"
         src="https://dayof.hackmit.org"
       />
     );
@@ -428,21 +518,6 @@ class Game extends Page {
         radius: 0.1,
         to: 'microsoft',
       },
-    });
-  };
-
-  handleRoomAddButton = () => {
-    const roomName = prompt('What should the room be called?');
-    const backgroundPath = prompt("What's this room's background path?");
-    const sponsor = prompt("Type 'true' if this is a sponsor room").includes(
-      'true'
-    );
-
-    socket.send({
-      type: 'room_add',
-      id: roomName,
-      background: backgroundPath,
-      sponsor,
     });
   };
 
@@ -480,8 +555,28 @@ class Game extends Page {
     createModal(settings.createSettingsModal(this.settings));
   };
 
-  handleAchievementsButton=()=>{
-    createModal(achievements.createAchievementsModal());
+  handleQueueButton = () => {
+    // TODO: 2 should be a constant for sponsor
+    if (characterManager.character.role === 2) {
+      createModal(
+        queueSponsor.createQueueModal(),
+        'queue',
+        queueSponsor.onClose
+      );
+
+      queueSponsor.subscribe(this.room.sponsor.id);
+    } else {
+      // if (characterManager.character.role === 1 /* hacker */) {
+      queueManager.join(this.room.sponsor);
+    }
+  };
+
+  handleWebsiteButton = () => {
+    window.open(this.room.sponsor.url, '_blank');
+  };
+
+  handleScheduleButton = () => {
+    window.open(constants.calendarURL, '_blank');
   };
 
   handleJukeboxButton = () => {
@@ -572,22 +667,36 @@ class Game extends Page {
     });
   };
 
-  handleSponsorLogin = () => {
-    this.startLoading();
+  handleDanceButton = () => {
+    if (this.dancePaneVisible === true) {
+      // Hide the dance pane
+      document.getElementById('dance-pane').classList.add('invisible');
+      this.dancePaneVisible = false;
+    } else if (this.dancePaneVisible === false) {
+      // make the dance pane visible
+      document.getElementById('dance-pane').classList.remove('invisible');
+      this.dancePaneVisible = true;
+    } else {
+      // Never created dance pane before, create it now
+      document.getElementById('chat').appendChild(dance.createDancePane());
+      this.dancePaneVisible = true;
+    }
+  };
 
-    const joinPacket = {
-      type: 'join',
-      name: prompt("What's your name?"),
-    };
-
-    // Connected to remote
-    socket.send(joinPacket);
+  handleMapButton = () => {
+    createModal(map.createMapModal());
   };
 
   handleWindowSize = () => {
     const outerElem = document.getElementById('outer');
 
-    if (window.innerWidth < window.innerHeight * (16 / 9)) {
+    let width = window.innerWidth;
+
+    if (this.room !== null && this.room.sponsorId.length > 0) {
+      width -= 340 + 24 * 3;
+    }
+
+    if (width < (window.innerHeight - (52 + 64)) * (16 / 9)) {
       if (outerElem.classList.contains('vertical')) {
         return;
       }
@@ -600,6 +709,10 @@ class Game extends Page {
 
       outerElem.classList.remove('vertical');
     }
+  };
+
+  showFeedback = () => {
+    createModal(feedback.createFeedbackModal());
   };
 
   startLoading = () => {

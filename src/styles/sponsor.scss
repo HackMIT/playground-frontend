@@ -1,12 +1,26 @@
-#game {
-  &.sponsor {
-    height: 90vh;
-    width: 97.5vh;
+$sponsor_pane_width: 340px;
+$horizontal_spacing: 24px;
+
+#outer.sponsor {
+  #game {
+    margin-left: $horizontal_spacing;
+  }
+
+  &.vertical #game {
+    width: calc(100vw - #{$horizontal_spacing} * 3 - #{$sponsor_pane_width});
+    height: calc(
+      (100vw - #{$horizontal_spacing} * 3 - #{$sponsor_pane_width}) * (9 / 16)
+    );
   }
 }
 
 #sponsor-pane {
   display: none;
+  margin: 0 $horizontal_spacing;
+  min-width: $sponsor_pane_width;
+  max-width: $sponsor_pane_width;
+  max-height: calc(100vh - 64px - 52px);
+  overflow-y: scroll;
   text-align: center;
   width: 30%;
 

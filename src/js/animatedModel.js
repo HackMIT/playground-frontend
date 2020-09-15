@@ -3,11 +3,20 @@ import LinearAnimation from './animations';
 import '../styles/profile.scss';
 
 class AnimatedModel {
-  constructor(modelGeometry, mixer, walkCycle, start, name, reverseRaycaster) {
+  constructor(
+    modelGeometry,
+    mixer,
+    animationCycles,
+    walkCycleIndex,
+    start,
+    name,
+    reverseRaycaster
+  ) {
     this.modelGeometry = modelGeometry;
     this.animation = new LinearAnimation();
     this.mixer = mixer;
-    this.walkCycle = walkCycle;
+    this.animationCycles = animationCycles;
+    this.walkCycleIndex = walkCycleIndex;
     this.reverseRaycaster = reverseRaycaster;
 
     modelGeometry.position.set(start.x, start.y, start.z);
@@ -41,7 +50,10 @@ class AnimatedModel {
 
     this.nametag.remove();
     this.chatBubble.remove();
-    this.walkCycle.enabled = false;
+
+    this.animationCycles.forEach((cycle) => {
+      cycle.enabled = false;
+    });
   }
 
   // adds an html element that will follow the character around
@@ -57,6 +69,15 @@ class AnimatedModel {
     this.trackingElems.push(htmlElem);
   }
 
+  getPosition() {
+    const screenPt = this.reverseRaycaster(this.modelGeometry.position.clone());
+
+    return {
+      x: screenPt[0],
+      y: screenPt[1],
+    };
+  }
+
   updateChat(msg) {
     if (this.chatTimer !== undefined) {
       clearTimeout(this.chatTimer);
@@ -68,6 +89,26 @@ class AnimatedModel {
     this.chatTimer = setTimeout(() => {
       this.chatBubble.remove();
     }, 5000);
+  }
+
+  setDanceAnimation(anim) {
+    this.animating = true;
+    this.animationCycles[anim].enabled = true;
+
+    let duration = 0;
+
+    switch (anim) {
+      case 0: // dab
+        duration = 330;
+        break;
+      default:
+        break;
+    }
+
+    setTimeout(() => {
+      this.animationCycles[anim].enabled = false;
+      this.animating = false;
+    }, duration);
   }
 
   setAnimation(dest, callback) {
@@ -96,7 +137,8 @@ class AnimatedModel {
       new THREE.Vector3(0, 1, 0),
       angle
     );
-    this.walkCycle.enabled = true;
+
+    this.animationCycles[this.walkCycleIndex].enabled = true;
 
     this.callback = callback;
 
@@ -125,7 +167,7 @@ class AnimatedModel {
     this.mixer.update(timeDelta);
 
     if (this.animation.finished()) {
-      this.walkCycle.enabled = false;
+      this.animationCycles[this.walkCycleIndex].enabled = false;
 
       if (this.callback !== null) {
         this.animating = false;

@@ -1,5 +1,7 @@
-import './styles/attendance.scss';
 import swal from 'sweetalert';
+
+import './styles/attendance.scss';
+import constants from './constants';
 import socket from './js/socket';
 
 socket.start();
@@ -7,17 +9,16 @@ socket.subscribe('join', (msg) => {
   document.getElementById(
     'confirm-message'
   ).innerHTML = `Please confirm your attendance for the <strong>${msg.event} Workshop</strong>`;
-})
+});
 
-const baseURL = 'http://localhost:3000';
 const param = '/attendance?id=';
-const idURL = baseURL + param;
+const idURL = constants.baseURL + param;
 const eventID = window.location.href.slice(idURL.length);
 
 function handleSocketOpen() {
   const joinPacket = {
     type: 'join',
-    event: eventID
+    event: eventID,
   };
 
   if (localStorage.getItem('token') !== null) {
@@ -29,7 +30,7 @@ function handleSocketOpen() {
       icon: 'error',
       button: 'Log in',
     }).then(() => {
-      window.location.href = `${baseURL}#/login`;
+      window.location.href = `${constants.baseURL}#/login`;
     });
     return;
   }
@@ -41,7 +42,7 @@ function handleSocketOpen() {
 function handleConfirm() {
   socket.send({
     type: 'event',
-    id: eventID
+    id: eventID,
   });
   swal({
     title: 'Confirmed!',
@@ -49,7 +50,7 @@ function handleConfirm() {
     icon: 'success',
     button: 'Return to Playground',
   }).then(() => {
-    window.location.href = `${baseURL}`;
+    window.location.href = `${constants.baseURL}`;
   });
 }
 
