@@ -71,7 +71,12 @@
       .hacker {
         background: #fff;
         border-radius: 4px;
+        margin-bottom: 12px;
         padding: 8px 12px;
+
+        &:last-of-type {
+          margin-bottom: 0;
+        }
 
         button {
           background: $accent_pink;

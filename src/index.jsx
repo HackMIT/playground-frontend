@@ -1,5 +1,3 @@
-
-
 import hotkeys from 'hotkeys-js';
 import isMobile from 'ismobilejs';
 
@@ -23,6 +21,7 @@ import characterSelector from './js/components/characterSelector';
 import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
 import queueManager from './js/managers/queue';
+import projectForm from './js/components/projectForm';
 import constants from './constants';
 
 // eslint-disable-next-line
@@ -56,7 +55,6 @@ import './images/swoopy.svg';
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
-
 // eslint-disable-next-line
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
@@ -74,7 +72,8 @@ class Game extends Page {
     if (isMobile(window.navigator).any || !window.WebSocket) {
       this.stopLoading();
       loginPanel.hide();
-      document.getElementById("outer").innerHTML = "<div id=\"unsupported\">Unsupported device or browser</div>"
+      document.getElementById('outer').innerHTML =
+        '<div id="unsupported">Unsupported device or browser</div>';
       return;
     }
 
@@ -670,6 +669,12 @@ class Game extends Page {
   };
 
   handleDanceButton = () => {
+    createModal(projectForm.createFormModal());
+
+    if (Math.random() < 1) {
+      return;
+    }
+
     if (this.dancePaneVisible === true) {
       // Hide the dance pane
       document.getElementById('dance-pane').classList.add('invisible');
@@ -680,9 +685,7 @@ class Game extends Page {
       this.dancePaneVisible = true;
     } else {
       // Never created dance pane before, create it now
-      document
-        .getElementById('chat')
-        .appendChild(dance.createDancePane());
+      document.getElementById('chat').appendChild(dance.createDancePane());
       this.dancePaneVisible = true;
     }
   };

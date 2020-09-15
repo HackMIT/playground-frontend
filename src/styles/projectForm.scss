@@ -1,0 +1,59 @@
+@import 'colors';
+
+#project-form {
+  h1 {
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .field {
+    margin-bottom: 12px;
+
+    p {
+      font-size: 17px;
+      margin-bottom: 6px;
+    }
+
+    &.checkbox-field p {
+      margin-bottom: 0;
+    }
+
+    input[type='text'],
+    textarea {
+      box-sizing: border-box;
+      border: 2px solid $blue_dark;
+      border-radius: 4px;
+      font-size: 14px;
+      padding: 8px;
+      width: 100%;
+    }
+
+    .checkbox-container {
+      * {
+        vertical-align: middle;
+      }
+
+      input {
+        margin-left: 4px;
+        margin-right: 6px;
+      }
+    }
+  }
+
+  button {
+    background: #43a047;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    font-size: 14px;
+    margin: 12px auto 0;
+    outline: none;
+    padding: 12px 16px;
+
+    &:hover {
+      background: #388e3c;
+    }
+  }
+}
