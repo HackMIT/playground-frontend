@@ -54,7 +54,6 @@ import './images/swoopy.svg';
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
-// eslint-disable-next-line
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
 
@@ -97,7 +96,7 @@ class Game extends Page {
     this.editing = false;
     this.elementNames = [];
     this.roomNames = [];
-    this.addClickListener('achievements-button', this.handleAchievementsButton);
+
     this.addClickListener('add-button', this.handleElementAddButton);
     this.addClickListener('add-hallway-button', this.handleHallwayAddButton);
     this.addClickListener('add-room-button', this.handleRoomAddButton);

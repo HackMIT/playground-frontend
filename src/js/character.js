@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 
 import AnimatedModel from './animatedModel';
+import achievements from './components/achievements';
 import characterManager from './managers/character';
+import createModal from '../modal';
 import socket from './socket';
 import report from './components/report';
 
@@ -10,6 +12,7 @@ import closeIcon from '../images/icons/close-white.svg';
 import earthIcon from '../images/icons/earth.svg';
 import flagIcon from '../images/icons/flag.svg';
 import messageIcon from '../images/icons/message.svg';
+import starIcon from '../images/icons/star.svg';
 
 // eslint-disable-next-line
 import createElement from '../utils/jsxHelper';
@@ -186,7 +189,19 @@ class Character {
           <button>
             <img src={messageIcon} />
           </button>
-          <button>
+          <button
+            onclick={() => {
+              this.handleAchievementsButton();
+            }}
+          >
+            <img src={starIcon} />
+          </button>
+          <button
+            id="report-button"
+            onclick={() => {
+              this.handleReportButton();
+            }}
+          >
             <img src={flagIcon} />
           </button>
         </div>
@@ -204,7 +219,19 @@ class Character {
           >
             <img src={addFriendIcon} />
           </button>
-          <button id="report-button" onclick={() => { this.handleReportButton() }}>
+          <button
+            onclick={() => {
+              this.handleAchievementsButton();
+            }}
+          >
+            <img src={starIcon} />
+          </button>
+          <button
+            id="report-button"
+            onclick={() => {
+              this.handleReportButton();
+            }}
+          >
             <img src={flagIcon} />
           </button>
         </div>
@@ -248,6 +275,10 @@ class Character {
 
     return this.data.name;
   }
+
+  handleAchievementsButton = () => {
+    createModal(achievements.createAchievementsModal());
+  };
 
   handleReportButton = () => {
     if (this.reportPaneVisible === true) {

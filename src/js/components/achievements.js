@@ -1,27 +1,27 @@
 /* eslint-disable no-multi-str */
-import './styles/achievements.scss';
-import './images/settingsicon.svg';
-import './images/box.svg';
-import './images/settingsclouds.svg';
-import hangOuts from './images/explorer/meet.svg';
-import companyTour from './images/explorer/company.svg';
-import peerExpo from './images/explorer/peerexpo.svg';
-import hackWeek from './images/explorer/hackweek.svg';
-import map from './images/explorer/map.svg';
-import memeLord from './images/explorer/memelord.svg';
-import miniEvents from './images/explorer/minievents.svg';
-import socialMedia from './images/explorer/socialmedia.svg';
-import strikePose from './images/explorer/strikepost.svg';
-import trackCounter from './images/explorer/trackcounter.svg';
-import coffeeChat from './images/explorer/coffeechat.svg';
-import redArrow from './images/arrows/red_arrow.svg';
-import yellowArrow from './images/arrows/yellow_arrow.svg';
-import blueArrow from './images/arrows/blue_arrow.svg';
+import '../../styles/achievements.scss';
+import '../../images/settingsicon.svg';
+import '../../images/box.svg';
+import '../../images/settingsclouds.svg';
+import hangOuts from '../../images/explorer/meet.svg';
+import companyTour from '../../images/explorer/company.svg';
+import peerExpo from '../../images/explorer/peerexpo.svg';
+import hackWeek from '../../images/explorer/hackweek.svg';
+import map from '../../images/explorer/map.svg';
+import memeLord from '../../images/explorer/memelord.svg';
+import miniEvents from '../../images/explorer/minievents.svg';
+import socialMedia from '../../images/explorer/socialmedia.svg';
+import strikePose from '../../images/explorer/strikepost.svg';
+import trackCounter from '../../images/explorer/trackcounter.svg';
+import coffeeChat from '../../images/explorer/coffeechat.svg';
+import redArrow from '../../images/arrows/red_arrow.svg';
+import yellowArrow from '../../images/arrows/yellow_arrow.svg';
+import blueArrow from '../../images/arrows/blue_arrow.svg';
 
 // import socket from './js/socket';
 
 // eslint-disable-next-line
-import createElement from './utils/jsxHelper';
+import createElement from '../../utils/jsxHelper';
 
 const achievements = [
   {
