@@ -570,7 +570,7 @@ class Game extends Page {
         queueSponsor.onClose
       );
 
-      queueSponsor.subscribe(this.room.sponsorId);
+      queueSponsor.subscribe(characterManager.character.sponsorId);
     }
     else {
       createModal(settings.createSettingsModal(this.settings));
