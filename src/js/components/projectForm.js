@@ -141,13 +141,15 @@ class SponsorPanel {
       submit = false;
     }
 
-    teamList.forEach(email => {
-      if (!validator.validate(email)) {
-        document.getElementById('form-errors').insertAdjacentHTML('beforeend',
-          `<p>${email} is not a valid email!</p>`)
-        submit = false;
-      }
-    });
+    if (teamList.length > 0 && teamList[0] !== '') {
+      teamList.forEach(email => {
+        if (!validator.validate(email)) {
+          document.getElementById('form-errors').insertAdjacentHTML('beforeend',
+            `<p>${email} is not a valid email!</p>`)
+          submit = false;
+        }
+      });
+    }
 
     if (document.getElementById('name').value === '') {
       document.getElementById('form-errors').insertAdjacentHTML('beforeend',

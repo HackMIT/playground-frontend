@@ -418,45 +418,41 @@ class Game extends Page {
       //  sponsor
       else if (characterManager.character.role === 4 && !characterManager.character.project) {
         // const currentTime = new Date().getTime();
-        const currentTime = this.createUTCDate(19, 17);
+        const currentTime = this.createUTCDate(19, 5);
         const formOpen1 = this.createUTCDate(19, 1);
         const deadline1 = this.createUTCDate(19, 7);
 
         const formOpen2 = this.createUTCDate(19, 16);
         const deadline2 = this.createUTCDate(19, 22);
 
-        if (formOpen1.getTime() < currentTime && currentTime < deadline1.getTime()) {
-          document.getElementById('form-button').style.display = "block";
-          if (!this.remindForm) {
-            createModal(
-              <div id="form-reminder-modal">
-                <div id="form-reminder">
-                  <h1>Reminder: </h1>
-                  You must submit the fun friday form in order to be eligible for judging and swag! Please fill this out by Saturday 3am EDT at the latest by clicking the exclamation mark on the top right of your screen."
-                </div>
-                <button onclick={() => {
-                  document.getElementById('form-reminder-modal').remove();
-                  document.getElementById('modal-background').remove();
-                }}>Ok</button>
-              </div>
-            );
-            this.remindForm = true;
-          }
+        const first = formOpen1.getTime() < currentTime && currentTime < deadline1.getTime();
+        const second = formOpen2.getTime() < currentTime && currentTime < deadline2.getTime();
+
+        let formName = "";
+        let due = "";
+        if (first) {
+          formName = "Fun Friday Form";
+          due = "Saturday 3am EDT"
+        } else {
+          formName = "Spicy Saturday Survey";
+          due = "Saturday 6pm EDT"
         }
-        else if (formOpen2.getTime() < currentTime && currentTime < deadline2.getTime()) {
+
+        if (first || second) {
           document.getElementById('form-button').style.display = "block";
           if (!this.remindForm) {
             createModal(
               <div id="form-reminder-modal">
                 <div id="form-reminder">
                   <h1>Reminder: </h1>
-                  You must submit the spicy saturday survey in order to be eligible for judging and swag! Please fill this out by Saturday 6pm EDT at the latest by clicking the exclamation mark on the top right of your screen."
+                  You must submit the <b>{formName}</b> in order to be eligible for judging and swag! Please fill this out by <b>{due}</b> at the latest by clicking the exclamation mark at the top right of your screen.
                 </div>
                 <button onclick={() => {
                   document.getElementById('form-reminder-modal').remove();
-                  document.getElementById('modal-background').remove();
-                }}>Ok</button>
-              </div>
+                  document.getElementById('form-modal-background').remove();
+                }}>OK</button>
+              </div>,
+              'form'
             );
             this.remindForm = true;
           }
