@@ -1,4 +1,5 @@
 import hotkeys from 'hotkeys-js';
+import isMobile from 'ismobilejs';
 
 import Scene from './js/scene';
 import Element from './js/element';
@@ -7,28 +8,34 @@ import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
 import settings from './settings.jsx';
+import map from './js/components/map';
 import feedback from './feedback.jsx';
-import queueHacker from './queueHacker.jsx';
-import queueSponsor from './queueSponsor.jsx';
+import queueSponsor from './js/components/sponsorPanel';
+import projectForm from './js/components/projectForm';
 import friends from './js/components/friends';
+import dance from './js/components/dance';
 import jukebox from './jukebox';
 import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
+import characterSelector from './js/components/characterSelector';
 
+import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
+import queueManager from './js/managers/queue';
+import constants from './constants';
+
 // eslint-disable-next-line
 import statusManager from './js/managers/status';
 
 import './styles/index.scss';
+import './styles/notifications.scss';
 import './styles/sponsor.scss';
 import './images/Code_Icon.svg';
 import './images/Coffee_Icon.svg';
 import './images/Site_Icon.svg';
 import './images/sponsor_text.svg';
-import './styles/coffeechat.scss';
 
-import './coffeechat';
-
+import './images/icons/megaphone.svg';
 import './images/icons/dance.svg';
 import './images/icons/edit.svg';
 import './images/icons/friends.svg';
@@ -39,10 +46,20 @@ import './images/icons/portal.png';
 import './images/icons/send.svg';
 import './images/icons/settings.svg';
 import './images/icons/tree.svg';
+import './images/icons/map.svg';
+import './images/icons/guidebook.svg';
+import './images/icons/schedule.svg';
+import './images/logo.png';
+import './images/swoopy.svg';
+import './images/icons/dab.svg';
+import './images/icons/wave.svg';
+import './images/icons/floss.svg';
+import './images/icons/exclamation.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
+// eslint-disable-next-line
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
 
@@ -56,8 +73,18 @@ class Game extends Page {
   }
 
   start = () => {
-    if (!window.WebSocket) {
-      // TODO: Handle error -- tell people their browser is incompatible
+    document.getElementById('top-bar-button-container').style.display = 'none';
+    document.getElementById('chat').style.display = 'none';
+
+    if (isMobile(window.navigator).any || !window.WebSocket) {
+      this.stopLoading();
+      loginPanel.hide();
+      document.getElementById('top-bar-button-container').style.display =
+        'flex';
+      document.getElementById('chat').style.display = 'flex';
+      document.getElementById('outer').innerHTML =
+        '<div id="unsupported">Unsupported device or browser</div>';
+      return;
     }
 
     loginPanel.update();
@@ -65,6 +92,9 @@ class Game extends Page {
     // Quick check for auth data
     if (localStorage.getItem('token') !== null) {
       loginPanel.hide();
+      document.getElementById('top-bar-button-container').style.display =
+        'flex';
+      document.getElementById('chat').style.display = 'flex';
     } else {
       this.stopLoading();
     }
@@ -87,28 +117,46 @@ class Game extends Page {
     this.addClickListener('add-room-button', this.handleRoomAddButton);
     this.addClickListener('day-of-button', this.handleDayofButton);
     this.addClickListener('edit-button', this.handleEditButton);
-    this.addClickListener('queue-hacker-button', this.handleQueueHackerButton);
-    this.addClickListener(
-      'queue-sponsor-button',
-      this.handleQueueSponsorButton
-    );
     this.addClickListener('settings-button', this.handleSettingsButton);
     this.addClickListener('game', this.handleGameClick);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
     this.addClickListener('friends-button', this.handleFriendsButton);
     this.addClickListener('send-button', this.handleSendButton);
     this.addClickListener('igloo-button', this.handleIglooButton);
-
-    this.handleWindowSize();
+    this.addClickListener('dance-button', this.handleDanceButton);
+    this.addClickListener('map-button', this.handleMapButton);
+    this.addClickListener('queue-button', this.handleQueueButton);
+    this.addClickListener('website-button', this.handleWebsiteButton);
+    this.addClickListener('schedule-button', this.handleScheduleButton);
+    this.addClickListener('form-button', this.handleFormButton);
+    this.addClickListener('challenges-button', this.handleChallengesButton);
+    this.addClickListener('top-bar-logo', () => {
+      socket.send({
+        type: 'teleport',
+        to: 'home',
+      });
+    });
 
     socket.onopen = this.handleSocketOpen;
+    socket.onclose = this.handleSocketClose;
     socket.subscribe('*', this.handleSocketMessage);
     socket.start();
+
+    queueManager.start();
 
     // Listen for hotkeys
     hotkeys('t, enter, /', (e) => {
       e.preventDefault();
       document.getElementById('chat-box').focus();
+    });
+
+    hotkeys('esc', () => {
+      // Close all character profiles
+      Array.from(document.getElementsByClassName('profile-container')).forEach(
+        (elem) => {
+          elem.style.visibility = 'hidden';
+        }
+      );
     });
 
     // Start sending chat events
@@ -171,7 +219,11 @@ class Game extends Page {
 
   handleGameClick = (e) => {
     // When clicking on the page, send a move message to the server
-    if (e.target.id !== 'three-canvas') {
+    if (
+      (e.target.id !== 'three-canvas' &&
+        !e.target.classList.contains('element-img')) ||
+      e.target.hasAttribute('data-interactable')
+    ) {
       return;
     }
 
@@ -201,9 +253,11 @@ class Game extends Page {
       return;
     }
 
-    const rect = document.getElementById('game').getBoundingClientRect();
-    const x = (e.pageX - rect.x) / rect.width;
-    const y = (e.pageY - rect.y) / rect.height;
+    const rect = document
+      .getElementById('three-canvas')
+      .getBoundingClientRect();
+    const x = (e.clientX - rect.x) / rect.width;
+    const y = (e.clientY - rect.y) / rect.height;
 
     // call click handler of game to check for characters clicked
     const success = this.scene.handleClickEvent(x, y);
@@ -240,6 +294,13 @@ class Game extends Page {
     socket.send(joinPacket);
   };
 
+  handleSocketClose = () => {
+    notificationsManager.displayMessage(
+      "You've been disconnected from the HackMIT playground. Please refresh the page to try to reconnect.",
+      30000
+    );
+  };
+
   handleSocketMessage = (data) => {
     console.log(data);
     if (data.type === 'init') {
@@ -254,7 +315,11 @@ class Game extends Page {
       if (data.token !== undefined) {
         localStorage.setItem('token', data.token);
         window.history.pushState(null, null, ' ');
+
         loginPanel.hide();
+        document.getElementById('top-bar-button-container').style.display =
+          'flex';
+        document.getElementById('chat').style.display = 'flex';
       }
 
       // Delete stuff from previous room
@@ -290,15 +355,15 @@ class Game extends Page {
           this.finishedLoadingPart();
         };
 
+        const threeContainer = document.getElementById('three-container');
+
         if (element.action > 0) {
-          document.getElementById('game').appendChild(elementElem.element);
+          threeContainer.appendChild(elementElem.element);
         } else {
-          document
-            .getElementById('game')
-            .insertBefore(
-              elementElem.element,
-              document.getElementById('three-container')
-            );
+          threeContainer.insertBefore(
+            elementElem.element,
+            document.getElementById('three-canvas')
+          );
         }
       });
 
@@ -317,18 +382,46 @@ class Game extends Page {
       this.settings = data.settings;
       this.room = data.room;
 
-      if (this.room.sponsor) {
+      if (this.room.sponsorId.length > 0) {
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
           'sponsor-name'
         ).innerHTML = `<span>${this.room.slug}</span>${this.room.slug}`;
         document.getElementById('outer').classList.add('sponsor');
         document.getElementById('game').classList.add('sponsor');
+
+        document.getElementById('challenges-button').style.display =
+          this.room.sponsor.challenges.length > 0 ? 'inline-block' : 'none';
+        document.getElementById(
+          'sponsor-description'
+        ).innerText = this.room.sponsor.description;
+        document.getElementById(
+          'queue-button-text'
+        ).innerText = `Talk to ${this.room.sponsor.name}`;
       } else {
         document.getElementById('sponsor-pane').classList.remove('active');
         document.getElementById('outer').classList.remove('sponsor');
         document.getElementById('game').classList.remove('sponsor');
       }
+
+      if (this.dancePaneVisible) {
+        // Hide the dance pane
+        document.getElementById('dance-pane').classList.add('invisible');
+        this.dancePaneVisible = false;
+      }
+
+      if (this.friendsPaneVisible) {
+        // Hide the friends pane
+        document.getElementById('friends-pane').classList.add('invisible');
+        this.friendsPaneVisible = false;
+      }
+
+      // Close all character profiles
+      Array.from(document.getElementsByClassName('profile-container')).forEach(
+        (elem) => {
+          elem.style.visibility = 'hidden';
+        }
+      );
 
       this.loadingTasks += 1;
       const img = new Image();
@@ -342,10 +435,94 @@ class Game extends Page {
 
       img.src = BACKGROUND_IMAGE_URL.replace('%PATH%', this.room.background);
 
-      this.scene.fixCameraOnResize();
-
-      // Start notifications manager
+      // Start managers
       notificationsManager.start();
+
+      if (data.character.shirtColor === '#d6e2f8') {
+        createModal(characterSelector.createModal());
+      }
+
+      document.getElementById('form-button').style.display = 'none';
+      document.getElementById('edit-button').style.display = 'none';
+
+      //  organizer
+      if (characterManager.character.role === 1) {
+        document.getElementById('edit-button').style.display = 'block';
+      }
+      //  sponsor
+      else if (
+        characterManager.character.role === 4 &&
+        !characterManager.character.project
+      ) {
+        const currentTime = new Date().getTime();
+        const formOpen1 = this.createUTCDate(19, 1);
+        const deadline1 = this.createUTCDate(19, 7);
+
+        const formOpen2 = this.createUTCDate(19, 16);
+        const deadline2 = this.createUTCDate(19, 22);
+
+        const first =
+          formOpen1.getTime() < currentTime &&
+          currentTime < deadline1.getTime();
+        const second =
+          formOpen2.getTime() < currentTime &&
+          currentTime < deadline2.getTime();
+
+        let formName = '';
+        let due = '';
+        if (first) {
+          formName = 'Fun Friday Form';
+          due = 'Saturday 3am EDT';
+        } else {
+          formName = 'Spicy Saturday Survey';
+          due = 'Saturday 6pm EDT';
+        }
+
+        if (first || second) {
+          console.log('hello');
+          document.getElementById('form-button').style.display = 'block';
+          if (!this.remindForm) {
+            createModal(
+              <div id="form-reminder-modal">
+                <div id="form-reminder">
+                  <h1>Reminder: </h1>
+                  You must submit the <b>{formName}</b> in order to be eligible
+                  for judging and swag! Please fill this out by <b>{due}</b> at
+                  the latest by clicking the exclamation mark at the top right
+                  of your screen.
+                </div>
+                <div id="form-button-div">
+                  <button
+                    id="later-button"
+                    onclick={() => {
+                      document.getElementById('form-reminder-modal').remove();
+                      document.getElementById('form-modal-background').remove();
+                    }}
+                  >
+                    Later
+                  </button>
+                  <button
+                    onclick={() => {
+                      document.getElementById('form-reminder-modal').remove();
+                      document.getElementById('form-modal-background').remove();
+                      createModal(projectForm.createFormModal());
+                    }}
+                  >
+                    OK
+                  </button>
+                </div>
+              </div>,
+              'form'
+            );
+            this.remindForm = true;
+          }
+        }
+      }
+
+      // Resize appropriately if we're in a sponsor room
+      this.handleWindowSize();
+    } else if (data.type === 'dance') {
+      this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
         if (data.id !== this.characterId) {
@@ -406,6 +583,17 @@ class Game extends Page {
         this.stopLoading();
         loginPanel.show();
       }
+      if (data.code === 2) {
+        this.stopLoading();
+        createModal(
+          <div id="jukebox-modal">
+            <h1 className="white-text">Oops!</h1>
+            <p className="white-text">
+              You must be a college student to enter the nightclub.
+            </p>
+          </div>
+        );
+      }
     } else if (data.type === 'join') {
       this.scene.newCharacter(data.character.id, data.character);
     } else if (data.type === 'leave') {
@@ -415,17 +603,23 @@ class Game extends Page {
       this.scene.deleteCharacter(data.character.id);
     } else if (data.type === 'chat') {
       this.scene.sendChat(data.id, data.mssg);
-    } else {
-      console.log(`received unknown packet: ${data.type}`);
-      console.log(data);
+    } else if (data.type === 'wardrobe_change') {
+      this.scene.updateClothes(data.characterId, data);
     }
+  };
+
+  createUTCDate = (day, hour) => {
+    const date = new Date();
+    date.setUTCFullYear(2020, 8, day);
+    date.setUTCHours(hour, 0, 0);
+    return date;
   };
 
   handleDayofButton = () => {
     createModal(
       <iframe
         id="day-of-iframe"
-        className="day-of-page"
+        className="modal-frame"
         src="https://dayof.hackmit.org"
       />
     );
@@ -452,21 +646,6 @@ class Game extends Page {
         radius: 0.1,
         to: 'microsoft',
       },
-    });
-  };
-
-  handleRoomAddButton = () => {
-    const roomName = prompt('What should the room be called?');
-    const backgroundPath = prompt("What's this room's background path?");
-    const sponsor = prompt("Type 'true' if this is a sponsor room").includes(
-      'true'
-    );
-
-    socket.send({
-      type: 'room_add',
-      id: roomName,
-      background: backgroundPath,
-      sponsor,
     });
   };
 
@@ -500,16 +679,57 @@ class Game extends Page {
     }
   };
 
+  handleFormButton = () => {
+    createModal(projectForm.createFormModal());
+  };
+
   handleSettingsButton = () => {
-    createModal(settings.createSettingsModal(this.settings));
+    if (characterManager.character.role === 2) {
+      createModal(
+        queueSponsor.createQueueModal(),
+        'queue',
+        queueSponsor.onClose
+      );
+
+      queueSponsor.subscribe(characterManager.character.sponsorId);
+    } else {
+      createModal(settings.createSettingsModal(this.settings));
+    }
   };
 
-  handleQueueSponsorButton = () => {
-    createModal(queueSponsor.createQueueModal(), 'queue', queueSponsor.onClose);
+  handleQueueButton = () => {
+    // TODO: 2 should be a constant for sponsor
+    if (characterManager.character.role === 2) {
+      createModal(
+        queueSponsor.createQueueModal(),
+        'queue',
+        queueSponsor.onClose
+      );
+
+      queueSponsor.subscribe(this.room.sponsor.id);
+    } else {
+      // if (characterManager.character.role === 1 /* hacker */) {
+      queueManager.join(this.room.sponsor);
+    }
   };
 
-  handleQueueHackerButton = () => {
-    createModal(queueHacker.createQueueModal(), 'queue', queueHacker.onClose);
+  handleChallengesButton = () => {
+    createModal(
+      <div id="challenges-modal">
+        <div id="challenges-content">
+          <h1>{this.room.sponsor.name} Challenges</h1>
+          {this.room.sponsor.challenges}
+        </div>
+      </div>
+    );
+  };
+
+  handleWebsiteButton = () => {
+    window.open(this.room.sponsor.url, '_blank');
+  };
+
+  handleScheduleButton = () => {
+    window.open(constants.calendarURL, '_blank');
   };
 
   handleJukeboxButton = () => {
@@ -538,12 +758,20 @@ class Game extends Page {
       // Make the friends pane visible
       document.getElementById('friends-pane').classList.remove('invisible');
       this.friendsPaneVisible = true;
+
+      // Hide the dance pane
+      document.getElementById('dance-pane').classList.add('invisible');
+      this.dancePaneVisible = false;
     } else {
       // Never created friends pane before, create it now
       document
         .getElementById('chat')
         .appendChild(friends.createFriendsPane(this.friends));
       this.friendsPaneVisible = true;
+
+      // Hide the dance pane
+      document.getElementById('dance-pane').classList.add('invisible');
+      this.dancePaneVisible = false;
     }
   };
 
@@ -601,10 +829,44 @@ class Game extends Page {
     });
   };
 
+  handleDanceButton = () => {
+    if (this.dancePaneVisible === true) {
+      // Hide the dance pane
+      document.getElementById('dance-pane').classList.add('invisible');
+      this.dancePaneVisible = false;
+    } else if (this.dancePaneVisible === false) {
+      // make the dance pane visible
+      document.getElementById('dance-pane').classList.remove('invisible');
+      this.dancePaneVisible = true;
+
+      //  make friends pane invisible
+      document.getElementById('friends-pane').classList.add('invisible');
+      this.friendsPaneVisible = false;
+    } else {
+      // Never created dance pane before, create it now
+      document.getElementById('chat').appendChild(dance.createDancePane());
+      this.dancePaneVisible = true;
+
+      // Hide the friends pane
+      document.getElementById('friends-pane').classList.add('invisible');
+      this.friendsPaneVisible = false;
+    }
+  };
+
+  handleMapButton = () => {
+    createModal(map.createMapModal());
+  };
+
   handleWindowSize = () => {
     const outerElem = document.getElementById('outer');
 
-    if (window.innerWidth < window.innerHeight * (16 / 9)) {
+    let width = window.innerWidth;
+
+    if (this.room !== null && this.room.sponsorId.length > 0) {
+      width -= 340 + 24 * 3;
+    }
+
+    if (width < (window.innerHeight - (52 + 64)) * (16 / 9)) {
       if (outerElem.classList.contains('vertical')) {
         return;
       }
@@ -617,6 +879,8 @@ class Game extends Page {
 
       outerElem.classList.remove('vertical');
     }
+
+    this.scene.fixCameraOnResize();
   };
 
   showFeedback = () => {

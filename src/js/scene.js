@@ -32,10 +32,11 @@ class Scene {
     this.clock = new THREE.Clock();
     this.scene = new THREE.Scene();
 
-    const light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+    // const light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+    const light = new THREE.HemisphereLight(0xffffbb, 0x141434, 1);
     this.scene.add(light);
 
-    this.loader = new GLTFLoader().setPath('models/');
+    this.loader = new GLTFLoader();
 
     this.characters = new Map();
 
@@ -47,9 +48,9 @@ class Scene {
       this.container.clientWidth,
       this.container.clientHeight
     );
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 0.8;
-    this.renderer.outputEncoding = THREE.sRGBEncoding;
+    // this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    // this.renderer.toneMappingExposure = 0.8;
+    // this.renderer.outputEncoding = THREE.sRGBEncoding;
     this.renderer.setClearColor(0xffffff, 0);
     this.container.appendChild(this.renderer.domElement);
 
@@ -96,16 +97,32 @@ class Scene {
 
       return [pageX, pageY];
     });
+  }
 
-    // if (this.modelScene !== undefined) {
-    //   this.characters[character_id].setModel(this, this.modelScene, this.modelAnimation)
-    // }
+  updateClothes(id, data) {
+    const characterData = this.characters[id].data;
+
+    Object.keys(data).forEach((key) => {
+      characterData[key] = data[key];
+    });
+
+    this.characters[id].safeDelete(this);
+    delete this.characters[id];
+
+    this.newCharacter(id, characterData);
   }
 
   // move character with given id to x,y
   moveCharacter(id, x, y, callback) {
+    this.characters[id].data.x = x;
+    this.characters[id].data.y = y;
+
     const newPos = this.worldVectorForPos(x, y);
     this.characters[id].moveTo(newPos, callback);
+  }
+
+  danceCharacter(id, dance) {
+    this.characters[id].dance(dance);
   }
 
   // delete character (remove from map and scene)

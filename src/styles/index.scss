@@ -5,11 +5,23 @@
 @import 'fonts';
 @import 'colors';
 
+$top_bar_height: 64px;
+$top_bar_logo_width: 64px;
+$chat_bar_height: 52px;
 $chat_input_height: 40px;
 
 * {
   padding: 0;
   margin: 0;
+}
+
+body {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 h1,
@@ -26,7 +38,8 @@ b {
 }
 
 p,
-span {
+span,
+div {
   font-family: Muli;
   color: $blue-text;
 }
@@ -53,36 +66,78 @@ body {
   visibility: hidden;
 }
 
+#unsupported {
+  margin: auto;
+}
+
 #outer {
-  width: 177.77vh;
+  width: 100vw;
   height: 100vh;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 
-  &.vertical {
-    width: 100vw;
-    height: 56.25vw;
-    position: absolute;
-    transform: translate(-50%, -50%);
-    left: 50%;
-    top: 50%;
-  }
+  #top-bar {
+    display: grid;
+    grid-template-columns: 1fr $top_bar_logo_width 1fr;
+    background: #dfecf3;
+    height: $top_bar_height;
+    width: 100%;
 
-  &.sponsor {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    #main {
-      display: flex;
+    #top-bar-logo {
+      background: transparent;
       align-items: center;
-      justify-content: space-around;
-      flex-grow: 1;
+      grid-column-start: 2;
+      transform: translateY(10px);
+      width: $top_bar_logo_width;
+      cursor: pointer;
+    }
+
+    #top-bar-button-container {
+      display: flex;
+      justify-content: flex-end;
+
+      button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        margin-left: 20px;
+        margin-right: 20px;
+        width: 32px;
+
+        &:hover {
+          transform: translateY(-2px);
+        }
+      }
+    }
+
+    #swoopy {
+      position: absolute;
+      left: 50%;
+      top: $top_bar_height;
+      transform: translateX(-50%);
+      width: 84px;
+      z-index: -1;
     }
   }
 
   #main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    height: 100%;
+  }
+
+  &.vertical #game {
+    width: 100vw;
+    max-height: 56.25vw;
+  }
+
+  #game {
+    width: calc((100vh - #{$top_bar_height} - #{$chat_bar_height}) * (16 / 9));
+    height: calc(100vh - #{$top_bar_height} - #{$chat_bar_height});
   }
 }
 
@@ -90,14 +145,10 @@ body {
   background: $chat_box_background;
   border-radius: 8px;
   display: flex;
-  height: 52px;
+  height: $chat_bar_height;
   align-items: center;
   justify-content: space-around;
   padding: 0 16px;
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translate(-50%, 0);
 
   input {
     color: #fff;
@@ -176,6 +227,9 @@ body {
       }
     }
   }
+  .dance-pane-button {
+    background: #7b9fce;
+  }
 }
 
 #game {
@@ -185,6 +239,7 @@ body {
   background-size: 100% 100%;
   position: relative;
   overflow: hidden;
+  display: flex;
 
   #background {
     position: absolute;
@@ -248,6 +303,19 @@ body {
     right: 24px;
   }
 
+  #form-button {
+    cursor: pointer;
+    height: 32px;
+    width: 32px;
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    display: block;
+    background: red;
+    border: none;
+    border-radius: 50%;
+  }
+
   #queue-hacker-button {
     position: absolute;
     bottom: 156px;
@@ -260,15 +328,6 @@ body {
   #queue-sponsor-button {
     position: absolute;
     bottom: 90px;
-    right: 24px;
-    height: 64px;
-    width: 64px;
-    cursor: pointer;
-  }
-
-  #day-of-button {
-    position: absolute;
-    bottom: 24px;
     right: 24px;
     height: 64px;
     width: 64px;
@@ -587,5 +646,59 @@ body {
 
   .white-text {
     color: $white !important;
+  }
+}
+
+#form-reminder-modal {
+  #form-button-div {
+    display: inline-block;
+    text-align: center;
+
+    button {
+      background: #43a047;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 14px;
+      margin: 10px;
+      outline: none;
+      padding: 12px 16px;
+
+      &:hover {
+        background: #388e3c;
+      }
+    }
+
+    #later-button {
+      background: #eed202;
+      display: inline-block;
+
+      &:hover {
+        background: #eed202af;
+      }
+    }
+  }
+
+  #form-reminder {
+    h1 {
+      padding: 5px;
+      text-align: center;
+    }
+  }
+}
+
+#challenges-modal {
+  background: $blue_light;
+
+  #challenges-content {
+    color: #001d55;
+    padding: 32px;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
   }
 }

@@ -11,7 +11,7 @@ class Socket {
   }
 
   start() {
-    this.conn = new WebSocket(constants.ws_url);
+    this.conn = new WebSocket(constants.websocketURL);
     this.conn.onopen = this.onopen;
     this.conn.onclose = this.onclose;
     this.conn.onmessage = (e) => {

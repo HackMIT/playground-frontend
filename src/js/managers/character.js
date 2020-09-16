@@ -2,7 +2,7 @@ import socket from '../socket';
 
 class CharacterManager {
   constructor() {
-    this.characterId = null;
+    this.character = null;
     this.friends = new Map();
 
     socket.subscribe(
@@ -30,12 +30,11 @@ class CharacterManager {
         break;
       }
       case 'init': {
-        this.characterId = msg.character.id;
+        this.character = msg.character;
 
         this.friends = new Map();
 
         msg.friends.forEach((friend) => {
-          console.log(friend);
           this.friends.set(friend.id, friend);
         });
 
@@ -56,7 +55,10 @@ class CharacterManager {
     }
   };
 
-  getCharacterId = () => this.characterId;
+  getSponsorId = () =>
+    this.character === null ? null : this.character.sponsorId;
+
+  getCharacterId = () => (this.character === null ? null : this.character.id);
 
   getFriends = () => this.friends;
 

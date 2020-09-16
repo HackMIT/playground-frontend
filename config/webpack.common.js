@@ -12,7 +12,6 @@ module.exports = {
    */
   entry: {
     attendance: [`${paths.src}/attendance.js`],
-    character: [`${paths.src}/character.jsx`],
     game: [`${paths.src}/index.jsx`],
     quillsso: [`${paths.src}/quillsso.js`],
   },

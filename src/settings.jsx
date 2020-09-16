@@ -11,6 +11,7 @@ class Settings {
   constructor() {
     this.musicMuted = false;
     this.soundMuted = false;
+    this.twitterHandle = null;
   }
 
   handleMusicButton = () => {
@@ -39,20 +40,32 @@ class Settings {
   createSettingsContent = () => {
     return (
       <div id="settings-text">
-        <div id="settings-option">
+        <div className="settings-option">
           <div id="settings-box"></div>
-          <button id="settings-button" onclick={this.handleMusicButton}>
+          <button className="settings-button" onclick={this.handleMusicButton}>
             {this.musicMuted ? 'UNMUTE ALL MUSIC' : 'MUTE ALL MUSIC'}
           </button>
         </div>
-        <div id="settings-option">
+        <div className="settings-option">
           <div id="settings-box"></div>
-          <button id="settings-button" onclick={this.handleSoundButton}>
+          <button className="settings-button" onclick={this.handleSoundButton}>
             {this.soundMuted ? 'UNMUTE ALL SOUND' : 'MUTE ALL SOUND'}
           </button>
         </div>
       </div>
     );
+  };
+
+  checkTweets = () => {
+    const elem = document.getElementById('settings-twitter');
+    this.twitterHandle = elem.value;
+    socket.send({
+      type: 'settings',
+      checkTwitter: true,
+      settings: {
+        twitterHandle: this.twitterHandle,
+      },
+    });
   };
 
   handleLogOff = () => {
@@ -66,7 +79,7 @@ class Settings {
 
     return (
       <div id="settings">
-        <div id="inner"> {/*Eva's border code*/} </div>
+        {/* <div id="inner" /> */}
         <div id="root">
           <div class="settings-header" id="settings-header">
             <div id="settings-gear"></div>
@@ -76,17 +89,23 @@ class Settings {
           <div class="settings-list" id="settings-list">
             {this.createSettingsContent()}
           </div>
-
+          <div id="settings-input">
+            <label>Tweet with #HackMIT to earn an achievement: </label>
+            <input
+              id="settings-twitter"
+              type="text"
+              placeholder="Twitter handle"
+            />
+            <button onclick={() => this.checkTweets()}>CHECK TWEETS</button>
+          </div>
           <div id="settings-flexcenter">
             <button id="settings-logout" onclick={this.handleLogOff}>
               LOG OFF
             </button>
           </div>
-
         </div>
 
-        <div id = "settings-clouds"></div>
-
+        <div id="settings-clouds"></div>
       </div>
     );
   };
