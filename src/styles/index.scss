@@ -644,3 +644,29 @@ body {
     color: $white !important;
   }
 }
+
+#form-reminder-modal {
+  button {
+    background: #43a047;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    font-size: 14px;
+    margin: 10px auto 0;
+    outline: none;
+    padding: 12px 16px;
+
+    &:hover {
+      background: #388e3c;
+    }
+  }
+  
+  #form-reminder {
+    h1 {
+      padding: 5px;
+      text-align: center;
+    }
+  }
+}
