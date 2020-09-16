@@ -21,6 +21,8 @@ class QueueManager {
     this.position = undefined;
   };
 
+  inQueue = () => this.sponsor !== undefined;
+
   join = (sponsor) => {
     if (this.sponsor !== undefined) {
       socket.send({

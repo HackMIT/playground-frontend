@@ -1,0 +1,38 @@
+
+#queue-form {
+  width: initial;
+}
+
+#queue-form-content {
+  h1 {
+    margin-bottom: 12px;
+    text-align: center;
+  }
+    .checkbox-container {
+      * {
+        vertical-align: middle;
+      }
+
+      input {
+        margin-left: 4px;
+        margin-right: 6px;
+      }
+    }
+
+  button {
+    background: #43a047;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    font-size: 14px;
+    margin: 12px auto 0;
+    outline: none;
+    padding: 12px 16px;
+
+    &:hover {
+      background: #388e3c;
+    }
+  }
+}
