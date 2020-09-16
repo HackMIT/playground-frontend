@@ -17,6 +17,7 @@ import jukebox from './jukebox';
 import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 import characterSelector from './js/components/characterSelector';
+import nonprofit from './js/components/nonprofit';
 
 import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
@@ -49,6 +50,7 @@ import './images/icons/map.svg';
 import './images/icons/guidebook.svg';
 import './images/icons/schedule.svg';
 import './images/logo.png';
+import './images/wikipedia.png';
 import './images/swoopy.svg';
 import './images/icons/dab.svg';
 import './images/icons/wave.svg';
@@ -71,6 +73,8 @@ class Game extends Page {
   }
 
   start = () => {
+    document.getElementById('top-bar-button-container').style.display = 'none';
+    document.getElementById('chat').style.display = 'none';
     if (isMobile(window.navigator).any || !window.WebSocket) {
       this.stopLoading();
       loginPanel.hide();
@@ -87,6 +91,7 @@ class Game extends Page {
     } else {
       this.stopLoading();
     }
+
 
     this.scene = new Scene();
 
@@ -117,6 +122,7 @@ class Game extends Page {
     this.addClickListener('queue-button', this.handleQueueButton);
     this.addClickListener('website-button', this.handleWebsiteButton);
     this.addClickListener('schedule-button', this.handleScheduleButton);
+    this.addClickListener('dance-button', this.handleNonprofitButton);
     this.addClickListener('top-bar-logo', () => {
       socket.send({
         type: 'teleport',
@@ -387,6 +393,25 @@ class Game extends Page {
         document.getElementById('game').classList.remove('sponsor');
       }
 
+      if (this.dancePaneVisible) {
+        // Hide the dance pane
+        document.getElementById('dance-pane').classList.add('invisible');
+        this.dancePaneVisible = false;
+      }
+
+      if (this.friendsPaneVisible) {
+        // Hide the friends pane
+        document.getElementById('friends-pane').classList.add('invisible');
+        this.friendsPaneVisible = false;
+      }
+
+      // Close all character profiles
+      Array.from(document.getElementsByClassName('profile-container')).forEach(
+        (elem) => {
+          elem.style.visibility = 'hidden';
+        }
+      );
+
       this.loadingTasks += 1;
       const img = new Image();
 
@@ -625,12 +650,20 @@ class Game extends Page {
       // Make the friends pane visible
       document.getElementById('friends-pane').classList.remove('invisible');
       this.friendsPaneVisible = true;
+
+      // Hide the dance pane
+      document.getElementById('dance-pane').classList.add('invisible');
+      this.dancePaneVisible = false;
     } else {
       // Never created friends pane before, create it now
       document
         .getElementById('chat')
         .appendChild(friends.createFriendsPane(this.friends));
       this.friendsPaneVisible = true;
+
+      // Hide the dance pane
+      document.getElementById('dance-pane').classList.add('invisible');
+      this.dancePaneVisible = false;
     }
   };
 
@@ -696,12 +729,24 @@ class Game extends Page {
       // make the dance pane visible
       document.getElementById('dance-pane').classList.remove('invisible');
       this.dancePaneVisible = true;
+
+      //  make friends pane invisible
+      document.getElementById('friends-pane').classList.add('invisible');
+      this.friendsPaneVisible = false;
     } else {
       // Never created dance pane before, create it now
       document.getElementById('chat').appendChild(dance.createDancePane());
       this.dancePaneVisible = true;
+
+      // Hide the friends pane
+      document.getElementById('friends-pane').classList.add('invisible');
+      this.friendsPaneVisible = false;
     }
   };
+
+  handleNonprofitButton = () => {
+    createModal(nonprofit.createNonprofitModal('wikipedia'));
+  }
 
   handleMapButton = () => {
     createModal(map.createMapModal());
