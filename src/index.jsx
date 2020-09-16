@@ -71,9 +71,15 @@ class Game extends Page {
   }
 
   start = () => {
+    document.getElementById('top-bar-button-container').style.display = 'none';
+    document.getElementById('chat').style.display = 'none';
+
     if (isMobile(window.navigator).any || !window.WebSocket) {
       this.stopLoading();
       loginPanel.hide();
+      document.getElementById('top-bar-button-container').style.display =
+        'flex';
+      document.getElementById('chat').style.display = 'flex';
       document.getElementById('outer').innerHTML =
         '<div id="unsupported">Unsupported device or browser</div>';
       return;
@@ -84,6 +90,9 @@ class Game extends Page {
     // Quick check for auth data
     if (localStorage.getItem('token') !== null) {
       loginPanel.hide();
+      document.getElementById('top-bar-button-container').style.display =
+        'flex';
+      document.getElementById('chat').style.display = 'flex';
     } else {
       this.stopLoading();
     }
@@ -121,7 +130,7 @@ class Game extends Page {
     this.addClickListener('top-bar-logo', () => {
       socket.send({
         type: 'teleport',
-        to: 'home'
+        to: 'home',
       });
     });
 
@@ -303,7 +312,11 @@ class Game extends Page {
       if (data.token !== undefined) {
         localStorage.setItem('token', data.token);
         window.history.pushState(null, null, ' ');
+
         loginPanel.hide();
+        document.getElementById('top-bar-button-container').style.display =
+          'flex';
+        document.getElementById('chat').style.display = 'flex';
       }
 
       // Delete stuff from previous room
@@ -387,6 +400,25 @@ class Game extends Page {
         document.getElementById('outer').classList.remove('sponsor');
         document.getElementById('game').classList.remove('sponsor');
       }
+
+      if (this.dancePaneVisible) {
+        // Hide the dance pane
+        document.getElementById('dance-pane').classList.add('invisible');
+        this.dancePaneVisible = false;
+      }
+
+      if (this.friendsPaneVisible) {
+        // Hide the friends pane
+        document.getElementById('friends-pane').classList.add('invisible');
+        this.friendsPaneVisible = false;
+      }
+
+      // Close all character profiles
+      Array.from(document.getElementsByClassName('profile-container')).forEach(
+        (elem) => {
+          elem.style.visibility = 'hidden';
+        }
+      );
 
       this.loadingTasks += 1;
       const img = new Image();
@@ -569,11 +601,9 @@ class Game extends Page {
       );
 
       queueSponsor.subscribe(characterManager.character.sponsorId);
-    }
-    else {
+    } else {
       createModal(settings.createSettingsModal(this.settings));
     }
-
   };
 
   handleQueueButton = () => {
@@ -638,12 +668,20 @@ class Game extends Page {
       // Make the friends pane visible
       document.getElementById('friends-pane').classList.remove('invisible');
       this.friendsPaneVisible = true;
+
+      // Hide the dance pane
+      document.getElementById('dance-pane').classList.add('invisible');
+      this.dancePaneVisible = false;
     } else {
       // Never created friends pane before, create it now
       document
         .getElementById('chat')
         .appendChild(friends.createFriendsPane(this.friends));
       this.friendsPaneVisible = true;
+
+      // Hide the dance pane
+      document.getElementById('dance-pane').classList.add('invisible');
+      this.dancePaneVisible = false;
     }
   };
 
@@ -709,10 +747,18 @@ class Game extends Page {
       // make the dance pane visible
       document.getElementById('dance-pane').classList.remove('invisible');
       this.dancePaneVisible = true;
+
+      //  make friends pane invisible
+      document.getElementById('friends-pane').classList.add('invisible');
+      this.friendsPaneVisible = false;
     } else {
       // Never created dance pane before, create it now
       document.getElementById('chat').appendChild(dance.createDancePane());
       this.dancePaneVisible = true;
+
+      // Hide the friends pane
+      document.getElementById('friends-pane').classList.add('invisible');
+      this.friendsPaneVisible = false;
     }
   };
 
