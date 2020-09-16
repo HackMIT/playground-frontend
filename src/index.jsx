@@ -589,6 +589,7 @@ class Game extends Page {
     } else {
       // if (characterManager.character.role === 1 /* hacker */) {
       queueManager.join(this.room.sponsor);
+
     }
   };
 
