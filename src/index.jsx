@@ -54,6 +54,7 @@ import './images/swoopy.svg';
 import './images/icons/dab.svg';
 import './images/icons/wave.svg';
 import './images/icons/floss.svg';
+import './images/icons/exclamation.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
@@ -417,8 +418,7 @@ class Game extends Page {
       }
       //  sponsor
       else if (characterManager.character.role === 4 && !characterManager.character.project) {
-        // const currentTime = new Date().getTime();
-        const currentTime = this.createUTCDate(19, 5);
+        const currentTime = new Date().getTime();
         const formOpen1 = this.createUTCDate(19, 1);
         const deadline1 = this.createUTCDate(19, 7);
 
@@ -439,6 +439,7 @@ class Game extends Page {
         }
 
         if (first || second) {
+          console.log('hello')
           document.getElementById('form-button').style.display = "block";
           if (!this.remindForm) {
             createModal(
@@ -447,11 +448,18 @@ class Game extends Page {
                   <h1>Reminder: </h1>
                   You must submit the <b>{formName}</b> in order to be eligible for judging and swag! Please fill this out by <b>{due}</b> at the latest by clicking the exclamation mark at the top right of your screen.
                 </div>
-                <button onclick={() => {
-                  document.getElementById('form-reminder-modal').remove();
-                  document.getElementById('form-modal-background').remove();
-                }}>OK</button>
-              </div>,
+                <div id="form-button-div">
+                  <button id="later-button" onclick={() => {
+                    document.getElementById('form-reminder-modal').remove();
+                    document.getElementById('form-modal-background').remove();
+                  }}>Later</button>
+                  <button onclick={() => {
+                    document.getElementById('form-reminder-modal').remove();
+                    document.getElementById('form-modal-background').remove();
+                    createModal(projectForm.createFormModal());
+                  }}>OK</button>
+                </div>
+              </div >,
               'form'
             );
             this.remindForm = true;

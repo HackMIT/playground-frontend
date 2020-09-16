@@ -4,6 +4,7 @@ import socket from '../socket';
 
 import '../../styles/projectForm.scss';
 
+import notificationsManager from '../managers/notifications'
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
 
@@ -188,6 +189,8 @@ class SponsorPanel {
     }
     if (submit) {
       socket.send(packet);
+      notificationsManager.displayMessage("You successfully submitted your project form!")
+      document.getElementById('modal-background').remove();
     }
 
   };

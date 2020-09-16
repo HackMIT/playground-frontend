@@ -310,6 +310,10 @@ body {
     position: absolute;
     top: 24px;
     right: 24px;
+    display: block;
+    background: red;
+    border: none;
+    border-radius: 50%;
   }
 
   #queue-hacker-button {
@@ -646,20 +650,34 @@ body {
 }
 
 #form-reminder-modal {
-  button {
-    background: #43a047;
-    border: none;
-    border-radius: 4px;
-    color: #fff;
-    cursor: pointer;
-    display: block;
-    font-size: 14px;
-    margin: 10px auto 0;
-    outline: none;
-    padding: 12px 16px;
+  #form-button-div {
+    display: inline-block;
+    text-align: center;
+    
+    button {
+      background: #43a047;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 14px;
+      margin: 10px;
+      outline: none;
+      padding: 12px 16px;
+  
+      &:hover {
+        background: #388e3c;
+      }
+    }
+  
+    #later-button {
+      background: #EED202;
+      display: inline-block;
 
-    &:hover {
-      background: #388e3c;
+      &:hover {
+        background: #eed202af;
+      }
     }
   }
   
