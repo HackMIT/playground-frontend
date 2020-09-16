@@ -1,6 +1,7 @@
 import YouTubeIframeLoader from 'youtube-iframe';
 import swal from 'sweetalert';
 
+import characterManager from './js/managers/character';
 import socket from './js/socket';
 import closeIcon from './images/icons/close.svg';
 import './styles/jukebox.scss';
@@ -14,7 +15,7 @@ class Jukebox {
     this.currentSong = null;
     this.songStart = 0;
     this.player = null;
-    this.ready = false;
+    this.jukeboxToggle = true;
 
     socket.subscribe(
       ['song', 'error', 'songs', 'playSong'],
@@ -25,22 +26,12 @@ class Jukebox {
   handleSocketMessage = (msg) => {
     if (msg.type === 'songs') {
       this.songs = msg.songs;
-    } else if (msg.type === 'playSong') {
-      // this.currentSong = msg.song;
+    } else if (msg.type === 'playSong' && this.jukeboxToggle) {
       this.songStart = msg.start;
-      console.log(msg.song);
-      console.log(this.currentSong);
-      if (this.player !== null && this.ready) {
-        // song ended
-        // console.log(this.player.getPlayerState());
-        // while (this.player.getPlayerState() !== 0) {
-        //   console.log(this.player.getPlayerState());
-        // }
+      if (this.player !== null && msg.song.id !== this.currentSong.id) {
         this.currentSong = msg.song;
-        console.log(this.player);
-        this.player.loadVideoById(msg.song.vidCode);
         this.updateJukeboxPane(false);
-        this.playing = true;
+        this.player.loadVideoById(msg.song.vidCode);
       } else {
         this.currentSong = msg.song;
         this.updateJukeboxPane(true);
@@ -87,11 +78,10 @@ class Jukebox {
     jukeboxElem.classList.add('closing');
 
     setTimeout(() => {
-      // jukeboxBackgroundElem.remove();
-      // jukeboxElem.style.display = 'none';
       jukeboxElem.classList.remove('closing');
-      document.getElementById('hidden-jukebox').appendChild(jukeboxElem);
-    }, 250);
+      // document.getElementById('hidden-jukebox').appendChild(jukeboxElem);
+      jukeboxElem.style.display = 'none';
+    }, 25);
   };
 
   createPlayingNowContents = () => {
@@ -101,13 +91,40 @@ class Jukebox {
     } else {
       title = this.currentSong.title;
     }
+    let input;
+    if (this.jukeboxToggle) {
+      input = <input onclick={this.toggleJukebox} id="jukebox-toggle" class="toggle" type="checkbox" checked />;
+    }
+    else {
+      input = <input onclick={this.toggleJukebox} id="jukebox-toggle" class="toggle" type="checkbox" />
+    }
     return (
       <div>
-        <p>Playing now:</p>
-        <h2>{title}</h2>
+        <div>
+          <p>Playing now:</p>
+          <h2>{title}</h2>
+        </div>
+        <p id="toggle">Toggle Jukebox: </p>
+        <label class="toggle">
+          {input}
+        </label>
       </div>
     );
   };
+
+  toggleJukebox = () => {
+    const toggle = document.getElementById('jukebox-toggle');
+    this.jukeboxToggle = toggle.checked;
+    if (toggle.checked && this.player !== null) {
+      socket.send({
+        type: 'get_current_song',
+      });
+      this.player.loadVideoById(this.currentSong.id, this.songStart);
+    }
+    else if (this.player !== null) {
+      this.player.pauseVideo();
+    }
+  }
 
   createSongsQueueContents = () => {
     socket.send({
@@ -115,7 +132,14 @@ class Jukebox {
     });
     const rootElem = <div />;
     setTimeout(() => {
+      let removeButton;
       this.songs.forEach((song) => {
+        if (characterManager.character.role === 1) { // user is an admin
+          removeButton = <button id="remove" onclick={() => this.handleRemoveButton(song)}>Remove</button>;
+        }
+        else {
+          removeButton = null;
+        }
         const minutesStr = Math.floor(song.duration / 60)
           .toString()
           .padStart(2, '0');
@@ -129,14 +153,12 @@ class Jukebox {
             <div>
               <p className="title">{song.title}</p>
               <p className="duration">{`${minutesStr}:${secondsStr}`}</p>
-              <button id="remove" onclick={() => this.handleRemoveButton(song)}>
-                Remove
-              </button>
+              {removeButton}
             </div>
           </div>
         );
       });
-    }, 250);
+    }, 25);
 
     return rootElem;
   };
@@ -155,7 +177,11 @@ class Jukebox {
               </button>
             </div>
             <div id="player" />
-            <div id="jukebox-playing-now"></div>
+            <div id="jukebox-playing-now">
+              <label class="volume">
+                <input type="checkbox" />
+              </label>
+            </div>
             <div id="jukebox-songs-queue"></div>
             <div id="jukebox-controls">
               <p>Add a song to the queue:</p>
@@ -178,10 +204,8 @@ class Jukebox {
           </div>
         </div>
       );
+      rootElem.appendChild(jukeboxElem);
     }
-
-    rootElem.appendChild(jukeboxElem);
-    // jukeboxElem.style.display = 'flex';
 
     socket.send({
       type: 'get_current_song',
@@ -191,17 +215,15 @@ class Jukebox {
     });
     setTimeout(() => {
       jukeboxElem.classList.add('opening');
-      this.updateJukeboxPane(true);
+      jukeboxElem.style.display = 'flex';
+      this.updateJukeboxPane(false);
     }, 25);
-    // this.updateYouTubePlayer();
   };
 
   updateYouTubePlayer = () => {
-    if (this.currentSong.duration === 0) {
+    if (this.currentSong.duration === 0 || this.player !== null) {
       return;
     }
-
-    console.log(this.currentSong);
 
     setTimeout(() => {
       YouTubeIframeLoader.load((YT) => {
@@ -214,9 +236,6 @@ class Jukebox {
             controls: 0,
             start: this.songStart,
             loop: 1,
-            events: {
-              'onReady': this.onPlayerReady,
-            },
           },
         });
       });
@@ -225,12 +244,6 @@ class Jukebox {
     socket.send({
       type: 'get_songs',
     });
-    this.updateJukeboxPane(false);
-  };
-
-  onPlayerReady = (event) => {
-    console.log('we in here');
-    this.ready = true;
   };
 
   handleSubmitButton = () => {
@@ -251,8 +264,16 @@ class Jukebox {
       return;
     }
 
-    const splitUrl = url.search.split(/[&=]/);
-    const vidCode = splitUrl[splitUrl.length - 3];
+    let splitUrl;
+    let vidCode;
+    try {
+      splitUrl = url.search.split(/[&=]/);
+      vidCode = splitUrl[splitUrl.length - 3];
+    }
+    catch {
+      swal('Oops!', 'Please input a valid YouTube video URL.', 'error');
+      return;
+    }
 
     socket.send({
       type: 'song',

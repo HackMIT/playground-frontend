@@ -28,7 +28,13 @@
 }
 
 #hidden-jukebox {
-  visibility: hidden;
+  // width: 500px;
+  // height: 500px;
+  // position: absolute;
+  // top: 0;
+  // left: 0;
+  // z-index: -1000;
+  display: none;
 }
 
 #jukebox-container {
@@ -98,6 +104,7 @@
   #jukebox-songs-queue {
     background: $blue_light;
     flex-grow: 1;
+    overflow-y:auto;
 
     .jukebox-song {
       display: flex;
@@ -199,4 +206,15 @@
 
 .swal-button {
   font-family: Muli;
+}
+
+#toggle {
+  float: left;
+  margin-right: 8px;
+}
+
+.toggle {
+  float: left;
+  margin-left: 5px;
+  margin-top: 10px;
 }
