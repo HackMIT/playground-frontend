@@ -17,7 +17,6 @@ import jukebox from './jukebox';
 import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 import characterSelector from './js/components/characterSelector';
-import nonprofit from './js/components/nonprofit';
 
 import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
@@ -92,7 +91,6 @@ class Game extends Page {
       this.stopLoading();
     }
 
-
     this.scene = new Scene();
 
     this.characterId = null;
@@ -122,11 +120,10 @@ class Game extends Page {
     this.addClickListener('queue-button', this.handleQueueButton);
     this.addClickListener('website-button', this.handleWebsiteButton);
     this.addClickListener('schedule-button', this.handleScheduleButton);
-    this.addClickListener('dance-button', this.handleNonprofitButton);
     this.addClickListener('top-bar-logo', () => {
       socket.send({
         type: 'teleport',
-        to: 'home'
+        to: 'home',
       });
     });
 
@@ -593,11 +590,9 @@ class Game extends Page {
       );
 
       queueSponsor.subscribe(characterManager.character.sponsorId);
-    }
-    else {
+    } else {
       createModal(settings.createSettingsModal(this.settings));
     }
-
   };
 
   handleQueueButton = () => {
@@ -743,10 +738,6 @@ class Game extends Page {
       this.friendsPaneVisible = false;
     }
   };
-
-  handleNonprofitButton = () => {
-    createModal(nonprofit.createNonprofitModal('wikipedia'));
-  }
 
   handleMapButton = () => {
     createModal(map.createMapModal());
