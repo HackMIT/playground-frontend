@@ -115,7 +115,12 @@ class SponsorPanel {
           {challengeElems}
         </div>
         <div id="form-errors"></div>
-        <button id="project-form-submit" onclick={() => this.handleSubmitButton()}>Submit</button>
+        <button
+          id="project-form-submit"
+          onclick={() => this.handleSubmitButton()}
+        >
+          Submit
+        </button>
       </div>
     );
   };
@@ -131,42 +136,60 @@ class SponsorPanel {
       'input[name="challenges"]:checked'
     );
 
-    const teamList = document
+    let teamList = document
       .getElementById('teammates')
       .value.split(',')
       .map((x) => x.trim());
 
+    if (teamList.length === 1 && teamList[0].length === 0) {
+      teamList = [];
+    }
+
     if (teamList.length > 3) {
-      document.getElementById('form-errors').insertAdjacentHTML('beforeend',
-        '<p>Cannot have more than four people on a team!</p>')
+      document
+        .getElementById('form-errors')
+        .insertAdjacentHTML(
+          'beforeend',
+          '<p>Cannot have more than four people on a team!</p>'
+        );
       submit = false;
     }
 
     if (teamList.length > 0 && teamList[0] !== '') {
-      teamList.forEach(email => {
+      teamList.forEach((email) => {
         if (!validator.validate(email)) {
-          document.getElementById('form-errors').insertAdjacentHTML('beforeend',
-            `<p>${email} is not a valid email!</p>`)
+          document
+            .getElementById('form-errors')
+            .insertAdjacentHTML(
+              'beforeend',
+              `<p>${email} is not a valid email!</p>`
+            );
           submit = false;
         }
       });
     }
 
     if (document.getElementById('name').value === '') {
-      document.getElementById('form-errors').insertAdjacentHTML('beforeend',
-        `<p>Enter a project name!</p>`)
+      document
+        .getElementById('form-errors')
+        .insertAdjacentHTML('beforeend', `<p>Enter a project name!</p>`);
       submit = false;
     }
 
     if (document.getElementById('pitch').value === '') {
-      document.getElementById('form-errors').insertAdjacentHTML('beforeend',
-        `<p>Enter a project description!</p>`)
+      document
+        .getElementById('form-errors')
+        .insertAdjacentHTML('beforeend', `<p>Enter a project description!</p>`);
       submit = false;
     }
 
     if (!selectedTrackElem) {
-      document.getElementById('form-errors').insertAdjacentHTML('beforeend',
-        '<p>Please select a track to submit to.</p>')
+      document
+        .getElementById('form-errors')
+        .insertAdjacentHTML(
+          'beforeend',
+          '<p>Please select a track to submit to.</p>'
+        );
       submit = false;
     }
 
@@ -192,7 +215,6 @@ class SponsorPanel {
       notificationsManager.displayMessage("You successfully submitted your project form!")
       document.getElementById('modal-background').remove();
     }
-
   };
 }
 
