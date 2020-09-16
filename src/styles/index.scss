@@ -635,3 +635,17 @@ body {
     color: $white !important;
   }
 }
+
+  #challenges-modal {
+    background: $blue_light;
+    
+    #challenges-content {
+      color: #001d55;
+      padding: 32px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+  }

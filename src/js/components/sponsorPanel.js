@@ -138,7 +138,7 @@ class SponsorPanel {
                 placeholder="https://company.com/jobs"
               />
             </div>
-            <button
+            <button id="sponsor-panel-submit"
               onclick={() => {
                 socket.send({
                   type: 'update_sponsor',
@@ -150,7 +150,9 @@ class SponsorPanel {
                   ).value,
                   url: document.getElementById('sponsor-url-field').value,
                 });
-              }}
+                document.getElementById('sponsor-panel-submit').insertAdjacentHTML('beforeBegin', '<p id="challenge-submitted">Submitted!</p>')
+              }
+              }
             >
               Submit
             </button>
