@@ -27,8 +27,6 @@ class LoginPanel {
 
   hide = () => {
     document.getElementById('login-panel').style.display = 'none';
-    document.getElementById('top-bar-button-container').style.display = 'flex';
-    document.getElementById('chat').style.display = 'flex';
   };
 
   update = () => {

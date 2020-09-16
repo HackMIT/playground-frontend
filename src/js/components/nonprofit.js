@@ -1,4 +1,5 @@
 import '../../styles/nonprofit.scss';
+import wikipediaInfo from '../../images/wikipedia.png';
 
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
@@ -9,7 +10,7 @@ class NonprofitPopup {
       case 'wikimedia':
         return (
           <div id="nonprofit-popup">
-            <img src="/images/wikipedia.png"></img>
+            <img src={wikipediaInfo} />
           </div>
         );
       case 'humanitarian_ai':

@@ -49,7 +49,6 @@ import './images/icons/map.svg';
 import './images/icons/guidebook.svg';
 import './images/icons/schedule.svg';
 import './images/logo.png';
-import './images/wikipedia.png';
 import './images/swoopy.svg';
 import './images/icons/dab.svg';
 import './images/icons/wave.svg';
@@ -74,9 +73,13 @@ class Game extends Page {
   start = () => {
     document.getElementById('top-bar-button-container').style.display = 'none';
     document.getElementById('chat').style.display = 'none';
+
     if (isMobile(window.navigator).any || !window.WebSocket) {
       this.stopLoading();
       loginPanel.hide();
+      document.getElementById('top-bar-button-container').style.display =
+        'flex';
+      document.getElementById('chat').style.display = 'flex';
       document.getElementById('outer').innerHTML =
         '<div id="unsupported">Unsupported device or browser</div>';
       return;
@@ -87,6 +90,9 @@ class Game extends Page {
     // Quick check for auth data
     if (localStorage.getItem('token') !== null) {
       loginPanel.hide();
+      document.getElementById('top-bar-button-container').style.display =
+        'flex';
+      document.getElementById('chat').style.display = 'flex';
     } else {
       this.stopLoading();
     }
@@ -305,7 +311,11 @@ class Game extends Page {
       if (data.token !== undefined) {
         localStorage.setItem('token', data.token);
         window.history.pushState(null, null, ' ');
+
         loginPanel.hide();
+        document.getElementById('top-bar-button-container').style.display =
+          'flex';
+        document.getElementById('chat').style.display = 'flex';
       }
 
       // Delete stuff from previous room
