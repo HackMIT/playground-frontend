@@ -82,7 +82,7 @@ body {
   #top-bar {
     display: grid;
     grid-template-columns: 1fr $top_bar_logo_width 1fr;
-    background: rgba(255, 255, 255, 0.6);
+    background: #dfecf3;
     height: $top_bar_height;
     width: 100%;
 
@@ -653,7 +653,7 @@ body {
   #form-button-div {
     display: inline-block;
     text-align: center;
-    
+
     button {
       background: #43a047;
       border: none;
@@ -665,14 +665,14 @@ body {
       margin: 10px;
       outline: none;
       padding: 12px 16px;
-  
+
       &:hover {
         background: #388e3c;
       }
     }
-  
+
     #later-button {
-      background: #EED202;
+      background: #eed202;
       display: inline-block;
 
       &:hover {
@@ -680,11 +680,25 @@ body {
       }
     }
   }
-  
+
   #form-reminder {
     h1 {
       padding: 5px;
       text-align: center;
     }
+  }
+}
+
+#challenges-modal {
+  background: $blue_light;
+
+  #challenges-content {
+    color: #001d55;
+    padding: 32px;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
   }
 }
