@@ -1,5 +1,3 @@
-
-
 import hotkeys from 'hotkeys-js';
 import isMobile from 'ismobilejs';
 
@@ -52,10 +50,12 @@ import './images/icons/guidebook.svg';
 import './images/icons/schedule.svg';
 import './images/logo.png';
 import './images/swoopy.svg';
+import './images/icons/dab.svg';
+import './images/icons/wave.svg';
+import './images/icons/floss.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
-
 
 // eslint-disable-next-line
 const BACKGROUND_IMAGE_URL =
@@ -74,7 +74,8 @@ class Game extends Page {
     if (isMobile(window.navigator).any || !window.WebSocket) {
       this.stopLoading();
       loginPanel.hide();
-      document.getElementById("outer").innerHTML = "<div id=\"unsupported\">Unsupported device or browser</div>"
+      document.getElementById('outer').innerHTML =
+        '<div id="unsupported">Unsupported device or browser</div>';
       return;
     }
 
@@ -117,8 +118,12 @@ class Game extends Page {
     this.addClickListener('website-button', this.handleWebsiteButton);
     this.addClickListener('schedule-button', this.handleScheduleButton);
     this.addClickListener('challenges-button', this.handleChallengesButton);
-
-    this.handleWindowSize();
+    this.addClickListener('top-bar-logo', () => {
+      socket.send({
+        type: 'teleport',
+        to: 'home'
+      });
+    });
 
     socket.onopen = this.handleSocketOpen;
     socket.onclose = this.handleSocketClose;
@@ -239,8 +244,8 @@ class Game extends Page {
     const rect = document
       .getElementById('three-canvas')
       .getBoundingClientRect();
-    const x = (e.pageX - rect.x) / rect.width;
-    const y = (e.pageY - rect.y) / rect.height;
+    const x = (e.clientX - rect.x) / rect.width;
+    const y = (e.clientY - rect.y) / rect.height;
 
     // call click handler of game to check for characters clicked
     const success = this.scene.handleClickEvent(x, y);
@@ -395,14 +400,15 @@ class Game extends Page {
 
       img.src = BACKGROUND_IMAGE_URL.replace('%PATH%', this.room.background);
 
-      this.scene.fixCameraOnResize();
-
       // Start managers
       notificationsManager.start();
 
       if (data.character.shirtColor === '#d6e2f8') {
         createModal(characterSelector.createModal());
       }
+
+      // Resize appropriately if we're in a sponsor room
+      this.handleWindowSize();
     } else if (data.type === 'dance') {
       this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
@@ -555,7 +561,19 @@ class Game extends Page {
   };
 
   handleSettingsButton = () => {
-    createModal(settings.createSettingsModal(this.settings));
+    if (characterManager.character.role === 2) {
+      createModal(
+        queueSponsor.createQueueModal(),
+        'queue',
+        queueSponsor.onClose
+      );
+
+      queueSponsor.subscribe(characterManager.character.sponsorId);
+    }
+    else {
+      createModal(settings.createSettingsModal(this.settings));
+    }
+
   };
 
   handleQueueButton = () => {
@@ -693,9 +711,7 @@ class Game extends Page {
       this.dancePaneVisible = true;
     } else {
       // Never created dance pane before, create it now
-      document
-        .getElementById('chat')
-        .appendChild(dance.createDancePane());
+      document.getElementById('chat').appendChild(dance.createDancePane());
       this.dancePaneVisible = true;
     }
   };
@@ -726,6 +742,8 @@ class Game extends Page {
 
       outerElem.classList.remove('vertical');
     }
+
+    this.scene.fixCameraOnResize();
   };
 
   showFeedback = () => {

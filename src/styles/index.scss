@@ -92,6 +92,7 @@ body {
       grid-column-start: 2;
       transform: translateY(10px);
       width: $top_bar_logo_width;
+      cursor: pointer;
     }
 
     #top-bar-button-container {
