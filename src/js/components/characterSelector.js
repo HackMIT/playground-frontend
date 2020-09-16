@@ -63,7 +63,7 @@ class CharacterSelector {
         '#84beeb',
         '#425d8c',
         '#1a224a',
-        '#ffffff',
+        '#313345',
         '#0a0908',
         '#22333b',
         '#eae0d5',
