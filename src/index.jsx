@@ -575,14 +575,11 @@ class Game extends Page {
   };
 
   handleChallengesButton = () => {
-    console.log(this.room.sponsor.challenges)
     createModal(
       <div id="challenges-modal">
         <div id="challenges-content">
           <h1>{this.room.sponsor.name} Challenges</h1>
-
           {this.room.sponsor.challenges}
-
         </div>
       </div>
     );
