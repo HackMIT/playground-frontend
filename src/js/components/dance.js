@@ -20,13 +20,13 @@ class DancePane {
               });
             }}
           >
-            <img src="/images/icons/dance.svg" />
+            <img id="dab-img" src="/images/icons/dab.svg" />
           </button>
           <button className="dance-pane-button" id="dance-button-2">
-            <img src="/images/icons/dance.svg" />
+            <img src="/images/icons/wave.svg" />
           </button>
           <button className="dance-pane-button" id="dance-button-3">
-            <img src="/images/icons/dance.svg" />
+            <img src="/images/icons/floss.svg" />
           </button>
           <button className="dance-pane-button" id="dance-button-4">
             <img src="/images/icons/dance.svg" />
