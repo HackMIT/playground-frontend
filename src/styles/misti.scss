@@ -1,0 +1,120 @@
+@import 'colors';
+
+#misti-container {
+  background: transparent;
+  padding: 0;
+}
+
+#misti-popup {
+  background: url(/images/misti_popup_background.svg);
+  background-position: center;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+  width: 100%;
+  height: calc(60vw * (525.5 / 880));
+  padding: 9vw 5vw 3vw;
+
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  grid-template-rows: 1fr 4fr;
+
+  h1,
+  h2 {
+    color: #563b40;
+  }
+
+  p,
+  a {
+    color: #6d5358;
+    text-decoration: none;
+  }
+
+  a {
+    // font-size: 14px;
+  }
+
+  a:hover {
+    color: #3a2c2f;
+  }
+
+  .separator,
+  .border {
+    grid-column: auto / span 2;
+  }
+
+  .border {
+    background: #ffebef;
+  }
+
+  .misti-popup-heading {
+    grid-column: auto / span 2;
+    border-bottom: 6px solid #ffebef;
+    padding-bottom: 8px;
+
+    display: flex;
+    align-items: center;
+
+    h1 {
+      font-size: 42px;
+      margin-right: 16px;
+    }
+  }
+
+  .links-container {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+
+    h2 {
+      margin-bottom: 12px;
+    }
+
+    div {
+      box-sizing: border-box;
+      flex-grow: 1;
+      width: 100%;
+    }
+  }
+
+  .misti-popup-locations {
+    box-sizing: border-box;
+    border-right: 6px solid #ffebef;
+    padding-top: 16px;
+
+    .misti-popup-locations-container {
+      display: flex;
+      justify-content: center;
+      padding-right: 16px;
+
+      .misti-popup-locations-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .spacer {
+          color: transparent;
+        }
+      }
+    }
+  }
+
+  .misti-popup-resources {
+    padding-top: 16px;
+
+    .misti-popup-resources-buttons {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 4px 0 12px 16px;
+
+      a {
+        background: #ffebef;
+        border-radius: 24px;
+        line-height: 48px;
+        text-align: center;
+      }
+    }
+  }
+}
