@@ -690,7 +690,7 @@ class Game extends Page {
     if (!characterManager.character.project) {
       createModal(projectForm.createFormModal());
     } else {
-      createModal(projectForm.createProjectModal(characterManager.character.project))
+      createModal(projectForm.createFormModal(characterManager.character.project))
     }
 
   };

@@ -10,54 +10,8 @@ import notificationsManager from '../managers/notifications'
 import createElement from '../../utils/jsxHelper';
 
 class SponsorPanel {
-  createProjectModal = (project) => {
-    const challenges = project.challenges.split(',')
-      .map((x) => x.trim());
-    const team = project.emails.split(',')
-      .map((x) => x.trim());
-    return (
-      <div id="project-summary">
-        <h3>Project Name:{" "}</h3> {project.name}
-        <h3>Team Emails: </h3>{team.join(", ")}
-        <h3>Pitch: </h3>{project.pitch}
-        <h3>Track: </h3>{project.track}
-        {project.zoom ? <div><h3>Expo zoom link: </h3> {project.zoom}</div> : <div></div>}
-        <h3>Challenges: </h3>
-        {challenges.map(challenge => {
-          switch (challenge) {
-            case 'arrowstreet':
-              return <p>(Arrowstreet) Best Panel Data Visualization</p>
-            case 'cmt':
-              return <p>(CMT) Detecting Crashes in Smartphone Data</p>
-            case 'drw':
-              return <p>(DRW) Best Data Visualization Hack</p>
-            case 'facebook':
-              return <p>(Facebook) Best Hack for Building Community</p>
-            case 'goldman':
-              return <p>(Goldman Sachs) Best Use of Marquee API by Goldman Sachs</p>
-            case 'ibm':
-              return <p>(IBM) Best solution addressing the community response to COVID-19</p>
-            default:
-              return <p>No challenges selected</p>
-          }
-        })}
-        <button
-          id="project-form-resubmit"
-          onclick={() => this.handleResubmitButton()}
-        >
-          Edit/Resubmit
-        </button>
-      </div>
-    )
-  }
-
-  handleResubmitButton = () => {
-    document.getElementById('modal-background').remove();
-    createModal(this.createFormModal());
-  }
 
   createFormModal = (project) => {
-
     const isFriday = new Date().getTime() < 1600498800000;
 
     const trackElems = [
@@ -80,7 +34,7 @@ class SponsorPanel {
     ].map((track) => {
       return (
         <div className="checkbox-container">
-          <input type="radio" name="track" value={track.id} />
+          <input type="radio" name="track" value={track.id} checked={project.track === track.id} />
           <label for={track.id}>{track.title}</label>
         </div>
       );
@@ -115,13 +69,13 @@ class SponsorPanel {
     ].map((challenge) => {
       return (
         <div className="checkbox-container">
-          <input type="checkbox" name="challenges" value={challenge.id} />
+          <input type="checkbox" name="challenges" value={challenge.id} checked={project.challenges.includes(challenge.id)} />
           <label for={challenge.id}>{challenge.title}</label>
         </div>
       );
     });
 
-    const elem = (
+    return (
       <div id="project-form">
         <h1>{isFriday ? 'Fun Friday Form' : 'Spicy Saturday Survey'}</h1>
         <div className="field">
@@ -131,18 +85,18 @@ class SponsorPanel {
             for HackMIT with. Only one person on your team needs to fill out
             this form.
           </p>
-          <input type="text" id="teammates" />
+          <input type="text" id="teammates" defaultValue={project.emails || ''} />
         </div>
         <div className="field">
           <p>What's your project's name?</p>
-          <input type="text" id="name" />
+          <input type="text" id="name" defaultValue={project.name || ''} />
         </div>
         <div className="field">
           <p>
             Write a 1-2 sentence &ldquo;elevator pitch&rdquo; explaining your
             idea.
           </p>
-          <input type="text" id="pitch" />
+          <input type="text" id="pitch" defaultValue={project.pitch || ''} />
         </div>
         {isFriday ? (
           <div className="field">
@@ -151,7 +105,7 @@ class SponsorPanel {
               hacker arena at 6pm EDT!), enter a Zoom link that other
               participants can use to meet you.
             </p> : <div></div>}
-            <input type="text" id="zoom" />
+            <input type="text" id="zoom" defaultValue={project.zoom || ''} />
           </div>
         ) : null}
         <div className="field checkbox-field">
@@ -172,17 +126,6 @@ class SponsorPanel {
       </div>
     );
 
-    if (project) {
-      document.getElementById('teammates').value = project.emails;
-      document.getElementById('name').value = project.name;
-      document.getElementById('pitch').value = project.pitch;
-      document.getElementById('zoom').value = project.zoom;
-      project.challenges.forEach(() => {
-
-      })
-
-    }
-    return elem;
   };
 
   handleSubmitButton = () => {
