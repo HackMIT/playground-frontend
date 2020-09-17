@@ -103,7 +103,7 @@ class SponsorPanel {
               If you&rsquo;ll be participating in peer expo (happening in the
               hacker arena at 6pm EDT!), enter a Zoom link that other
               participants can use to meet you.
-            </p> : <div></div>}
+            </p> : <div />}
             <input type="text" id="zoom" defaultValue={project ? project.zoom || '' : ''} />
           </div>
         ) : null}
