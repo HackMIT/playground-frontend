@@ -192,7 +192,7 @@ class NonprofitPopup {
           <div className="misti-popup-resources links-container">
             <h2>Resources</h2>
             <div className="misti-popup-resources-buttons">
-              <a href="https://misti.mit.edu" target="_blank">
+              <a href="https://misti.mit.edu/MISTI101" target="_blank">
                 Learn More
               </a>
               <a href="https://misti.mit.edu/apply-now" target="_blank">

@@ -325,6 +325,7 @@ class Game extends Page {
   };
 
   handleSocketMessage = (data) => {
+    console.log(data);
     if (data.type === 'init') {
       if (data.firstTime) {
         // If firstTime is true, components/login.js is handling this
@@ -416,10 +417,11 @@ class Game extends Page {
         document.getElementById('challenges-button').style.display =
           this.room.sponsor.challenges.length > 0 ? 'inline-block' : 'none';
 
-        const text = this.room.sponsor.description.replace(/(https?:\/\/[^\s]+)/g, "<a href='$1' target=\"_blank\">$1</a>")
-        document.getElementById(
-          'sponsor-description'
-        ).innerHTML = text
+        const text = this.room.sponsor.description.replace(
+          /(https?:\/\/[^\s]+)/g,
+          '<a href=\'$1\' target="_blank">$1</a>'
+        );
+        document.getElementById('sponsor-description').innerHTML = text;
         document.getElementById(
           'queue-button-text'
         ).innerText = `Talk to ${this.room.sponsor.name}`;
@@ -768,7 +770,10 @@ class Game extends Page {
         </div>
       </div>
     );
-    const text = this.room.sponsor.challenges.replace(/(https?:\/\/[^\s]+)/g, "<a href='$1' target=\"_blank\">$1</a>")
+    const text = this.room.sponsor.challenges.replace(
+      /(https?:\/\/[^\s]+)/g,
+      '<a href=\'$1\' target="_blank">$1</a>'
+    );
     document.getElementById('challenge-text').innerHTML = text;
   };
 

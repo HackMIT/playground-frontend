@@ -16,6 +16,7 @@ class AdminPanel {
       ['Goldman Sachs', 'goldman'],
       ['IBM', 'ibm'],
       ['Intersystems', 'intersystems'],
+      ['MISTI', 'misti'],
       ['Linode', 'linode'],
       ['Nasdaq', 'nasdaq'],
       ['OCA Ventures', 'oca'],
@@ -23,6 +24,7 @@ class AdminPanel {
       ['QuantCo', 'quantco'],
       ['Yext', 'yext'],
     ];
+
     this.sponsorMap = new Map(this.sponsorArray);
   }
 
