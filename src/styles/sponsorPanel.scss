@@ -16,6 +16,7 @@
   #table {
     display: grid;
     grid-template-columns: 47.5% 5% 47.5%;
+    overflow-y: auto;
 
     div {
       overflow-y: scroll;
@@ -24,6 +25,11 @@
         margin-bottom: 8px;
         text-align: center;
       }
+    }
+
+    #challenge-submitted {
+      text-align: center;
+      color: green;
     }
 
     #options {
@@ -71,7 +77,12 @@
       .hacker {
         background: #fff;
         border-radius: 4px;
+        margin-bottom: 12px;
         padding: 8px 12px;
+
+        &:last-of-type {
+          margin-bottom: 0;
+        }
 
         button {
           background: $accent_pink;

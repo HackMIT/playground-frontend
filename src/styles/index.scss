@@ -82,7 +82,7 @@ body {
   #top-bar {
     display: grid;
     grid-template-columns: 1fr $top_bar_logo_width 1fr;
-    background: rgba(255, 255, 255, 0.6);
+    background: #dfecf3;
     height: $top_bar_height;
     width: 100%;
 
@@ -92,6 +92,7 @@ body {
       grid-column-start: 2;
       transform: translateY(10px);
       width: $top_bar_logo_width;
+      cursor: pointer;
     }
 
     #top-bar-button-container {
@@ -300,6 +301,19 @@ body {
     position: absolute;
     top: 24px;
     right: 24px;
+  }
+
+  #form-button {
+    cursor: pointer;
+    height: 32px;
+    width: 32px;
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    display: block;
+    background: red;
+    border: none;
+    border-radius: 50%;
   }
 
   #queue-hacker-button {
@@ -632,5 +646,59 @@ body {
 
   .white-text {
     color: $white !important;
+  }
+}
+
+#form-reminder-modal {
+  #form-button-div {
+    display: inline-block;
+    text-align: center;
+
+    button {
+      background: #43a047;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 14px;
+      margin: 10px;
+      outline: none;
+      padding: 12px 16px;
+
+      &:hover {
+        background: #388e3c;
+      }
+    }
+
+    #later-button {
+      background: #eed202;
+      display: inline-block;
+
+      &:hover {
+        background: #eed202af;
+      }
+    }
+  }
+
+  #form-reminder {
+    h1 {
+      padding: 5px;
+      text-align: center;
+    }
+  }
+}
+
+#challenges-modal {
+  background: $blue_light;
+
+  #challenges-content {
+    color: #001d55;
+    padding: 32px;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
   }
 }

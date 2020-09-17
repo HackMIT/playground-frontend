@@ -1,6 +1,8 @@
 import characterSelector from './components/characterSelector';
 import createModal from '../modal';
 import mapInstance from './components/worldMap';
+import misti from './components/misti';
+import nonprofit from './components/nonprofit';
 
 import Editable from './editable';
 import jukebox from '../jukebox';
@@ -13,6 +15,8 @@ const NO_ACTION = 0;
 const JUKEBOX_OPEN_ACTION = 1;
 const MAP_OPEN_ACTION = 2;
 const WARDROBE_OPEN_ACTION = 3;
+const NONPROFIT_OPEN_ACTION = 4;
+const MISTI_POPUP_ACTION = 5;
 
 class Element extends Editable {
   dataKeyName = 'element';
@@ -103,6 +107,13 @@ class Element extends Editable {
       mapInstance.createMap(this.characterId);
     } else if (this.data.action === WARDROBE_OPEN_ACTION) {
       createModal(characterSelector.createModal());
+    } else if (this.data.action === NONPROFIT_OPEN_ACTION) {
+      const nonprofitId = this.data.path
+        .substring(this.data.path.indexOf('_') + 1)
+        .split('.')[0];
+      createModal(nonprofit.createNonprofitModal(nonprofitId));
+    } else if (this.data.action === MISTI_POPUP_ACTION) {
+      createModal(misti.createModal());
     }
   }
 
