@@ -4,7 +4,7 @@ const config = {
 
 const dev = {
   baseURL: 'http://localhost:3000',
-  websocketURL: 'ws://localhost:5000/ws',
+  websocketURL: 'wss://backend.play.hackmit.org/ws',
 };
 
 const prod = {
