@@ -217,6 +217,15 @@ class Game extends Page {
       this.scene.fixCameraOnResize();
       this.handleWindowSize();
     });
+
+    window.onclick = (e) => {
+      console.log(e.target.id);
+      if (e.target.id === "modal-background") {
+        document.getElementById('modal-background').remove();
+      } else if (e.target.id === 'form-modal-background') {
+        document.getElementById('form-modal-background').remove();
+      }
+    }
   };
 
   handleGameClick = (e) => {
