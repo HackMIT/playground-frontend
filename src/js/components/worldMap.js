@@ -6,6 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import '../../styles/worldMap.scss';
 import socket from '../socket';
 import saveLocationButton from './saveLocationButton';
+import mapHelpPanel from './mapHelpPanel';
 
 const MAPBOX_API_KEY =
   'pk.eyJ1IjoiaGFja21pdDIwIiwiYSI6ImNrZHVpaTk4dDE4Ym0yc255YzM3NGx0dGIifQ.XXstZ1xCBEqC-Wz4_EI8Pw';
@@ -77,6 +78,7 @@ class Map {
     this.map.addControl(geocoder, 'top-left');
     this.map.addControl(saveLocationButton, 'bottom-right');
     this.map.addControl(navigationPanel, 'top-left');
+    this.map.addControl(mapHelpPanel, 'bottom-left')
 
     this.map.on('load', () => {
       // get coordinate data
