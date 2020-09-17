@@ -406,9 +406,11 @@ class Game extends Page {
 
         document.getElementById('challenges-button').style.display =
           this.room.sponsor.challenges.length > 0 ? 'inline-block' : 'none';
+
+        const text = this.room.sponsor.description.replace(/(https?:\/\/[^\s]+)/g, "<a href='$1' target=\"_blank\">$1</a>")
         document.getElementById(
           'sponsor-description'
-        ).innerText = this.room.sponsor.description;
+        ).innerHTML = text
         document.getElementById(
           'queue-button-text'
         ).innerText = `Talk to ${this.room.sponsor.name}`;
@@ -752,10 +754,12 @@ class Game extends Page {
       <div id="challenges-modal">
         <div id="challenges-content">
           <h1>{this.room.sponsor.name} Challenges</h1>
-          {this.room.sponsor.challenges}
+          <div id="challenge-text"></div>
         </div>
       </div>
     );
+    const text = this.room.sponsor.challenges.replace(/(https?:\/\/[^\s]+)/g, "<a href='$1' target=\"_blank\">$1</a>")
+    document.getElementById('challenge-text').innerHTML = text;
   };
 
   handleWebsiteButton = () => {
