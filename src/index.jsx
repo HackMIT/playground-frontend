@@ -18,7 +18,7 @@ import jukebox from './jukebox';
 import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 import characterSelector from './js/components/characterSelector';
-import queueForm from './js/components/queueForm'
+import queueForm from './js/components/queueForm';
 
 import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
@@ -219,13 +219,12 @@ class Game extends Page {
     });
 
     window.onclick = (e) => {
-      console.log(e.target.id);
-      if (e.target.id === "modal-background") {
+      if (e.target.id === 'modal-background') {
         document.getElementById('modal-background').remove();
       } else if (e.target.id === 'form-modal-background') {
         document.getElementById('form-modal-background').remove();
       }
-    }
+    };
   };
 
   handleGameClick = (e) => {
@@ -724,11 +723,8 @@ class Game extends Page {
       queueSponsor.subscribe(this.room.sponsor.id);
     } else if (queueManager.inQueue()) {
       queueManager.join(this.room.sponsor);
-    }
-    else {
-      createModal(
-        queueForm.createQueueModal(this.room.sponsor)
-      );
+    } else {
+      createModal(queueForm.createQueueModal(this.room.sponsor));
     }
   };
 
