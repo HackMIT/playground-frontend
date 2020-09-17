@@ -1,7 +1,7 @@
 import YouTubeIframeLoader from 'youtube-iframe';
-import swal from 'sweetalert';
 
 import characterManager from './js/managers/character';
+import createModal from './modal';
 import socket from './js/socket';
 import closeIcon from './images/icons/close.svg';
 import './styles/jukebox.scss';
@@ -42,22 +42,37 @@ class Jukebox {
       this.updateJukeboxPane(false);
     } else if (msg.type === 'song') {
       if (msg.requiresWarning) {
-        swal(
-          'Warning!',
-          'You will be disqualified from HackMIT 2020 if you submit any inappropriate songs or videos. Please visit go.hackmit.org/coc for more details about our code of conduct.',
-          'warning'
+        createModal(
+          <div id="jukebox-modal">
+            <h1 className="white-text">Oops!</h1>
+            <p className="white-text">
+              Here you can add songs to the queue for all hackers to listen to. If
+              you select any inappropriate songs, you will be disqualified. Please
+              see our Code of Conduct for more information.
+            </p>
+          </div>
         );
       }
       this.songs.push(msg);
       this.updateJukeboxPane(false);
     } else if (msg.type === 'error') {
       if (msg.code === 400) {
-        swal('Oops!', 'Your song must be less than 6 minutes long.', 'error');
+        createModal(
+          <div id="jukebox-modal">
+            <h1 className="white-text">Oops!</h1>
+            <p className="white-text">
+              Oops! Your song must be less than 6 minutes long.
+            </p>
+          </div>
+        );
       } else if (msg.code === 401) {
-        swal(
-          'Oops!',
-          'You must wait at least 15 minutes between song submissions.',
-          'error'
+        createModal(
+          <div id="jukebox-modal">
+            <h1 className="white-text">Oops!</h1>
+            <p className="white-text">
+              Oops! You must wait at least 15 minutes between song submissions.
+            </p>
+          </div>
         );
       }
     }
@@ -84,19 +99,8 @@ class Jukebox {
   };
 
   createPlayingNowContents = () => {
-    let title;
-    if (this.currentSong.duration === 0) {
-      title = 'None';
-    } else {
-      title = this.currentSong.title;
-    }
-    let input;
-    if (this.jukeboxToggle) {
-      input = <input onclick={this.toggleJukebox} id="jukebox-toggle" class="toggle" type="checkbox" checked />;
-    }
-    else {
-      input = <input onclick={this.toggleJukebox} id="jukebox-toggle" class="toggle" type="checkbox" />
-    }
+    this.currentSong.duration === 0 ? "No songs playing" : this.currentSong.title;
+    const input = <input onclick={this.toggleJukebox} id="jukebox-toggle" class="toggle" type="checkbox" checked={this.jukeboxToggle} />;
     return (
       <div>
         <div>
@@ -131,14 +135,8 @@ class Jukebox {
     });
     const rootElem = <div />;
     setTimeout(() => {
-      let removeButton;
       this.songs.forEach((song) => {
-        if (characterManager.character.role === 1) { // user is an admin
-          removeButton = <button id="remove" onclick={() => this.handleRemoveButton(song)}>Remove</button>;
-        }
-        else {
-          removeButton = null;
-        }
+        const removeButton = characterManager.character.role === 1 ? (<button id="remove" onclick={() => this.handleRemoveButton(song)}>Remove</button>) : null;
         const minutesStr = Math.floor(song.duration / 60)
           .toString()
           .padStart(2, '0');
@@ -189,7 +187,7 @@ class Jukebox {
                   id="jukebox-song-input"
                   type="text"
                   className="Jukebox-queue-container-controls-input"
-                  placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstleyVEVO"
+                  placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
                 />
                 <button
                   id="jukebox-queue-button"
@@ -251,7 +249,14 @@ class Jukebox {
     try {
       url = new URL(document.getElementById('jukebox-song-input').value);
     } catch (err) {
-      swal('Oops!', 'Please input a valid YouTube video URL.', 'error');
+      createModal(
+        <div id="jukebox-modal">
+          <h1 className="white-text">Oops!</h1>
+          <p className="white-text">
+            Oops! Please input a valid YouTube video URL.
+          </p>
+        </div>
+      );
       return;
     }
 
@@ -259,7 +264,14 @@ class Jukebox {
       url.hostname.toUpperCase() !== 'WWW.YOUTUBE.COM' &&
       url.hostname.toUpperCase() !== 'YOUTUBE.COM'
     ) {
-      swal('Oops!', 'Please input a valid YouTube video URL.', 'error');
+      createModal(
+        <div id="jukebox-modal">
+          <h1 className="white-text">Oops!</h1>
+          <p className="white-text">
+            Oops! Please input a valid YouTube video URL.
+          </p>
+        </div>
+      );
       return;
     }
 
@@ -275,7 +287,14 @@ class Jukebox {
       }
     }
     catch {
-      swal('Oops!', 'Please input a valid YouTube video URL.', 'error');
+      createModal(
+        <div id="jukebox-modal">
+          <h1 className="white-text">Oops!</h1>
+          <p className="white-text">
+            Oops! Please input a valid YouTube video URL.
+          </p>
+        </div>
+      );
       return;
     }
 
