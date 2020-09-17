@@ -82,7 +82,7 @@ body {
   #top-bar {
     display: grid;
     grid-template-columns: 1fr $top_bar_logo_width 1fr;
-    background: rgba(255, 255, 255, 0.6);
+    background: #dfecf3;
     height: $top_bar_height;
     width: 100%;
 
@@ -128,6 +128,76 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
+
+    #floor-selector {
+      position: absolute;
+      width: 160px;
+      right: 0px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: $white;
+      text-align: center;
+      padding: 24px;
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+      display: none;
+
+      h3 {
+        padding-bottom: 8px;
+        border-bottom: 3px solid #1a2353;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 12px;
+      }
+
+      button {
+        display: block;
+        width: 100%;
+        margin: 0.8em 0;
+        height: 32px;
+        border-radius: 16px;
+        outline: none;
+        border: none;
+        align-items: center;
+        font-family: LemonMilkRegular;
+        font-size: 12px;
+        color: $white;
+        letter-spacing: 1px;
+        cursor: pointer;
+
+        &#connectivity-button {
+          background: #95cff0;
+
+          &:hover {
+            background: #63b8e9;
+          }
+        }
+
+        &#healthtech-button {
+          background: #fbcdc2;
+
+          &:hover {
+            background: #f9b19f;
+          }
+        }
+
+        &#education-button {
+          background: #fcc24c;
+
+          &:hover {
+            background: #fcb11d;
+          }
+        }
+
+        &#urbaninnovation-button {
+          background: #958470;
+
+          &:hover {
+            background: #756757;
+          }
+        }
+      }
+    }
   }
 
   &.vertical #game {
@@ -301,6 +371,19 @@ body {
     position: absolute;
     top: 24px;
     right: 24px;
+  }
+
+  #form-button {
+    cursor: pointer;
+    height: 32px;
+    width: 32px;
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    display: block;
+    background: red;
+    border: none;
+    border-radius: 50%;
   }
 
   #queue-hacker-button {
@@ -633,5 +716,59 @@ body {
 
   .white-text {
     color: $white !important;
+  }
+}
+
+#form-reminder-modal {
+  #form-button-div {
+    display: inline-block;
+    text-align: center;
+
+    button {
+      background: #43a047;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 14px;
+      margin: 10px;
+      outline: none;
+      padding: 12px 16px;
+
+      &:hover {
+        background: #388e3c;
+      }
+    }
+
+    #later-button {
+      background: #eed202;
+      display: inline-block;
+
+      &:hover {
+        background: #eed202af;
+      }
+    }
+  }
+
+  #form-reminder {
+    h1 {
+      padding: 5px;
+      text-align: center;
+    }
+  }
+}
+
+#challenges-modal {
+  background: $blue_light;
+
+  #challenges-content {
+    color: #001d55;
+    padding: 32px;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
   }
 }

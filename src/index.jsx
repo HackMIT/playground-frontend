@@ -11,12 +11,14 @@ import settings from './settings.jsx';
 import map from './js/components/map';
 import feedback from './feedback.jsx';
 import queueSponsor from './js/components/sponsorPanel';
+import projectForm from './js/components/projectForm';
 import friends from './js/components/friends';
 import dance from './js/components/dance';
 import jukebox from './jukebox';
 import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 import characterSelector from './js/components/characterSelector';
+import queueForm from './js/components/queueForm';
 
 import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
@@ -53,13 +55,15 @@ import './images/swoopy.svg';
 import './images/icons/dab.svg';
 import './images/icons/wave.svg';
 import './images/icons/floss.svg';
+import './images/icons/exclamation.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
-// eslint-disable-next-line
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
+const SPONSOR_NAME_IMAGE_URL =
+  'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/sponsors/%PATH%.svg';
 
 class Game extends Page {
   constructor() {
@@ -71,9 +75,15 @@ class Game extends Page {
   }
 
   start = () => {
+    document.getElementById('top-bar-button-container').style.display = 'none';
+    document.getElementById('chat').style.display = 'none';
+
     if (isMobile(window.navigator).any || !window.WebSocket) {
       this.stopLoading();
       loginPanel.hide();
+      document.getElementById('top-bar-button-container').style.display =
+        'flex';
+      document.getElementById('chat').style.display = 'flex';
       document.getElementById('outer').innerHTML =
         '<div id="unsupported">Unsupported device or browser</div>';
       return;
@@ -84,6 +94,9 @@ class Game extends Page {
     // Quick check for auth data
     if (localStorage.getItem('token') !== null) {
       loginPanel.hide();
+      document.getElementById('top-bar-button-container').style.display =
+        'flex';
+      document.getElementById('chat').style.display = 'flex';
     } else {
       this.stopLoading();
     }
@@ -117,12 +130,26 @@ class Game extends Page {
     this.addClickListener('queue-button', this.handleQueueButton);
     this.addClickListener('website-button', this.handleWebsiteButton);
     this.addClickListener('schedule-button', this.handleScheduleButton);
+    this.addClickListener('form-button', this.handleFormButton);
+    this.addClickListener('challenges-button', this.handleChallengesButton);
     this.addClickListener('top-bar-logo', () => {
       socket.send({
         type: 'teleport',
-        to: 'home'
+        to: 'home',
       });
     });
+    this.addClickListener('connectivity-button', () =>
+      this.handleArenaButton('connectivity')
+    );
+    this.addClickListener('education-button', () =>
+      this.handleArenaButton('education')
+    );
+    this.addClickListener('healthtech-button', () =>
+      this.handleArenaButton('health')
+    );
+    this.addClickListener('urbaninnovation-button', () =>
+      this.handleArenaButton('urban')
+    );
 
     socket.onopen = this.handleSocketOpen;
     socket.onclose = this.handleSocketClose;
@@ -289,11 +316,11 @@ class Game extends Page {
   };
 
   handleSocketMessage = (data) => {
-    console.log(data);
     if (data.type === 'init') {
       if (data.firstTime) {
         // If firstTime is true, components/login.js is handling this
-        loginPanel.show();
+        this.stopLoading();
+        loginPanel.show(true);
         return;
       }
 
@@ -302,7 +329,11 @@ class Game extends Page {
       if (data.token !== undefined) {
         localStorage.setItem('token', data.token);
         window.history.pushState(null, null, ' ');
+
         loginPanel.hide();
+        document.getElementById('top-bar-button-container').style.display =
+          'flex';
+        document.getElementById('chat').style.display = 'flex';
       }
 
       // Delete stuff from previous room
@@ -375,17 +406,42 @@ class Game extends Page {
 
         document.getElementById('challenges-button').style.display =
           this.room.sponsor.challenges.length > 0 ? 'inline-block' : 'none';
+
+        const text = this.room.sponsor.description.replace(/(https?:\/\/[^\s]+)/g, "<a href='$1' target=\"_blank\">$1</a>")
         document.getElementById(
           'sponsor-description'
-        ).innerText = this.room.sponsor.description;
+        ).innerHTML = text
         document.getElementById(
           'queue-button-text'
         ).innerText = `Talk to ${this.room.sponsor.name}`;
+
+        document.getElementById(
+          'sponsor-name'
+        ).src = SPONSOR_NAME_IMAGE_URL.replace('%PATH%', this.room.sponsorId);
       } else {
         document.getElementById('sponsor-pane').classList.remove('active');
         document.getElementById('outer').classList.remove('sponsor');
         document.getElementById('game').classList.remove('sponsor');
       }
+
+      if (this.dancePaneVisible) {
+        // Hide the dance pane
+        document.getElementById('dance-pane').classList.add('invisible');
+        this.dancePaneVisible = false;
+      }
+
+      if (this.friendsPaneVisible) {
+        // Hide the friends pane
+        document.getElementById('friends-pane').classList.add('invisible');
+        this.friendsPaneVisible = false;
+      }
+
+      // Close all character profiles
+      Array.from(document.getElementsByClassName('profile-container')).forEach(
+        (elem) => {
+          elem.style.visibility = 'hidden';
+        }
+      );
 
       this.loadingTasks += 1;
       const img = new Image();
@@ -406,8 +462,91 @@ class Game extends Page {
         createModal(characterSelector.createModal());
       }
 
+      document.getElementById('form-button').style.display = 'none';
+      document.getElementById('edit-button').style.display = 'none';
+
+      //  organizer
+      if (characterManager.character.role === 1) {
+        document.getElementById('edit-button').style.display = 'block';
+      }
+      //  sponsor
+      else if (
+        characterManager.character.role === 4 &&
+        !characterManager.character.project
+      ) {
+        const currentTime = new Date().getTime();
+        const formOpen1 = this.createUTCDate(19, 1);
+        const deadline1 = this.createUTCDate(19, 7);
+
+        const formOpen2 = this.createUTCDate(19, 16);
+        const deadline2 = this.createUTCDate(19, 22);
+
+        const first =
+          formOpen1.getTime() < currentTime &&
+          currentTime < deadline1.getTime();
+        const second =
+          formOpen2.getTime() < currentTime &&
+          currentTime < deadline2.getTime();
+
+        let formName = '';
+        let due = '';
+        if (first) {
+          formName = 'Fun Friday Form';
+          due = 'Saturday 3am EDT';
+        } else {
+          formName = 'Spicy Saturday Survey';
+          due = 'Saturday 6pm EDT';
+        }
+
+        if (first || second) {
+          document.getElementById('form-button').style.display = 'block';
+          if (!this.remindForm) {
+            createModal(
+              <div id="form-reminder-modal">
+                <div id="form-reminder">
+                  <h1>Reminder: </h1>
+                  You must submit the <b>{formName}</b> in order to be eligible
+                  for judging and swag! Please fill this out by <b>{due}</b> at
+                  the latest by clicking the exclamation mark at the top right
+                  of your screen.
+                </div>
+                <div id="form-button-div">
+                  <button
+                    id="later-button"
+                    onclick={() => {
+                      document.getElementById('form-reminder-modal').remove();
+                      document.getElementById('form-modal-background').remove();
+                    }}
+                  >
+                    Later
+                  </button>
+                  <button
+                    onclick={() => {
+                      document.getElementById('form-reminder-modal').remove();
+                      document.getElementById('form-modal-background').remove();
+                      createModal(projectForm.createFormModal());
+                    }}
+                  >
+                    OK
+                  </button>
+                </div>
+              </div>,
+              'form'
+            );
+            this.remindForm = true;
+          }
+        }
+      }
+
       // Resize appropriately if we're in a sponsor room
       this.handleWindowSize();
+
+      // Show floor selector inside hacker arena
+      if (this.room.id.startsWith('arena:')) {
+        document.getElementById('floor-selector').style.display = 'block';
+      } else {
+        document.getElementById('floor-selector').style.display = 'none';
+      }
     } else if (data.type === 'dance') {
       this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
@@ -505,6 +644,13 @@ class Game extends Page {
     }
   };
 
+  createUTCDate = (day, hour) => {
+    const date = new Date();
+    date.setUTCFullYear(2020, 8, day);
+    date.setUTCHours(hour, 0, 0);
+    return date;
+  };
+
   handleDayofButton = () => {
     createModal(
       <iframe
@@ -569,6 +715,19 @@ class Game extends Page {
     }
   };
 
+  handleArenaButton = (id) => {
+    socket.send({
+      type: 'teleport',
+      to: `arena:${id}`,
+      x: 0.6007,
+      y: 0.6905,
+    });
+  };
+
+  handleFormButton = () => {
+    createModal(projectForm.createFormModal());
+  };
+
   handleSettingsButton = () => {
     if (characterManager.character.role === 2) {
       createModal(
@@ -578,11 +737,9 @@ class Game extends Page {
       );
 
       queueSponsor.subscribe(characterManager.character.sponsorId);
-    }
-    else {
+    } else {
       createModal(settings.createSettingsModal(this.settings));
     }
-
   };
 
   handleQueueButton = () => {
@@ -595,10 +752,24 @@ class Game extends Page {
       );
 
       queueSponsor.subscribe(this.room.sponsor.id);
-    } else {
-      // if (characterManager.character.role === 1 /* hacker */) {
+    } else if (queueManager.inQueue()) {
       queueManager.join(this.room.sponsor);
+    } else {
+      createModal(queueForm.createQueueModal(this.room.sponsor));
     }
+  };
+
+  handleChallengesButton = () => {
+    createModal(
+      <div id="challenges-modal">
+        <div id="challenges-content">
+          <h1>{this.room.sponsor.name} Challenges</h1>
+          <div id="challenge-text"></div>
+        </div>
+      </div>
+    );
+    const text = this.room.sponsor.challenges.replace(/(https?:\/\/[^\s]+)/g, "<a href='$1' target=\"_blank\">$1</a>")
+    document.getElementById('challenge-text').innerHTML = text;
   };
 
   handleWebsiteButton = () => {
@@ -635,12 +806,20 @@ class Game extends Page {
       // Make the friends pane visible
       document.getElementById('friends-pane').classList.remove('invisible');
       this.friendsPaneVisible = true;
+
+      // Hide the dance pane
+      document.getElementById('dance-pane').classList.add('invisible');
+      this.dancePaneVisible = false;
     } else {
       // Never created friends pane before, create it now
       document
         .getElementById('chat')
         .appendChild(friends.createFriendsPane(this.friends));
       this.friendsPaneVisible = true;
+
+      // Hide the dance pane
+      document.getElementById('dance-pane').classList.add('invisible');
+      this.dancePaneVisible = false;
     }
   };
 
@@ -706,10 +885,18 @@ class Game extends Page {
       // make the dance pane visible
       document.getElementById('dance-pane').classList.remove('invisible');
       this.dancePaneVisible = true;
+
+      //  make friends pane invisible
+      document.getElementById('friends-pane').classList.add('invisible');
+      this.friendsPaneVisible = false;
     } else {
       // Never created dance pane before, create it now
       document.getElementById('chat').appendChild(dance.createDancePane());
       this.dancePaneVisible = true;
+
+      // Hide the friends pane
+      document.getElementById('friends-pane').classList.add('invisible');
+      this.friendsPaneVisible = false;
     }
   };
 

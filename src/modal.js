@@ -32,6 +32,12 @@ function createModal(contentElem, modalType, onClose) {
         <div className="modal-content">{contentElem}</div>
       </div>
     );
+  } else if (modalType === 'form') {
+    modalElem = (
+      <div id="form-modal-background" className="modal-background">
+        <div className="modal-content">{contentElem}</div>
+      </div>
+    );
   } else {
     modalElem = (
       <div id="modal-background" className="modal-background">
