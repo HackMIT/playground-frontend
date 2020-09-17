@@ -620,7 +620,8 @@ class Game extends Page {
           </div>
         );
       }
-      if (data.code === 3) {
+      if (data.code === 4) {
+        this.stopLoading();
         createModal(
           <div id="jukebox-modal">
             <h1 className="white-text">Oops!</h1>
