@@ -248,7 +248,7 @@ class Scene {
   }
 
   removeAllBuildings() {
-    this.buildings.forEach((building) => {
+    this.buildings.forEach((elem, building) => {
       this.scene.remove(building);
     });
   }
