@@ -456,8 +456,7 @@ class Game extends Page {
       else if (
         characterManager.character.role === 4
       ) {
-        // const currentTime = new Date().getTime();
-        const currentTime = this.createUTCDate(19, 2);
+        const currentTime = new Date().getTime();
         const formOpen1 = this.createUTCDate(19, 1);
         const deadline1 = this.createUTCDate(19, 7);
 
@@ -483,10 +482,9 @@ class Game extends Page {
           extra = ' For those who have already submitted Friday, be sure to resubmit any updates or add in a zoom link if you would like to participate in Peer Expo!'
         }
 
-        const submittedAt = this.createUTCDate(19, 14)
         if (first || second) {
           document.getElementById('form-button').style.display = 'block';
-          if (!characterManager.character.project || (second && (submittedAt < formOpen2))) {
+          if (!characterManager.character.project || (second && (characterManager.character.project.submittedAt < formOpen2))) {
             if (!this.remindForm) {
               createModal(
                 <div id="form-reminder-modal">
