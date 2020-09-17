@@ -72,14 +72,27 @@ class SponsorPanel {
   };
 
   createQueueContent = () => {
+    const queueTopics = {
+      companyTech: 'Company Technology',
+      workshopQuestions: 'Workshop Questions',
+      recruiting: 'Recruiting',
+      companyInfo: 'Company Information',
+      other: 'Other',
+    };
+
     const hackerElems = this.queue.map((subscriber) => {
+      console.log(subscriber);
       return (
         <div className="hacker">
           <p>
             {subscriber.name} &bull; {subscriber.school}, {subscriber.gradYear}
           </p>
           <p>
-            Interested in <strong>recruiting</strong>, <strong>APIs</strong>
+            Interested in{' '}
+            {subscriber.interests
+              .split(',')
+              .map((x) => queueTopics[x])
+              .join(', ')}
           </p>
           <button onclick={() => this.chat(subscriber.id)}>Chat</button>
         </div>
@@ -138,7 +151,8 @@ class SponsorPanel {
                 placeholder="https://company.com/jobs"
               />
             </div>
-            <button id="sponsor-panel-submit"
+            <button
+              id="sponsor-panel-submit"
               onclick={() => {
                 socket.send({
                   type: 'update_sponsor',
@@ -150,9 +164,13 @@ class SponsorPanel {
                   ).value,
                   url: document.getElementById('sponsor-url-field').value,
                 });
-                document.getElementById('sponsor-panel-submit').insertAdjacentHTML('beforeBegin', '<p id="challenge-submitted">Submitted!</p>')
-              }
-              }
+                document
+                  .getElementById('sponsor-panel-submit')
+                  .insertAdjacentHTML(
+                    'beforeBegin',
+                    '<p id="challenge-submitted">Submitted!</p>'
+                  );
+              }}
             >
               Submit
             </button>

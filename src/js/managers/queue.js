@@ -23,7 +23,7 @@ class QueueManager {
 
   inQueue = () => this.sponsor !== undefined;
 
-  join = (sponsor) => {
+  join = (sponsor, interests) => {
     if (this.sponsor !== undefined) {
       socket.send({
         type: 'queue_remove',
@@ -41,6 +41,7 @@ class QueueManager {
     socket.send({
       type: 'queue_join',
       sponsorId: sponsor.id,
+      interests,
     });
   };
 

@@ -1,4 +1,4 @@
-import queueManager from '../managers/queue'
+import queueManager from '../managers/queue';
 
 import '../../styles/queueForm.scss';
 // eslint-disable-next-line
@@ -8,11 +8,11 @@ class QueueForm {
   createQueueModal = (sponsor) => {
     const queueTopics = [
       {
-        id: 'company-tech',
+        id: 'companyTech',
         title: 'Company Technology',
       },
       {
-        id: 'workshop-questions',
+        id: 'workshopQuestions',
         title: 'Workshop Questions',
       },
       {
@@ -20,7 +20,7 @@ class QueueForm {
         title: 'Recruiting',
       },
       {
-        id: 'company-info',
+        id: 'companyInfo',
         title: 'Company Information',
       },
       {
@@ -44,17 +44,23 @@ class QueueForm {
             <p>Which topics are you interested in?</p>
             {queueTopics}
           </div>
-          <button onclick={() => this.handleSubmitButton(sponsor)}>Submit</button>
+          <button onclick={() => this.handleSubmitButton(sponsor)}>
+            Submit
+          </button>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   handleSubmitButton = (sponsor) => {
+    const interests = Array.from(
+      document.querySelectorAll('input[name="queue-topics"]:checked')
+    ).map((elem) => elem.value);
+    queueManager.join(sponsor, interests);
+
     document.getElementById('modal-background').remove();
-    queueManager.join(sponsor);
-  }
+  };
 }
 
 const formInstance = new QueueForm();
-export default formInstance
+export default formInstance;
