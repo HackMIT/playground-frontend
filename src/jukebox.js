@@ -6,7 +6,6 @@ import socket from './js/socket';
 import closeIcon from './images/icons/close.svg';
 import './styles/jukebox.scss';
 
-// eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
 class Jukebox {
@@ -79,9 +78,7 @@ class Jukebox {
 
     setTimeout(() => {
       jukeboxElem.classList.remove('closing');
-      // document.getElementById('hidden-jukebox').appendChild(jukeboxElem);
       jukeboxElem.style.display = 'none';
-      // document.getElementById('player').style.zIndex = -1000;
     }, 25);
   };
 
@@ -217,7 +214,6 @@ class Jukebox {
     setTimeout(() => {
       jukeboxElem.classList.add('opening');
       jukeboxElem.style.display = 'flex';
-      // document.getElementById('player').style.zIndex = 1000;
       this.updateJukeboxPane(false);
     }, 25);
   };
