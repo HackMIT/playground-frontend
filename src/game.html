@@ -13,6 +13,14 @@
   <meta property="og:url" content="play.hackmit.org" />
   <title><%= htmlWebpackPlugin.options.title %></title>
   <link rel="icon" href="/favicon.ico" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-63828172-15"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-63828172-15');
+  </script>
 </head>
 
 <body>
@@ -66,7 +74,7 @@
             <div class="icon-container">
               <img id="queue-button-icon" src="/images/Coffee_Icon.svg" />
             </div>
-            <span id="queue-button-text">Talk to CMT</span>
+            <span id="queue-button-text">Talk to DRW</span>
           </div>
           <div class="action" id="website-button">
             <div class="icon-container">

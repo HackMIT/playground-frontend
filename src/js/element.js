@@ -1,6 +1,7 @@
 import characterSelector from './components/characterSelector';
 import createModal from '../modal';
 import mapInstance from './components/worldMap';
+import misti from './components/misti';
 import nonprofit from './components/nonprofit';
 
 import Editable from './editable';
@@ -15,6 +16,7 @@ const JUKEBOX_OPEN_ACTION = 1;
 const MAP_OPEN_ACTION = 2;
 const WARDROBE_OPEN_ACTION = 3;
 const NONPROFIT_OPEN_ACTION = 4;
+const MISTI_POPUP_ACTION = 5;
 
 class Element extends Editable {
   dataKeyName = 'element';
@@ -110,6 +112,8 @@ class Element extends Editable {
         .substring(this.data.path.indexOf('_') + 1)
         .split('.')[0];
       createModal(nonprofit.createNonprofitModal(nonprofitId));
+    } else if (this.data.action === MISTI_POPUP_ACTION) {
+      createModal(misti.createModal());
     }
   }
 
