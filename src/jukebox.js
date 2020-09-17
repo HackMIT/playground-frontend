@@ -44,7 +44,7 @@ class Jukebox {
       if (msg.requiresWarning) {
         createModal(
           <div id="jukebox-modal">
-            <h1 className="white-text">Oops!</h1>
+            <h1 className="white-text">Warning!</h1>
             <p className="white-text">
               Here you can add songs to the queue for all hackers to listen to. If
               you select any inappropriate songs, you will be disqualified. Please
@@ -61,7 +61,7 @@ class Jukebox {
           <div id="jukebox-modal">
             <h1 className="white-text">Oops!</h1>
             <p className="white-text">
-              Oops! Your song must be less than 6 minutes long.
+              Your song must be less than 6 minutes long.
             </p>
           </div>
         );
@@ -70,7 +70,7 @@ class Jukebox {
           <div id="jukebox-modal">
             <h1 className="white-text">Oops!</h1>
             <p className="white-text">
-              Oops! You must wait at least 15 minutes between song submissions.
+              You must wait at least 15 minutes between song submissions.
             </p>
           </div>
         );
@@ -99,7 +99,7 @@ class Jukebox {
   };
 
   createPlayingNowContents = () => {
-    this.currentSong.duration === 0 ? "No songs playing" : this.currentSong.title;
+    const title = this.currentSong.duration === 0 ? "No songs playing" : this.currentSong.title;
     const input = <input onclick={this.toggleJukebox} id="jukebox-toggle" class="toggle" type="checkbox" checked={this.jukeboxToggle} />;
     return (
       <div>
@@ -253,7 +253,7 @@ class Jukebox {
         <div id="jukebox-modal">
           <h1 className="white-text">Oops!</h1>
           <p className="white-text">
-            Oops! Please input a valid YouTube video URL.
+            Please input a valid YouTube video URL.
           </p>
         </div>
       );
@@ -268,7 +268,7 @@ class Jukebox {
         <div id="jukebox-modal">
           <h1 className="white-text">Oops!</h1>
           <p className="white-text">
-            Oops! Please input a valid YouTube video URL.
+            Please input a valid YouTube video URL.
           </p>
         </div>
       );
@@ -291,7 +291,7 @@ class Jukebox {
         <div id="jukebox-modal">
           <h1 className="white-text">Oops!</h1>
           <p className="white-text">
-            Oops! Please input a valid YouTube video URL.
+            Please input a valid YouTube video URL.
           </p>
         </div>
       );
