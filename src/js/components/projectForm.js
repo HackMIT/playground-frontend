@@ -1,6 +1,7 @@
 import validator from 'email-validator';
 
 import socket from '../socket';
+import createModal from '../../modal';
 
 import '../../styles/projectForm.scss';
 
@@ -9,6 +10,52 @@ import notificationsManager from '../managers/notifications'
 import createElement from '../../utils/jsxHelper';
 
 class SponsorPanel {
+  createProjectModal = (project) => {
+    const challenges = project.challenges.split(',')
+      .map((x) => x.trim());
+    const team = project.emails.split(',')
+      .map((x) => x.trim());
+    return (
+      <div id="project-summary">
+        <h3>Project Name:{" "}</h3> {project.name}
+        <h3>Team Emails: </h3>{team.join(", ")}
+        <h3>Pitch: </h3>{project.pitch}
+        <h3>Track: </h3>{project.track}
+        {project.zoom ? <div><h3>Expo zoom link: </h3> {project.zoom}</div> : <div></div>}
+        <h3>Challenges: </h3>
+        {challenges.map(challenge => {
+          switch (challenge) {
+            case 'arrowstreet':
+              return <p>(Arrowstreet) Best Panel Data Visualization</p>
+            case 'cmt':
+              return <p>(CMT) Detecting Crashes in Smartphone Data</p>
+            case 'drw':
+              return <p>(DRW) Best Data Visualization Hack</p>
+            case 'facebook':
+              return <p>(Facebook) Best Hack for Building Community</p>
+            case 'goldman':
+              return <p>(Goldman Sachs) Best Use of Marquee API by Goldman Sachs</p>
+            case 'ibm':
+              return <p>(IBM) Best solution addressing the community response to COVID-19</p>
+            default:
+              return <p>No challenges selected</p>
+          }
+        })}
+        <button
+          id="project-form-resubmit"
+          onclick={() => this.handleResubmitButton()}
+        >
+          Edit/Resubmit
+        </button>
+      </div>
+    )
+  }
+
+  handleResubmitButton = () => {
+    document.getElementById('modal-background').remove();
+    createModal(this.createFormModal());
+  }
+
   createFormModal = () => {
     const isFriday = new Date().getTime() < 1600498800000;
 
@@ -98,11 +145,11 @@ class SponsorPanel {
         </div>
         {isFriday ? (
           <div className="field">
-            <p>
+            {isFriday ? <p>
               If you&rsquo;ll be participating in peer expo (happening in the
               hacker arena at 6pm EDT!), enter a Zoom link that other
               participants can use to meet you.
-            </p>
+            </p> : <div></div>}
             <input type="text" id="zoom" />
           </div>
         ) : null}

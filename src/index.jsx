@@ -55,6 +55,7 @@ import './images/icons/dab.svg';
 import './images/icons/wave.svg';
 import './images/icons/floss.svg';
 import './images/icons/exclamation.svg';
+import './images/icons/form-check.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
@@ -75,6 +76,8 @@ class Game extends Page {
   start = () => {
     document.getElementById('top-bar-button-container').style.display = 'none';
     document.getElementById('chat').style.display = 'none';
+    document.getElementById('form-button').style.display = 'none';
+    document.getElementById('edit-button').style.display = 'none';
 
     if (isMobile(window.navigator).any || !window.WebSocket) {
       this.stopLoading();
@@ -451,8 +454,7 @@ class Game extends Page {
       }
       //  sponsor
       else if (
-        characterManager.character.role === 4 &&
-        !characterManager.character.project
+        characterManager.character.role === 4
       ) {
         const currentTime = new Date().getTime();
         const formOpen1 = this.createUTCDate(19, 1);
@@ -470,51 +472,55 @@ class Game extends Page {
 
         let formName = '';
         let due = '';
+        let extra = '';
         if (first) {
           formName = 'Fun Friday Form';
           due = 'Saturday 3am EDT';
         } else {
           formName = 'Spicy Saturday Survey';
           due = 'Saturday 6pm EDT';
+          extra = ' For those who have already submitted Friday, be sure to resubmit any updates or add in a zoom link if you would like to participate in Peer Expo!'
         }
 
+        const submittedAt = this.createUTCDate(19, 14)
         if (first || second) {
-          console.log('hello');
           document.getElementById('form-button').style.display = 'block';
-          if (!this.remindForm) {
-            createModal(
-              <div id="form-reminder-modal">
-                <div id="form-reminder">
-                  <h1>Reminder: </h1>
+          if (!characterManager.character.project || (second && (submittedAt < formOpen2))) {
+            if (!this.remindForm) {
+              createModal(
+                <div id="form-reminder-modal">
+                  <div id="form-reminder">
+                    <h1>Reminder: </h1>
                   You must submit the <b>{formName}</b> in order to be eligible
                   for judging and swag! Please fill this out by <b>{due}</b> at
                   the latest by clicking the exclamation mark at the top right
-                  of your screen.
-                </div>
-                <div id="form-button-div">
-                  <button
-                    id="later-button"
-                    onclick={() => {
-                      document.getElementById('form-reminder-modal').remove();
-                      document.getElementById('form-modal-background').remove();
-                    }}
-                  >
-                    Later
+                  of your screen.{extra}
+                  </div>
+                  <div id="form-button-div">
+                    <button
+                      id="later-button"
+                      onclick={() => {
+                        document.getElementById('form-reminder-modal').remove();
+                        document.getElementById('form-modal-background').remove();
+                      }}
+                    >
+                      Later
                   </button>
-                  <button
-                    onclick={() => {
-                      document.getElementById('form-reminder-modal').remove();
-                      document.getElementById('form-modal-background').remove();
-                      createModal(projectForm.createFormModal());
-                    }}
-                  >
-                    OK
+                    <button
+                      onclick={() => {
+                        document.getElementById('form-reminder-modal').remove();
+                        document.getElementById('form-modal-background').remove();
+                        createModal(projectForm.createFormModal());
+                      }}
+                    >
+                      OK
                   </button>
-                </div>
-              </div>,
-              'form'
-            );
-            this.remindForm = true;
+                  </div>
+                </div>,
+                'form'
+              );
+              this.remindForm = true;
+            }
           }
         }
       }
@@ -680,7 +686,12 @@ class Game extends Page {
   };
 
   handleFormButton = () => {
-    createModal(projectForm.createFormModal());
+    if (!characterManager.character.project) {
+      createModal(projectForm.createFormModal());
+    } else {
+      createModal(projectForm.createProjectModal(characterManager.character.project))
+    }
+
   };
 
   handleSettingsButton = () => {
