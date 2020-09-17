@@ -16,7 +16,6 @@ import starIcon from '../images/icons/star.svg';
 
 // eslint-disable-next-line
 import createElement from '../utils/jsxHelper';
-import createModal from '../modal';
 
 class Character {
   constructor(data, parent, reverseRaycaster) {
@@ -195,14 +194,14 @@ class Character {
 
     const buttons = (
       <div id="profile-buttons" className="profile-buttons">
+        {' '}
         {characterManager.isFriend(this.data.id) ? (
           <button>
-            <img src={messageIcon} />
+            <img src={messageIcon} />{' '}
           </button>
         ) : (
           none
-        )}
-
+        )}{' '}
         {characterManager.isFriend(this.data.id) ||
         characterManager.getCharacterId() === this.data.id ? (
           none
@@ -215,10 +214,9 @@ class Character {
               });
             }}
           >
-            <img src={addFriendIcon} />
+            <img src={addFriendIcon} />{' '}
           </button>
-        )}
-
+        )}{' '}
         <button
           onclick={() => {
             socket.send({
@@ -227,9 +225,8 @@ class Character {
             });
           }}
         >
-          <img src={starIcon} />
-        </button>
-
+          <img src={starIcon} />{' '}
+        </button>{' '}
         {this.data.id === characterManager.getCharacterId() ? (
           none
         ) : (
@@ -239,37 +236,37 @@ class Character {
               this.handleReportButton();
             }}
           >
-            <img src={flagIcon} />
+            <img src={flagIcon} />{' '}
           </button>
-        )}
+        )}{' '}
       </div>
     );
 
     this.profileBox = (
       <div className="profile-container">
         <button className="close-button" onclick={() => this.hideProfile()}>
-          <img src={closeIcon} />
-        </button>
+          <img src={closeIcon} />{' '}
+        </button>{' '}
         <div className="profile-card">
-          <h2 className="name">{this.data.name}</h2>
-          <p className="school">{this.data.school}</p>
+          <h2 className="name"> {this.data.name} </h2>{' '}
+          <p className="school"> {this.data.school} </p>{' '}
           <div className="profile-badge">
             <div />
             <div className="bio-background">
-              <img className="earth" src={earthIcon} />
+              <img className="earth" src={earthIcon} />{' '}
               <p className="bio">
-                This is a long long bio, I have nothing to say but let's just
-                fill it with as many words as I can.
-              </p>
+                This is a long long bio, I have nothing to say but let 's just
+                fill it with as many words as I can.{' '}
+              </p>{' '}
               <div className="line1" />
               <div className="location-container">
-                <p className="location">Arizona, United States</p>
+                <p className="location"> Arizona, United States </p>{' '}
                 <div className="line2" />
-              </div>
-            </div>
-          </div>
-        </div>
-        {buttons}
+              </div>{' '}
+            </div>{' '}
+          </div>{' '}
+        </div>{' '}
+        {buttons}{' '}
       </div>
     );
   }

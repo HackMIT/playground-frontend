@@ -11,7 +11,6 @@ import map from '../../images/explorer/map.svg';
 import memeLord from '../../images/explorer/memelord.svg';
 import miniEvents from '../../images/explorer/minievents.svg';
 import socialMedia from '../../images/explorer/socialmedia.svg';
-import strikePose from '../../images/explorer/strikepost.svg';
 import trackCounter from '../../images/explorer/trackcounter.svg';
 import coffeeChat from '../../images/explorer/coffeechat.svg';
 import redArrow from '../../images/arrows/red_arrow.svg';
@@ -32,7 +31,7 @@ const achievements = [
    one non-profit and come get your badge!',
     img: redArrow,
     sticker: companyTour,
-    completed: true,
+    variableName: 'companyTour',
   },
   {
     title: 'PEER EXPO',
@@ -41,26 +40,27 @@ const achievements = [
     Visit at least 3 other teams in Peer Expo and claim your sticker.',
     img: yellowArrow,
     sticker: peerExpo,
-    completed: true,
+    variableName: 'peerExpo',
   },
   {
     title: 'HANGOUTS',
     // eslint-disable-next-line no-multi-str
     blurb:
       '\
-      HackMIT 2020 is larger than ever! That means more people to interact with, more connections to make, more friendships to form.\
-       Meet at least 5 other people to claim your sticker, one of them from a different country from you!',
+      HackMIT 2020 is larger than ever! That means more people to interact with, more connections to make, more friendships \
+      to form. Meet new friends by adding at least 5 other people, one of them from\
+      a different country from you, to your friends list. Once they add you back, you can claim your sticker!',
     img: blueArrow,
     sticker: hangOuts,
-    completed: true,
+    variableName: 'hangouts',
   },
   {
-    title: 'HACKWEEK',
+    title: 'WORKSHOPS',
     blurb:
-      'Hack2020 doesn’t just start when we kick off the hackathon! Attend one HackWeek workshop to earn this sticker',
+      'Hack2020 isn’t just about the projects! Attend at least two talks and one workshop from during the weekend to earn this sticker.',
     img: redArrow,
     sticker: hackWeek,
-    completed: true,
+    variableName: 'workshops',
   },
   {
     title: 'PUB HACK ON SOCIAL MEDIA',
@@ -68,7 +68,7 @@ const achievements = [
       'Share your HackMIT experience on social media with our hashtag, #HackMIT2020! Inflict some #fomo on the rest of the world.',
     img: yellowArrow,
     sticker: socialMedia,
-    completed: true,
+    variableName: 'socialMedia',
   },
   {
     title: 'MEME LORD',
@@ -76,15 +76,16 @@ const achievements = [
       'Want to battle it out for the ultimate prize and become “Meme Lord”?  Submit a meme to our meme challenge, and get a sticker for participating. Also, winners of the meme challenge get cool prizes. #justforlaughs',
     img: blueArrow,
     sticker: memeLord,
-    completed: false,
+    variableName: 'memeLord',
   },
   {
-    title: 'COFFEE CHATS',
+    title: 'SPONSOR CHATS',
     blurb:
-      'Would you like to know more about a company/sponsor? Hop on to one of their coffee chat sessions and learn more about the cool products they have in store, and what they are currently working on. Attend at least one coffee chat session to earn a sticker.',
+      'Would you like to know more about a company/sponsor? Hop into one of their rooms in Playground and click their “talk to” button to learn more about the cool \
+      products they have in store and what they are currently working on. Chat with at least one company to earn a sticker.',
     img: redArrow,
     sticker: coffeeChat,
-    completed: true,
+    variableName: 'sponsorQueue',
   },
   {
     title: 'SEND ME YOUR LOCATION',
@@ -92,15 +93,7 @@ const achievements = [
       'Pin your location on the world map on Playground and mark your presence in the global village. See where other fellow hackers are from and appreciate how technology has made us more connected. Basically,"Send me your location, let’s focus on communicatin’...” Khalid, Location (song).',
     img: yellowArrow,
     sticker: map,
-    completed: false,
-  },
-  {
-    title: 'STRIKE A POSE',
-    blurb:
-      'We want to make Hack Weekend more memorable, and what better way than to take a photo with friends, old or new. Strike a pose in our virtual photo booths and submit it to the team to get a sticker or show us your hack flare by submitting a video saying hi or of your team working together. ',
-    img: blueArrow,
-    sticker: strikePose,
-    completed: false,
+    variableName: 'sendLocation',
   },
   {
     title: 'TRACK COUNTER',
@@ -108,7 +101,7 @@ const achievements = [
       'Be sure to choose to your track of choice before the Friday and Saturday deadlines. Submit your choice to the online Track Counter to get a sticker.',
     img: redArrow,
     sticker: trackCounter,
-    completed: false,
+    variableName: 'trackCounter',
   },
   {
     title: 'MINI EVENTS',
@@ -116,7 +109,7 @@ const achievements = [
       'Have fun at a mini-event! We’ve got a whole bunch of fun events so you can take a break from hacking! Put some work in with the “Abs with Jenny” workout session or our TikTok/Dance workshops. Put your mind to the test with some trivia/kahoot, or potentially meet the love of your “hack life”  in our “Hack Blind Dating”. Get up, take a stretch, and relax - you’ll get a sticker for attending any of these events!',
     img: yellowArrow,
     sticker: miniEvents,
-    completed: true,
+    variableName: 'miniEvents',
   },
 ];
 class Achievements {
@@ -142,7 +135,7 @@ class Achievements {
     achievementsRecord.classList.toggle('Achievements-records-container');
   };
 
-  createAchievementsIntroTile = () => {
+  createAchievementsIntroTile = (tasksCompleted) => {
     // create the introduction tile which describes what explorer is all about
     return (
       <div className="Achievements-intro-tile">
@@ -161,10 +154,9 @@ class Achievements {
             exploring all that we have to offer. It is also an empty scrapbook
             that you can fill up with stickers by participating in various
             events. With each space you fill up, you can earn a raffle ticket!
-            Collect 5 or more for ~bonus~ tickets. Prizes included so get hyped
-            :))
+            Prizes include ..... so get hyped :))
           </div>
-          {this.createAchievementsRecord(achievements)}
+          {this.createAchievementsRecord(achievements, tasksCompleted)}
           <div
             onclick={this.handleIntroToggle}
             className="Achievements-body-closing-container"
@@ -174,16 +166,15 @@ class Achievements {
             <div className="Achievements-body-closing-container-tile"></div>
           </div>
         </div>
-        {/* <div className="Achievement-intro"></div> */}
       </div>
     );
   };
 
-  createAchievementsRecord = (achievementsData) => {
+  createAchievementsRecord = (achievementsData, tasksCompleted) => {
     // creates sticker scrapbook in intro-tile
     // fills in stickers based on whether the task has been completed
     const AchievementsRecord = achievementsData.map((data) =>
-      this.createAchievementRecordTile(data)
+      this.createAchievementRecordTile(data, tasksCompleted)
     );
     return (
       <div
@@ -195,12 +186,12 @@ class Achievements {
     );
   };
 
-  createAchievementRecordTile = (data) => {
+  createAchievementRecordTile = (data, tasksCompleted) => {
     // create a sticker tile in createAchievementsRecord above
     // fills in the sticker based on whether the task has been completed
     // eslint-disable-next-line prefer-destructuring
     let sticker = data.sticker;
-    if (!data.completed) {
+    if (!tasksCompleted[data.variableName]) {
       sticker = '';
     }
     return (
@@ -213,8 +204,19 @@ class Achievements {
     );
   };
 
-  createAchievementsTile = (data) => {
+  createAchievementsTile = (data, tasksCompleted) => {
     // creates a tile for each explorer task
+
+    let stickerStyle = `
+    background-image : url(${data.sticker});
+    filter:grayscale(100%);
+    `;
+
+    if (tasksCompleted[data.variableName]) {
+      stickerStyle = `background-image : url(${data.sticker});
+        `;
+    }
+
     return (
       <div className="Achievement-tile-container">
         <div className="Achievement-tile-header">
@@ -233,7 +235,7 @@ class Achievements {
             <div className="Achievement-tile-sticker">
               <div
                 className="Achievement-tile-sticker-container"
-                style={`background-image:url(${data.sticker})`}
+                style={stickerStyle}
               ></div>
             </div>
           </div>
@@ -248,24 +250,23 @@ class Achievements {
     );
   };
 
-  createAchievementsTilesContainer = (data) => {
+  createAchievementsTilesContainer = (tasksCompleted) => {
     // houses all the tasks for explorer
     // each task is a "tile" like the one above
-    const AchievementsTiles = data.map((datapiece) =>
-      this.createAchievementsTile(datapiece)
+    const AchievementsTiles = achievements.map((datapiece) =>
+      this.createAchievementsTile(datapiece, tasksCompleted)
     );
     return (
       <div className="Achievements-Tiles-Container">{AchievementsTiles}</div>
     );
   };
 
-  createAchievementsModal = () => {
+  createAchievementsModal = (tasksCompleted) => {
     return (
       <div id="achievements">
         <div id="root"></div>
-        {this.createAchievementsIntroTile()}
-        {this.createAchievementsTilesContainer(achievements)}
-
+        {this.createAchievementsIntroTile(tasksCompleted)}
+        {this.createAchievementsTilesContainer(tasksCompleted)}
         <div id="achievements-clouds"></div>
       </div>
     );

@@ -1,18 +1,20 @@
-@import 'fonts';
-@import 'colors';
-@import 'variables';
+@import "fonts";
+@import "colors";
+@import "variables";
 
 #achievements {
   background: $blue_light;
   color: $white !important;
   height: 100%;
   overflow-y: scroll;
+  padding: 0;
 
   #root {
     padding: 32px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding: 0;
   }
 
   * {
@@ -64,6 +66,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+
   .Achievement-intro-tile-body-title {
     margin-top: 1rem !important;
     font-size: 1.5rem;
@@ -100,14 +103,18 @@
     flex-direction: row;
     flex-wrap: wrap;
     border-radius: 12px;
+    align-items: center;
+    justify-content: space-evenly;
     margin: 1rem !important;
   }
+
   .Achievements-records-container-hide {
     background-color: $blue_light;
     height: 0px;
     visibility: hidden;
     width: 500px;
   }
+
   .Achievements-body-closing-container {
     display: flex;
     flex-direction: column;
@@ -127,7 +134,7 @@
   flex-direction: column;
   align-items: center;
   // overflow: scroll;
-  height: 400px;
+  // height: 400px;
 
   .Achievement-tile-container {
     width: 700px;
@@ -169,6 +176,7 @@
           height: 2rem;
         }
       }
+
       .Achievement-tile-titleandsticker {
         display: flex;
         flex-direction: row;
@@ -176,6 +184,7 @@
         justify-content: space-between;
         width: 650px;
       }
+
       .Achievement-tile-title {
         display: flex;
         flex-direction: row;
@@ -211,6 +220,7 @@
     }
   }
 }
+
 .Achievement-tile-sticker {
   display: flex;
   flex-direction: row;
@@ -219,6 +229,7 @@
   width: 4rem;
   margin: 1rem !important;
 }
+
 .Achievement-tile-sticker-container {
   height: 4rem;
   width: 4rem;
