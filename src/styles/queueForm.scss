@@ -1,4 +1,3 @@
-
 #queue-form {
   width: initial;
 }
@@ -8,16 +7,16 @@
     margin-bottom: 12px;
     text-align: center;
   }
-    .checkbox-container {
-      * {
-        vertical-align: middle;
-      }
-
-      input {
-        margin-left: 4px;
-        margin-right: 6px;
-      }
+  .checkbox-container {
+    * {
+      vertical-align: middle;
     }
+
+    input {
+      margin-left: 4px;
+      margin-right: 6px;
+    }
+  }
 
   button {
     background: #43a047;

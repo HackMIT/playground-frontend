@@ -81,7 +81,6 @@ class SponsorPanel {
     };
 
     const hackerElems = this.queue.map((subscriber) => {
-      console.log(subscriber);
       return (
         <div className="hacker">
           <p>
