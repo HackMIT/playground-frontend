@@ -9,8 +9,6 @@ class AdminPanel {
   constructor() {
     this.sponsorArray = [["ArrowStreet", "arrowstreet"], ["Citadel", "citadel"], ["CMT", "cmt"], ["DRW", "drw"], ["Facebook", "facebook"], ["Goldman Sachs", "goldman"], ["IBM", "ibm"], ["Intersystems", "intersystems"], ["Linode", "linode"], ["Nasdaq", "nasdaq"], ["OCA Ventures", "oca"], ["Pegasystems", "pega"], ["QuantCo", "quantco"], ["Yext", "yext"]]
     this.sponsorMap = new Map(this.sponsorArray)
-    console.log("admin", this.sponsorMap)
-    
   }
 
   createAdminDropdown = () => {
@@ -21,8 +19,18 @@ class AdminPanel {
     defaultSelection.disabled = true
     defaultSelection.text = "Sponsor Name"
     defaultSelection.selected = true
-    
     select.add(defaultSelection)
+
+    const addAsMentor = document.createElement("option")
+    addAsMentor.text = "Add as mentor"
+    addAsMentor.value = "mentor"
+    select.add(addAsMentor)
+
+    const addAsOrganizer = document.createElement("option")
+    addAsOrganizer.text = "Add as organizer"
+    addAsOrganizer.value = "organizer"
+    select.add(addAsOrganizer)
+    
     // eslint-disable-next-line
     for(const [sponsorName, sponsorId] of this.sponsorMap) {
       const el = document.createElement("option");
@@ -44,14 +52,33 @@ class AdminPanel {
         <button
           id="admin-panel-submit green"
           onclick={() => {
-            socket.send({
-              type: 'add_email',
-              email: document.getElementById(
-                'admin-sponsor-email'
-              ).value,
-              role: 2,
-              sponsorId: document.getElementById('admin-sponsor-ids').value
-            });
+            const select = document.getElementById('admin-sponsor-ids').value
+            if (select === "organizer") {
+              socket.send({
+                type: 'add_email',
+                email: document.getElementById(
+                  'admin-sponsor-email'
+                ).value,
+                role: 1,
+              });
+            } else if (select === "mentor") {
+              socket.send({
+                type: 'add_email',
+                email: document.getElementById(
+                  'admin-sponsor-email'
+                ).value,
+                role: 3,
+              });
+            } else {
+              socket.send({
+                type: 'add_email',
+                email: document.getElementById(
+                  'admin-sponsor-email'
+                ).value,
+                role: 2,
+                sponsorId: select
+              });
+            }
           }}
         >
           Submit
