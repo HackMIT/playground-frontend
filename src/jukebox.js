@@ -81,6 +81,7 @@ class Jukebox {
       jukeboxElem.classList.remove('closing');
       // document.getElementById('hidden-jukebox').appendChild(jukeboxElem);
       jukeboxElem.style.display = 'none';
+      // document.getElementById('player').style.zIndex = -1000;
     }, 25);
   };
 
@@ -216,6 +217,7 @@ class Jukebox {
     setTimeout(() => {
       jukeboxElem.classList.add('opening');
       jukeboxElem.style.display = 'flex';
+      // document.getElementById('player').style.zIndex = 1000;
       this.updateJukeboxPane(false);
     }, 25);
   };
@@ -268,7 +270,12 @@ class Jukebox {
     let vidCode;
     try {
       splitUrl = url.search.split(/[&=]/);
-      vidCode = splitUrl[splitUrl.length - 3];
+      if (url.toString().includes('&')) {
+        vidCode = splitUrl[splitUrl.length - 3];
+      }
+      else {
+        vidCode = splitUrl[splitUrl.length - 1];
+      }
     }
     catch {
       swal('Oops!', 'Please input a valid YouTube video URL.', 'error');
