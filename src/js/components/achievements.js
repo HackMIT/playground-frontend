@@ -115,16 +115,11 @@ const achievements = [
 class Achievements {
   handleToggle = (id) => {
     // rotating arrows
-    try {
-      const tileArrow = document.getElementById(id);
-      tileArrow.classList.toggle('Achievement-tile-arrow-container-rotate');
+    const tileArrow = document.getElementById(id);
+    tileArrow.classList.toggle('Achievement-tile-arrow-container-rotate');
 
-      const tileBody = document.getElementById(`${id}-tile-body`);
-      tileBody.classList.toggle('Achievement-tile-body');
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error);
-    }
+    const tileBody = document.getElementById(`${id}-tile-body`);
+    tileBody.classList.toggle('Achievement-tile-body');
   };
 
   handleIntroToggle = () => {
@@ -158,7 +153,7 @@ class Achievements {
           </div>
           {this.createAchievementsRecord(achievements, tasksCompleted)}
           <div
-            onclick={this.handleIntroToggle}
+            onclick={() => this.handleIntroToggle()}
             className="Achievements-body-closing-container"
           >
             <div className="Achievements-body-closing-container-tile"></div>
@@ -217,15 +212,17 @@ class Achievements {
         `;
     }
 
+    const title = data.title.replace(' ', '_').toLowerCase();
+
     return (
       <div className="Achievement-tile-container">
         <div className="Achievement-tile-header">
           <div className="Achievement-tile-arrow">
             <div
               className="Achievement-tile-arrow-container"
-              id={data.title}
+              id={title}
               onclick={() => {
-                this.handleToggle(data.title);
+                this.handleToggle(title);
               }}
               style={`background-image:url(${data.img})`}
             ></div>
@@ -240,10 +237,7 @@ class Achievements {
             </div>
           </div>
         </div>
-        <div
-          id={`${data.title}-tile-body`}
-          className="Achievement-tile-body-hide"
-        >
+        <div id={`${title}-tile-body`} className="Achievement-tile-body-hide">
           {data.blurb}
         </div>
       </div>
