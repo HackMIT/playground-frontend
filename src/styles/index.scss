@@ -149,9 +149,9 @@ body {
         text-align: center;
         margin-bottom: 12px;
       }
-      
+
       button {
-        display:block;
+        display: block;
         width: 100%;
         margin: 0.8em 0;
         height: 32px;
@@ -164,21 +164,37 @@ body {
         color: $white;
         letter-spacing: 1px;
         cursor: pointer;
-  
+
         &#connectivity-button {
           background: #95cff0;
+
+          &:hover {
+            background: #63b8e9;
+          }
         }
-  
-       &#healthtech-button {
+
+        &#healthtech-button {
           background: #fbcdc2;
+
+          &:hover {
+            background: #f9b19f;
+          }
         }
-  
+
         &#education-button {
           background: #fcc24c;
+
+          &:hover {
+            background: #fcb11d;
+          }
         }
-  
+
         &#urbaninnovation-button {
           background: #958470;
+
+          &:hover {
+            background: #756757;
+          }
         }
       }
     }
