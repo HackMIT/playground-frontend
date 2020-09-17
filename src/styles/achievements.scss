@@ -1,10 +1,11 @@
-@import "fonts";
-@import "colors";
-@import "variables";
+@import 'fonts';
+@import 'colors';
+@import 'variables';
 
 #achievements {
   background: $blue_light;
   color: $white !important;
+  display: block;
   height: 100%;
   overflow-y: scroll;
   padding: 0;
@@ -52,13 +53,13 @@
 }
 
 .Achievements-intro-tile-header {
-  font-family: LemonMilk-Bold !important;
+  font-family: LemonMilkBold !important;
   font-size: 4rem;
   color: white;
 }
 
 .Achievements-intro-tile-body {
-  width: 650px;
+  width: 60%;
   margin: 1rem !important;
   padding: 1rem !important;
   background-color: $accent_pink;
@@ -73,7 +74,7 @@
     margin-top: 1rem !important;
     font-size: 1.5rem;
     text-align: center;
-    font-family: LemonMilk-Bold !important;
+    font-family: LemonMilkBold !important;
   }
 
   .Achievement-intro-tile-body-text {
@@ -99,7 +100,7 @@
   .Achievements-records-container {
     background-color: $blue_light;
     height: 300px !important;
-    width: 500px;
+    width: 80%;
     visibility: visible !important;
     display: flex;
     flex-direction: row;
@@ -114,10 +115,11 @@
     background-color: $blue_light;
     height: 0px;
     visibility: hidden;
-    width: 500px;
+    width: 80%;
   }
 
   .Achievements-body-closing-container {
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -132,22 +134,16 @@
 }
 
 .Achievements-Tiles-Container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  // overflow: scroll;
-  // height: 400px;
-
   .Achievement-tile-container {
-    width: 700px;
+    width: 70%;
     display: flex;
     flex-direction: column;
-    margin-top: 0.5rem !important;
+    margin: 0.5rem auto 0 !important;
 
     .Achievement-tile-header {
       font-weight: bold;
       color: $blue_text;
-      font-family: LemonMilk-Bold !important;
+      font-family: LemonMilkBold !important;
       font-size: 2rem;
       height: 85px;
       background-color: white;
@@ -156,13 +152,14 @@
       align-items: center;
 
       .Achievement-tile-arrow {
-        width: 3rem;
+        width: 48px;
         height: 100%;
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: center;
         margin-right: 2rem !important;
+        cursor: pointer;
 
         .Achievement-tile-arrow-container {
           transform: rotate(0deg);
@@ -184,7 +181,7 @@
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        width: 650px;
+        flex-grow: 1;
       }
 
       .Achievement-tile-title {
@@ -192,7 +189,7 @@
         flex-direction: row;
         align-items: center;
         text-align: center;
-        font-family: LemonMilk-Bold !important;
+        font-family: LemonMilkBold !important;
       }
     }
 
@@ -201,10 +198,9 @@
       text-align: center;
       color: $blue_text;
       visibility: visible !important;
-      height: 100px !important;
       transition: all 0.5s ease !important;
       display: table !important;
-      padding-top: 1rem !important;
+      padding: 32px 32px 24px !important;
       border-bottom-left-radius: 12px;
       border-bottom-right-radius: 12px;
     }
