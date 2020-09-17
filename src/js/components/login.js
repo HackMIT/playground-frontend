@@ -158,20 +158,14 @@ class LoginPanel {
               <p>Location</p>
               <input
                 type="text"
-                placeholder="Cambridge, Massachusetts"
+                placeholder="Cambridge, MA"
                 id="location-field"
-                defaultValue={this.location}
                 maxLength="30"
               />
             </div>
             <div className="field">
-              <p>Bio</p>
-              <textarea
-                id="bio-field"
-                defaultValue={this.bio}
-                maxLength="150"
-                rows="4"
-              />
+              <p>Short bio (&#8804; 150 characters)</p>
+              <textarea id="bio-field" maxLength="150" rows="4" />
             </div>
             <h2>Notifications</h2>
             <p className="small">
@@ -222,18 +216,22 @@ class LoginPanel {
                 }
 
                 const locationField = document.getElementById('location-field');
-                if (locationField.value.length > 0) {
+                if (locationField.value.length <= 30) {
                   this.location = locationField.value;
                 } else {
-                  showError('Please enter your location.');
+                  showError(
+                    'Please shorten your location to 30 characters or fewer.'
+                  );
                   return;
                 }
 
                 const bioField = document.getElementById('bio-field');
-                if (bioField.value.length > 0) {
+                if (bioField.value.length <= 150) {
                   this.bio = bioField.value;
                 } else {
-                  showError('Please enter a bio.');
+                  showError(
+                    'Please shorten your bio to 150 characters or fewer.'
+                  );
                   return;
                 }
 
@@ -323,6 +321,8 @@ class LoginPanel {
     ) {
       this.name = data.character.name;
       this.nameFieldDisabled = true;
+
+      this.email = data.character.email;
     }
 
     this.state = CREATE_ACCOUNT;
@@ -349,7 +349,7 @@ class LoginPanel {
     if (this.bio !== undefined) {
       data.bio = this.bio;
     }
-    console.log(data)
+
     socket.send(data);
   };
 }
