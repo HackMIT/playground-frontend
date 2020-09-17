@@ -59,9 +59,10 @@ import './images/icons/exclamation.svg';
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
-// eslint-disable-next-line
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
+const SPONSOR_NAME_IMAGE_URL =
+  'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/sponsors/%PATH%.svg';
 
 class Game extends Page {
   constructor() {
@@ -306,7 +307,8 @@ class Game extends Page {
     if (data.type === 'init') {
       if (data.firstTime) {
         // If firstTime is true, components/login.js is handling this
-        loginPanel.show();
+        this.stopLoading();
+        loginPanel.show(true);
         return;
       }
 
@@ -398,6 +400,10 @@ class Game extends Page {
         document.getElementById(
           'queue-button-text'
         ).innerText = `Talk to ${this.room.sponsor.name}`;
+
+        document.getElementById(
+          'sponsor-name'
+        ).src = SPONSOR_NAME_IMAGE_URL.replace('%PATH%', this.room.sponsorId);
       } else {
         document.getElementById('sponsor-pane').classList.remove('active');
         document.getElementById('outer').classList.remove('sponsor');
@@ -479,7 +485,6 @@ class Game extends Page {
         }
 
         if (first || second) {
-          console.log('hello');
           document.getElementById('form-button').style.display = 'block';
           if (!this.remindForm) {
             createModal(

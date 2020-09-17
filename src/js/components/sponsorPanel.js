@@ -33,6 +33,8 @@ class SponsorPanel {
       case 'sponsor':
         document.getElementById('sponsor-description-field').value =
           msg.sponsor.description;
+        document.getElementById('sponsor-challenges-field').value =
+          msg.sponsor.challenges;
         document.getElementById('sponsor-url-field').value = msg.sponsor.url;
         break;
       default:
@@ -138,8 +140,15 @@ class SponsorPanel {
                 placeholder="https://company.com/jobs"
               />
             </div>
-            <button id="sponsor-panel-submit"
+            <button
+              id="sponsor-panel-submit"
               onclick={() => {
+                let url = document.getElementById('sponsor-url-field').value;
+
+                if (!url.startsWith('http')) {
+                  url = `https://${url}`;
+                }
+
                 socket.send({
                   type: 'update_sponsor',
                   description: document.getElementById(
@@ -148,11 +157,15 @@ class SponsorPanel {
                   challenges: document.getElementById(
                     'sponsor-challenges-field'
                   ).value,
-                  url: document.getElementById('sponsor-url-field').value,
+                  url,
                 });
-                document.getElementById('sponsor-panel-submit').insertAdjacentHTML('beforeBegin', '<p id="challenge-submitted">Submitted!</p>')
-              }
-              }
+                document
+                  .getElementById('sponsor-panel-submit')
+                  .insertAdjacentHTML(
+                    'beforeBegin',
+                    '<p id="challenge-submitted">Submitted!</p>'
+                  );
+              }}
             >
               Submit
             </button>
