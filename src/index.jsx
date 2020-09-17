@@ -18,7 +18,7 @@ import jukebox from './jukebox';
 import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 import characterSelector from './js/components/characterSelector';
-import queueForm from './js/components/queueForm'
+import queueForm from './js/components/queueForm';
 
 import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
@@ -138,6 +138,18 @@ class Game extends Page {
         to: 'home',
       });
     });
+    this.addClickListener('connectivity-button', () =>
+      this.handleArenaButton('connectivity')
+    );
+    this.addClickListener('education-button', () =>
+      this.handleArenaButton('education')
+    );
+    this.addClickListener('healthtech-button', () =>
+      this.handleArenaButton('health')
+    );
+    this.addClickListener('urbaninnovation-button', () =>
+      this.handleArenaButton('urban')
+    );
 
     socket.onopen = this.handleSocketOpen;
     socket.onclose = this.handleSocketClose;
@@ -304,7 +316,6 @@ class Game extends Page {
   };
 
   handleSocketMessage = (data) => {
-    console.log(data);
     if (data.type === 'init') {
       if (data.firstTime) {
         // If firstTime is true, components/login.js is handling this
@@ -527,6 +538,13 @@ class Game extends Page {
 
       // Resize appropriately if we're in a sponsor room
       this.handleWindowSize();
+
+      // Show floor selector inside hacker arena
+      if (this.room.id.startsWith('arena:')) {
+        document.getElementById('floor-selector').style.display = 'block';
+      } else {
+        document.getElementById('floor-selector').style.display = 'none';
+      }
     } else if (data.type === 'dance') {
       this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
@@ -685,6 +703,15 @@ class Game extends Page {
     }
   };
 
+  handleArenaButton = (id) => {
+    socket.send({
+      type: 'teleport',
+      to: `arena:${id}`,
+      x: 0.6007,
+      y: 0.6905,
+    });
+  };
+
   handleFormButton = () => {
     createModal(projectForm.createFormModal());
   };
@@ -715,11 +742,8 @@ class Game extends Page {
       queueSponsor.subscribe(this.room.sponsor.id);
     } else if (queueManager.inQueue()) {
       queueManager.join(this.room.sponsor);
-    }
-    else {
-      createModal(
-        queueForm.createQueueModal(this.room.sponsor)
-      );
+    } else {
+      createModal(queueForm.createQueueModal(this.room.sponsor));
     }
   };
 
