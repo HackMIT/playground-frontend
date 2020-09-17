@@ -491,6 +491,7 @@ body {
   box-sizing: border-box;
   font-family: Helvetica, sans-serif;
   left: 50%;
+  margin-top: 32px;
   padding: 24px 24px 28px;
   position: absolute;
   text-align: center;
@@ -625,6 +626,17 @@ body {
     margin: 16px 0 8px;
     padding: 12px;
     text-align: center;
+    width: 100%;
+  }
+
+  textarea {
+    border: 1px solid #ccc !important;
+    border-radius: 2px;
+    box-sizing: border-box;
+    font-size: 14px;
+    padding: 12px;
+    resize: none;
+    font-family: Muli;
     width: 100%;
   }
 

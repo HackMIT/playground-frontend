@@ -11,6 +11,7 @@ import settings from './settings.jsx';
 import map from './js/components/map';
 import feedback from './feedback.jsx';
 import queueSponsor from './js/components/sponsorPanel';
+import adminPanel from './js/components/adminPanel';
 import projectForm from './js/components/projectForm';
 import friends from './js/components/friends';
 import dance from './js/components/dance';
@@ -733,8 +734,9 @@ class Game extends Page {
         'queue',
         queueSponsor.onClose
       );
-
       queueSponsor.subscribe(characterManager.character.sponsorId);
+    } else if (characterManager.character.role === 1) {
+      createModal(adminPanel.createAdminModal(), '', adminPanel.onClose);
     } else {
       createModal(settings.createSettingsModal(this.settings));
     }

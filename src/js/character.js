@@ -258,12 +258,17 @@ class Character {
             <div className="bio-background">
               <img className="earth" src={earthIcon} />
               <p className="bio">
-                This is a long long bio, I have nothing to say but let's just
-                fill it with as many words as I can.
+                {this.data.bio.length === 0
+                  ? "This person hasn't added their bio yet!"
+                  : this.data.bio}
               </p>
               <div className="line1" />
               <div className="location-container">
-                <p className="location">Arizona, United States</p>
+                <p className="location">
+                  {this.data.location.length === 0
+                    ? 'Earth'
+                    : this.data.location}
+                </p>
                 <div className="line2" />
               </div>
             </div>
