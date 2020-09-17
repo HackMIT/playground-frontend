@@ -3,43 +3,110 @@ import * as THREE from 'three';
 import AnimatedModel from './animatedModel';
 import characterManager from './managers/character';
 import socket from './socket';
+import report from './components/report';
 
 import addFriendIcon from '../images/icons/add-friend.svg';
 import closeIcon from '../images/icons/close-white.svg';
 import earthIcon from '../images/icons/earth.svg';
 import flagIcon from '../images/icons/flag.svg';
 import messageIcon from '../images/icons/message.svg';
+import starIcon from '../images/icons/star.svg';
 
 // eslint-disable-next-line
 import createElement from '../utils/jsxHelper';
+import createModal from '../modal';
 
 class Character {
   constructor(data, parent, reverseRaycaster) {
     this.data = data;
     this.reverseRaycaster = reverseRaycaster;
 
-    const scale = data.id === 'tim' ? 0.04 : 1.3;
+    const onModelLoadSuccess = (gltf) => {
+      const scale = data.id === 'tim' ? 0.04 : 1.3;
+      gltf.scene.scale.set(scale, scale, scale);
+      this.setModel(
+        parent,
+        gltf.scene,
+        gltf.animations,
+        data.id === 'tim' ? 0 : 2,
+        data.x,
+        data.y
+      );
+    };
 
-    // load glb file
-    parent.loader.load(
-      data.id === 'tim' ? 'beaver.glb' : 'character.glb',
-      (gltf) => {
-        gltf.scene.scale.set(scale, scale, scale);
-        this.setModel(
-          parent,
-          gltf.scene,
-          gltf.animations,
-          data.id === 'tim' ? 0 : 1,
-          data.x,
-          data.y
+    if (data.id === 'tim') {
+      parent.loader.load(
+        'models/beaver.glb',
+        onModelLoadSuccess,
+        undefined,
+        (err) => {
+          console.error(err);
+        }
+      );
+    } else {
+      const req = new XMLHttpRequest();
+      req.open('GET', 'models/character.gltf', true);
+      req.onload = () => {
+        const gltfData = JSON.parse(req.response);
+
+        const matColors = {
+          Head: this.getColor(data.skinColor),
+          Face: this.getColor(data.eyeColor),
+          Shirt: this.getColor(data.shirtColor),
+          Skin: this.getColor(data.pantsColor),
+        };
+
+        gltfData.materials = gltfData.materials.map((mat) => {
+          if (Object.keys(matColors).includes(mat.name)) {
+            mat.pbrMetallicRoughness.baseColorFactor = matColors[
+              mat.name
+            ].concat(
+              // add 1 to array for alpha channel
+              1
+            );
+          }
+
+          return mat;
+        });
+
+        parent.loader.parse(
+          JSON.stringify(gltfData),
+          'models/',
+          onModelLoadSuccess,
+          undefined,
+          (err) => {
+            console.error(err);
+          }
         );
-      },
-      undefined,
-      (e) => {
-        console.error(e);
-      }
-    );
+      };
+
+      req.send();
+    }
+
+    socket.subscribe('achievements', this.handleSocketMessage);
   }
+
+  handleSocketMessage = (msg) => {
+    if (msg.type !== 'achievements') {
+      return;
+    }
+
+    console.log(msg);
+
+    // Create achievements modal here
+    createModal();
+  };
+
+  getColor = (hex) => {
+    return hex
+      .replace(
+        /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
+        (m, r, g, b) => `#${r}${r}${g}${g}${b}${b}`
+      )
+      .substring(1)
+      .match(/.{2}/g)
+      .map((x) => parseInt(x, 16) / 255);
+  };
 
   update(deltaTime) {
     if (this.model !== undefined) {
@@ -124,24 +191,22 @@ class Character {
   }
 
   createCharacterProfile() {
-    let buttons;
+    const none = <div style="display: none" />;
 
-    if (this.data.id === characterManager.getCharacterId()) {
-      buttons = <div />;
-    } else if (characterManager.isFriend(this.data.id)) {
-      buttons = (
-        <div className="profile-buttons">
+    const buttons = (
+      <div id="profile-buttons" className="profile-buttons">
+        {characterManager.isFriend(this.data.id) ? (
           <button>
             <img src={messageIcon} />
           </button>
-          <button>
-            <img src={flagIcon} />
-          </button>
-        </div>
-      );
-    } else {
-      buttons = (
-        <div className="profile-buttons">
+        ) : (
+          none
+        )}
+
+        {characterManager.isFriend(this.data.id) ||
+        characterManager.getCharacterId() === this.data.id ? (
+          none
+        ) : (
           <button
             onclick={() => {
               socket.send({
@@ -152,12 +217,33 @@ class Character {
           >
             <img src={addFriendIcon} />
           </button>
-          <button>
+        )}
+
+        <button
+          onclick={() => {
+            socket.send({
+              type: 'get_achievements',
+              id: this.data.id,
+            });
+          }}
+        >
+          <img src={starIcon} />
+        </button>
+
+        {this.data.id === characterManager.getCharacterId() ? (
+          none
+        ) : (
+          <button
+            id="report-button"
+            onclick={() => {
+              this.handleReportButton();
+            }}
+          >
             <img src={flagIcon} />
           </button>
-        </div>
-      );
-    }
+        )}
+      </div>
+    );
 
     this.profileBox = (
       <div className="profile-container">
@@ -172,12 +258,17 @@ class Character {
             <div className="bio-background">
               <img className="earth" src={earthIcon} />
               <p className="bio">
-                This is a long long bio, I have nothing to say but let's just
-                fill it with as many words as I can.
+                {this.data.bio.length === 0
+                  ? "This person hasn't added their bio yet!"
+                  : this.data.bio}
               </p>
               <div className="line1" />
               <div className="location-container">
-                <p className="location">Arizona, United States</p>
+                <p className="location">
+                  {this.data.location.length === 0
+                    ? 'Earth'
+                    : this.data.location}
+                </p>
                 <div className="line2" />
               </div>
             </div>
@@ -196,6 +287,25 @@ class Character {
 
     return this.data.name;
   }
+
+  handleReportButton = () => {
+    if (this.reportPaneVisible === true) {
+      // Hide the pane
+      document.getElementById('report-pane').classList.add('invisible');
+      this.reportPaneVisible = false;
+    } else if (this.reportPaneVisible === false) {
+      // make the pane visible
+      document.getElementById('report-pane').classList.remove('invisible');
+      this.reportPaneVisible = true;
+    } else {
+      // create it now
+      document
+        .getElementById('profile-buttons')
+        .appendChild(report.createReportPane());
+      this.reportPaneVisible = true;
+    }
+    document.getElementById('reported-id').value = this.data.id;
+  };
 }
 
 export default Character;

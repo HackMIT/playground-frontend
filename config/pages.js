@@ -4,10 +4,6 @@ module.exports = [
     template: 'game',
   },
   {
-    path: 'character',
-    template: 'character',
-  },
-  {
     path: 'login',
     template: 'quillsso',
   },

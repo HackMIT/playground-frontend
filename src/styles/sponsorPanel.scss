@@ -16,11 +16,57 @@
   #table {
     display: grid;
     grid-template-columns: 47.5% 5% 47.5%;
+    overflow-y: auto;
 
     div {
+      overflow-y: scroll;
+
       h2 {
         margin-bottom: 8px;
         text-align: center;
+      }
+    }
+
+    #challenge-submitted {
+      text-align: center;
+      color: green;
+    }
+
+    #options {
+      .field {
+        margin-bottom: 12px;
+
+        p {
+          font-size: 13px;
+          margin-bottom: 4px;
+        }
+
+        input,
+        textarea {
+          box-sizing: border-box;
+          border: 2px solid $blue_dark;
+          border-radius: 4px;
+          font-size: 14px;
+          padding: 8px;
+          width: 100%;
+        }
+      }
+
+      button {
+        background: #43a047;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        cursor: pointer;
+        display: block;
+        font-size: 14px;
+        margin: 20px auto 0;
+        outline: none;
+        padding: 12px 16px;
+
+        &:hover {
+          background: #388e3c;
+        }
       }
     }
 
@@ -31,7 +77,12 @@
       .hacker {
         background: #fff;
         border-radius: 4px;
+        margin-bottom: 12px;
         padding: 8px 12px;
+
+        &:last-of-type {
+          margin-bottom: 0;
+        }
 
         button {
           background: $accent_pink;

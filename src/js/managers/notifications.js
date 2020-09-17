@@ -16,10 +16,15 @@ class NotificationsPane {
     }
 
     document.getElementById('notifications-pane').classList.remove('hidden');
-    document.getElementById('notification-text').innerText = msg;
+    document.getElementById('notification-text').innerHTML = msg;
 
     this.hideTimer = setTimeout(() => {
       document.getElementById('notifications-pane').classList.add('hidden');
+
+      setTimeout(() => {
+        // Hide text after the notification animates out
+        document.getElementById('notification-text').innerText = '';
+      }, 250);
     }, duration);
   };
 

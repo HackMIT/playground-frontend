@@ -7,6 +7,7 @@ import '../../styles/friends.scss';
 import addFriendIcon from '../../images/icons/add-friend.svg';
 import closeIcon from '../../images/icons/close-white.svg';
 import messageIcon from '../../images/icons/message.svg';
+import teleportIcon from '../../images/icons/teleport-friend.svg';
 
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
@@ -32,9 +33,20 @@ class FriendsPane {
   };
 
   friendsListContents = () => {
-    const friendsListContainer = <div />;
+    let friendsListContainer = <div />;
 
     const friends = Array.from(characterManager.getFriends().values());
+
+    if (friends.length === 0) {
+      friendsListContainer = <div id="no-friends-container" />
+      friendsListContainer.appendChild(
+        <p>
+          You have no friends :(
+          <br />
+          Try clicking someone to make a friend!</p>
+      )
+      return friendsListContainer;
+    }
 
     friends.sort((a, b) => {
       if (a.teammate && !b.teammate) {
@@ -117,6 +129,9 @@ class FriendsPane {
             <button onclick={() => this.handleChatButton(friend)}>
               <img src={messageIcon} />
             </button>
+            <button onclick={() => this.handleTeleportButton(friend)}>
+              <img src={teleportIcon} />
+            </button>
           </div>
         );
       }
@@ -158,7 +173,16 @@ class FriendsPane {
     message.show();
     message.updateMessagesPane(friend);
   };
+
+  handleTeleportButton = (friend) => {
+    socket.send({
+      type: 'teleport',
+      to: `character:${friend.id}`
+    })
+  };
 }
+
+
 
 const friendsPaneInstance = new FriendsPane();
 export default friendsPaneInstance;

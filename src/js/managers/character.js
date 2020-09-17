@@ -35,7 +35,6 @@ class CharacterManager {
         this.friends = new Map();
 
         msg.friends.forEach((friend) => {
-          console.log(friend);
           this.friends.set(friend.id, friend);
         });
 

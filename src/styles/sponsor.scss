@@ -2,10 +2,6 @@ $sponsor_pane_width: 340px;
 $horizontal_spacing: 24px;
 
 #outer.sponsor {
-  #game {
-    margin-left: $horizontal_spacing;
-  }
-
   &.vertical #game {
     width: calc(100vw - #{$horizontal_spacing} * 3 - #{$sponsor_pane_width});
     height: calc(
@@ -31,9 +27,10 @@ $horizontal_spacing: 24px;
   #sponsor-name {
     display: block;
     font-size: 48px;
-    margin: 12px auto;
+    margin: 8px auto;
     position: relative;
-    width: 80%;
+    max-width: 80%;
+    max-height: 48px;
   }
 
   p {

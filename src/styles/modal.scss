@@ -1,3 +1,5 @@
+@import 'colors';
+
 @mixin border-gradient($from, $to, $weight: 0) {
   $mix-main: mix($from, $to);
   $mix-sub-from: mix($mix-main, $from);
@@ -29,6 +31,7 @@
   background: rgba(0, 0, 0, 0);
   width: 60vw;
   height: 88vh;
+  display: flex;
   align-items: center;
   justify-content: center;
   animation-name: animatetop;
@@ -37,6 +40,18 @@
 
   * {
     max-width: 100%;
+  }
+
+  & > div {
+    background: $blue_light;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    overflow-y: scroll;
+    padding: 32px;
+    position: relative;
+    width: 100%;
   }
 }
 

@@ -83,12 +83,18 @@ class AnimatedModel {
       clearTimeout(this.chatTimer);
     }
 
-    this.chatBubble.innerHTML = msg;
+    this.chatBubble.innerText = msg;
     this.gameDom.appendChild(this.chatBubble);
 
+    const wpm = 180;
+    const words = msg.length / 5;
+    const wordsTime = ((words / wpm) * 60) * 1000;
+    const timeout = wordsTime + 5000;
+
+    console.log(timeout)
     this.chatTimer = setTimeout(() => {
       this.chatBubble.remove();
-    }, 5000);
+    }, timeout);
   }
 
   setDanceAnimation(anim) {
@@ -112,7 +118,6 @@ class AnimatedModel {
   }
 
   setAnimation(dest, callback) {
-    console.log(dest);
     if (this.animation.destination && this.animation.destination.equals(dest)) {
       return 0;
     }
@@ -138,7 +143,7 @@ class AnimatedModel {
       new THREE.Vector3(0, 1, 0),
       angle
     );
-    console.log(this.walkCycleIndex);
+
     this.animationCycles[this.walkCycleIndex].enabled = true;
 
     this.callback = callback;
