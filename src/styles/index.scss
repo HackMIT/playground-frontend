@@ -9,6 +9,7 @@ $top_bar_height: 64px;
 $top_bar_logo_width: 64px;
 $chat_bar_height: 52px;
 $chat_input_height: 40px;
+$top_bar_banner_height: 52px;
 
 * {
   padding: 0;
@@ -116,12 +117,56 @@ body {
         display: flex;
         align-items: center;
         justify-content: center;
-        flex-grow: 2;
+        flex-grow: 1;
         height: $top_bar_height;
+
         #top-bar-banner {
+          background: rgb(141, 208, 238);
+          border-radius: 3px;
+          border-top: 6px solid rgb(70, 113, 180);
+          border-bottom: 6px solid rgb(70, 113, 180);
+          box-sizing: border-box;
+          cursor: pointer;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: $top_bar_banner_height;
+          transform: none;
+          transition: 0.25s ease transform;
           width: 80%;
-          height: 80%;
+
+          &:hover {
+            transform: scale(1.03);
+          }
+
+          #top-bar-left-arrow {
+            width: 0;
+            height: 0;
+            border-left: 8px solid #dfecf3;
+            border-top: ($top_bar_banner_height / 2) solid transparent;
+            border-bottom: ($top_bar_banner_height / 2) solid transparent;
+          }
+
+          #top-bar-right-arrow {
+            width: 0;
+            height: 0;
+            border-right: 8px solid #dfecf3;
+            border-top: ($top_bar_banner_height / 2) solid transparent;
+            border-bottom: ($top_bar_banner_height / 2) solid transparent;
+          }
+
+          img {
+            margin: 0 8px;
+            height: 50%;
+          }
+
+          p {
+            flex-grow: 1;
+            font-size: 14px;
+            text-align: center;
+          }
         }
+
         #top-bar-event {
           position: absolute;
           margin-left: 16px;

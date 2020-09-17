@@ -57,7 +57,6 @@ import './images/icons/dab.svg';
 import './images/icons/wave.svg';
 import './images/icons/floss.svg';
 import './images/icons/exclamation.svg';
-import './images/icons/happening_now_banner.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';

@@ -69,7 +69,7 @@
   #character-selector-pane {
     flex-grow: 1;
     margin-left: 32px;
-    overflow-y: scroll;
+    overflow-y: auto;
 
     div {
       display: grid;
