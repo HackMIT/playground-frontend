@@ -456,7 +456,8 @@ class Game extends Page {
       else if (
         characterManager.character.role === 4
       ) {
-        const currentTime = new Date().getTime();
+        // const currentTime = new Date().getTime();
+        const currentTime = this.createUTCDate(19, 2);
         const formOpen1 = this.createUTCDate(19, 1);
         const deadline1 = this.createUTCDate(19, 7);
 

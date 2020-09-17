@@ -56,7 +56,8 @@ class SponsorPanel {
     createModal(this.createFormModal());
   }
 
-  createFormModal = () => {
+  createFormModal = (project) => {
+
     const isFriday = new Date().getTime() < 1600498800000;
 
     const trackElems = [
@@ -120,7 +121,7 @@ class SponsorPanel {
       );
     });
 
-    return (
+    const elem = (
       <div id="project-form">
         <h1>{isFriday ? 'Fun Friday Form' : 'Spicy Saturday Survey'}</h1>
         <div className="field">
@@ -170,6 +171,18 @@ class SponsorPanel {
         </button>
       </div>
     );
+
+    if (project) {
+      document.getElementById('teammates').value = project.emails;
+      document.getElementById('name').value = project.name;
+      document.getElementById('pitch').value = project.pitch;
+      document.getElementById('zoom').value = project.zoom;
+      project.challenges.forEach(() => {
+
+      })
+
+    }
+    return elem;
   };
 
   handleSubmitButton = () => {
