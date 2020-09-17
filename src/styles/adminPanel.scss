@@ -1,0 +1,60 @@
+@import 'colors';
+
+#admin-panel {
+  background: $blue_light;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 50%;
+  padding: 32px;
+  align-items: center;
+
+  #admin-inputs {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+
+  #admin-sponsor-email {
+    margin-right: 5px;
+  }
+
+  h1 {
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  p {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  input,
+  textarea,
+  select,
+  option {
+    box-sizing: border-box;
+    border: 2px solid $blue_dark;
+    border-radius: 4px;
+    font-size: 14px;
+    padding: 8px;
+    width: 50%;
+  }
+
+  button {
+    background: #43a047;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    font-size: 14px;
+    margin: 20px auto 0;
+    outline: none;
+    padding: 12px 16px;
+
+    &:hover {
+      background: #388e3c;
+    }
+  }
+}
