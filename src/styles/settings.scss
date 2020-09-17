@@ -41,6 +41,7 @@
     padding: 4px;
     margin-right: 6px;
     width: 240px;
+    border-radius: 2px;
   }
 
   textarea {
@@ -51,6 +52,10 @@
   label {
     color: white;
     margin-bottom: 8px;
+  }
+
+  button {
+    border-radius: 2px !important;
   }
 }
 

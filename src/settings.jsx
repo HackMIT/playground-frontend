@@ -37,11 +37,16 @@ class Settings {
     });
   };
 
-  // updateProfileContent = (profileArea) => {
-  //   const profileContent = document.getElementById(
-  //     `settings-update-${profileArea}`
-  //   );
-  // };
+  updateProfileContent = (profileArea) => {
+    const profileContent = document.getElementById(
+      `settings-update-${profileArea}`
+    ).value;
+    socket.send({
+      type: 'settings',
+      [profileArea]: profileContent,
+      settings: { twitterHandle: '' },
+    });
+  };
 
   createSettingsContent = () => {
     return (
