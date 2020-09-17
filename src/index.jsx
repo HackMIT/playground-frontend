@@ -56,6 +56,7 @@ import './images/icons/dab.svg';
 import './images/icons/wave.svg';
 import './images/icons/floss.svg';
 import './images/icons/exclamation.svg';
+import './images/icons/Floors.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
@@ -304,7 +305,6 @@ class Game extends Page {
   };
 
   handleSocketMessage = (data) => {
-    console.log(data);
     if (data.type === 'init') {
       if (data.firstTime) {
         // If firstTime is true, components/login.js is handling this
@@ -527,6 +527,10 @@ class Game extends Page {
 
       // Resize appropriately if we're in a sponsor room
       this.handleWindowSize();
+
+      if (this.room.id.startsWith("arena:")) {
+        console.log("do stuff")
+      }
     } else if (data.type === 'dance') {
       this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
