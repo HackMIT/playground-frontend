@@ -57,7 +57,7 @@
 }
 
 .Achievements-intro-tile-body {
-  width: 650px;
+  width: 60%;
   margin: 1rem !important;
   padding: 1rem !important;
   background-color: $accent_pink;
@@ -98,7 +98,7 @@
   .Achievements-records-container {
     background-color: $blue_light;
     height: 300px !important;
-    width: 500px;
+    width: 80%;
     visibility: visible !important;
     display: flex;
     flex-direction: row;
@@ -113,7 +113,7 @@
     background-color: $blue_light;
     height: 0px;
     visibility: hidden;
-    width: 500px;
+    width: 80%;
   }
 
   .Achievements-body-closing-container {
