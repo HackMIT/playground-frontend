@@ -15,6 +15,8 @@ const CODE_OF_CONDUCT = 4;
 class LoginPanel {
   constructor() {
     this.name = '';
+    this.location = '';
+    this.bio = '';
     this.nameFieldDisabled = false;
     this.state = INITIAL_STATE;
 
@@ -152,6 +154,25 @@ class LoginPanel {
                 disabled={this.nameFieldDisabled}
               />
             </div>
+            <div className="field">
+              <p>Location</p>
+              <input
+                type="text"
+                placeholder="Cambridge, Massachusetts"
+                id="location-field"
+                defaultValue={this.location}
+                maxLength="30"
+              />
+            </div>
+            <div className="field">
+              <p>Bio</p>
+              <textarea
+                id="bio-field"
+                defaultValue={this.bio}
+                maxLength="150"
+                rows="4"
+              />
+            </div>
             <h2>Notifications</h2>
             <p className="small">
               We recommend you enable all of these. We'll only alert you if it's
@@ -197,6 +218,22 @@ class LoginPanel {
                   this.name = nameField.value;
                 } else {
                   showError('Please enter your name.');
+                  return;
+                }
+
+                const locationField = document.getElementById('location-field');
+                if (locationField.value.length > 0) {
+                  this.location = locationField.value;
+                } else {
+                  showError('Please enter your location.');
+                  return;
+                }
+
+                const bioField = document.getElementById('bio-field');
+                if (bioField.value.length > 0) {
+                  this.bio = bioField.value;
+                } else {
+                  showError('Please enter a bio.');
                   return;
                 }
 
@@ -305,6 +342,14 @@ class LoginPanel {
       data.phoneNumber = this.phoneNumber;
     }
 
+    if (this.location !== undefined) {
+      data.location = this.location;
+    }
+
+    if (this.bio !== undefined) {
+      data.bio = this.bio;
+    }
+    console.log(data)
     socket.send(data);
   };
 }

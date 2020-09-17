@@ -37,6 +37,12 @@ class Settings {
     });
   };
 
+  // updateProfileContent = (profileArea) => {
+  //   const profileContent = document.getElementById(
+  //     `settings-update-${profileArea}`
+  //   );
+  // };
+
   createSettingsContent = () => {
     return (
       <div id="settings-text">
@@ -57,16 +63,16 @@ class Settings {
   };
 
   checkTweets = () => {
-    const elem = document.getElementById('settings-twitter')
-    this.twitterHandle = elem.value
+    const elem = document.getElementById('settings-twitter');
+    this.twitterHandle = elem.value;
     socket.send({
-      type: 'settings', 
+      type: 'settings',
       checkTwitter: true,
       settings: {
-        twitterHandle: this.twitterHandle
-      }
-    })
-  }
+        twitterHandle: this.twitterHandle,
+      },
+    });
+  };
 
   handleLogOff = () => {
     localStorage.setItem('token', null);
@@ -90,8 +96,44 @@ class Settings {
           </div>
           <div id="settings-input">
             <label>Tweet with #HackMIT to earn an achievement: </label>
-            <input id="settings-twitter" type="text" placeholder="Twitter handle"/>
-            <button onclick={() => this.checkTweets()}>CHECK TWEETS</button>
+            <div>
+              <input
+                id="settings-twitter"
+                type="text"
+                placeholder="Twitter handle"
+              />
+              <button onclick={() => this.checkTweets()}>CHECK TWEETS</button>
+            </div>
+          </div>
+          <div id="settings-update-profile">
+            <div id="settings-update-item">
+              <label>Update location:</label>
+              <div>
+                <input
+                  type="text"
+                  placeholder="Location"
+                  id="settings-update-location"
+                  maxLength="30"
+                />
+                <button onclick={() => this.updateProfileContent('location')}>
+                  UPDATE
+                </button>
+              </div>
+            </div>
+            <div id="settings-update-item">
+              <label>Update bio:</label>
+              <div>
+                <textarea
+                  placeholder="Bio"
+                  id="settings-update-bio"
+                  rows="5"
+                  maxLength="150"
+                />
+                <button onclick={() => this.updateProfileContent('bio')}>
+                  UPDATE
+                </button>
+              </div>
+            </div>
           </div>
           <div id="settings-flexcenter">
             <button id="settings-logout" onclick={this.handleLogOff}>

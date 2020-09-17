@@ -31,6 +31,27 @@
     font-family: LemonMilkMedium;
     color: $white !important;
   }
+
+  input,
+  textarea {
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    font-size: 14px;
+    padding: 4px;
+    margin-right: 6px;
+    width: 240px;
+  }
+
+  textarea {
+    resize: none;
+    font-family: Muli;
+  }
+
+  label {
+    color: white;
+    margin-bottom: 8px;
+  }
 }
 
 #settings-header {
@@ -60,18 +81,14 @@
 
 #settings-input {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
   margin: 1em;
 
-  input {
-    margin-left: 10px;
-    border: none;
-    padding: 2px;
-    outline: none;
-  }
-
   button {
+    height: 28px;
     padding: 2px 6px;
     outline: none;
     cursor: pointer;
@@ -79,6 +96,49 @@
     border: 1px solid #c0c0c0;
     background: $white;
     text-align: center;
+    width: 120px;
+
+    &:hover {
+      background: #c0c0c0;
+      color: $white;
+    }
+  }
+}
+
+#settings-update-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1;
+  width: 100%;
+  text-align: center;
+
+  #settings-update-item {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  textarea {
+    height: 100px;
+  }
+
+  button {
+    height: 28px;
+    padding: 2px 6px;
+    outline: none;
+    cursor: pointer;
+    color: #c0c0c0;
+    border: 1px solid #c0c0c0;
+    background: $white;
+    text-align: center;
+    width: 120px;
 
     &:hover {
       background: #c0c0c0;
@@ -92,8 +152,8 @@
   flex-direction: row;
   align-items: center;
   // padding: 0 20px 0 0;
-  width: 40%;
-  // justify-content: center;
+  // width: 40%;
+  justify-content: center;
 
   #settings-box {
     background-image: url(../images/box.svg);
