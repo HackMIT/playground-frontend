@@ -6,6 +6,7 @@ import socket from './js/socket';
 import closeIcon from './images/icons/close.svg';
 import './styles/jukebox.scss';
 
+// eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
 class Jukebox {
@@ -17,7 +18,7 @@ class Jukebox {
     this.jukeboxToggle = true;
 
     socket.subscribe(
-      ['song', 'error', 'songs', 'playSong'],
+      ['song', 'error', 'songs', 'play_song'],
       this.handleSocketMessage
     );
   }
@@ -25,7 +26,7 @@ class Jukebox {
   handleSocketMessage = (msg) => {
     if (msg.type === 'songs') {
       this.songs = msg.songs;
-    } else if (msg.type === 'playSong' && this.jukeboxToggle) {
+    } else if (msg.type === 'play_song' && this.jukeboxToggle) {
       this.songStart = msg.start;
       if (this.player !== null && msg.song.id !== this.currentSong.id) {
         this.currentSong = msg.song;
