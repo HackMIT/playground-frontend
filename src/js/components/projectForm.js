@@ -1,7 +1,6 @@
 import validator from 'email-validator';
 
 import socket from '../socket';
-import createModal from '../../modal';
 
 import '../../styles/projectForm.scss';
 
@@ -34,7 +33,7 @@ class SponsorPanel {
     ].map((track) => {
       return (
         <div className="checkbox-container">
-          <input type="radio" name="track" value={track.id} checked={project.track === track.id} />
+          <input type="radio" name="track" value={track.id} checked={project ? project.track === track.id : 'false'} />
           <label for={track.id}>{track.title}</label>
         </div>
       );
@@ -69,7 +68,7 @@ class SponsorPanel {
     ].map((challenge) => {
       return (
         <div className="checkbox-container">
-          <input type="checkbox" name="challenges" value={challenge.id} checked={project.challenges.includes(challenge.id)} />
+          <input type="checkbox" name="challenges" value={challenge.id} checked={project ? project.challenges.includes(challenge.id) : 'false'} />
           <label for={challenge.id}>{challenge.title}</label>
         </div>
       );
@@ -85,18 +84,18 @@ class SponsorPanel {
             for HackMIT with. Only one person on your team needs to fill out
             this form.
           </p>
-          <input type="text" id="teammates" defaultValue={project.emails || ''} />
+          <input type="text" id="teammates" defaultValue={project ? project.emails : ''} />
         </div>
         <div className="field">
           <p>What's your project's name?</p>
-          <input type="text" id="name" defaultValue={project.name || ''} />
+          <input type="text" id="name" defaultValue={project ? project.name : ''} />
         </div>
         <div className="field">
           <p>
             Write a 1-2 sentence &ldquo;elevator pitch&rdquo; explaining your
             idea.
           </p>
-          <input type="text" id="pitch" defaultValue={project.pitch || ''} />
+          <input type="text" id="pitch" defaultValue={project ? project.pitch : ''} />
         </div>
         {isFriday ? (
           <div className="field">
@@ -105,7 +104,7 @@ class SponsorPanel {
               hacker arena at 6pm EDT!), enter a Zoom link that other
               participants can use to meet you.
             </p> : <div></div>}
-            <input type="text" id="zoom" defaultValue={project.zoom || ''} />
+            <input type="text" id="zoom" defaultValue={project ? project.zoom || '' : ''} />
           </div>
         ) : null}
         <div className="field checkbox-field">

@@ -479,7 +479,7 @@ class Game extends Page {
         } else {
           formName = 'Spicy Saturday Survey';
           due = 'Saturday 6pm EDT';
-          extra = ' For those who have already submitted Friday, be sure to resubmit any updates or add in a zoom link if you would like to participate in Peer Expo!'
+          extra = ' For those who have already submitted Friday, look over your form and resubmit, and add in a zoom link if you would like to participate in Peer Expo!'
         }
 
         if (first || second) {
@@ -493,7 +493,8 @@ class Game extends Page {
                   You must submit the <b>{formName}</b> in order to be eligible
                   for judging and swag! Please fill this out by <b>{due}</b> at
                   the latest by clicking the exclamation mark at the top right
-                  of your screen.{extra}
+                  of your screen.
+                  {extra}
                   </div>
                   <div id="form-button-div">
                     <button
@@ -509,14 +510,22 @@ class Game extends Page {
                       onclick={() => {
                         document.getElementById('form-reminder-modal').remove();
                         document.getElementById('form-modal-background').remove();
-                        createModal(projectForm.createFormModal());
+                        if (characterManager.character.project) {
+                          createModal(projectForm.createFormModal(characterManager.character.project))
+                        } else {
+                          createModal(projectForm.createFormModal())
+                        }
                       }}
                     >
                       OK
                   </button>
                   </div>
                 </div>,
-                'form'
+                'form',
+                () => {
+                  document.getElementById('form-reminder-modal').remove();
+                  document.getElementById('form-modal-background').remove();
+                }
               );
               this.remindForm = true;
             }
