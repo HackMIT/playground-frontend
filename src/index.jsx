@@ -56,7 +56,6 @@ import './images/icons/dab.svg';
 import './images/icons/wave.svg';
 import './images/icons/floss.svg';
 import './images/icons/exclamation.svg';
-import './images/icons/Floors.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
@@ -139,6 +138,30 @@ class Game extends Page {
         to: 'home',
       });
     });
+    this.addClickListener('connectivity-button', () => {
+      socket.send({
+        type: 'teleport',
+        to: 'arena:connectivity',
+      })
+    })
+    this.addClickListener('education-button', () => {
+      socket.send({
+        type: 'teleport',
+        to: 'arena:education',
+      })
+    })
+    this.addClickListener('healthtech-button', () => {
+      socket.send({
+        type: 'teleport',
+        to: 'arena:health',
+      })
+    })
+    this.addClickListener('urbaninnovation-button', () => {
+      socket.send({
+        type: 'teleport',
+        to: 'arena:urban',
+      })
+    })
 
     socket.onopen = this.handleSocketOpen;
     socket.onclose = this.handleSocketClose;
@@ -528,8 +551,11 @@ class Game extends Page {
       // Resize appropriately if we're in a sponsor room
       this.handleWindowSize();
 
+      // Show floor selector inside hacker arena
       if (this.room.id.startsWith("arena:")) {
-        console.log("do stuff")
+        document.getElementById("floor-selector").style.display = "block";
+      } else {
+        document.getElementById("floor-selector").style.display = "none";
       }
     } else if (data.type === 'dance') {
       this.scene.danceCharacter(data.id, data.dance);
