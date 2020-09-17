@@ -45,7 +45,7 @@ class Editable {
 
     img.onload = () => {
       imgElem.src = img.src;
-
+      this.aspectRatio = img.naturalWidth / img.naturalHeight;
       if (this.onload !== undefined) {
         this.onload();
       }

@@ -327,6 +327,7 @@ class Game extends Page {
 
       // Delete stuff from previous room
       this.scene.deleteAllCharacters();
+      this.scene.removeAllBuildings();
 
       this.elements.forEach((element) => {
         element.remove();
@@ -353,9 +354,12 @@ class Game extends Page {
 
         const elementElem = new Element(element, element.id, data.elementNames);
         this.elements.push(elementElem);
+        const gameRect = document.getElementById('game').getBoundingClientRect();
 
         elementElem.onload = () => {
           this.finishedLoadingPart();
+          this.convertElementTo3d(elementElem, gameRect);
+          elementElem.element.remove();
         };
 
         const threeContainer = document.getElementById('three-container');
@@ -527,6 +531,7 @@ class Game extends Page {
 
       // Resize appropriately if we're in a sponsor room
       this.handleWindowSize();
+
     } else if (data.type === 'dance') {
       this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
@@ -675,6 +680,8 @@ class Game extends Page {
       document.getElementById('add-hallway-button').classList.remove('visible');
       document.getElementById('add-room-button').classList.remove('visible');
 
+      this.elementsTo3d();
+
       this.elements.forEach((element) => {
         element.makeUneditable();
       });
@@ -684,6 +691,27 @@ class Game extends Page {
       });
     }
   };
+
+  elementsTo3d = () => {
+    // make everything into an actual object in 3d
+      const gameRect = document.getElementById('game').getBoundingClientRect();
+
+      this.elements.forEach((element) => {
+        this.convertElementTo3d(element, gameRect);
+      });
+
+      this.elements.forEach((element) => {
+        element.element.remove();
+      });
+  };
+
+  convertElementTo3d = (element, gameRect) => {
+    const request = new XMLHttpRequest();
+    request.addEventListener("load", this.makeSceneRequestFunc(gameRect, element));
+    request.overrideMimeType("image/svg+xml");
+    request.open("GET", element.imagePath);
+    request.send();
+  }
 
   handleFormButton = () => {
     createModal(projectForm.createFormModal());
@@ -924,6 +952,50 @@ class Game extends Page {
       loadingElem.remove();
     }, 250);
   };
+
+
+  makeSceneRequestFunc = (gameRect, element) =>  {
+    const rect = element.element.getBoundingClientRect()
+    return (data) => {
+      const bb = {
+        x: element.data.x, 
+        y: element.data.y, 
+        width: element.data.width,
+        height: element.data.width / element.aspectRatio * (gameRect.width/gameRect.height)
+      };
+
+      console.log(element)
+
+      let shiftAmt = 0;
+      const svg = data.target.responseXML;
+      if (svg.getElementById("base") !== null){
+        const viewbox = svg.firstElementChild.getAttribute("viewBox").split(" ").map((num) => parseInt(num))
+        const base = svg.getElementById("base").firstElementChild.getAttribute("points").trim().split(",").join(" ").split(" ").map((num) => parseFloat(num))
+        // these are coordinates w/ y=0 at top and y=1 at bottom
+        const scaledBaseYs = base.filter((el, i) => i % 2 === 1).map((y) => y/(viewbox[3]-viewbox[1]));
+        const minY = Math.min.apply(null, scaledBaseYs);
+        const maxY = Math.max.apply(null, scaledBaseYs);
+
+        //we essentially shift the point where we draw it up by this amount (but also shift center pt "back")
+        shiftAmt = (maxY-minY)/2
+      }
+
+      const buildingSprite = this.scene.create2DObject(bb, element.imagePath, shiftAmt, element);
+
+      if (element.data.changingImagePath) {
+        const state_len = element.data.changingPaths.split(",").length
+        setInterval(() => {
+          if (element.data.changingRandomly) {
+            element.data.state = Math.floor(Math.random() * Math.floor(state_len));
+          } else {
+            element.data.state = (element.data.state + 1) % state_len;
+          }
+
+          this.scene.changeBuildingImage(buildingSprite, element.imagePath);
+        }, element.data.changingInterval);
+      }
+    };
+  }
 }
 
 const gamePage = new Game();

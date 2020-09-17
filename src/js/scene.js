@@ -39,6 +39,8 @@ class Scene {
     this.loader = new GLTFLoader();
 
     this.characters = new Map();
+    this.buildings = new Map();
+    this.textures = new Map();
 
     // set up renderer
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -48,20 +50,11 @@ class Scene {
       this.container.clientWidth,
       this.container.clientHeight
     );
-    // this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    // this.renderer.toneMappingExposure = 0.8;
-    // this.renderer.outputEncoding = THREE.sRGBEncoding;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 0.8;
+    this.renderer.outputEncoding = THREE.sRGBEncoding;
     this.renderer.setClearColor(0xffffff, 0);
     this.container.appendChild(this.renderer.domElement);
-
-    // Add floor plane
-    // var geo = new THREE.PlaneBufferGeometry(30, 30, 8, 8);
-    // var texture = THREE.ImageUtils.loadTexture('assets/images/grid.jpg');
-    // var mat = new THREE.MeshBasicMaterial({map: texture});
-    // var floorPlane = new THREE.Mesh(geo, mat);
-    // floorPlane.rotateX( - Math.PI / 2);
-
-    // this.scene.add(floorPlane);
 
     const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
     pmremGenerator.compileEquirectangularShader();
@@ -189,8 +182,77 @@ class Scene {
       return false;
     });
 
-    return success;
+    let building_success = false
+    this.buildings.forEach((elem, building) => {
+      const intersects = this.raycaster.intersectObject(building);
+      if (intersects.length > 0) {
+        if (elem.hasAction()) {
+          building_success = true;
+          elem.onClick();
+        }
+      }
+    });
+
+    return success || building_success;
   }
+
+
+  // creates an object on a plane for an object with the given bounding box in [0,1]^2 coords
+  create2DObject(boundingBox, imgPath, shiftAmt, element) {
+    const aspect = this.container.clientWidth / this.container.clientHeight;
+    const height = boundingBox.height * 2 * d * Math.sqrt(3/2);
+    const width = boundingBox.width * 2 * d * aspect;
+    const baseX = boundingBox.x;
+    const baseY = boundingBox.y + boundingBox.height * (1/2 - shiftAmt);
+    const basePt = this.worldVectorForPos(baseX, baseY);
+
+    let texture = null;
+    if (this.textures.has(imgPath)){
+      texture = this.textures.get(imgPath);
+    } else {
+      const loader = new THREE.TextureLoader();
+      loader.setCrossOrigin('anonymous');
+      texture = loader.load(imgPath);
+      texture.encoding = THREE.sRGBEncoding;
+      this.textures.set(imgPath, texture);
+    }
+
+    var geometry = new THREE.PlaneGeometry( width, height);
+    const material = new THREE.MeshBasicMaterial( { map: texture, transparent: true, side: THREE.DoubleSide} );
+    const plane = new THREE.Mesh( geometry, material );
+    plane.renderOrder = baseY * this.container.clientHeight;
+    plane.position.set(basePt.x, height/2 - height*shiftAmt, basePt.z);
+    // plane.scale.set(width, height, 1);
+    plane.rotateY( Math.PI / 4);
+
+    this.scene.add(plane);
+    this.buildings.set(plane, element);
+
+    return plane;
+  }
+
+  changeBuildingImage(building, newImg) {
+    let texture = null;
+    if (this.textures.has(newImg)){
+      texture = this.textures.get(newImg);
+      console.log("he's cached")
+    } else {
+      const loader = new THREE.TextureLoader();
+      loader.setCrossOrigin('anonymous');
+      texture = loader.load(newImg);
+      texture.encoding = THREE.sRGBEncoding;
+      this.textures.set(newImg, texture);
+    }
+
+    building.material.map = texture;
+  }
+
+  removeAllBuildings() {
+    this.buildings.forEach((building) => {
+      this.scene.remove(building);
+    });
+  }
+
 
   render() {
     requestAnimationFrame(this.render.bind(this));

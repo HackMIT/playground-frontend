@@ -55,8 +55,12 @@ class Element extends Editable {
     }
   }
 
+  hasAction() {
+    return (this.data.action !== NO_ACTION || this.data.toggleable)
+  }
+
   configureElement(elem) {
-    if (this.data.action !== NO_ACTION || this.data.toggleable) {
+    if (this.hasAction()) {
       elem.style.cursor = 'pointer';
     } else {
       elem.style.cursor = 'default';
