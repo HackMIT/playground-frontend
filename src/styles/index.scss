@@ -111,6 +111,22 @@ body {
           transform: translateY(-2px);
         }
       }
+
+      #top-bar-banner-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-grow: 2;
+        height: $top_bar_height;
+        #top-bar-banner {
+          width: 80%;
+          height: 80%;
+        }
+        #top-bar-event {
+          position: absolute;
+          margin-left: 16px;
+        }
+      }
     }
 
     #swoopy {
