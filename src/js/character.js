@@ -10,9 +10,11 @@ import closeIcon from '../images/icons/close-white.svg';
 import earthIcon from '../images/icons/earth.svg';
 import flagIcon from '../images/icons/flag.svg';
 import messageIcon from '../images/icons/message.svg';
+import starIcon from '../images/icons/star.svg';
 
 // eslint-disable-next-line
 import createElement from '../utils/jsxHelper';
+import createModal from '../modal';
 
 class Character {
   constructor(data, parent, reverseRaycaster) {
@@ -80,7 +82,20 @@ class Character {
 
       req.send();
     }
+
+    socket.subscribe('achievements', this.handleSocketMessage);
   }
+
+  handleSocketMessage = (msg) => {
+    if (msg.type !== 'achievements') {
+      return;
+    }
+
+    console.log(msg);
+
+    // Create achievements modal here
+    createModal();
+  };
 
   getColor = (hex) => {
     return hex
@@ -176,24 +191,22 @@ class Character {
   }
 
   createCharacterProfile() {
-    let buttons;
+    const none = <div style="display: none" />;
 
-    if (this.data.id === characterManager.getCharacterId()) {
-      buttons = <div />;
-    } else if (characterManager.isFriend(this.data.id)) {
-      buttons = (
-        <div id="profile-buttons" className="profile-buttons">
+    const buttons = (
+      <div id="profile-buttons" className="profile-buttons">
+        {characterManager.isFriend(this.data.id) ? (
           <button>
             <img src={messageIcon} />
           </button>
-          <button>
-            <img src={flagIcon} />
-          </button>
-        </div>
-      );
-    } else {
-      buttons = (
-        <div id="profile-buttons" className="profile-buttons">
+        ) : (
+          none
+        )}
+
+        {characterManager.isFriend(this.data.id) ||
+        characterManager.getCharacterId() === this.data.id ? (
+          none
+        ) : (
           <button
             onclick={() => {
               socket.send({
@@ -204,12 +217,33 @@ class Character {
           >
             <img src={addFriendIcon} />
           </button>
-          <button id="report-button" onclick={() => { this.handleReportButton() }}>
+        )}
+
+        <button
+          onclick={() => {
+            socket.send({
+              type: 'get_achievements',
+              id: this.data.id,
+            });
+          }}
+        >
+          <img src={starIcon} />
+        </button>
+
+        {this.data.id === characterManager.getCharacterId() ? (
+          none
+        ) : (
+          <button
+            id="report-button"
+            onclick={() => {
+              this.handleReportButton();
+            }}
+          >
             <img src={flagIcon} />
           </button>
-        </div>
-      );
-    }
+        )}
+      </div>
+    );
 
     this.profileBox = (
       <div className="profile-container">
