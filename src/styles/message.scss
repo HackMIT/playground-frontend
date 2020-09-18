@@ -12,12 +12,21 @@
   .header {
     background: #fff;
     padding: 4px 8px;
+    display: inline-flex;
+    align-items: center;
 
-    p {
-      small {
-        font-size: 11px;
-        margin-left: 2px;
+    #header-name {
+      p {
+        small {
+          font-size: 11px;
+          margin-left: 2px;
+        }
       }
+    }
+
+    #close-button {
+      transform: scale(.75);
+      margin-left: auto;
     }
   }
 

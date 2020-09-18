@@ -163,12 +163,10 @@ class FriendsPane {
   };
 
   handleChatButton = (friend) => {
-    if (this.selectedId === friend.id) {
+    if (!(message.isHidden())) {
       message.hide();
       return;
     }
-
-    this.selectedId = friend.id;
 
     message.show();
     message.updateMessagesPane(friend);
