@@ -404,34 +404,6 @@ class Game extends Page {
       this.elementNames = data.elementNames;
       this.roomNames = data.roomNames;
 
-      data.room.elements.forEach((element) => {
-        this.loadingTasks += 1;
-
-        const elementElem = new Element(element, element.id, data.elementNames);
-        this.elements.push(elementElem);
-        const gameRect = document
-          .getElementById('game')
-          .getBoundingClientRect();
-
-        elementElem.onload = () => {
-          this.convertElementTo3d(elementElem, gameRect, () =>
-            this.finishedLoadingPart()
-          );
-          elementElem.element.style.opacity = 0;
-        };
-
-        const threeContainer = document.getElementById('three-container');
-
-        if (element.action > 0) {
-          threeContainer.appendChild(elementElem.element);
-        } else {
-          threeContainer.insertBefore(
-            elementElem.element,
-            document.getElementById('three-canvas')
-          );
-        }
-      });
-
       Object.entries(data.room.hallways).forEach(([id, hallway]) => {
         this.hallways.set(id, new Hallway(hallway, id, data.roomNames));
 
@@ -642,6 +614,34 @@ class Game extends Page {
       // Resize appropriately if we're in a sponsor room
       this.handleWindowSize();
 
+      data.room.elements.forEach((element) => {
+        this.loadingTasks += 1;
+
+        const elementElem = new Element(element, element.id, data.elementNames);
+        this.elements.push(elementElem);
+        const gameRect = document
+          .getElementById('game')
+          .getBoundingClientRect();
+
+        elementElem.onload = () => {
+          this.convertElementTo3d(elementElem, gameRect, () =>
+            this.finishedLoadingPart()
+          );
+          elementElem.element.style.opacity = 0;
+        };
+
+        const threeContainer = document.getElementById('three-container');
+
+        if (element.action > 0) {
+          threeContainer.appendChild(elementElem.element);
+        } else {
+          threeContainer.insertBefore(
+            elementElem.element,
+            document.getElementById('three-canvas')
+          );
+        }
+      });
+
       // Show floor selector inside hacker arena
       if (this.room.id.startsWith('arena:')) {
         document.getElementById('floor-selector').style.display = 'block';
@@ -777,9 +777,6 @@ class Game extends Page {
     } else if (data.type === 'join') {
       this.scene.newCharacter(data.character.id, data.character);
     } else if (data.type === 'leave') {
-      if (data.character.id === this.characterId) {
-        return;
-      }
       this.scene.deleteCharacter(data.character.id);
     } else if (data.type === 'chat') {
       this.scene.sendChat(data.id, data.mssg);
@@ -1226,7 +1223,6 @@ class Game extends Page {
         .split(' ')
         .map((num) => parseFloat(num));
       const aspect = viewbox[2] / viewbox[3];
-
       const bb = {
         x: element.data.x,
         y: element.data.y,
@@ -1293,7 +1289,7 @@ class Game extends Page {
         walls.push(thisWall)
       } else if (element.data.path.slice(0, 5) === 'tiles') {
         customShift = 1;
-      } else if (element.data.path.slice(0, 21) == 'auditorium_chairs.svg') {
+      } else if (element.data.path.slice(0, 21) === 'auditorium_chairs.svg') {
         customShift = 1;
       }
 
