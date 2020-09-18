@@ -831,7 +831,7 @@ class Game extends Page {
     const gameRect = document.getElementById('game').getBoundingClientRect();
 
     this.elements.forEach((element) => {
-      this.convertElementTo3d(element, gameRect, () => {});
+      this.convertElementTo3d(element, gameRect, () => { });
     });
 
     this.elements.forEach((element) => {
