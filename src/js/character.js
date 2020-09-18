@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 import AnimatedModel from './animatedModel';
 import characterManager from './managers/character';
+import constants from '../constants';
 import socket from './socket';
 import report from './components/report';
 
@@ -132,14 +133,24 @@ class Character {
     const mixer = new THREE.AnimationMixer(model);
     mixer.timeScale = 2.5;
 
-    const animationCycles = actions.map((x) => {
+    const animationCycles = actions.map((x, i) => {
       const cycle = mixer.clipAction(x);
+
+      if (i === constants.dances.dab) {
+        cycle.clampWhenFinished = true;
+        cycle.repetitions = 1;
+      } else if (i === constants.dances.floss) {
+        cycle.timeScale = 0.3;
+      } else if (i === constants.dances.wave) {
+        cycle.timeScale = 0.4;
+        cycle.clampWhenFinished = true;
+        cycle.repetitions = 1;
+      }
+
       cycle.enabled = false;
       cycle.play();
       return cycle;
     });
-
-    // animationCycles[walkActionIndex].play();
 
     parentScene.scene.add(model);
 
@@ -182,7 +193,10 @@ class Character {
     }
 
     let { x, y } = this.model.getPosition();
-    x = Math.min(Math.max(x, 200), window.innerWidth - 200);
+    x = Math.min(
+      Math.max(x, 200),
+      this.gameDom.getBoundingClientRect().width - 200
+    );
     y = Math.max(y, 400);
 
     this.profileBox.style.left = `${x}px`;
