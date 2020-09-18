@@ -742,7 +742,7 @@ class Game extends Page {
     }
   };
 
-  elementsTo3d = () => {
+elementsTo3d = () => {
     // make everything into an actual object in 3d
       const gameRect = document.getElementById('game').getBoundingClientRect();
 
@@ -762,7 +762,6 @@ class Game extends Page {
     request.open("GET", element.imagePath);
     request.send();
   }
-
   handleArenaButton = (id) => {
     socket.send({
       type: 'teleport',
