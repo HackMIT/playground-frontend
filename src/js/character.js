@@ -18,6 +18,8 @@ import starIcon from '../images/icons/star.svg';
 // eslint-disable-next-line
 import createElement from '../utils/jsxHelper';
 
+const CHARACTER_GAMMA = 1.9;
+
 class Character {
   constructor(data, parent, reverseRaycaster) {
     this.data = data;
@@ -52,7 +54,6 @@ class Character {
       req.open('GET', 'models/character.gltf', true);
       req.onload = () => {
         const gltfData = JSON.parse(req.response);
-
         const matColors = {
           Head: this.getColor(data.skinColor),
           Face: this.getColor(data.eyeColor),
@@ -111,7 +112,7 @@ class Character {
       )
       .substring(1)
       .match(/.{2}/g)
-      .map((x) => parseInt(x, 16) / 255);
+      .map((x) => Math.pow(parseInt(x, 16) / 255, CHARACTER_GAMMA));
   };
 
   update(deltaTime) {
