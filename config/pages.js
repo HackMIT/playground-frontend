@@ -11,4 +11,8 @@ module.exports = [
     path: 'attendance',
     template: 'attendance',
   },
+  {
+    path: '404',
+    template: '404',
+  }
 ];

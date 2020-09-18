@@ -1,5 +1,7 @@
 import * as THREE from 'three';
+
 import LinearAnimation from './animations';
+import constants from '../constants';
 import '../styles/profile.scss';
 
 class AnimatedModel {
@@ -28,12 +30,12 @@ class AnimatedModel {
     // create html elems associated with this guy
     this.nametag = document.createElement('p');
     this.nametag.className = 'name';
-    this.nametag.innerHTML = name;
+    this.nametag.innerText = name;
     this.nametag.style.transform = 'translate(-50%, 25px)';
 
     this.chatBubble = document.createElement('div');
     this.chatBubble.className = 'text-bubble';
-    this.chatBubble.innerHTML = '';
+    this.chatBubble.innerText = '';
 
     this.gameDom.appendChild(this.nametag);
 
@@ -88,32 +90,61 @@ class AnimatedModel {
 
     const wpm = 180;
     const words = msg.length / 5;
-    const wordsTime = ((words / wpm) * 60) * 1000;
+    const wordsTime = (words / wpm) * 60 * 1000;
     const timeout = wordsTime + 5000;
 
-    console.log(timeout)
     this.chatTimer = setTimeout(() => {
       this.chatBubble.remove();
     }, timeout);
   }
 
   setDanceAnimation(anim) {
+    // Allow an animation interrupt if we're flossing
+    if (
+      this.animating &&
+      !(
+        this.animationCycles[constants.dances.floss].enabled ||
+        this.animationCycles[constants.dances.shoot].enabled
+      )
+    ) {
+      return;
+    }
+
+    // Disable other animations
+    this.animationCycles.forEach((cycle) => {
+      cycle.reset();
+      cycle.enabled = false;
+    });
+
     this.animating = true;
     this.animationCycles[anim].enabled = true;
 
     let duration = 0;
 
     switch (anim) {
-      case 0: // dab
-        duration = 330;
+      case constants.dances.dab:
+        duration = 500;
+        break;
+      case constants.dances.wave:
+        duration = 1000;
+        break;
+      case constants.dances.backflip:
+        duration = 1000;
+        break;
+      case constants.dances.clap:
+        duration = 1100;
         break;
       default:
         break;
     }
 
-    setTimeout(() => {
-      this.animationCycles[anim].enabled = false;
+    if (duration === 0) {
+      return;
+    }
+
+    this.animationTimeout = setTimeout(() => {
       this.animating = false;
+      this.animationCycles[anim].reset();
     }, duration);
   }
 
@@ -121,6 +152,16 @@ class AnimatedModel {
     if (this.animation.destination && this.animation.destination.equals(dest)) {
       return 0;
     }
+
+    if (this.animationTimeout) {
+      clearTimeout(this.animationTimeout);
+      this.animationTimeout = undefined;
+    }
+
+    this.animationCycles.forEach((cycle) => {
+      cycle.reset();
+      cycle.enabled = false;
+    });
 
     this.animating = true;
 

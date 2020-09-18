@@ -119,7 +119,12 @@ class Scene {
     this.characters[id].data.y = y;
 
     const newPos = this.worldVectorForPos(x, y);
-    this.characters[id].moveTo(newPos, callback);
+    this.characters[id].moveTo(newPos, callback, x, y);
+  }
+
+  getCharacterPos(id) {
+    const character = this.characters[id];
+    return [character.curX, character.curY];
   }
 
   danceCharacter(id, dance) {
@@ -210,20 +215,21 @@ class Scene {
     let shiftAmt = 0;
     if (basebb !== null) {
       shiftAmt = (basebb.bottom - basebb.top) / 2;
-    } 
+    }
 
     const aspect = this.container.clientWidth / this.container.clientHeight;
     const height = boundingBox.height * 2 * d * Math.sqrt(3 / 2);
     const width = boundingBox.width * 2 * d * aspect;
     const baseX = boundingBox.x;
-    const baseY = boundingBox.y + boundingBox.height * (1 / 2 - shiftAmt - customShift);
+    const baseY =
+      boundingBox.y + boundingBox.height * (1 / 2 - shiftAmt - customShift);
     const basePt = this.worldVectorForPos(baseX, baseY);
     this.loadTexture(
       imgPath,
       boundingBox.width * this.container.clientWidth,
       boundingBox.height * this.container.clientHeight,
       (texture) => {
-        const geometry = new THREE.PlaneGeometry(width, height);        
+        const geometry = new THREE.PlaneGeometry(width, height);
         const material = new THREE.MeshBasicMaterial({
           map: texture,
           transparent: true,
@@ -235,10 +241,13 @@ class Scene {
 
         if (basebb !== null) {
           const semiAxisy = Math.min(basebb.leftY, basebb.rightY);
-          plane.renderOrder = (boundingBox.y - boundingBox.height * (1/2 - semiAxisy)) * this.container.clientHeight;
+          plane.renderOrder =
+            (boundingBox.y - boundingBox.height * (1 / 2 - semiAxisy)) *
+            this.container.clientHeight;
         }
 
         plane.position.set(basePt.x, height / 2 - height * (shiftAmt + customShift), basePt.z);
+
         // plane.scale.set(width, height, 1);
         plane.rotateY(Math.PI / 4);
 
@@ -252,12 +261,15 @@ class Scene {
         plane.matrix.identity();
 
         if (basebb !== null) {
+          const leftX =
+            boundingBox.x - boundingBox.width * (1 / 2 - basebb.left);
+          const leftY =
+            boundingBox.y - boundingBox.height * (1 / 2 - basebb.leftY);
 
-          const leftX = boundingBox.x - boundingBox.width * (1/2 - basebb.left);
-          const leftY = boundingBox.y - boundingBox.height * (1/2 - basebb.leftY);
-
-          const rightX = boundingBox.x - boundingBox.width * (1/2 - basebb.right);
-          const rightY = boundingBox.y - boundingBox.height * (1/2 - basebb.rightY);
+          const rightX =
+            boundingBox.x - boundingBox.width * (1 / 2 - basebb.right);
+          const rightY =
+            boundingBox.y - boundingBox.height * (1 / 2 - basebb.rightY);
 
           const leftPt = this.worldVectorForPos(leftX, leftY);
           const rightPt = this.worldVectorForPos(rightX, rightY);
@@ -285,10 +297,10 @@ class Scene {
   }
 
   loadTexture(imgPath, width, height, callback) {
-    const queryIndex = imgPath.lastIndexOf('?')
-    const imgKey = imgPath.slice(0, queryIndex)
+    const queryIndex = imgPath.lastIndexOf('?');
+    const imgKey = imgPath.slice(0, queryIndex);
     if (this.textures.has(imgKey)) {
-      callback(this.textures.get(imgKey))
+      callback(this.textures.get(imgKey));
     } else {
       const loader = new THREE.TextureLoader();
       loader.setCrossOrigin('anonymous');
@@ -306,7 +318,8 @@ class Scene {
     const element = this.buildingElements.get(id);
     const plane = this.buildings.get(id);
     if (element !== undefined) {
-      const height = (element.data.width / element.aspectRatio) * this.container.clientWidth;
+      const height =
+        (element.data.width / element.aspectRatio) * this.container.clientWidth;
       this.loadTexture(
         element.imagePath,
         element.data.width * this.container.clientWidth,

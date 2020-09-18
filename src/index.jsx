@@ -18,6 +18,7 @@ import dance from './js/components/dance';
 import jukebox from './jukebox';
 import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
+import { pointInPolygon, lineIntersectsPolygon } from './js/geometry';
 import characterSelector from './js/components/characterSelector';
 import queueForm from './js/components/queueForm';
 
@@ -36,6 +37,7 @@ import './images/Code_Icon.svg';
 import './images/Coffee_Icon.svg';
 import './images/Site_Icon.svg';
 import './images/sponsor_text.svg';
+import './images/icons/leave-queue.svg';
 
 import './images/icons/megaphone.svg';
 import './images/icons/dance.svg';
@@ -57,6 +59,7 @@ import './images/icons/dab.svg';
 import './images/icons/wave.svg';
 import './images/icons/floss.svg';
 import './images/icons/exclamation.svg';
+import './images/icons/event_flag.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
@@ -65,6 +68,11 @@ const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
 const SPONSOR_NAME_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/sponsors/%PATH%.svg';
+
+let walls = [];
+
+// const walls = [[[0.2, 0.2], [0.4, 0.4], [0.2, 0.4]], [[0.4, 0.4], [0.6, 0.4], [0.6, 0.6], [0.4, 0.6]]]
+// ^ an example of a trianlge and a rectangle (coordinates are in [0,1]^2)
 
 class Game extends Page {
   constructor() {
@@ -78,10 +86,13 @@ class Game extends Page {
   start = () => {
     document.getElementById('top-bar-button-container').style.display = 'none';
     document.getElementById('chat').style.display = 'none';
+    document.getElementById('form-button').style.display = 'none';
+    document.getElementById('edit-button').style.display = 'none';
 
     if (isMobile(window.navigator).any || !window.WebSocket) {
       this.stopLoading();
       loginPanel.hide();
+
       document.getElementById('top-bar-button-container').style.display =
         'flex';
       document.getElementById('chat').style.display = 'flex';
@@ -287,6 +298,24 @@ class Game extends Page {
     // call click handler of game to check for characters clicked
     const success = this.scene.handleClickEvent(x, y);
 
+    // calculate whether target location is valid (e.g. not inside walls)
+    const oldPos = this.scene.getCharacterPos(this.characterId);
+    // check if you're currently in the wall
+    const inWall = walls.some((wall) => pointInPolygon(oldPos, wall));
+    if (inWall) {
+      // if you're in the wall you're only allowed to move out
+      // (this is so you can't get stuck in walls if something breaks)
+      if (!walls.some((wall) => pointInPolygon([x, y], wall))) {
+        return;
+      }
+    } else {
+      // check that you're not trying to move through a wall
+      // eslint-disable-next-line
+      if (walls.some((wall) => lineIntersectsPolygon([oldPos, [x, y]], wall))) {
+        return;
+      }
+    }
+
     if (success) {
       // If we click on a character, don't move
       return;
@@ -322,7 +351,7 @@ class Game extends Page {
   handleSocketClose = () => {
     notificationsManager.displayMessage(
       "You've been disconnected from the HackMIT playground. Please refresh the page to try to reconnect.",
-      30000
+      Number.MAX_SAFE_INTEGER
     );
   };
 
@@ -379,15 +408,6 @@ class Game extends Page {
       // data.room.elements.forEach((element) => {
       //   this.loadingTasks += 1;
 
-      //   const elementElem = new Element(element, element.id, data.elementNames);
-      //   this.elements.push(elementElem);
-      //   const gameRect = document.getElementById('game').getBoundingClientRect();
-
-      //   elementElem.onload = () => {
-      //     this.convertElementTo3d(elementElem, gameRect, () => this.finishedLoadingPart());
-      //     elementElem.element.style.opacity = 0;
-      //   };
-
       //   const threeContainer = document.getElementById('three-container');
 
       //   if (element.action > 0) {
@@ -415,9 +435,26 @@ class Game extends Page {
       this.settings = data.settings;
       this.room = data.room;
 
+      walls = [
+        data.room.corners
+          .split(';')
+          .map((coords) => coords.split(',').map((x) => parseFloat(x))),
+      ];
+      console.log(walls);
+
       if (this.room.sponsorId.length > 0) {
-        if (characterManager.character.queueId !== this.room.sponsorId.length) {
-          document.getElementById('queue-button-icon').src = './images/Coffee_Icon.svg';
+        if (characterManager.character.queueId !== this.room.sponsorId) {
+          document.getElementById('queue-button-icon').src =
+            './images/Coffee_Icon.svg';
+          document.getElementById(
+            'queue-button-text'
+          ).innerText = `Talk to ${this.room.sponsor.name}`;
+        } else {
+          document.getElementById('queue-button-icon').src =
+            './images/icons/leave-queue.svg';
+          document.getElementById(
+            'queue-button-text'
+          ).innerText = `Leave Queue`;
         }
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
@@ -428,15 +465,16 @@ class Game extends Page {
 
         document.getElementById('challenges-button').style.display =
           this.room.sponsor.challenges.length > 0 ? 'inline-block' : 'none';
+        document.getElementById('queue-button').style.display = this.room
+          .sponsor.queueOpen
+          ? 'inline-block'
+          : 'none';
 
         const text = this.room.sponsor.description.replace(
           /(https?:\/\/[^\s]+)/g,
           '<a href=\'$1\' target="_blank">$1</a>'
         );
         document.getElementById('sponsor-description').innerHTML = text;
-        document.getElementById(
-          'queue-button-text'
-        ).innerText = `Talk to ${this.room.sponsor.name}`;
 
         document.getElementById(
           'sponsor-name'
@@ -478,11 +516,40 @@ class Game extends Page {
 
       img.src = BACKGROUND_IMAGE_URL.replace('%PATH%', this.room.background);
 
+      this.scene.fixCameraOnResize();
+
+      // uncomment this to have the walls drawn in red (for testing)
+      // walls.forEach((wall) => {
+      //   const svg = document.createElementNS(
+      //     'http://www.w3.org/2000/svg',
+      //     'svg'
+      //   );
+      //   svg.style.cssText =
+      //     'position: absolute; height: 100%; width: 100%; top: 0; left: 0;';
+
+      //   const polygon = document.createElementNS(
+      //     'http://www.w3.org/2000/svg',
+      //     'polygon'
+      //   );
+      //   let ptStr = '';
+
+      //   const game = document.getElementById('game');
+      //   const rect = game.getBoundingClientRect();
+
+      //   wall.forEach((elem) => {
+      //     ptStr += `${elem[0] * rect.width},${elem[1] * rect.height} `;
+      //   });
+      //   polygon.setAttribute('points', ptStr);
+      //   polygon.setAttribute('style', 'fill: red;');
+      //   svg.appendChild(polygon);
+      //   game.insertBefore(svg, game.firstChild);
+      // });
+
       // Start managers
       notificationsManager.start();
 
       if (data.character.shirtColor === '#d6e2f8') {
-        createModal(characterSelector.createModal());
+        createModal(characterSelector.createModal(), 'character');
       }
 
       document.getElementById('form-button').style.display = 'none';
@@ -493,10 +560,7 @@ class Game extends Page {
         document.getElementById('edit-button').style.display = 'block';
       }
       //  sponsor
-      else if (
-        characterManager.character.role === 4 &&
-        !characterManager.character.project
-      ) {
+      else if (characterManager.character.role === 4) {
         const currentTime = new Date().getTime();
         const formOpen1 = this.createUTCDate(19, 1);
         const deadline1 = this.createUTCDate(19, 7);
@@ -513,50 +577,76 @@ class Game extends Page {
 
         let formName = '';
         let due = '';
+        let extra = '';
         if (first) {
           formName = 'Fun Friday Form';
           due = 'Saturday 3am EDT';
         } else {
           formName = 'Spicy Saturday Survey';
           due = 'Saturday 6pm EDT';
+          extra =
+            ' For those who have already submitted Friday, look over your form and resubmit, and add in a zoom link if you would like to participate in Peer Expo!';
         }
 
         if (first || second) {
           document.getElementById('form-button').style.display = 'block';
-          if (!this.remindForm) {
-            createModal(
-              <div id="form-reminder-modal">
-                <div id="form-reminder">
-                  <h1>Reminder: </h1>
-                  You must submit the <b>{formName}</b> in order to be eligible
-                  for judging and swag! Please fill this out by <b>{due}</b> at
-                  the latest by clicking the exclamation mark at the top right
-                  of your screen.
-                </div>
-                <div id="form-button-div">
-                  <button
-                    id="later-button"
-                    onclick={() => {
-                      document.getElementById('form-reminder-modal').remove();
-                      document.getElementById('form-modal-background').remove();
-                    }}
-                  >
-                    Later
-                  </button>
-                  <button
-                    onclick={() => {
-                      document.getElementById('form-reminder-modal').remove();
-                      document.getElementById('form-modal-background').remove();
-                      createModal(projectForm.createFormModal());
-                    }}
-                  >
-                    OK
-                  </button>
-                </div>
-              </div>,
-              'form'
-            );
-            this.remindForm = true;
+          if (
+            !characterManager.character.project ||
+            (second &&
+              characterManager.character.project.submittedAt < formOpen2)
+          ) {
+            if (!this.remindForm) {
+              createModal(
+                <div id="form-reminder-modal">
+                  <div id="form-reminder">
+                    <h1>Reminder: </h1>
+                    You must submit the <b>{formName}</b> in order to be
+                    eligible for judging and swag! Please fill this out by{' '}
+                    <b>{due}</b> at the latest by clicking the exclamation mark
+                    at the top right of your screen.
+                    {extra}
+                  </div>
+                  <div id="form-button-div">
+                    <button
+                      id="later-button"
+                      onclick={() => {
+                        document.getElementById('form-reminder-modal').remove();
+                        document
+                          .getElementById('form-modal-background')
+                          .remove();
+                      }}
+                    >
+                      Later
+                    </button>
+                    <button
+                      onclick={() => {
+                        document.getElementById('form-reminder-modal').remove();
+                        document
+                          .getElementById('form-modal-background')
+                          .remove();
+                        if (characterManager.character.project) {
+                          createModal(
+                            projectForm.createFormModal(
+                              characterManager.character.project
+                            )
+                          );
+                        } else {
+                          createModal(projectForm.createFormModal());
+                        }
+                      }}
+                    >
+                      OK
+                    </button>
+                  </div>
+                </div>,
+                'form',
+                () => {
+                  document.getElementById('form-reminder-modal').remove();
+                  document.getElementById('form-modal-background').remove();
+                }
+              );
+              this.remindForm = true;
+            }
           }
         }
       }
@@ -594,6 +684,36 @@ class Game extends Page {
       } else {
         document.getElementById('floor-selector').style.display = 'none';
       }
+
+      // Show current event on navbar
+      const currTimestamp = Math.floor(Date.now() / 1000);
+
+      data.events.some((event) => {
+        if (
+          event.startTime <= currTimestamp &&
+          currTimestamp <= event.startTime + event.duration * 60
+        ) {
+          document.getElementById('top-bar-event').innerHTML = event.name;
+          document.getElementById('top-bar-banner-container').style.visibility =
+            'visible';
+          document.getElementById('top-bar-banner-link').onclick = () => {
+            if (event.url.startsWith('room:')) {
+              socket.send({
+                type: 'teleport',
+                to: event.url.substring(event.url.indexOf(':') + 1),
+                x: 0.6007,
+                y: 0.6905,
+              });
+            } else {
+              window.open(event.url, '_blank');
+            }
+          };
+
+          return true;
+        }
+
+        return false;
+      });
     } else if (data.type === 'dance') {
       this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
@@ -674,6 +794,18 @@ class Game extends Page {
             <h1 className="white-text">Oops!</h1>
             <p className="white-text">
               You must be a college student to enter a sponsor queue.
+            </p>
+          </div>
+        );
+      }
+      if (data.code === 5) {
+        this.stopLoading();
+        createModal(
+          <div id="jukebox-modal">
+            <h1 className="white-text">Oops!</h1>
+            <p className="white-text">
+              You must fill out the Spicy Saturday Survey on time to enter the
+              hacker arena.
             </p>
           </div>
         );
@@ -770,24 +902,27 @@ class Game extends Page {
 
   elementsTo3d = () => {
     // make everything into an actual object in 3d
-      const gameRect = document.getElementById('game').getBoundingClientRect();
+    const gameRect = document.getElementById('game').getBoundingClientRect();
 
-      this.elements.forEach((element) => {
-        this.convertElementTo3d(element, gameRect, ()=>{});
-      });
+    this.elements.forEach((element) => {
+      this.convertElementTo3d(element, gameRect, () => {});
+    });
 
-      this.elements.forEach((element) => {
-        element.element.remove();
-      });
+    this.elements.forEach((element) => {
+      element.element.remove();
+    });
   };
 
   convertElementTo3d = (element, gameRect, callback) => {
     const request = new XMLHttpRequest();
-    request.addEventListener("load", this.makeSceneRequestFunc(gameRect, element, callback));
-    request.overrideMimeType("image/svg+xml");
-    request.open("GET", element.imagePath);
+    request.addEventListener(
+      'load',
+      this.makeSceneRequestFunc(gameRect, element, callback)
+    );
+    request.overrideMimeType('image/svg+xml');
+    request.open('GET', element.imagePath);
     request.send();
-  }
+  };
 
   handleArenaButton = (id) => {
     socket.send({
@@ -799,7 +934,13 @@ class Game extends Page {
   };
 
   handleFormButton = () => {
-    createModal(projectForm.createFormModal());
+    if (!characterManager.character.project) {
+      createModal(projectForm.createFormModal());
+    } else {
+      createModal(
+        projectForm.createFormModal(characterManager.character.project)
+      );
+    }
   };
 
   handleSettingsButton = () => {
@@ -829,13 +970,21 @@ class Game extends Page {
       queueSponsor.subscribe(this.room.sponsor.id);
     } else if (queueManager.inQueue()) {
       queueManager.join(this.room.sponsor);
-    } else if (characterManager.character.queueId !== '' && characterManager.character.queueId !== this.room.sponsor.id) {
+    } else if (
+      characterManager.character.queueId !== '' &&
+      characterManager.character.queueId !== this.room.sponsor.id
+    ) {
       createModal(
         <div id="other-queue-modal">
           <h1>Confirm:</h1>
-          <p>You are currently in the queue for {characterManager.character.queueId}, would you like to leave and join this queue instead?</p>
+          <p>
+            You are currently in the queue for{' '}
+            {characterManager.character.queueId}, would you like to leave and
+            join this queue instead?
+          </p>
           <div id="queue-button-div">
-            <button id="no-button"
+            <button
+              id="no-button"
               onclick={() => {
                 document.getElementById('modal-background').remove();
               }}
@@ -857,7 +1006,7 @@ class Game extends Page {
             </button>
           </div>
         </div>
-      )
+      );
     } else {
       createModal(queueForm.createQueueModal(this.room.sponsor));
     }
@@ -892,6 +1041,8 @@ class Game extends Page {
   };
 
   handleFriendsButton = () => {
+    const dancePane = document.getElementById('dance-pane');
+
     if (this.friendsPaneVisible === true) {
       // Hide the friends pane
       document.getElementById('friends-pane').classList.add('invisible');
@@ -902,8 +1053,10 @@ class Game extends Page {
       this.friendsPaneVisible = true;
 
       // Hide the dance pane
-      document.getElementById('dance-pane').classList.add('invisible');
-      this.dancePaneVisible = false;
+      if (dancePane) {
+        document.getElementById('dance-pane').classList.add('invisible');
+        this.dancePaneVisible = false;
+      }
     } else {
       // Never created friends pane before, create it now
       document
@@ -912,8 +1065,10 @@ class Game extends Page {
       this.friendsPaneVisible = true;
 
       // Hide the dance pane
-      document.getElementById('dance-pane').classList.add('invisible');
-      this.dancePaneVisible = false;
+      if (dancePane) {
+        document.getElementById('dance-pane').classList.add('invisible');
+        this.dancePaneVisible = false;
+      }
     }
   };
 
@@ -963,6 +1118,7 @@ class Game extends Page {
   };
 
   handleIglooButton = () => {
+    // this.showFeedback();
     this.startLoading();
 
     socket.send({
@@ -971,6 +1127,8 @@ class Game extends Page {
   };
 
   handleDanceButton = () => {
+    const friendsPane = document.getElementById('friends-pane');
+
     if (this.dancePaneVisible === true) {
       // Hide the dance pane
       document.getElementById('dance-pane').classList.add('invisible');
@@ -981,16 +1139,20 @@ class Game extends Page {
       this.dancePaneVisible = true;
 
       //  make friends pane invisible
-      document.getElementById('friends-pane').classList.add('invisible');
-      this.friendsPaneVisible = false;
+      if (friendsPane) {
+        document.getElementById('friends-pane').classList.add('invisible');
+        this.friendsPaneVisible = false;
+      }
     } else {
       // Never created dance pane before, create it now
       document.getElementById('chat').appendChild(dance.createDancePane());
       this.dancePaneVisible = true;
 
       // Hide the friends pane
-      document.getElementById('friends-pane').classList.add('invisible');
-      this.friendsPaneVisible = false;
+      if (friendsPane) {
+        friendsPane.classList.add('invisible');
+        this.friendsPaneVisible = false;
+      }
     }
   };
 
@@ -1057,32 +1219,36 @@ class Game extends Page {
     }, 250);
   };
 
-
-  makeSceneRequestFunc = (gameRect, element, callback) =>  {
+  makeSceneRequestFunc = (gameRect, element, callback) => {
     return (data) => {
       let basebb = null;
       let customShift = 0;
 
       const svg = data.target.responseXML;
-      let baseElem = svg.getElementById("base") 
+      let baseElem = svg.getElementById('base');
       if (baseElem === null) {
-        baseElem = svg.getElementById("Base")
+        baseElem = svg.getElementById('Base');
       }
 
       const viewbox = svg.firstElementChild.getAttribute("viewBox").split(" ").map((num) => parseFloat(num))
       const aspect = viewbox[2]/viewbox[3]
       const bb = {
-        x: element.data.x, 
-        y: element.data.y, 
+        x: element.data.x,
+        y: element.data.y,
         width: element.data.width,
-        height: element.data.width / aspect * (gameRect.width/gameRect.height)
+        height:
+          (element.data.width / aspect) * (gameRect.width / gameRect.height),
       };
 
       if (baseElem !== null && baseElem.firstElementChild.getAttribute("points") !== null){
         const base = baseElem.firstElementChild.getAttribute("points").trim().split(",").join(" ").split(" ").map((num) => parseFloat(num))
         // these are coordinates w/ y=0 at top and y=1 at bottom
-        const scaledBaseYs = base.filter((el, i) => i % 2 === 1).map((y) => y/(viewbox[3]));
-        const scaledBaseXs = base.filter((el, i) => i % 2 === 0).map((x) => x/(viewbox[2]));
+        const scaledBaseYs = base
+          .filter((el, i) => i % 2 === 1)
+          .map((y) => y / viewbox[3]);
+        const scaledBaseXs = base
+          .filter((el, i) => i % 2 === 0)
+          .map((x) => x / viewbox[2]);
 
         const minY = Math.min.apply(null, scaledBaseYs);
         const maxY = Math.max.apply(null, scaledBaseYs);
@@ -1090,35 +1256,48 @@ class Game extends Page {
         const minX = Math.min.apply(null, scaledBaseXs);
         const maxX = Math.max.apply(null, scaledBaseXs);
 
-        const leftY = scaledBaseYs[scaledBaseXs.indexOf(minX)]
-        const rightY = scaledBaseYs[scaledBaseXs.indexOf(maxX)]
+        const leftY = scaledBaseYs[scaledBaseXs.indexOf(minX)];
+        const rightY = scaledBaseYs[scaledBaseXs.indexOf(maxX)];
 
         // we essentially shift the point where we draw it up by this amount (but also shift center pt "back")
         basebb = {
-          bottom: maxY, top: minY, left: minX, right: maxX, leftY: leftY, rightY: rightY
-        }
-      } else if(element.data.path.slice(0, 5) == "tiles") {
+          bottom: maxY,
+          top: minY,
+          left: minX,
+          right: maxX,
+          leftY,
+          rightY,
+        };
+      } else if (element.data.path.slice(0, 5) === 'tiles') {
         customShift = 1;
       }
 
-
-      this.scene.create2DObject(bb, element.imagePath, basebb, element, customShift, callback);
+      this.scene.create2DObject(
+        bb,
+        element.imagePath,
+        basebb,
+        element,
+        customShift,
+        callback
+      );
 
       if (element.data.changingImagePath) {
-        const stateLen = element.data.changingPaths.split(",").length
+        const stateLen = element.data.changingPaths.split(',').length;
         const interval = setInterval(() => {
           if (element.data.changingRandomly) {
-            element.data.state = Math.floor(Math.random() * Math.floor(stateLen));
+            element.data.state = Math.floor(
+              Math.random() * Math.floor(stateLen)
+            );
           } else {
             element.data.state = (element.data.state + 1) % stateLen;
           }
           element.setImageForState();
           this.scene.updateBuildingImage(element.data.id);
         }, element.data.changingInterval);
-        this.buildingIntervals.push(interval)
+        this.buildingIntervals.push(interval);
       }
     };
-  }
+  };
 }
 
 const gamePage = new Game();

@@ -6,21 +6,36 @@
   box-sizing: border-box;
   padding: 6px;
   position: absolute;
-  width: fit-content;
-  height: fit-content;
-  transform: translate(-272px, -75px);
+  transform: translate(-272px, -80px);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+#dance-buttons-div {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 
-#dance-buttons-div{
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  grid-row-gap: 8px;
-  grid-column-gap: 4px;
+  .dance-buttons-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    width: 100%;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+
+    button {
+      margin: 0 8px 0 0;
+
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
 
   #dab-img {
     transform: scale(1.5);

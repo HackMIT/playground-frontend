@@ -1,5 +1,15 @@
 const config = {
   calendarURL: 'https://go.hackmit.org/gcal',
+  dances: {
+    backflip: 0,
+    clap: 1,
+    dab: 2,
+    floss: 3,
+    jumpingJacks: 4,
+    shoot: 5,
+    walk: 6,
+    wave: 7,
+  },
 };
 
 const dev = {

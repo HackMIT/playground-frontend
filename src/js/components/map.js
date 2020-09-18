@@ -21,48 +21,40 @@ class Map {
       <div id="map">
         <div id="map-container">
           <button id="town-square" onclick={() => this.teleport('home')}>
-            <img src={townSquare} />
+            <img className="clickable" src={townSquare} />
             <p class="label">{'Town Square'}</p>
           </button>
           <button
             id="town-square-2"
             onclick={() => this.teleport('plaza', 0.5694, 0.6962)}
           >
-            <img src={townSquare2} />
+            <img className="clickable" src={townSquare2} />
             <p class="label">{'Hacker Plaza'}</p>
           </button>
           <button id="nonprofit" onclick={() => this.teleport('nonprofits')}>
-            <img src={nonprofit} />
+            <img className="clickable" src={nonprofit} />
             <p class="label">{'Nonprofits'}</p>
           </button>
           <button id="personal-room" onclick={() => this.teleportPersonal()}>
-            <img src={personalRoom} />
+            <img className="clickable" src={personalRoom} />
             <p class="label">{'Personal Room'}</p>
           </button>
           <button id="sponsor-town" onclick={() => this.teleport('plat_area')}>
-            <img src={sponsorTown} />
+            <img className="clickable" src={sponsorTown} />
             <p class="label">{'Sponsor Town'}</p>
           </button>
-          <button
-            id="speaker-sign"
-            onclick={() => this.link('https://hackmit.org/')}
-          >
+          <button id="speaker-sign">
             <img src={speakerSign} />
-            <p class="label">{'Speakers'}</p>
           </button>
           <button
             id="workshop-sign"
-            onclick={() => this.link('https://hackmit.org/')}
           >
             <img src={workshopSign} />
-            <p class="label">{'Workshops'}</p>
           </button>
           <button
             id="event-sign"
-            onclick={() => this.link('https://hackmit.org/')}
           >
             <img src={eventSign} />
-            <p class="label">{'Events'}</p>
           </button>
         </div>
       </div>

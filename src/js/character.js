@@ -1,7 +1,10 @@
 import * as THREE from 'three';
 
 import AnimatedModel from './animatedModel';
+import achievements from './components/achievements';
 import characterManager from './managers/character';
+import createModal from '../modal';
+import constants from '../constants';
 import socket from './socket';
 import report from './components/report';
 
@@ -14,11 +17,12 @@ import starIcon from '../images/icons/star.svg';
 
 // eslint-disable-next-line
 import createElement from '../utils/jsxHelper';
-import createModal from '../modal';
 
 class Character {
   constructor(data, parent, reverseRaycaster) {
     this.data = data;
+    this.curX = data.x;
+    this.curY = data.y;
     this.reverseRaycaster = reverseRaycaster;
 
     const onModelLoadSuccess = (gltf) => {
@@ -28,7 +32,7 @@ class Character {
         parent,
         gltf.scene,
         gltf.animations,
-        data.id === 'tim' ? 0 : 2,
+        data.id === 'tim' ? 0 : constants.dances.walk,
         data.x,
         data.y
       );
@@ -87,14 +91,12 @@ class Character {
   }
 
   handleSocketMessage = (msg) => {
-    if (msg.type !== 'achievements') {
+    if (msg.id !== this.data.id || msg.type !== 'achievements') {
       return;
     }
 
-    console.log(msg);
-
     // Create achievements modal here
-    createModal();
+    createModal(achievements.createAchievementsModal(msg.achievements));
   };
 
   getColor = (hex) => {
@@ -119,8 +121,11 @@ class Character {
   }
 
   // returns time it'll take
-  moveTo(vector, callback) {
+  // x and y are just stored so the screen position doesn't have to be recalculated
+  moveTo(vector, callback, x, y) {
     this.model.setAnimation(vector, callback);
+    this.curX = x;
+    this.curY = y;
   }
 
   safeDelete(parent) {
@@ -132,14 +137,38 @@ class Character {
     const mixer = new THREE.AnimationMixer(model);
     mixer.timeScale = 2.5;
 
-    const animationCycles = actions.map((x) => {
+    const animationCycles = actions.map((x, i) => {
       const cycle = mixer.clipAction(x);
+
+      if (i === constants.dances.walk) {
+        cycle.timeScale = 0.7;
+      } else if (i === constants.dances.dab) {
+        cycle.timeScale = 0.8;
+        cycle.clampWhenFinished = true;
+        cycle.repetitions = 1;
+      } else if (i === constants.dances.floss) {
+        cycle.timeScale = 0.3;
+      } else if (i === constants.dances.wave) {
+        cycle.timeScale = 0.4;
+        cycle.clampWhenFinished = true;
+        cycle.repetitions = 1;
+      } else if (i === constants.dances.backflip) {
+        cycle.timeScale = 0.35;
+        cycle.clampWhenFinished = true;
+        cycle.repetitions = 1;
+      } else if (i === constants.dances.shoot) {
+        cycle.timeScale = 0.35;
+      } else if (i === constants.dances.clap) {
+        cycle.timeScale = 0.35;
+        cycle.clampWhenFinished = true;
+        cycle.repetitions = 1;
+      }
+
       cycle.enabled = false;
+
       cycle.play();
       return cycle;
     });
-
-    // animationCycles[walkActionIndex].play();
 
     parentScene.scene.add(model);
 
@@ -182,7 +211,10 @@ class Character {
     }
 
     let { x, y } = this.model.getPosition();
-    x = Math.min(Math.max(x, 200), window.innerWidth - 200);
+    x = Math.min(
+      Math.max(x, 200),
+      this.gameDom.getBoundingClientRect().width - 200
+    );
     y = Math.max(y, 400);
 
     this.profileBox.style.left = `${x}px`;
@@ -195,14 +227,14 @@ class Character {
 
     const buttons = (
       <div id="profile-buttons" className="profile-buttons">
+        {' '}
         {characterManager.isFriend(this.data.id) ? (
           <button>
-            <img src={messageIcon} />
+            <img src={messageIcon} />{' '}
           </button>
         ) : (
           none
-        )}
-
+        )}{' '}
         {characterManager.isFriend(this.data.id) ||
         characterManager.getCharacterId() === this.data.id ? (
           none
@@ -215,10 +247,9 @@ class Character {
               });
             }}
           >
-            <img src={addFriendIcon} />
+            <img src={addFriendIcon} />{' '}
           </button>
-        )}
-
+        )}{' '}
         <button
           onclick={() => {
             socket.send({
@@ -227,9 +258,8 @@ class Character {
             });
           }}
         >
-          <img src={starIcon} />
-        </button>
-
+          <img src={starIcon} />{' '}
+        </button>{' '}
         {this.data.id === characterManager.getCharacterId() ? (
           none
         ) : (
@@ -239,24 +269,24 @@ class Character {
               this.handleReportButton();
             }}
           >
-            <img src={flagIcon} />
+            <img src={flagIcon} />{' '}
           </button>
-        )}
+        )}{' '}
       </div>
     );
 
     this.profileBox = (
       <div className="profile-container">
         <button className="close-button" onclick={() => this.hideProfile()}>
-          <img src={closeIcon} />
-        </button>
+          <img src={closeIcon} />{' '}
+        </button>{' '}
         <div className="profile-card">
-          <h2 className="name">{this.data.name}</h2>
-          <p className="school">{this.data.school}</p>
+          <h2 className="name"> {this.data.name} </h2>{' '}
+          <p className="school"> {this.data.school} </p>{' '}
           <div className="profile-badge">
             <div />
             <div className="bio-background">
-              <img className="earth" src={earthIcon} />
+              <img className="earth" src={earthIcon} />{' '}
               <p className="bio">
                 {this.data.bio.length === 0
                   ? "This person hasn't added their bio yet!"
@@ -274,7 +304,7 @@ class Character {
             </div>
           </div>
         </div>
-        {buttons}
+        {this.data.id === 'tim' ? null : buttons}
       </div>
     );
   }

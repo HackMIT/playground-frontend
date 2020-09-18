@@ -9,7 +9,8 @@ import notificationsManager from '../managers/notifications'
 import createElement from '../../utils/jsxHelper';
 
 class SponsorPanel {
-  createFormModal = () => {
+
+  createFormModal = (project) => {
     const isFriday = new Date().getTime() < 1600498800000;
 
     const trackElems = [
@@ -32,7 +33,7 @@ class SponsorPanel {
     ].map((track) => {
       return (
         <div className="checkbox-container">
-          <input type="radio" name="track" value={track.id} />
+          <input type="radio" name="track" value={track.id} checked={project ? project.track === track.id : 'false'} />
           <label for={track.id}>{track.title}</label>
         </div>
       );
@@ -67,7 +68,7 @@ class SponsorPanel {
     ].map((challenge) => {
       return (
         <div className="checkbox-container">
-          <input type="checkbox" name="challenges" value={challenge.id} />
+          <input type="checkbox" name="challenges" value={challenge.id} checked={project ? project.challenges.includes(challenge.id) : 'false'} />
           <label for={challenge.id}>{challenge.title}</label>
         </div>
       );
@@ -83,27 +84,27 @@ class SponsorPanel {
             for HackMIT with. Only one person on your team needs to fill out
             this form.
           </p>
-          <input type="text" id="teammates" />
+          <input type="text" id="teammates" defaultValue={project ? project.emails : ''} />
         </div>
         <div className="field">
           <p>What's your project's name?</p>
-          <input type="text" id="name" />
+          <input type="text" id="name" defaultValue={project ? project.name : ''} />
         </div>
         <div className="field">
           <p>
             Write a 1-2 sentence &ldquo;elevator pitch&rdquo; explaining your
             idea.
           </p>
-          <input type="text" id="pitch" />
+          <input type="text" id="pitch" defaultValue={project ? project.pitch : ''} />
         </div>
         {isFriday ? (
           <div className="field">
-            <p>
+            {isFriday ? <p>
               If you&rsquo;ll be participating in peer expo (happening in the
               hacker arena at 6pm EDT!), enter a Zoom link that other
               participants can use to meet you.
-            </p>
-            <input type="text" id="zoom" />
+            </p> : <div />}
+            <input type="text" id="zoom" defaultValue={project ? project.zoom || '' : ''} />
           </div>
         ) : null}
         <div className="field checkbox-field">
@@ -123,6 +124,7 @@ class SponsorPanel {
         </button>
       </div>
     );
+
   };
 
   handleSubmitButton = () => {

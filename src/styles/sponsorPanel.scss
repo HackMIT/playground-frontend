@@ -19,7 +19,7 @@
     overflow-y: auto;
 
     div {
-      overflow-y: scroll;
+      overflow-y: auto;
 
       h2 {
         margin-bottom: 8px;
@@ -94,6 +94,84 @@
           margin-top: 8px;
           outline: none;
           padding: 8px;
+        }
+      }
+
+      #sponsor-zoom {
+        #sponsor-zoom-input {
+          display: flex;
+          flex-direction: row;
+        }
+
+        p {
+          font-size: 13px;
+          margin-bottom: 4px;
+        }
+
+        input,
+        textarea {
+          box-sizing: border-box;
+          border: 2px solid $blue_dark;
+          border-radius: 4px;
+          font-size: 14px;
+          padding: 8px;
+          // width: 100%;
+          flex-grow: 1;
+          margin-bottom: 12px;
+        }
+
+        button {
+          background: #43a047;
+          border: none;
+          border-radius: 4px;
+          color: #fff;
+          cursor: pointer;
+          font-size: 14px;
+          margin-left: 4px;
+          margin-bottom: 12px;
+          outline: none;
+          padding: 10px 16px;
+
+          &:hover {
+            background: #388e3c;
+          }
+        }
+      }
+
+      #sponsor-toggle-container {
+        p {
+          font-size: 13px;
+          margin-bottom: 4px;
+        }
+
+        button {
+          border: none;
+          border-radius: 4px;
+          color: #fff;
+          cursor: pointer;
+          font-size: 14px;
+          margin-bottom: 12px;
+          outline: none;
+          padding: 10px 16px;
+        }
+
+        #sponsor-queue-toggle {
+          display: flex;
+          justify-content: center;
+          #sponsor-queue-on {
+            // visibility: hidden;
+            background: #43a047;
+            &:hover {
+              background: #388e3c;
+            }
+          }
+          #sponsor-queue-off {
+            // visibility: hidden;
+            background: #db5a42;
+            &:hover {
+              background: #d64329;
+            }
+          }
         }
       }
     }
