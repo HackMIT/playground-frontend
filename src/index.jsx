@@ -1269,7 +1269,7 @@ class Game extends Page {
         };
       } else if (element.data.path.slice(0, 5) === 'tiles') {
         customShift = 1;
-      } else if (element.data.path.slice(0, 21) == 'auditorium_chairs.svg') {
+      } else if (element.data.path.slice(0, 21) === 'auditorium_chairs.svg') {
         customShift = 1;
       }
 

@@ -17,6 +17,7 @@ const MAP_OPEN_ACTION = 2;
 const WARDROBE_OPEN_ACTION = 3;
 const NONPROFIT_OPEN_ACTION = 4;
 const MISTI_POPUP_ACTION = 5;
+const CEREMONY_OPEN_ACTION = 6;
 
 class Element extends Editable {
   dataKeyName = 'element';
@@ -100,6 +101,8 @@ class Element extends Editable {
       createModal(nonprofit.createNonprofitModal(nonprofitId));
     } else if (this.data.action === MISTI_POPUP_ACTION) {
       createModal(misti.createModal());
+    } else if (this.data.action === CEREMONY_OPEN_ACTION) {
+      window.open('https://go.hackmit.org/opening', '_blank');
     }
   }
 
