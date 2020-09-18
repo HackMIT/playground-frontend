@@ -43,6 +43,7 @@ class Settings {
     const profileContent = document.getElementById(
       `settings-update-${profileArea}`
     ).value;
+    document.getElementById(`settings-update-${profileArea}-label`).insertAdjacentHTML('afterend', '<p id="profile-update">Updated!</p>');
     socket.send({
       type: 'settings',
       [profileArea]: profileContent,
@@ -119,7 +120,7 @@ class Settings {
           </div>
           <div id="settings-update-profile">
             <div id="settings-update-item">
-              <label>Update location:</label>
+              <label id="settings-update-location-label">Update location:</label>
               <div>
                 <input
                   type="text"
@@ -134,7 +135,7 @@ class Settings {
               </div>
             </div>
             <div id="settings-update-item">
-              <label>Update bio:</label>
+              <label id="settings-update-bio-label">Update bio:</label>
               <div>
                 <textarea
                   defaultValue={characterManager.character.bio}

@@ -57,6 +57,7 @@ import './images/icons/dab.svg';
 import './images/icons/wave.svg';
 import './images/icons/floss.svg';
 import './images/icons/exclamation.svg';
+import './images/icons/event_flag.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
@@ -326,6 +327,7 @@ class Game extends Page {
 
   handleSocketMessage = (data) => {
     console.log(data);
+    console.log(data.events);
     if (data.type === 'init') {
       if (data.firstTime) {
         // If firstTime is true, components/login.js is handling this
@@ -407,6 +409,9 @@ class Game extends Page {
       this.room = data.room;
 
       if (this.room.sponsorId.length > 0) {
+        if (characterManager.character.queueId !== this.room.sponsorId.length) {
+          document.getElementById('queue-button-icon').src = './images/Coffee_Icon.svg';
+        }
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
           'sponsor-name'
@@ -558,6 +563,39 @@ class Game extends Page {
       } else {
         document.getElementById('floor-selector').style.display = 'none';
       }
+
+      // Show current event on navbar
+      // const currTimestamp = Math.floor(Date.now() / 1000);
+      const currTimestamp = Math.floor(
+        this.createUTCDate(19, 21).getTime() / 1000
+      );
+
+      data.events.some((event) => {
+        if (
+          event.startTime <= currTimestamp &&
+          currTimestamp <= event.startTime + event.duration * 60
+        ) {
+          document.getElementById('top-bar-event').innerHTML = event.name;
+          document.getElementById('top-bar-banner-container').style.visibility =
+            'visible';
+          document.getElementById('top-bar-banner-link').onclick = () => {
+            if (event.url.startsWith('room:')) {
+              socket.send({
+                type: 'teleport',
+                to: event.url.substring(event.url.indexOf(':') + 1),
+                x: 0.6007,
+                y: 0.6905,
+              });
+            } else {
+              window.open(event.url, '_blank');
+            }
+          };
+
+          return true;
+        }
+
+        return false;
+      });
     } else if (data.type === 'dance') {
       this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
@@ -664,11 +702,13 @@ class Game extends Page {
 
   handleDayofButton = () => {
     createModal(
-      <iframe
-        id="day-of-iframe"
-        className="modal-frame"
-        src="https://dayof.hackmit.org"
-      />
+      <div id="day-of-div">
+        <iframe
+          id="day-of-iframe"
+          className="modal-frame"
+          src="https://dayof.hackmit.org"
+        />
+      </div>
     );
   };
 
@@ -766,6 +806,35 @@ class Game extends Page {
       queueSponsor.subscribe(this.room.sponsor.id);
     } else if (queueManager.inQueue()) {
       queueManager.join(this.room.sponsor);
+    } else if (characterManager.character.queueId !== '' && characterManager.character.queueId !== this.room.sponsor.id) {
+      createModal(
+        <div id="other-queue-modal">
+          <h1>Confirm:</h1>
+          <p>You are currently in the queue for {characterManager.character.queueId}, would you like to leave and join this queue instead?</p>
+          <div id="queue-button-div">
+            <button id="no-button"
+              onclick={() => {
+                document.getElementById('modal-background').remove();
+              }}
+            >
+              No
+            </button>
+            <button
+              onclick={() => {
+                document.getElementById('modal-background').remove();
+                socket.send({
+                  type: 'queue_remove',
+                  characterId: characterManager.character.id,
+                  sponsorId: this.room.sponsor.id,
+                });
+                createModal(queueForm.createQueueModal(this.room.sponsor));
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )
     } else {
       createModal(queueForm.createQueueModal(this.room.sponsor));
     }

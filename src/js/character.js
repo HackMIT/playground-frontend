@@ -274,7 +274,7 @@ class Character {
             </div>
           </div>
         </div>
-        {buttons}
+        {this.data.id === 'tim' ? null : buttons}
       </div>
     );
   }

@@ -124,8 +124,12 @@
     margin: 10px;
     display: flex;
     flex-direction: column;
-  }
 
+    #profile-update {
+      color: green;
+    }
+  }
+  
   div {
     display: flex;
     flex-direction: row;
