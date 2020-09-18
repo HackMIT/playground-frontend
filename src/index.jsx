@@ -329,6 +329,7 @@ class Game extends Page {
   handleSocketMessage = (data) => {
     console.log(data);
     if (data.type === 'init') {
+      console.log(this.scene.characters)
       if (data.firstTime) {
         // If firstTime is true, components/login.js is handling this
         this.stopLoading();
@@ -366,6 +367,7 @@ class Game extends Page {
 
       this.hallways = new Map();
 
+      console.log(data.room.characters)
       Object.entries(data.room.characters).forEach(([id, character]) => {
         this.scene.newCharacter(id, character);
         this.characters.set(id, character);
@@ -562,7 +564,6 @@ class Game extends Page {
       // Resize appropriately if we're in a sponsor room
       this.handleWindowSize();
 
-      
       data.room.elements.forEach((element) => {
         this.loadingTasks += 1;
 
@@ -680,9 +681,10 @@ class Game extends Page {
     } else if (data.type === 'join') {
       this.scene.newCharacter(data.character.id, data.character);
     } else if (data.type === 'leave') {
-      if (data.character.id === this.characterId) {
-        return;
-      }
+      // if (data.character.id === this.characterId) {
+        // return;
+      // }
+      console.log("deleting", data.character.id)
       this.scene.deleteCharacter(data.character.id);
     } else if (data.type === 'chat') {
       this.scene.sendChat(data.id, data.mssg);
@@ -1058,8 +1060,6 @@ class Game extends Page {
 
   makeSceneRequestFunc = (gameRect, element, callback) =>  {
     return (data) => {
-      console.log(element)
-
       let basebb = null;
       let customShift = 0;
 
@@ -1071,9 +1071,6 @@ class Game extends Page {
 
       const viewbox = svg.firstElementChild.getAttribute("viewBox").split(" ").map((num) => parseFloat(num))
       const aspect = viewbox[2]/viewbox[3]
-      console.log(aspect, element.imagePath)
-      console.log(gameRect.width/gameRect.height)
-      console.log(gameRect.width, gameRect.height)
       const bb = {
         x: element.data.x, 
         y: element.data.y, 
@@ -1082,7 +1079,6 @@ class Game extends Page {
       };
 
       if (baseElem !== null && baseElem.firstElementChild.getAttribute("points") !== null){
-        console.log(baseElem)
         const base = baseElem.firstElementChild.getAttribute("points").trim().split(",").join(" ").split(" ").map((num) => parseFloat(num))
         // these are coordinates w/ y=0 at top and y=1 at bottom
         const scaledBaseYs = base.filter((el, i) => i % 2 === 1).map((y) => y/(viewbox[3]));

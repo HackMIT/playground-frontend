@@ -78,6 +78,12 @@ class Scene {
 
   // create a new character at 0,0
   newCharacter(id, character) {
+    console.log("making ch", id)
+    console.log("chars", this.characters)
+    if (this.characters.hasOwnProperty(id)) { 
+      console.log("hey");
+      return; 
+    }
     this.characters[id] = new Character(character, this, (vec) => {
       vec.project(this.camera);
 
@@ -209,8 +215,6 @@ class Scene {
     const aspect = this.container.clientWidth / this.container.clientHeight;
     const height = boundingBox.height * 2 * d * Math.sqrt(3 / 2);
     const width = boundingBox.width * 2 * d * aspect;
-    console.log(width/height * Math.sqrt(3/2), element.imagePath)
-    console.log(aspect)
     const baseX = boundingBox.x;
     const baseY = boundingBox.y + boundingBox.height * (1 / 2 - shiftAmt - customShift);
     const basePt = this.worldVectorForPos(baseX, baseY);
@@ -233,8 +237,6 @@ class Scene {
           const semiAxisy = Math.min(basebb.leftY, basebb.rightY);
           plane.renderOrder = (boundingBox.y - boundingBox.height * (1/2 - semiAxisy)) * this.container.clientHeight;
         }
-        console.log(plane.renderOrder, imgPath)
-
 
         plane.position.set(basePt.x, height / 2 - height * (shiftAmt + customShift), basePt.z);
         // plane.scale.set(width, height, 1);
@@ -260,12 +262,6 @@ class Scene {
           const leftPt = this.worldVectorForPos(leftX, leftY);
           const rightPt = this.worldVectorForPos(rightX, rightY);
 
-          // const geometry1 = new THREE.SphereGeometry( 2, 32, 32 );
-          // const material1 = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-          // const sphere = new THREE.Mesh( geometry1, material1 );
-          // sphere.position.set(geometry.vertices[2].x, geometry.vertices[2].y, geometry.vertices[2].z);
-          // this.scene.add( sphere );
-
           const camDirProj = new THREE.Vector3(1,0,1);
           const leftProj = new THREE.Vector3(geometry.vertices[0].x, 0, geometry.vertices[0].z);
           const tl = leftPt.clone().addScaledVector(leftProj, -1).dot(camDirProj)/2
@@ -278,20 +274,6 @@ class Scene {
 
           geometry.vertices[1].addScaledVector(cameraDirection, tr)
           geometry.vertices[3].addScaledVector(cameraDirection, tr)
-
-          // const geometry1 = new THREE.SphereGeometry( 2, 32, 32 );
-          // const material1 = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-          // const sphere = new THREE.Mesh( geometry1, material1 );
-          // sphere.position.set(geometry.vertices[0].x, geometry.vertices[0].y, geometry.vertices[0].z);
-          // this.scene.add( sphere );
-
-          // const geometry2 = new THREE.SphereGeometry( 2, 32, 32 );
-          // const material2 = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-          // const sphere2 = new THREE.Mesh( geometry2, material2 );
-          // sphere2.position.set(geometry.vertices[2].x, geometry.vertices[2].y, geometry.vertices[2].z);
-          // this.scene.add( sphere2 );
-
-          
         }
 
         this.scene.add(plane);
