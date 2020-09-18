@@ -78,6 +78,8 @@ class Game extends Page {
   start = () => {
     document.getElementById('top-bar-button-container').style.display = 'none';
     document.getElementById('chat').style.display = 'none';
+    document.getElementById('form-button').style.display = 'none';
+    document.getElementById('edit-button').style.display = 'none';
 
     if (isMobile(window.navigator).any || !window.WebSocket) {
       this.stopLoading();
