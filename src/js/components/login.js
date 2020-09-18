@@ -11,6 +11,7 @@ const GET_EMAIL = 1;
 const CHECK_EMAIL = 2;
 const CREATE_ACCOUNT = 3;
 const CODE_OF_CONDUCT = 4;
+const CHECK_GITHUB = 5;
 
 class LoginPanel {
   constructor() {
@@ -297,6 +298,34 @@ class LoginPanel {
               id="finish-button"
               className="green"
               disabled
+              onclick={() => {
+                this.state = CHECK_GITHUB;
+                this.update();
+              }}
+            >
+              Continue
+            </button>
+          </div>
+        );
+      case CHECK_GITHUB:
+        return (
+          <div>
+            <h1>Enjoy!</h1>
+            <p>
+              If you like what you see, please consider giving us a star on
+              GitHub! Enjoy your weekend!
+            </p>
+            <button
+              className="blue"
+              onclick={() =>
+                window.open('https://github.com/hackmit/playground', '_blank')
+              }
+            >
+              Go to GitHub
+            </button>
+            <button
+              id="finish-button"
+              className="green"
               onclick={() => this.finish()}
             >
               Finish
