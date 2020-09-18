@@ -4,7 +4,9 @@ import socket from '../socket';
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
 
+const ORGANIZER = 1;
 const SPONSOR = 2;
+const MENTOR = 3;
 
 const INITIAL_STATE = 0;
 const GET_EMAIL = 1;
@@ -56,14 +58,14 @@ class LoginPanel {
               Sponsor Login
             </button>
             <button
+              className="yellow"
+              onclick={() => this.handleEmailLogin(MENTOR)}
+            >
+              Mentor Login
+            </button>
+            <button
               className="red"
-              onclick={() => {
-                // TODO: Replace with handleEmailLogin(ORGANIZER)
-                socket.send({
-                  type: 'join',
-                  name: prompt("What's your name?"),
-                });
-              }}
+              onclick={() => this.handleEmailLogin(ORGANIZER)}
             >
               Organizer Login
             </button>

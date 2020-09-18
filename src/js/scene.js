@@ -53,7 +53,7 @@ class Scene {
       this.container.clientHeight
     );
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 0.8;
+    this.renderer.toneMappingExposure = 0.85;
     this.renderer.outputEncoding = THREE.sRGBEncoding;
     this.renderer.setClearColor(0xffffff, 0);
     this.container.appendChild(this.renderer.domElement);

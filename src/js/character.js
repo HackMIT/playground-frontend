@@ -28,6 +28,7 @@ class Character {
     const onModelLoadSuccess = (gltf) => {
       const scale = data.id === 'tim' ? 0.04 : 1.3;
       gltf.scene.scale.set(scale, scale, scale);
+      gltf.scene.castShadow = true;
       this.setModel(
         parent,
         gltf.scene,

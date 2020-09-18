@@ -520,7 +520,7 @@ class Game extends Page {
 
       //  organizer
       if (characterManager.character.role === 1) {
-        document.getElementById('edit-button').style.display = 'block';
+        // document.getElementById('edit-button').style.display = 'block';
       }
       //  sponsor
       else if (characterManager.character.role === 4) {
@@ -879,7 +879,7 @@ class Game extends Page {
     const gameRect = document.getElementById('game').getBoundingClientRect();
 
     this.elements.forEach((element) => {
-      this.convertElementTo3d(element, gameRect, () => { });
+      this.convertElementTo3d(element, gameRect, () => {});
     });
 
     this.elements.forEach((element) => {
