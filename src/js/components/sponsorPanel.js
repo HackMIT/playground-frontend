@@ -2,6 +2,7 @@ import socket from '../socket';
 
 import '../../styles/sponsorPanel.scss';
 import characterManager from '../managers/character';
+import notificationsManager from '../managers/notifications';
 
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
@@ -29,6 +30,11 @@ class SponsorPanel {
     switch (msg.type) {
       case 'queue_update_sponsor':
         this.queue = msg.subscribers;
+        if (!this.isOpen) {
+          const audio = new Audio('/audio/notification.mp3');
+          audio.play();
+          notificationsManager.displayMessage("Someone joined the queue", 7000);
+        }
         break;
       case 'sponsor':
         this.sponsor = msg.sponsor;
@@ -56,20 +62,30 @@ class SponsorPanel {
       type: 'queue_subscribe',
       sponsorId: this.sponsorId,
     });
+
+    this.isOpen = true;
   };
 
   unsubscribe = () => {
-    socket.send({
-      type: 'queue_unsubscribe',
-      sponsorId: this.sponsorId,
-    });
+    // socket.send({
+    //   type: 'queue_unsubscribe',
+    //   sponsorId: this.sponsorId,
+    // });
+    this.isOpen = false;
   };
 
   chat = (subscriberId) => {
+    let zoomLink = document.getElementById('sponsor-zoom-link').value;
+
+    if (zoomLink && !zoomLink.startsWith('http')) {
+      zoomLink = `https://${zoomLink}`;
+    }
+
     socket.send({
       type: 'queue_remove',
       characterId: subscriberId,
       sponsorId: this.sponsorId,
+      zoom: zoomLink,
     });
   };
 

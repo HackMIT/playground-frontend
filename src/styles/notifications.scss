@@ -12,6 +12,7 @@
   opacity: 1;
   justify-content: left;
   align-items: top;
+  z-index: 3;
 
   &.hidden {
     opacity: 0;
