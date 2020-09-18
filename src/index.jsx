@@ -667,11 +667,13 @@ class Game extends Page {
 
   handleDayofButton = () => {
     createModal(
-      <iframe
-        id="day-of-iframe"
-        className="modal-frame"
-        src="https://dayof.hackmit.org"
-      />
+      <div id="day-of-div">
+        <iframe
+          id="day-of-iframe"
+          className="modal-frame"
+          src="https://dayof.hackmit.org"
+        />
+      </div>
     );
   };
 

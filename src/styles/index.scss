@@ -805,6 +805,12 @@ body {
 
 }
 
+#day-of-div {
+  height: 100%;
+  padding: 0px;
+  overflow-x: hidden;
+}
+
 #challenges-modal {
   background: $blue_light;
 
