@@ -1,6 +1,8 @@
 import socket from '../socket';
 
 import '../../styles/sponsorPanel.scss';
+import characterManager from '../managers/character';
+
 
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
@@ -103,6 +105,19 @@ class SponsorPanel {
     return (
       <div>
         <h2>Hacker Queue</h2>
+        <div id="sponsor-zoom">
+          <p>Zoom Link: This is the link that hackers will receive when you accept them off of the queue.</p>
+          <div id="sponsor-zoom-input">
+            <input defaultValue={characterManager.character.zoom} id="sponsor-zoom-link"/>
+            <button onclick={() => {
+              socket.send({
+                type: 'settings',
+                zoom: document.getElementById('sponsor-zoom-link').value,
+                settings: { twitterHandle: '' },
+              })
+            }}>Update</button>
+          </div>
+        </div>
         <div>{hackerElems}</div>
       </div>
     );

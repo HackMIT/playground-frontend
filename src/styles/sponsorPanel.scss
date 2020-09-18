@@ -96,6 +96,45 @@
           padding: 8px;
         }
       }
+
+      #sponsor-zoom {
+        #sponsor-zoom-input {
+          display: flex;
+          flex-direction: row;
+        }
+
+        p {
+          font-size: 13px;
+          margin-bottom: 4px;
+        }
+
+        input,
+        textarea {
+          box-sizing: border-box;
+          border: 2px solid $blue_dark;
+          border-radius: 4px;
+          font-size: 14px;
+          padding: 8px;
+          // width: 100%;
+          flex-grow: 1;
+        }
+
+        button {
+          background: #43a047;
+          border: none;
+          border-radius: 4px;
+          color: #fff;
+          cursor: pointer;
+          font-size: 14px;
+          margin-left: 4px;
+          outline: none;
+          padding: 10px 16px;
+
+          &:hover {
+            background: #388e3c;
+          }
+        }
+      }
     }
   }
 }
