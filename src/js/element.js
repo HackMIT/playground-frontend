@@ -32,7 +32,7 @@ class Element extends Editable {
       path = this.data.path.split(',')[this.data.state];
     }
 
-    return `https://hackmit-playground-2020.s3.amazonaws.com/elements/${path}`;
+    return `https://hackmit-playground-2020.s3.amazonaws.com/elements/${path}?${Math.random()}`;
   }
 
   get name() {
@@ -56,7 +56,7 @@ class Element extends Editable {
   }
 
   hasAction() {
-    return (this.data.action !== NO_ACTION || this.data.toggleable)
+    return this.data.action !== NO_ACTION || this.data.toggleable;
   }
 
   configureElement(elem) {
