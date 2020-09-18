@@ -36,6 +36,7 @@ import './images/Code_Icon.svg';
 import './images/Coffee_Icon.svg';
 import './images/Site_Icon.svg';
 import './images/sponsor_text.svg';
+import './images/icons/leave-queue.svg';
 
 import './images/icons/megaphone.svg';
 import './images/icons/dance.svg';
@@ -409,8 +410,15 @@ class Game extends Page {
       this.room = data.room;
 
       if (this.room.sponsorId.length > 0) {
-        if (characterManager.character.queueId !== this.room.sponsorId.length) {
+        if (characterManager.character.queueId !== this.room.sponsorId) {
           document.getElementById('queue-button-icon').src = './images/Coffee_Icon.svg';
+          document.getElementById(
+            'queue-button-text'
+          ).innerText = `Talk to ${this.room.sponsor.name}`;
+        }
+        else {
+          document.getElementById('queue-button-icon').src = './images/icons/leave-queue.svg';
+          document.getElementById('queue-button-text').innerText = `Leave Queue`;
         }
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
@@ -427,9 +435,6 @@ class Game extends Page {
           '<a href=\'$1\' target="_blank">$1</a>'
         );
         document.getElementById('sponsor-description').innerHTML = text;
-        document.getElementById(
-          'queue-button-text'
-        ).innerText = `Talk to ${this.room.sponsor.name}`;
 
         document.getElementById(
           'sponsor-name'
