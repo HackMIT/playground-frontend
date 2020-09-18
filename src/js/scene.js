@@ -209,6 +209,8 @@ class Scene {
     const aspect = this.container.clientWidth / this.container.clientHeight;
     const height = boundingBox.height * 2 * d * Math.sqrt(3 / 2);
     const width = boundingBox.width * 2 * d * aspect;
+    console.log(width/height * Math.sqrt(3/2), element.imagePath)
+    console.log(aspect)
     const baseX = boundingBox.x;
     const baseY = boundingBox.y + boundingBox.height * (1 / 2 - shiftAmt - customShift);
     const basePt = this.worldVectorForPos(baseX, baseY);

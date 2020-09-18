@@ -374,29 +374,29 @@ class Game extends Page {
       this.elementNames = data.elementNames;
       this.roomNames = data.roomNames;
 
-      data.room.elements.forEach((element) => {
-        this.loadingTasks += 1;
+      // data.room.elements.forEach((element) => {
+      //   this.loadingTasks += 1;
 
-        const elementElem = new Element(element, element.id, data.elementNames);
-        this.elements.push(elementElem);
-        const gameRect = document.getElementById('game').getBoundingClientRect();
+      //   const elementElem = new Element(element, element.id, data.elementNames);
+      //   this.elements.push(elementElem);
+      //   const gameRect = document.getElementById('game').getBoundingClientRect();
 
-        elementElem.onload = () => {
-          this.convertElementTo3d(elementElem, gameRect, () => this.finishedLoadingPart());
-          elementElem.element.style.opacity = 0;
-        };
+      //   elementElem.onload = () => {
+      //     this.convertElementTo3d(elementElem, gameRect, () => this.finishedLoadingPart());
+      //     elementElem.element.style.opacity = 0;
+      //   };
 
-        const threeContainer = document.getElementById('three-container');
+      //   const threeContainer = document.getElementById('three-container');
 
-        if (element.action > 0) {
-          threeContainer.appendChild(elementElem.element);
-        } else {
-          threeContainer.insertBefore(
-            elementElem.element,
-            document.getElementById('three-canvas')
-          );
-        }
-      });
+      //   if (element.action > 0) {
+      //     threeContainer.appendChild(elementElem.element);
+      //   } else {
+      //     threeContainer.insertBefore(
+      //       elementElem.element,
+      //       document.getElementById('three-canvas')
+      //     );
+      //   }
+      // });
 
       Object.entries(data.room.hallways).forEach(([id, hallway]) => {
         this.hallways.set(id, new Hallway(hallway, id, data.roomNames));
@@ -561,6 +561,31 @@ class Game extends Page {
 
       // Resize appropriately if we're in a sponsor room
       this.handleWindowSize();
+
+      
+      data.room.elements.forEach((element) => {
+        this.loadingTasks += 1;
+
+        const elementElem = new Element(element, element.id, data.elementNames);
+        this.elements.push(elementElem);
+        const gameRect = document.getElementById('game').getBoundingClientRect();
+
+        elementElem.onload = () => {
+          this.convertElementTo3d(elementElem, gameRect, () => this.finishedLoadingPart());
+          elementElem.element.style.opacity = 0;
+        };
+
+        const threeContainer = document.getElementById('three-container');
+
+        if (element.action > 0) {
+          threeContainer.appendChild(elementElem.element);
+        } else {
+          threeContainer.insertBefore(
+            elementElem.element,
+            document.getElementById('three-canvas')
+          );
+        }
+      });
 
       // Show floor selector inside hacker arena
       if (this.room.id.startsWith('arena:')) {
@@ -1046,7 +1071,9 @@ class Game extends Page {
 
       const viewbox = svg.firstElementChild.getAttribute("viewBox").split(" ").map((num) => parseFloat(num))
       const aspect = viewbox[2]/viewbox[3]
-
+      console.log(aspect, element.imagePath)
+      console.log(gameRect.width/gameRect.height)
+      console.log(gameRect.width, gameRect.height)
       const bb = {
         x: element.data.x, 
         y: element.data.y, 
