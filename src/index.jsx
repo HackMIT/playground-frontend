@@ -11,6 +11,7 @@ import settings from './settings.jsx';
 import map from './js/components/map';
 import feedback from './feedback.jsx';
 import queueSponsor from './js/components/sponsorPanel';
+import adminPanel from './js/components/adminPanel';
 import projectForm from './js/components/projectForm';
 import friends from './js/components/friends';
 import dance from './js/components/dance';
@@ -18,6 +19,7 @@ import jukebox from './jukebox';
 import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 import characterSelector from './js/components/characterSelector';
+import queueForm from './js/components/queueForm';
 
 import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
@@ -34,6 +36,7 @@ import './images/Code_Icon.svg';
 import './images/Coffee_Icon.svg';
 import './images/Site_Icon.svg';
 import './images/sponsor_text.svg';
+import './images/icons/leave-queue.svg';
 
 import './images/icons/megaphone.svg';
 import './images/icons/dance.svg';
@@ -55,14 +58,15 @@ import './images/icons/dab.svg';
 import './images/icons/wave.svg';
 import './images/icons/floss.svg';
 import './images/icons/exclamation.svg';
-import './images/icons/form-check.svg';
+import './images/icons/event_flag.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
-// eslint-disable-next-line
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
+const SPONSOR_NAME_IMAGE_URL =
+  'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/sponsors/%PATH%.svg';
 
 class Game extends Page {
   constructor() {
@@ -139,6 +143,18 @@ class Game extends Page {
         to: 'home',
       });
     });
+    this.addClickListener('connectivity-button', () =>
+      this.handleArenaButton('connectivity')
+    );
+    this.addClickListener('education-button', () =>
+      this.handleArenaButton('education')
+    );
+    this.addClickListener('healthtech-button', () =>
+      this.handleArenaButton('health')
+    );
+    this.addClickListener('urbaninnovation-button', () =>
+      this.handleArenaButton('urban')
+    );
 
     socket.onopen = this.handleSocketOpen;
     socket.onclose = this.handleSocketClose;
@@ -218,6 +234,14 @@ class Game extends Page {
       this.scene.fixCameraOnResize();
       this.handleWindowSize();
     });
+
+    window.onclick = (e) => {
+      if (e.target.id === 'modal-background') {
+        document.getElementById('modal-background').remove();
+      } else if (e.target.id === 'form-modal-background') {
+        document.getElementById('form-modal-background').remove();
+      }
+    };
   };
 
   handleGameClick = (e) => {
@@ -306,10 +330,12 @@ class Game extends Page {
 
   handleSocketMessage = (data) => {
     console.log(data);
+    console.log(data.events);
     if (data.type === 'init') {
       if (data.firstTime) {
         // If firstTime is true, components/login.js is handling this
-        loginPanel.show();
+        this.stopLoading();
+        loginPanel.show(true);
         return;
       }
 
@@ -386,6 +412,19 @@ class Game extends Page {
       this.room = data.room;
 
       if (this.room.sponsorId.length > 0) {
+        if (characterManager.character.queueId !== this.room.sponsorId) {
+          document.getElementById('queue-button-icon').src =
+            './images/Coffee_Icon.svg';
+          document.getElementById(
+            'queue-button-text'
+          ).innerText = `Talk to ${this.room.sponsor.name}`;
+        } else {
+          document.getElementById('queue-button-icon').src =
+            './images/icons/leave-queue.svg';
+          document.getElementById(
+            'queue-button-text'
+          ).innerText = `Leave Queue`;
+        }
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
           'sponsor-name'
@@ -395,12 +434,16 @@ class Game extends Page {
 
         document.getElementById('challenges-button').style.display =
           this.room.sponsor.challenges.length > 0 ? 'inline-block' : 'none';
+
+        const text = this.room.sponsor.description.replace(
+          /(https?:\/\/[^\s]+)/g,
+          '<a href=\'$1\' target="_blank">$1</a>'
+        );
+        document.getElementById('sponsor-description').innerHTML = text;
+
         document.getElementById(
-          'sponsor-description'
-        ).innerText = this.room.sponsor.description;
-        document.getElementById(
-          'queue-button-text'
-        ).innerText = `Talk to ${this.room.sponsor.name}`;
+          'sponsor-name'
+        ).src = SPONSOR_NAME_IMAGE_URL.replace('%PATH%', this.room.sponsorId);
       } else {
         document.getElementById('sponsor-pane').classList.remove('active');
         document.getElementById('outer').classList.remove('sponsor');
@@ -535,6 +578,43 @@ class Game extends Page {
 
       // Resize appropriately if we're in a sponsor room
       this.handleWindowSize();
+
+      // Show floor selector inside hacker arena
+      if (this.room.id.startsWith('arena:')) {
+        document.getElementById('floor-selector').style.display = 'block';
+      } else {
+        document.getElementById('floor-selector').style.display = 'none';
+      }
+
+      // Show current event on navbar
+      const currTimestamp = Math.floor(Date.now() / 1000);
+
+      data.events.some((event) => {
+        if (
+          event.startTime <= currTimestamp &&
+          currTimestamp <= event.startTime + event.duration * 60
+        ) {
+          document.getElementById('top-bar-event').innerHTML = event.name;
+          document.getElementById('top-bar-banner-container').style.visibility =
+            'visible';
+          document.getElementById('top-bar-banner-link').onclick = () => {
+            if (event.url.startsWith('room:')) {
+              socket.send({
+                type: 'teleport',
+                to: event.url.substring(event.url.indexOf(':') + 1),
+                x: 0.6007,
+                y: 0.6905,
+              });
+            } else {
+              window.open(event.url, '_blank');
+            }
+          };
+
+          return true;
+        }
+
+        return false;
+      });
     } else if (data.type === 'dance') {
       this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
@@ -608,6 +688,28 @@ class Game extends Page {
           </div>
         );
       }
+      if (data.code === 4) {
+        createModal(
+          <div id="jukebox-modal">
+            <h1 className="white-text">Oops!</h1>
+            <p className="white-text">
+              You must be a college student to enter a sponsor queue.
+            </p>
+          </div>
+        );
+      }
+      if (data.code === 5) {
+        this.stopLoading();
+        createModal(
+          <div id="jukebox-modal">
+            <h1 className="white-text">Oops!</h1>
+            <p className="white-text">
+              You must fill out the Spicy Saturday Survey on time to enter the
+              hacker arena.
+            </p>
+          </div>
+        );
+      }
     } else if (data.type === 'join') {
       this.scene.newCharacter(data.character.id, data.character);
     } else if (data.type === 'leave') {
@@ -631,11 +733,13 @@ class Game extends Page {
 
   handleDayofButton = () => {
     createModal(
-      <iframe
-        id="day-of-iframe"
-        className="modal-frame"
-        src="https://dayof.hackmit.org"
-      />
+      <div id="day-of-div">
+        <iframe
+          id="day-of-iframe"
+          className="modal-frame"
+          src="https://dayof.hackmit.org"
+        />
+      </div>
     );
   };
 
@@ -693,6 +797,15 @@ class Game extends Page {
     }
   };
 
+  handleArenaButton = (id) => {
+    socket.send({
+      type: 'teleport',
+      to: `arena:${id}`,
+      x: 0.6007,
+      y: 0.6905,
+    });
+  };
+
   handleFormButton = () => {
     if (!characterManager.character.project) {
       createModal(projectForm.createFormModal());
@@ -709,8 +822,9 @@ class Game extends Page {
         'queue',
         queueSponsor.onClose
       );
-
       queueSponsor.subscribe(characterManager.character.sponsorId);
+    } else if (characterManager.character.role === 1) {
+      createModal(adminPanel.createAdminModal(), '', adminPanel.onClose);
     } else {
       createModal(settings.createSettingsModal(this.settings));
     }
@@ -726,9 +840,47 @@ class Game extends Page {
       );
 
       queueSponsor.subscribe(this.room.sponsor.id);
-    } else {
-      // if (characterManager.character.role === 1 /* hacker */) {
+    } else if (queueManager.inQueue()) {
       queueManager.join(this.room.sponsor);
+    } else if (
+      characterManager.character.queueId !== '' &&
+      characterManager.character.queueId !== this.room.sponsor.id
+    ) {
+      createModal(
+        <div id="other-queue-modal">
+          <h1>Confirm:</h1>
+          <p>
+            You are currently in the queue for{' '}
+            {characterManager.character.queueId}, would you like to leave and
+            join this queue instead?
+          </p>
+          <div id="queue-button-div">
+            <button
+              id="no-button"
+              onclick={() => {
+                document.getElementById('modal-background').remove();
+              }}
+            >
+              No
+            </button>
+            <button
+              onclick={() => {
+                document.getElementById('modal-background').remove();
+                socket.send({
+                  type: 'queue_remove',
+                  characterId: characterManager.character.id,
+                  sponsorId: this.room.sponsor.id,
+                });
+                createModal(queueForm.createQueueModal(this.room.sponsor));
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      );
+    } else {
+      createModal(queueForm.createQueueModal(this.room.sponsor));
     }
   };
 
@@ -737,10 +889,15 @@ class Game extends Page {
       <div id="challenges-modal">
         <div id="challenges-content">
           <h1>{this.room.sponsor.name} Challenges</h1>
-          {this.room.sponsor.challenges}
+          <div id="challenge-text"></div>
         </div>
       </div>
     );
+    const text = this.room.sponsor.challenges.replace(
+      /(https?:\/\/[^\s]+)/g,
+      '<a href=\'$1\' target="_blank">$1</a>'
+    );
+    document.getElementById('challenge-text').innerHTML = text;
   };
 
   handleWebsiteButton = () => {
@@ -753,19 +910,6 @@ class Game extends Page {
 
   handleJukeboxButton = () => {
     jukebox.openJukeboxPane(document.body);
-
-    // No inappropriate songs warning
-    createModal(
-      <div id="jukebox-modal">
-        <h1 className="white-text">Welcome to the Jukebox!</h1>
-        <p className="white-text">
-          Here you can add songs to the queue for all hackers to listen to. If
-          you select any inappropriate songs, you will be disqualified. Please
-          see our Code of Conduct for more information.
-        </p>
-      </div>,
-      'quarantine'
-    );
   };
 
   handleFriendsButton = () => {
@@ -840,6 +984,7 @@ class Game extends Page {
   };
 
   handleIglooButton = () => {
+    // this.showFeedback();
     this.startLoading();
 
     socket.send({

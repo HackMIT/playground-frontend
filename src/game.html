@@ -13,6 +13,14 @@
   <meta property="og:url" content="play.hackmit.org" />
   <title><%= htmlWebpackPlugin.options.title %></title>
   <link rel="icon" href="/favicon.ico" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-63828172-15"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-63828172-15');
+  </script>
 </head>
 
 <body>
@@ -26,11 +34,19 @@
       </div>
       <img id="top-bar-logo" src="/images/logo.png" />
       <div id="top-bar-button-container">
-        <button id="day-of-button">
-          <img src="/images/icons/guidebook.svg" />
-        </button>
+        <div id="top-bar-banner-container">
+          <div id="top-bar-banner-link">
+            <div id="top-bar-left-arrow"></div>
+            <img src="/images/icons/event_flag.svg" />
+            <p id="top-bar-event"></p>
+            <div id="top-bar-right-arrow"></div>
+          </div>
+        </div>
         <button id="map-button">
           <img src="/images/icons/map.svg" />
+        </button>
+        <button id="day-of-button">
+          <img src="/images/icons/guidebook.svg" />
         </button>
         <button id="schedule-button">
           <img src="/images/icons/schedule.svg" />
@@ -66,7 +82,7 @@
             <div class="icon-container">
               <img id="queue-button-icon" src="/images/Coffee_Icon.svg" />
             </div>
-            <span id="queue-button-text">Talk to CMT</span>
+            <span id="queue-button-text">Talk to DRW</span>
           </div>
           <div class="action" id="website-button">
             <div class="icon-container">
@@ -76,6 +92,14 @@
           </div>
         </div>
         <p id="sponsor-description"></p>
+      </div>
+
+      <div id="floor-selector" style="display: none">
+        <h3>Floors</h3>
+        <button id="connectivity-button">Connectivity</button>
+        <button id="healthtech-button">Health Tech</button>
+        <button id="education-button">Education</button>
+        <button id="urbaninnovation-button">Urban Innovation</button>
       </div>
     </div>
 
@@ -90,7 +114,7 @@
       <button id="jukebox-button">
         <img src="/images/icons/music.svg" />
       </button>
-      <input id="chat-box" type="text" placeholder="Send a message to the room" />
+      <input id="chat-box" type="text" placeholder="Say something" />
       <p id="chat-length-indicator" class="invisible"></p>
       <button id="send-button">
         <img src="/images/icons/send.svg" />
@@ -106,6 +130,7 @@
   </div>
 
   <div id="login-panel"></div>
+  <div id="hidden-jukebox"></div>
 </body>
 
 </html>

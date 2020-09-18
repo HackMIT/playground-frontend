@@ -10,9 +10,11 @@ import closeIcon from '../images/icons/close-white.svg';
 import earthIcon from '../images/icons/earth.svg';
 import flagIcon from '../images/icons/flag.svg';
 import messageIcon from '../images/icons/message.svg';
+import starIcon from '../images/icons/star.svg';
 
 // eslint-disable-next-line
 import createElement from '../utils/jsxHelper';
+import createModal from '../modal';
 
 class Character {
   constructor(data, parent, reverseRaycaster) {
@@ -80,7 +82,20 @@ class Character {
 
       req.send();
     }
+
+    socket.subscribe('achievements', this.handleSocketMessage);
   }
+
+  handleSocketMessage = (msg) => {
+    if (msg.type !== 'achievements') {
+      return;
+    }
+
+    console.log(msg);
+
+    // Create achievements modal here
+    createModal();
+  };
 
   getColor = (hex) => {
     return hex
@@ -176,24 +191,22 @@ class Character {
   }
 
   createCharacterProfile() {
-    let buttons;
+    const none = <div style="display: none" />;
 
-    if (this.data.id === characterManager.getCharacterId()) {
-      buttons = <div />;
-    } else if (characterManager.isFriend(this.data.id)) {
-      buttons = (
-        <div id="profile-buttons" className="profile-buttons">
+    const buttons = (
+      <div id="profile-buttons" className="profile-buttons">
+        {characterManager.isFriend(this.data.id) ? (
           <button>
             <img src={messageIcon} />
           </button>
-          <button>
-            <img src={flagIcon} />
-          </button>
-        </div>
-      );
-    } else {
-      buttons = (
-        <div id="profile-buttons" className="profile-buttons">
+        ) : (
+          none
+        )}
+
+        {characterManager.isFriend(this.data.id) ||
+        characterManager.getCharacterId() === this.data.id ? (
+          none
+        ) : (
           <button
             onclick={() => {
               socket.send({
@@ -204,12 +217,33 @@ class Character {
           >
             <img src={addFriendIcon} />
           </button>
-          <button id="report-button" onclick={() => { this.handleReportButton() }}>
+        )}
+
+        <button
+          onclick={() => {
+            socket.send({
+              type: 'get_achievements',
+              id: this.data.id,
+            });
+          }}
+        >
+          <img src={starIcon} />
+        </button>
+
+        {this.data.id === characterManager.getCharacterId() ? (
+          none
+        ) : (
+          <button
+            id="report-button"
+            onclick={() => {
+              this.handleReportButton();
+            }}
+          >
             <img src={flagIcon} />
           </button>
-        </div>
-      );
-    }
+        )}
+      </div>
+    );
 
     this.profileBox = (
       <div className="profile-container">
@@ -224,18 +258,23 @@ class Character {
             <div className="bio-background">
               <img className="earth" src={earthIcon} />
               <p className="bio">
-                This is a long long bio, I have nothing to say but let's just
-                fill it with as many words as I can.
+                {this.data.bio.length === 0
+                  ? "This person hasn't added their bio yet!"
+                  : this.data.bio}
               </p>
               <div className="line1" />
               <div className="location-container">
-                <p className="location">Arizona, United States</p>
+                <p className="location">
+                  {this.data.location.length === 0
+                    ? 'Earth'
+                    : this.data.location}
+                </p>
                 <div className="line2" />
               </div>
             </div>
           </div>
         </div>
-        {buttons}
+        {this.data.id === 'tim' ? null : buttons}
       </div>
     );
   }

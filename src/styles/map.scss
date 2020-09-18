@@ -9,8 +9,11 @@
 
   #map-container {
     background: url(../images/map/Ground.svg);
+    background-repeat: no-repeat;
+    background-position: center;
     width: 100%;
     height: calc(60vw * (578.76 / 1017.16));
+    overflow-y: hidden;
     position: relative;
 
     img {
@@ -44,7 +47,6 @@
         align-items: center;
         justify-content: center;
         background: white;
-        border: 1px solid black;
         position: absolute;
         width: fit-content;
         max-width: initial;

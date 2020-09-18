@@ -83,12 +83,18 @@ class AnimatedModel {
       clearTimeout(this.chatTimer);
     }
 
-    this.chatBubble.innerHTML = msg;
+    this.chatBubble.innerText = msg;
     this.gameDom.appendChild(this.chatBubble);
 
+    const wpm = 180;
+    const words = msg.length / 5;
+    const wordsTime = ((words / wpm) * 60) * 1000;
+    const timeout = wordsTime + 5000;
+
+    console.log(timeout)
     this.chatTimer = setTimeout(() => {
       this.chatBubble.remove();
-    }, 5000);
+    }, timeout);
   }
 
   setDanceAnimation(anim) {
