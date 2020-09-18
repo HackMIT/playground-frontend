@@ -114,6 +114,8 @@ class Game extends Page {
     this.elementNames = [];
     this.roomNames = [];
 
+    this.buildingIntervals = [];
+
     this.addClickListener('add-button', this.handleElementAddButton);
     this.addClickListener('add-hallway-button', this.handleHallwayAddButton);
     this.addClickListener('add-room-button', this.handleRoomAddButton);
@@ -328,7 +330,9 @@ class Game extends Page {
       // Delete stuff from previous room
       this.scene.deleteAllCharacters();
       this.scene.removeAllBuildings();
-
+      this.buildingIntervals.forEach((interval) => {
+        clearInterval(interval);
+      });
       this.elements.forEach((element) => {
         element.remove();
       });
@@ -571,6 +575,7 @@ class Game extends Page {
     } else if (data.type === 'element_update') {
       const idx = this.elements.findIndex((elem) => elem.id === data.id);
       this.elements[idx].applyUpdate(data.element);
+      this.scene.updateElement(this.elements[idx]);
     } else if (data.type === 'hallway_add') {
       this.hallways.set(
         data.id,
@@ -968,9 +973,15 @@ class Game extends Page {
 
       let shiftAmt = 0;
       const svg = data.target.responseXML;
-      if (svg.getElementById("base") !== null){
+      let baseElem = svg.getElementById("base") 
+      if (baseElem === null) {
+        baseElem = svg.getElementById("Base")
+      }
+
+      if (baseElem !== null){
+        console.log("hii")
         const viewbox = svg.firstElementChild.getAttribute("viewBox").split(" ").map((num) => parseInt(num))
-        const base = svg.getElementById("base").firstElementChild.getAttribute("points").trim().split(",").join(" ").split(" ").map((num) => parseFloat(num))
+        const base = baseElem.firstElementChild.getAttribute("points").trim().split(",").join(" ").split(" ").map((num) => parseFloat(num))
         // these are coordinates w/ y=0 at top and y=1 at bottom
         const scaledBaseYs = base.filter((el, i) => i % 2 === 1).map((y) => y/(viewbox[3]-viewbox[1]));
         const minY = Math.min.apply(null, scaledBaseYs);
@@ -980,19 +991,20 @@ class Game extends Page {
         shiftAmt = (maxY-minY)/2
       }
 
-      const buildingSprite = this.scene.create2DObject(bb, element.imagePath, shiftAmt, element);
+      this.scene.create2DObject(bb, element.imagePath, shiftAmt, element);
 
       if (element.data.changingImagePath) {
         const state_len = element.data.changingPaths.split(",").length
-        setInterval(() => {
+        const interval = setInterval(() => {
           if (element.data.changingRandomly) {
             element.data.state = Math.floor(Math.random() * Math.floor(state_len));
           } else {
             element.data.state = (element.data.state + 1) % state_len;
           }
 
-          this.scene.changeBuildingImage(buildingSprite, element.imagePath);
+          this.scene.updateBuildingImage(element.data.id);
         }, element.data.changingInterval);
+        this.buildingIntervals.push(interval)
       }
     };
   }
