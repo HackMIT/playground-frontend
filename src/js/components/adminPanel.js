@@ -28,6 +28,12 @@ class AdminPanel {
     this.sponsorMap = new Map(this.sponsorArray);
   }
 
+  handleLogOff = () => {
+    localStorage.setItem('token', null);
+    window.location.reload();
+  };
+
+
   createAdminDropdown = () => {
     const select = document.createElement('select');
     select.setAttribute('id', 'admin-sponsor-ids');
@@ -93,6 +99,9 @@ class AdminPanel {
           }}
         >
           Submit
+        </button>
+        <button id="admin-logout" onclick={this.handleLogOff}>
+          LOG OFF
         </button>
       </div>
     );

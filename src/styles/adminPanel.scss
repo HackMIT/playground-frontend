@@ -57,4 +57,27 @@
       background: #388e3c;
     }
   }
+
+  #admin-logout {
+    display: flex;
+    justify-content: center;
+    border-radius: 6px;
+    color: #c0c0c0;
+    border: 2px solid #c0c0c0;
+    cursor: pointer;
+    background: $white;
+    text-align: center;
+    outline: none;
+    // border: none;
+    margin: 2em 1em;
+    padding: 0.5em;
+    width: 12vw;
+    z-index: 25; //log off button layer
+    //   height: 38px;
+
+    &:hover {
+      background: #c0c0c0;
+      color: $white;
+    }
+  }
 }
