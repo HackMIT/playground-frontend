@@ -214,6 +214,7 @@ class Scene {
       boundingBox.height * this.container.clientHeight,
       (texture) => {
         const geometry = new THREE.PlaneGeometry(width, height);
+        console.log(geometry)
         const material = new THREE.MeshBasicMaterial({
           map: texture,
           transparent: true,
@@ -234,17 +235,18 @@ class Scene {
   }
 
   loadTexture(imgPath, width, height, callback) {
-    let texture = null;
-    if (this.textures.has(imgPath)) {
-      texture = this.textures.get(imgPath);
+    const queryIndex = imgPath.lastIndexOf('?')
+    const imgKey = imgPath.slice(0, queryIndex)
+    if (this.textures.has(imgKey)) {
+      callback(this.textures.get(imgKey))
     } else {
       const loader = new THREE.TextureLoader();
       loader.setCrossOrigin('anonymous');
-      texture = loader.load(imgPath, (texture) => {
+      loader.load(imgPath, (texture) => {
         texture.image.width = width * 2;
         texture.image.height = height * 2;
         texture.encoding = THREE.sRGBEncoding;
-        this.textures.set(imgPath, texture);
+        this.textures.set(imgKey, texture);
         callback(texture);
       });
     }
@@ -255,7 +257,7 @@ class Scene {
     const plane = this.buildings.get(id);
 
     const height = (element.data.width / element.aspectRatio) * this.container.clientWidth;
-    const texture = this.loadTexture(
+    this.loadTexture(
       element.imagePath,
       element.data.width * this.container.clientWidth,
       height,
