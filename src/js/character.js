@@ -310,7 +310,7 @@ class Character {
             </div>
           </div>
         </div>
-        {this.data.id === 'tim' ? null : buttons}
+        {this.data.id === 'tim' ? <div /> : buttons}
       </div>
     );
   }
