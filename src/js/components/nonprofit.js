@@ -25,7 +25,7 @@ class NonprofitPopup {
               potentially developing prototype open data driven humanitarian
               applications.
             </p>
-            <br></br>
+            <br />
             <p>
               Humanitarian AI is a meetup.com community with local groups in
               twelve cities. The community was started by former United Nations
@@ -61,6 +61,41 @@ class NonprofitPopup {
               <li>
                 <a href="https://data.humdata.org/">HDX:</a> The Humanitarian
                 Data Exchange
+              </li>
+            </ul>
+          </div>
+        );
+      case 'urban_displacement':
+        return (
+          <div id="nonprofit-popup">
+            <h1>Urban Displacement Project</h1>
+            <h3>Description</h3>
+            <p>
+              UDP conducts community-centered, data-driven, applied research
+              toward more equitable and inclusive futures for cities. Our
+              research aims to understand and describe the nature of
+              gentrification and displacement, and also to generate knowledge on
+              how policy interventions and investment can respond and support
+              more equitable development.
+            </p>
+            <br />
+            <p>
+              The goal of UDP is to produce rigorous research and create tools
+              to empower advocates and policymakers, to reframe conversations,
+              and to train and inspire the next generation of leaders in
+              equitable development.
+            </p>
+            <h3>Resources</h3>
+            <ul>
+              <li>
+                <a href="https://www.sensitivecommunities.org/">
+                  https://www.sensitivecommunities.org
+                </a>{' '}
+              </li>
+              <li>
+                Check out code on our github repo for identifying tract level
+                locations of communities that are sensitive to displacement and
+                housing cost increases
               </li>
             </ul>
           </div>
