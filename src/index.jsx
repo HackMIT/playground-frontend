@@ -11,6 +11,7 @@ import settings from './settings.jsx';
 import map from './js/components/map';
 import feedback from './feedback.jsx';
 import queueSponsor from './js/components/sponsorPanel';
+import adminPanel from './js/components/adminPanel';
 import projectForm from './js/components/projectForm';
 import friends from './js/components/friends';
 import dance from './js/components/dance';
@@ -18,7 +19,7 @@ import jukebox from './jukebox';
 import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 import characterSelector from './js/components/characterSelector';
-import queueForm from './js/components/queueForm'
+import queueForm from './js/components/queueForm';
 
 import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
@@ -140,6 +141,18 @@ class Game extends Page {
         to: 'home',
       });
     });
+    this.addClickListener('connectivity-button', () =>
+      this.handleArenaButton('connectivity')
+    );
+    this.addClickListener('education-button', () =>
+      this.handleArenaButton('education')
+    );
+    this.addClickListener('healthtech-button', () =>
+      this.handleArenaButton('health')
+    );
+    this.addClickListener('urbaninnovation-button', () =>
+      this.handleArenaButton('urban')
+    );
 
     socket.onopen = this.handleSocketOpen;
     socket.onclose = this.handleSocketClose;
@@ -219,6 +232,14 @@ class Game extends Page {
       this.scene.fixCameraOnResize();
       this.handleWindowSize();
     });
+
+    window.onclick = (e) => {
+      if (e.target.id === 'modal-background') {
+        document.getElementById('modal-background').remove();
+      } else if (e.target.id === 'form-modal-background') {
+        document.getElementById('form-modal-background').remove();
+      }
+    };
   };
 
   handleGameClick = (e) => {
@@ -394,6 +415,9 @@ class Game extends Page {
       this.room = data.room;
 
       if (this.room.sponsorId.length > 0) {
+        if (characterManager.character.queueId !== this.room.sponsorId.length) {
+          document.getElementById('queue-button-icon').src = './images/Coffee_Icon.svg';
+        }
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
           'sponsor-name'
@@ -403,9 +427,12 @@ class Game extends Page {
 
         document.getElementById('challenges-button').style.display =
           this.room.sponsor.challenges.length > 0 ? 'inline-block' : 'none';
-        document.getElementById(
-          'sponsor-description'
-        ).innerText = this.room.sponsor.description;
+
+        const text = this.room.sponsor.description.replace(
+          /(https?:\/\/[^\s]+)/g,
+          '<a href=\'$1\' target="_blank">$1</a>'
+        );
+        document.getElementById('sponsor-description').innerHTML = text;
         document.getElementById(
           'queue-button-text'
         ).innerText = `Talk to ${this.room.sponsor.name}`;
@@ -536,6 +563,12 @@ class Game extends Page {
       // Resize appropriately if we're in a sponsor room
       this.handleWindowSize();
 
+      // Show floor selector inside hacker arena
+      if (this.room.id.startsWith('arena:')) {
+        document.getElementById('floor-selector').style.display = 'block';
+      } else {
+        document.getElementById('floor-selector').style.display = 'none';
+      }
     } else if (data.type === 'dance') {
       this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
@@ -610,6 +643,16 @@ class Game extends Page {
           </div>
         );
       }
+      if (data.code === 4) {
+        createModal(
+          <div id="jukebox-modal">
+            <h1 className="white-text">Oops!</h1>
+            <p className="white-text">
+              You must be a college student to enter a sponsor queue.
+            </p>
+          </div>
+        );
+      }
     } else if (data.type === 'join') {
       this.scene.newCharacter(data.character.id, data.character);
     } else if (data.type === 'leave') {
@@ -633,11 +676,13 @@ class Game extends Page {
 
   handleDayofButton = () => {
     createModal(
-      <iframe
-        id="day-of-iframe"
-        className="modal-frame"
-        src="https://dayof.hackmit.org"
-      />
+      <div id="day-of-div">
+        <iframe
+          id="day-of-iframe"
+          className="modal-frame"
+          src="https://dayof.hackmit.org"
+        />
+      </div>
     );
   };
 
@@ -718,6 +763,15 @@ class Game extends Page {
     request.send();
   }
 
+  handleArenaButton = (id) => {
+    socket.send({
+      type: 'teleport',
+      to: `arena:${id}`,
+      x: 0.6007,
+      y: 0.6905,
+    });
+  };
+
   handleFormButton = () => {
     createModal(projectForm.createFormModal());
   };
@@ -729,8 +783,9 @@ class Game extends Page {
         'queue',
         queueSponsor.onClose
       );
-
       queueSponsor.subscribe(characterManager.character.sponsorId);
+    } else if (characterManager.character.role === 1) {
+      createModal(adminPanel.createAdminModal(), '', adminPanel.onClose);
     } else {
       createModal(settings.createSettingsModal(this.settings));
     }
@@ -748,11 +803,37 @@ class Game extends Page {
       queueSponsor.subscribe(this.room.sponsor.id);
     } else if (queueManager.inQueue()) {
       queueManager.join(this.room.sponsor);
-    }
-    else {
+    } else if (characterManager.character.queueId !== '' && characterManager.character.queueId !== this.room.sponsor.id) {
       createModal(
-        queueForm.createQueueModal(this.room.sponsor)
-      );
+        <div id="other-queue-modal">
+          <h1>Confirm:</h1>
+          <p>You are currently in the queue for {characterManager.character.queueId}, would you like to leave and join this queue instead?</p>
+          <div id="queue-button-div">
+            <button id="no-button"
+              onclick={() => {
+                document.getElementById('modal-background').remove();
+              }}
+            >
+              No
+            </button>
+            <button
+              onclick={() => {
+                document.getElementById('modal-background').remove();
+                socket.send({
+                  type: 'queue_remove',
+                  characterId: characterManager.character.id,
+                  sponsorId: this.room.sponsor.id,
+                });
+                createModal(queueForm.createQueueModal(this.room.sponsor));
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )
+    } else {
+      createModal(queueForm.createQueueModal(this.room.sponsor));
     }
   };
 
@@ -761,10 +842,15 @@ class Game extends Page {
       <div id="challenges-modal">
         <div id="challenges-content">
           <h1>{this.room.sponsor.name} Challenges</h1>
-          {this.room.sponsor.challenges}
+          <div id="challenge-text"></div>
         </div>
       </div>
     );
+    const text = this.room.sponsor.challenges.replace(
+      /(https?:\/\/[^\s]+)/g,
+      '<a href=\'$1\' target="_blank">$1</a>'
+    );
+    document.getElementById('challenge-text').innerHTML = text;
   };
 
   handleWebsiteButton = () => {
@@ -777,19 +863,6 @@ class Game extends Page {
 
   handleJukeboxButton = () => {
     jukebox.openJukeboxPane(document.body);
-
-    // No inappropriate songs warning
-    createModal(
-      <div id="jukebox-modal">
-        <h1 className="white-text">Welcome to the Jukebox!</h1>
-        <p className="white-text">
-          Here you can add songs to the queue for all hackers to listen to. If
-          you select any inappropriate songs, you will be disqualified. Please
-          see our Code of Conduct for more information.
-        </p>
-      </div>,
-      'quarantine'
-    );
   };
 
   handleFriendsButton = () => {

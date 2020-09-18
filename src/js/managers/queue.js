@@ -69,7 +69,7 @@ class QueueManager {
       case 'queue_update_hacker':
         if (msg.position === 0) {
           // Special message once you're off the queue
-          text = `It's your turn to talk to ${this.sponsor.name}! Chat with them now at ${msg.url}`;
+          text = `It's your turn to talk to ${this.sponsor.name}! Chat with them now at <a href=${msg.url} target="_blank">${msg.url}</a>`;
           duration = 30000;
 
           const audio = new Audio('/audio/notification.mp3');
