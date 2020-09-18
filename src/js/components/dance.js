@@ -1,3 +1,4 @@
+import constants from '../../constants';
 import socket from '../socket';
 
 import '../../styles/dance.scss';
@@ -13,19 +14,22 @@ class DancePane {
           <button
             className="dance-pane-button"
             id="dance-button-1"
-            onclick={() => {
-              socket.send({
-                type: 'dance',
-                dance: 0,
-              });
-            }}
+            onclick={() => this.dance(constants.dances.dab)}
           >
             <img id="dab-img" src="/images/icons/dab.svg" />
           </button>
-          <button className="dance-pane-button" id="dance-button-2">
+          <button
+            className="dance-pane-button"
+            id="dance-button-2"
+            onclick={() => this.dance(constants.dances.wave)}
+          >
             <img src="/images/icons/wave.svg" />
           </button>
-          <button className="dance-pane-button" id="dance-button-3">
+          <button
+            className="dance-pane-button"
+            id="dance-button-3"
+            onclick={() => this.dance(constants.dances.floss)}
+          >
             <img src="/images/icons/floss.svg" />
           </button>
           <button className="dance-pane-button" id="dance-button-4">
@@ -41,6 +45,13 @@ class DancePane {
         <div id="dance-pane-arrow" />
       </div>
     );
+  };
+
+  dance = (num) => {
+    socket.send({
+      type: 'dance',
+      dance: num,
+    });
   };
 }
 

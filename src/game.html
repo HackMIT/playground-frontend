@@ -32,19 +32,27 @@
           <p id="notification-text"></p>
         </div>
       </div>
+      <img id="swoopy" src="/images/swoopy.svg" />
       <img id="top-bar-logo" src="/images/logo.png" />
       <div id="top-bar-button-container">
-        <button id="day-of-button">
-          <img src="/images/icons/guidebook.svg" />
-        </button>
+        <div id="top-bar-banner-container">
+          <div id="top-bar-banner-link">
+            <div id="top-bar-left-arrow"></div>
+            <img src="/images/icons/event_flag.svg" />
+            <p id="top-bar-event"></p>
+            <div id="top-bar-right-arrow"></div>
+          </div>
+        </div>
         <button id="map-button">
           <img src="/images/icons/map.svg" />
+        </button>
+        <button id="day-of-button">
+          <img src="/images/icons/guidebook.svg" />
         </button>
         <button id="schedule-button">
           <img src="/images/icons/schedule.svg" />
         </button>
       </div>
-      <img id="swoopy" src="/images/swoopy.svg" />
     </div>
 
     <div id="main">
@@ -85,35 +93,43 @@
         </div>
         <p id="sponsor-description"></p>
       </div>
+
+      <div id="floor-selector" style="display: none">
+        <h3>Floors</h3>
+        <button id="connectivity-button">Connectivity</button>
+        <button id="healthtech-button">Health Tech</button>
+        <button id="education-button">Education</button>
+        <button id="urbaninnovation-button">Urban Innovation</button>
+      </div>
     </div>
 
-  <div id="chat" class="ChatBottom">
-    <button id="dance-button">
-      <img src="/images/icons/dance.svg" />
-    </button>
-    <button id="friends-button">
-      <div class="new-message-indicator"></div>
-      <img src="/images/icons/friends.svg" />
-    </button>
-    <button id="jukebox-button">
-      <img src="/images/icons/music.svg" />
-    </button>
-    <input id="chat-box" type="text" placeholder="Send a message to the room" />
-    <p id="chat-length-indicator" class="invisible"></p>
-    <button id="send-button">
-      <img src="/images/icons/send.svg" />
-    </button>
-    <button id="settings-button">
-      <img src="/images/icons/settings.svg" />
-    </button>
-    <button id="igloo-button">
-      <img src="/images/icons/home-white.svg" />
-    </button>
-  </div>
+    <div id="chat" class="ChatBottom">
+      <button id="dance-button">
+        <img src="/images/icons/dance.svg" />
+      </button>
+      <button id="friends-button">
+        <img src="/images/icons/friends.svg" />
+      </button>
+      <button id="jukebox-button">
+        <img src="/images/icons/music.svg" />
+      </button>
+      <input id="chat-box" type="text" placeholder="Say something" />
+      <p id="chat-length-indicator" class="invisible"></p>
+      <button id="send-button">
+        <img src="/images/icons/send.svg" />
+      </button>
+      <button id="settings-button">
+        <img src="/images/icons/settings.svg" />
+      </button>
+      <button id="igloo-button">
+        <img src="/images/icons/home-white.svg" />
+      </button>
+    </div>
   </div>
   </div>
 
   <div id="login-panel"></div>
+  <div id="hidden-jukebox"></div>
 </body>
 
 </html>

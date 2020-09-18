@@ -1,5 +1,7 @@
 import * as THREE from 'three';
+
 import LinearAnimation from './animations';
+import constants from '../constants';
 import '../styles/profile.scss';
 
 class AnimatedModel {
@@ -83,31 +85,54 @@ class AnimatedModel {
       clearTimeout(this.chatTimer);
     }
 
-    this.chatBubble.innerHTML = msg;
+    this.chatBubble.innerText = msg;
     this.gameDom.appendChild(this.chatBubble);
+
+    const wpm = 180;
+    const words = msg.length / 5;
+    const wordsTime = (words / wpm) * 60 * 1000;
+    const timeout = wordsTime + 5000;
 
     this.chatTimer = setTimeout(() => {
       this.chatBubble.remove();
-    }, 5000);
+    }, timeout);
   }
 
   setDanceAnimation(anim) {
+    // Allow an animation interrupt if we're flossing
+    if (
+      this.animating &&
+      !this.animationCycles[constants.dances.floss].enabled
+    ) {
+      return;
+    }
+
+    // Disable other animations
+    this.animationCycles.forEach((cycle) => {
+      cycle.enabled = false;
+    });
+
     this.animating = true;
     this.animationCycles[anim].enabled = true;
 
     let duration = 0;
 
     switch (anim) {
-      case 0: // dab
-        duration = 330;
+      case constants.dances.dab:
+        duration = 350;
+        break;
+      case constants.dances.wave:
+        duration = 1000;
         break;
       default:
         break;
     }
 
     setTimeout(() => {
-      this.animationCycles[anim].enabled = false;
-      this.animating = false;
+      if (duration !== 0) {
+        this.animating = false;
+        this.animationCycles[anim].reset();
+      }
     }, duration);
   }
 
@@ -115,6 +140,10 @@ class AnimatedModel {
     if (this.animation.destination && this.animation.destination.equals(dest)) {
       return 0;
     }
+
+    this.animationCycles.forEach((cycle) => {
+      cycle.enabled = false;
+    });
 
     this.animating = true;
 

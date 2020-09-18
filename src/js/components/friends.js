@@ -5,8 +5,8 @@ import socket from '../socket';
 
 import '../../styles/friends.scss';
 import addFriendIcon from '../../images/icons/add-friend.svg';
-import closeIcon from '../../images/icons/close-white.svg';
 import messageIcon from '../../images/icons/message.svg';
+import teleportIcon from '../../images/icons/teleport-friend.svg';
 
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
@@ -122,12 +122,16 @@ class FriendsPane {
       } else {
         buttons = (
           <div className="buttons">
-            <button>
-              <img src={closeIcon} />
-            </button>
             <button onclick={() => this.handleChatButton(friend)}>
               <img src={messageIcon} />
             </button>
+            {status !== 'offline' ?
+              <button onclick={() => this.handleTeleportButton(friend)}>
+                <img src={teleportIcon} />
+              </button>
+              :
+              <div />
+            }
           </div>
         );
       }
@@ -159,17 +163,24 @@ class FriendsPane {
   };
 
   handleChatButton = (friend) => {
-    if (this.selectedId === friend.id) {
+    if (!(message.isHidden())) {
       message.hide();
       return;
     }
 
-    this.selectedId = friend.id;
-
     message.show();
     message.updateMessagesPane(friend);
   };
+
+  handleTeleportButton = (friend) => {
+    socket.send({
+      type: 'teleport',
+      to: `character:${friend.id}`
+    })
+  };
 }
+
+
 
 const friendsPaneInstance = new FriendsPane();
 export default friendsPaneInstance;
