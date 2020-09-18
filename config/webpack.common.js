@@ -15,6 +15,7 @@ const generateConfig = (mode) => {
       attendance: [`${paths.src}/attendance.js`],
       game: [`${paths.src}/index.jsx`],
       quillsso: [`${paths.src}/quillsso.js`],
+      404: [`${paths.src}/404.js`],
     },
 
     /**
