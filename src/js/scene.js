@@ -39,6 +39,10 @@ class Scene {
     this.loader = new GLTFLoader();
 
     this.characters = new Map();
+    this.buildings = new Map();
+    this.buildingElements = new Map();
+    this.textures = new Map();
+    this.loadingCanvas = document.createElement('canvas');
 
     // set up renderer
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -48,20 +52,11 @@ class Scene {
       this.container.clientWidth,
       this.container.clientHeight
     );
-    // this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    // this.renderer.toneMappingExposure = 0.8;
-    // this.renderer.outputEncoding = THREE.sRGBEncoding;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 0.8;
+    this.renderer.outputEncoding = THREE.sRGBEncoding;
     this.renderer.setClearColor(0xffffff, 0);
     this.container.appendChild(this.renderer.domElement);
-
-    // Add floor plane
-    // var geo = new THREE.PlaneBufferGeometry(30, 30, 8, 8);
-    // var texture = THREE.ImageUtils.loadTexture('assets/images/grid.jpg');
-    // var mat = new THREE.MeshBasicMaterial({map: texture});
-    // var floorPlane = new THREE.Mesh(geo, mat);
-    // floorPlane.rotateX( - Math.PI / 2);
-
-    // this.scene.add(floorPlane);
 
     const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
     pmremGenerator.compileEquirectangularShader();
@@ -189,8 +184,94 @@ class Scene {
       return false;
     });
 
-    return success;
+    let building_success = false
+    this.buildings.forEach((building, id) => {
+      const intersects = this.raycaster.intersectObject(building);
+      if (intersects.length > 0) {
+        const elem = this.buildingElements.get(id);
+        if (elem.hasAction()) {
+          building_success = true;
+          elem.onClick();
+        }
+      }
+    });
+
+    return success || building_success;
   }
+
+
+  // creates an object on a plane for an object with the given bounding box in [0,1]^2 coords
+  create2DObject(boundingBox, imgPath, shiftAmt, element) {
+    const aspect = this.container.clientWidth / this.container.clientHeight;
+    const height = boundingBox.height * 2 * d * Math.sqrt(3/2);
+    const width = boundingBox.width * 2 * d * aspect;
+    const baseX = boundingBox.x;
+    const baseY = boundingBox.y + boundingBox.height * (1/2 - shiftAmt);
+    const basePt = this.worldVectorForPos(baseX, baseY);
+    const texture = this.loadTexture(imgPath, boundingBox.width * this.container.clientWidth, boundingBox.height * this.container.clientHeight);
+
+    var geometry = new THREE.PlaneGeometry( width, height);
+    const material = new THREE.MeshBasicMaterial( { map: texture, transparent: true, side: THREE.DoubleSide} );
+    const plane = new THREE.Mesh( geometry, material );
+
+    plane.renderOrder = baseY * this.container.clientHeight;
+    plane.position.set(basePt.x, height/2 - height*shiftAmt, basePt.z);
+    // plane.scale.set(width, height, 1);
+    plane.rotateY( Math.PI / 4);
+
+    this.scene.add(plane);
+    this.buildings.set(element.data.id, plane);
+    this.buildingElements.set(element.data.id, element);
+  }
+
+  loadTexture(imgPath, width, height) {
+    let texture = null;
+    if (this.textures.has(imgPath)){
+      texture = this.textures.get(imgPath);
+    } else {
+      const loader = new THREE.TextureLoader();
+      loader.setCrossOrigin('anonymous');
+      texture = loader.load(imgPath, (texture) => {
+        texture.image.width = width*2;
+        texture.image.height = height*2;
+      });
+      texture.encoding = THREE.sRGBEncoding;
+      this.textures.set(imgPath, texture);
+    }
+    return texture;
+  }
+
+  updateBuildingImage(id) {
+    const element = this.buildingElements.get(id);
+    const plane = this.buildings.get(id);
+      
+    const height = element.data.width / element.aspectRatio * (this.container.clientWidth)
+    const texture = this.loadTexture(element.imagePath, element.data.width * this.container.clientWidth, height);
+
+    plane.material.map = texture;
+  }
+
+  updateElement(element) {
+    console.log(this.buildingElements.has(element.data.id))
+
+    this.buildingElements.set(element.data.id, element);
+    this.updateBuildingImage(element.data.id);
+  }
+
+  removeAllBuildings() {
+    this.buildings.forEach((building, id) => {
+      this.scene.remove(building);
+    });
+
+    this.buildings.clear();
+    this.buildingElements.clear();
+    this.textures.forEach((texture) => {
+      texture.dispose();
+    });
+    this.textures.clear();
+
+  }
+
 
   render() {
     requestAnimationFrame(this.render.bind(this));
