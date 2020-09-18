@@ -54,15 +54,15 @@ class Settings {
   createSettingsContent = () => {
     return (
       <div id="settings-text">
-        <div id="settings-option">
+        <div className="settings-option">
           <div id="settings-box"></div>
-          <button id="settings-button" onclick={this.handleMusicButton}>
+          <button className="settings-button" onclick={this.handleMusicButton}>
             {this.musicMuted ? 'UNMUTE ALL MUSIC' : 'MUTE ALL MUSIC'}
           </button>
         </div>
-        <div id="settings-option">
+        <div className="settings-option">
           <div id="settings-box"></div>
-          <button id="settings-button" onclick={this.handleSoundButton}>
+          <button className="settings-button" onclick={this.handleSoundButton}>
             {this.soundMuted ? 'UNMUTE ALL SOUND' : 'MUTE ALL SOUND'}
           </button>
         </div>
@@ -98,6 +98,7 @@ class Settings {
 
     return (
       <div id="settings">
+        {/* <div id="inner" /> */}
         <div id="root">
           <div class="settings-header" id="settings-header">
             <div id="settings-gear"></div>
@@ -156,6 +157,7 @@ class Settings {
             </button>
           </div>
         </div>
+
         <div id="settings-clouds"></div>
       </div>
     );

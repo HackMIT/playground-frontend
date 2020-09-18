@@ -965,6 +965,7 @@ class Game extends Page {
   };
 
   handleIglooButton = () => {
+    // this.showFeedback();
     this.startLoading();
 
     socket.send({
