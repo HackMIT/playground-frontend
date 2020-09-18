@@ -135,7 +135,10 @@ class Character {
     const animationCycles = actions.map((x, i) => {
       const cycle = mixer.clipAction(x);
 
-      if (i === constants.dances.dab) {
+      if (i === constants.dances.walk) {
+        cycle.timeScale = 0.7;
+      } else if (i === constants.dances.dab) {
+        cycle.timeScale = 0.8;
         cycle.clampWhenFinished = true;
         cycle.repetitions = 1;
       } else if (i === constants.dances.floss) {
@@ -144,9 +147,20 @@ class Character {
         cycle.timeScale = 0.4;
         cycle.clampWhenFinished = true;
         cycle.repetitions = 1;
+      } else if (i === constants.dances.backflip) {
+        cycle.timeScale = 0.35;
+        cycle.clampWhenFinished = true;
+        cycle.repetitions = 1;
+      } else if (i === constants.dances.shoot) {
+        cycle.timeScale = 0.35;
+      } else if (i === constants.dances.clap) {
+        cycle.timeScale = 0.35;
+        cycle.clampWhenFinished = true;
+        cycle.repetitions = 1;
       }
 
       cycle.enabled = false;
+
       cycle.play();
       return cycle;
     });

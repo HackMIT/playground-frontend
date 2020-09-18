@@ -102,13 +102,17 @@ class AnimatedModel {
     // Allow an animation interrupt if we're flossing
     if (
       this.animating &&
-      !this.animationCycles[constants.dances.floss].enabled
+      !(
+        this.animationCycles[constants.dances.floss].enabled ||
+        this.animationCycles[constants.dances.shoot].enabled
+      )
     ) {
       return;
     }
 
     // Disable other animations
     this.animationCycles.forEach((cycle) => {
+      cycle.reset();
       cycle.enabled = false;
     });
 
@@ -119,20 +123,28 @@ class AnimatedModel {
 
     switch (anim) {
       case constants.dances.dab:
-        duration = 350;
+        duration = 500;
         break;
       case constants.dances.wave:
         duration = 1000;
+        break;
+      case constants.dances.backflip:
+        duration = 1000;
+        break;
+      case constants.dances.clap:
+        duration = 1100;
         break;
       default:
         break;
     }
 
-    setTimeout(() => {
-      if (duration !== 0) {
-        this.animating = false;
-        this.animationCycles[anim].reset();
-      }
+    if (duration === 0) {
+      return;
+    }
+
+    this.animationTimeout = setTimeout(() => {
+      this.animating = false;
+      this.animationCycles[anim].reset();
     }, duration);
   }
 
@@ -141,7 +153,13 @@ class AnimatedModel {
       return 0;
     }
 
+    if (this.animationTimeout) {
+      clearTimeout(this.animationTimeout);
+      this.animationTimeout = undefined;
+    }
+
     this.animationCycles.forEach((cycle) => {
+      cycle.reset();
       cycle.enabled = false;
     });
 

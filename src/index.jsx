@@ -925,6 +925,8 @@ class Game extends Page {
   };
 
   handleFriendsButton = () => {
+    const dancePane = document.getElementById('dance-pane');
+
     if (this.friendsPaneVisible === true) {
       // Hide the friends pane
       document.getElementById('friends-pane').classList.add('invisible');
@@ -935,8 +937,10 @@ class Game extends Page {
       this.friendsPaneVisible = true;
 
       // Hide the dance pane
-      document.getElementById('dance-pane').classList.add('invisible');
-      this.dancePaneVisible = false;
+      if (dancePane) {
+        document.getElementById('dance-pane').classList.add('invisible');
+        this.dancePaneVisible = false;
+      }
     } else {
       // Never created friends pane before, create it now
       document
@@ -945,8 +949,10 @@ class Game extends Page {
       this.friendsPaneVisible = true;
 
       // Hide the dance pane
-      document.getElementById('dance-pane').classList.add('invisible');
-      this.dancePaneVisible = false;
+      if (dancePane) {
+        document.getElementById('dance-pane').classList.add('invisible');
+        this.dancePaneVisible = false;
+      }
     }
   };
 
@@ -1005,6 +1011,8 @@ class Game extends Page {
   };
 
   handleDanceButton = () => {
+    const friendsPane = document.getElementById('friends-pane');
+
     if (this.dancePaneVisible === true) {
       // Hide the dance pane
       document.getElementById('dance-pane').classList.add('invisible');
@@ -1015,16 +1023,20 @@ class Game extends Page {
       this.dancePaneVisible = true;
 
       //  make friends pane invisible
-      document.getElementById('friends-pane').classList.add('invisible');
-      this.friendsPaneVisible = false;
+      if (friendsPane) {
+        document.getElementById('friends-pane').classList.add('invisible');
+        this.friendsPaneVisible = false;
+      }
     } else {
       // Never created dance pane before, create it now
       document.getElementById('chat').appendChild(dance.createDancePane());
       this.dancePaneVisible = true;
 
       // Hide the friends pane
-      document.getElementById('friends-pane').classList.add('invisible');
-      this.friendsPaneVisible = false;
+      if (friendsPane) {
+        friendsPane.classList.add('invisible');
+        this.friendsPaneVisible = false;
+      }
     }
   };
 
