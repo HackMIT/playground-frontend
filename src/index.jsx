@@ -379,10 +379,14 @@ class Game extends Page {
 
         const elementElem = new Element(element, element.id, data.elementNames);
         this.elements.push(elementElem);
-        const gameRect = document.getElementById('game').getBoundingClientRect();
+        const gameRect = document
+          .getElementById('game')
+          .getBoundingClientRect();
 
         elementElem.onload = () => {
-          this.convertElementTo3d(elementElem, gameRect, () => this.finishedLoadingPart());
+          this.convertElementTo3d(elementElem, gameRect, () =>
+            this.finishedLoadingPart()
+          );
           elementElem.element.style.opacity = 0;
         };
 
@@ -415,7 +419,8 @@ class Game extends Page {
 
       if (this.room.sponsorId.length > 0) {
         if (characterManager.character.queueId !== this.room.sponsorId.length) {
-          document.getElementById('queue-button-icon').src = './images/Coffee_Icon.svg';
+          document.getElementById('queue-button-icon').src =
+            './images/Coffee_Icon.svg';
         }
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
@@ -743,24 +748,27 @@ class Game extends Page {
 
   elementsTo3d = () => {
     // make everything into an actual object in 3d
-      const gameRect = document.getElementById('game').getBoundingClientRect();
+    const gameRect = document.getElementById('game').getBoundingClientRect();
 
-      this.elements.forEach((element) => {
-        this.convertElementTo3d(element, gameRect, ()=>{});
-      });
+    this.elements.forEach((element) => {
+      this.convertElementTo3d(element, gameRect, () => {});
+    });
 
-      this.elements.forEach((element) => {
-        element.element.remove();
-      });
+    this.elements.forEach((element) => {
+      element.element.remove();
+    });
   };
 
   convertElementTo3d = (element, gameRect, callback) => {
     const request = new XMLHttpRequest();
-    request.addEventListener("load", this.makeSceneRequestFunc(gameRect, element, callback));
-    request.overrideMimeType("image/svg+xml");
-    request.open("GET", element.imagePath);
+    request.addEventListener(
+      'load',
+      this.makeSceneRequestFunc(gameRect, element, callback)
+    );
+    request.overrideMimeType('image/svg+xml');
+    request.open('GET', element.imagePath);
     request.send();
-  }
+  };
 
   handleArenaButton = (id) => {
     socket.send({
@@ -802,13 +810,21 @@ class Game extends Page {
       queueSponsor.subscribe(this.room.sponsor.id);
     } else if (queueManager.inQueue()) {
       queueManager.join(this.room.sponsor);
-    } else if (characterManager.character.queueId !== '' && characterManager.character.queueId !== this.room.sponsor.id) {
+    } else if (
+      characterManager.character.queueId !== '' &&
+      characterManager.character.queueId !== this.room.sponsor.id
+    ) {
       createModal(
         <div id="other-queue-modal">
           <h1>Confirm:</h1>
-          <p>You are currently in the queue for {characterManager.character.queueId}, would you like to leave and join this queue instead?</p>
+          <p>
+            You are currently in the queue for{' '}
+            {characterManager.character.queueId}, would you like to leave and
+            join this queue instead?
+          </p>
           <div id="queue-button-div">
-            <button id="no-button"
+            <button
+              id="no-button"
               onclick={() => {
                 document.getElementById('modal-background').remove();
               }}
@@ -830,7 +846,7 @@ class Game extends Page {
             </button>
           </div>
         </div>
-      )
+      );
     } else {
       createModal(queueForm.createQueueModal(this.room.sponsor));
     }
@@ -1030,36 +1046,52 @@ class Game extends Page {
     }, 250);
   };
 
-
-  makeSceneRequestFunc = (gameRect, element, callback) =>  {
+  makeSceneRequestFunc = (gameRect, element, callback) => {
     return (data) => {
-      console.log(element)
+      console.log(element);
 
       let basebb = null;
       let customShift = 0;
 
       const svg = data.target.responseXML;
-      let baseElem = svg.getElementById("base") 
+      let baseElem = svg.getElementById('base');
       if (baseElem === null) {
-        baseElem = svg.getElementById("Base")
+        baseElem = svg.getElementById('Base');
       }
 
-      const viewbox = svg.firstElementChild.getAttribute("viewBox").split(" ").map((num) => parseFloat(num))
-      const aspect = viewbox[2]/viewbox[3]
+      const viewbox = svg.firstElementChild
+        .getAttribute('viewBox')
+        .split(' ')
+        .map((num) => parseFloat(num));
+      const aspect = viewbox[2] / viewbox[3];
 
       const bb = {
-        x: element.data.x, 
-        y: element.data.y, 
+        x: element.data.x,
+        y: element.data.y,
         width: element.data.width,
-        height: element.data.width / aspect * (gameRect.width/gameRect.height)
+        height:
+          (element.data.width / aspect) * (gameRect.width / gameRect.height),
       };
 
-      if (baseElem !== null && baseElem.firstElementChild.getAttribute("points") !== null){
-        console.log(baseElem)
-        const base = baseElem.firstElementChild.getAttribute("points").trim().split(",").join(" ").split(" ").map((num) => parseFloat(num))
+      if (
+        baseElem !== null &&
+        baseElem.firstElementChild.getAttribute('points') !== null
+      ) {
+        console.log(baseElem);
+        const base = baseElem.firstElementChild
+          .getAttribute('points')
+          .trim()
+          .split(',')
+          .join(' ')
+          .split(' ')
+          .map((num) => parseFloat(num));
         // these are coordinates w/ y=0 at top and y=1 at bottom
-        const scaledBaseYs = base.filter((el, i) => i % 2 === 1).map((y) => y/(viewbox[3]));
-        const scaledBaseXs = base.filter((el, i) => i % 2 === 0).map((x) => x/(viewbox[2]));
+        const scaledBaseYs = base
+          .filter((el, i) => i % 2 === 1)
+          .map((y) => y / viewbox[3]);
+        const scaledBaseXs = base
+          .filter((el, i) => i % 2 === 0)
+          .map((x) => x / viewbox[2]);
 
         const minY = Math.min.apply(null, scaledBaseYs);
         const maxY = Math.max.apply(null, scaledBaseYs);
@@ -1067,35 +1099,48 @@ class Game extends Page {
         const minX = Math.min.apply(null, scaledBaseXs);
         const maxX = Math.max.apply(null, scaledBaseXs);
 
-        const leftY = scaledBaseYs[scaledBaseXs.indexOf(minX)]
-        const rightY = scaledBaseYs[scaledBaseXs.indexOf(maxX)]
+        const leftY = scaledBaseYs[scaledBaseXs.indexOf(minX)];
+        const rightY = scaledBaseYs[scaledBaseXs.indexOf(maxX)];
 
         // we essentially shift the point where we draw it up by this amount (but also shift center pt "back")
         basebb = {
-          bottom: maxY, top: minY, left: minX, right: maxX, leftY: leftY, rightY: rightY
-        }
-      } else if(element.data.path.slice(0, 5) == "tiles") {
+          bottom: maxY,
+          top: minY,
+          left: minX,
+          right: maxX,
+          leftY,
+          rightY,
+        };
+      } else if (element.data.path.slice(0, 5) === 'tiles') {
         customShift = 1;
       }
 
-
-      this.scene.create2DObject(bb, element.imagePath, basebb, element, customShift, callback);
+      this.scene.create2DObject(
+        bb,
+        element.imagePath,
+        basebb,
+        element,
+        customShift,
+        callback
+      );
 
       if (element.data.changingImagePath) {
-        const stateLen = element.data.changingPaths.split(",").length
+        const stateLen = element.data.changingPaths.split(',').length;
         const interval = setInterval(() => {
           if (element.data.changingRandomly) {
-            element.data.state = Math.floor(Math.random() * Math.floor(stateLen));
+            element.data.state = Math.floor(
+              Math.random() * Math.floor(stateLen)
+            );
           } else {
             element.data.state = (element.data.state + 1) % stateLen;
           }
           element.setImageForState();
           this.scene.updateBuildingImage(element.data.id);
         }, element.data.changingInterval);
-        this.buildingIntervals.push(interval)
+        this.buildingIntervals.push(interval);
       }
     };
-  }
+  };
 }
 
 const gamePage = new Game();
