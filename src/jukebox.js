@@ -18,7 +18,7 @@ class Jukebox {
     this.jukeboxToggle = true;
 
     socket.subscribe(
-      ['song', 'error', 'songs', 'play_song'],
+      ['song', 'error', 'songs', 'play_song', 'jukebox_warning'],
       this.handleSocketMessage
     );
   }
@@ -26,6 +26,17 @@ class Jukebox {
   handleSocketMessage = (msg) => {
     if (msg.type === 'songs') {
       this.songs = msg.songs;
+    } else if (msg.type === 'jukebox_warning') {
+      createModal(
+        <div id="jukebox-modal">
+          <h1 className="white-text">Warning!</h1>
+          <p className="white-text">
+            Here you can add songs to the queue for all hackers to listen to. If
+            you select any inappropriate songs, you will be disqualified. Please
+            see our Code of Conduct for more information.
+          </p>
+        </div>
+      );
     } else if (msg.type === 'play_song' && this.jukeboxToggle) {
       this.songStart = msg.start;
       if (this.player !== null && msg.song.id !== this.currentSong.id) {
@@ -41,18 +52,6 @@ class Jukebox {
       this.songs.splice(index, 1);
       this.updateJukeboxPane(false);
     } else if (msg.type === 'song') {
-      if (msg.requiresWarning) {
-        createModal(
-          <div id="jukebox-modal">
-            <h1 className="white-text">Warning!</h1>
-            <p className="white-text">
-              Here you can add songs to the queue for all hackers to listen to. If
-              you select any inappropriate songs, you will be disqualified. Please
-              see our Code of Conduct for more information.
-            </p>
-          </div>
-        );
-      }
       this.songs.push(msg);
       this.updateJukeboxPane(false);
     } else if (msg.type === 'error') {
@@ -230,7 +229,7 @@ class Jukebox {
           videoId: this.currentSong.vidCode,
           playerVars: {
             autoplay: 1,
-            controls: 0,
+            controls: 1,
             start: this.songStart,
             loop: 1,
           },
