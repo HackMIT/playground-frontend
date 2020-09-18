@@ -93,6 +93,7 @@ body {
       transform: translateY(10px);
       width: $top_bar_logo_width;
       cursor: pointer;
+      z-index: 1;
     }
 
     #top-bar-button-container {
@@ -119,7 +120,7 @@ body {
       top: $top_bar_height;
       transform: translateX(-50%);
       width: 84px;
-      z-index: -1;
+      z-index: 1;
     }
   }
 
