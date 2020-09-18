@@ -22,7 +22,6 @@ class AnimatedModel {
     this.reverseRaycaster = reverseRaycaster;
 
     modelGeometry.position.set(start.x, start.y, start.z);
-
     this.callback = null;
 
     this.gameDom = document.getElementById('game');
