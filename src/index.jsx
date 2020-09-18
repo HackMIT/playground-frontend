@@ -445,6 +445,10 @@ class Game extends Page {
 
         document.getElementById('challenges-button').style.display =
           this.room.sponsor.challenges.length > 0 ? 'inline-block' : 'none';
+        document.getElementById('queue-button').style.display = this.room
+          .sponsor.queueOpen
+          ? 'inline-block'
+          : 'none';
 
         const text = this.room.sponsor.description.replace(
           /(https?:\/\/[^\s]+)/g,
