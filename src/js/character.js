@@ -91,12 +91,16 @@ class Character {
   }
 
   handleSocketMessage = (msg) => {
-    if (msg.id !== this.data.id || msg.type !== 'achievements') {
+    if (
+      !this.expectingAchievements ||
+      msg.id !== this.data.id ||
+      msg.type !== 'achievements'
+    ) {
       return;
     }
 
-    // Create achievements modal here
     createModal(achievements.createAchievementsModal(msg.achievements));
+    this.expectingAchievements = false;
   };
 
   getColor = (hex) => {
@@ -252,6 +256,8 @@ class Character {
         )}{' '}
         <button
           onclick={() => {
+            this.expectingAchievements = true;
+
             socket.send({
               type: 'get_achievements',
               id: this.data.id,

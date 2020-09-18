@@ -306,7 +306,7 @@ class Game extends Page {
     if (inWall) {
       // if you're in the wall you're only allowed to move out
       // (this is so you can't get stuck in walls if something breaks)
-      if (walls.some((wall) => pointInPolygon([x, y], wall))) {
+      if (!walls.some((wall) => pointInPolygon([x, y], wall))) {
         return;
       }
     } else {
@@ -1286,9 +1286,11 @@ class Game extends Page {
           thisWall.push([scaledBase[i], scaledBase[i + 1]]);
         }
         walls.push(thisWall);
-      } else if (element.data.path.slice(0, 5) === 'tiles') {
-        customShift = 1;
-      } else if (element.data.path.slice(0, 21) === 'auditorium_chairs.svg') {
+      } else if (
+        element.data.path.startsWith('tiles') ||
+        element.data.path.startsWith('auditorium_chairs.svg') ||
+        element.data.path.startsWith('stripper_pole.svg')
+      ) {
         customShift = 1;
       }
 
