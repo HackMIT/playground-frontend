@@ -797,6 +797,17 @@ class Game extends Page {
           </div>
         );
       }
+      if (data.code === 6) {
+        this.stopLoading();
+        createModal(
+          <div id="jukebox-modal">
+            <h1 className="white-text">Oops!</h1>
+            <p className="white-text">
+              You must be an MIT student to visit the MISTI room.
+            </p>
+          </div>
+        );
+      }
     } else if (data.type === 'join') {
       this.scene.newCharacter(data.character.id, data.character);
     } else if (data.type === 'leave') {
@@ -891,7 +902,7 @@ class Game extends Page {
     const gameRect = document.getElementById('game').getBoundingClientRect();
 
     this.elements.forEach((element) => {
-      this.convertElementTo3d(element, gameRect, () => {});
+      this.convertElementTo3d(element, gameRect, () => { });
     });
 
     this.elements.forEach((element) => {
@@ -1269,7 +1280,7 @@ class Game extends Page {
         };
       } else if (element.data.path.slice(0, 5) === 'tiles') {
         customShift = 1;
-      } else if (element.data.path.slice(0, 21) == 'auditorium_chairs.svg') {
+      } else if (element.data.path.slice(0, 21) === 'auditorium_chairs.svg') {
         customShift = 1;
       }
 
