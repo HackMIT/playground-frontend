@@ -57,6 +57,12 @@ class AnimatedModel {
     });
   }
 
+  // behind is false in like just nightclub and maybe the auditorium
+  changeZorderOfNameTag(behind) {
+    this.nametag.style.zIndex = behind ? -1 : 0;
+  }
+
+
   // adds an html element that will follow the character around
   addHtmlElem(htmlElem) {
     const screenPt = this.reverseRaycaster(this.modelGeometry.position.clone());

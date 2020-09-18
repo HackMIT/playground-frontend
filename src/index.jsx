@@ -422,6 +422,7 @@ class Game extends Page {
       } else {
         roomWalls = [];
       }
+      walls = [];
 
       if (this.room.sponsorId.length > 0) {
         if (characterManager.character.queueId !== this.room.sponsorId) {
@@ -682,7 +683,6 @@ class Game extends Page {
         return false;
       });
     } else if (data.type === 'dance') {
-      this.testDrawWalls();
       this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
@@ -1304,11 +1304,14 @@ class Game extends Page {
         }
         walls.push(thisWall);
       } else if (
-        element.data.path.startsWith('tiles') ||
         element.data.path.startsWith('auditorium_chairs.svg') ||
         element.data.path.startsWith('stripper_pole.svg')
       ) {
         customShift = 1;
+      } else if (
+        element.data.path.startsWith('tiles')
+      ) {
+        customShift = 20;
       }
 
       this.scene.create2DObject(
