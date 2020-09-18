@@ -78,12 +78,10 @@ class Scene {
 
   // create a new character at 0,0
   newCharacter(id, character) {
-    console.log("making ch", id)
-    console.log("chars", this.characters)
-    if (this.characters.hasOwnProperty(id)) { 
-      console.log("hey");
-      return; 
+    if (id in this.characters) {
+      return;
     }
+
     this.characters[id] = new Character(character, this, (vec) => {
       vec.project(this.camera);
 
@@ -246,7 +244,11 @@ class Scene {
             this.container.clientHeight;
         }
 
-        plane.position.set(basePt.x, height / 2 - height * (shiftAmt + customShift), basePt.z);
+        plane.position.set(
+          basePt.x,
+          height / 2 - height * (shiftAmt + customShift),
+          basePt.z
+        );
 
         // plane.scale.set(width, height, 1);
         plane.rotateY(Math.PI / 4);
@@ -274,18 +276,28 @@ class Scene {
           const leftPt = this.worldVectorForPos(leftX, leftY);
           const rightPt = this.worldVectorForPos(rightX, rightY);
 
-          const camDirProj = new THREE.Vector3(1,0,1);
-          const leftProj = new THREE.Vector3(geometry.vertices[0].x, 0, geometry.vertices[0].z);
-          const tl = leftPt.clone().addScaledVector(leftProj, -1).dot(camDirProj)/2
+          const camDirProj = new THREE.Vector3(1, 0, 1);
+          const leftProj = new THREE.Vector3(
+            geometry.vertices[0].x,
+            0,
+            geometry.vertices[0].z
+          );
+          const tl =
+            leftPt.clone().addScaledVector(leftProj, -1).dot(camDirProj) / 2;
 
-          geometry.vertices[0].addScaledVector(cameraDirection, tl)
-          geometry.vertices[2].addScaledVector(cameraDirection, tl)
+          geometry.vertices[0].addScaledVector(cameraDirection, tl);
+          geometry.vertices[2].addScaledVector(cameraDirection, tl);
 
-          const rightProj = new THREE.Vector3(geometry.vertices[1].x, 0, geometry.vertices[1].z);
-          const tr = rightPt.clone().addScaledVector(rightProj, -1).dot(camDirProj)/2
+          const rightProj = new THREE.Vector3(
+            geometry.vertices[1].x,
+            0,
+            geometry.vertices[1].z
+          );
+          const tr =
+            rightPt.clone().addScaledVector(rightProj, -1).dot(camDirProj) / 2;
 
-          geometry.vertices[1].addScaledVector(cameraDirection, tr)
-          geometry.vertices[3].addScaledVector(cameraDirection, tr)
+          geometry.vertices[1].addScaledVector(cameraDirection, tr);
+          geometry.vertices[3].addScaledVector(cameraDirection, tr);
         }
 
         this.scene.add(plane);
