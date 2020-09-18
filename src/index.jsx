@@ -562,8 +562,12 @@ class Game extends Page {
       }
 
       // Show current event on navbar
-      const currTimestamp = Date.now();
-      data.events.forEach((event) => {
+      // const currTimestamp = Math.floor(Date.now() / 1000);
+      const currTimestamp = Math.floor(
+        this.createUTCDate(19, 21).getTime() / 1000
+      );
+
+      data.events.some((event) => {
         if (
           event.startTime <= currTimestamp &&
           currTimestamp <= event.startTime + event.duration * 60
@@ -572,9 +576,22 @@ class Game extends Page {
           document.getElementById('top-bar-banner-container').style.visibility =
             'visible';
           document.getElementById('top-bar-banner-link').onclick = () => {
-            window.open(event.url, '_blank');
+            if (event.url.startsWith('room:')) {
+              socket.send({
+                type: 'teleport',
+                to: event.url.substring(event.url.indexOf(':') + 1),
+                x: 0.6007,
+                y: 0.6905,
+              });
+            } else {
+              window.open(event.url, '_blank');
+            }
           };
+
+          return true;
         }
+
+        return false;
       });
     } else if (data.type === 'dance') {
       this.scene.danceCharacter(data.id, data.dance);
