@@ -670,6 +670,14 @@ body {
         background: #d64329;
       }
     }
+
+    &.yellow {
+      background: #f1c40f;
+
+      &:hover {
+        background: #d9b00d;
+      }
+    }
   }
 
   p {
@@ -850,22 +858,21 @@ body {
       margin: 10px;
       outline: none;
       padding: 12px 16px;
-  
+
       &:hover {
         background: #388e3c;
       }
     }
-  
+
     #no-button {
       background: #ee0a0a;
       display: inline-block;
-  
+
       &:hover {
         background: #ee0a0a8a;
       }
     }
   }
-
 }
 
 #day-of-div {

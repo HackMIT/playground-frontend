@@ -148,7 +148,8 @@ class Achievements {
             exploring all that we have to offer. It is also an empty scrapbook
             that you can fill up with stickers by participating in various
             events. With each space you fill up, you can earn a raffle ticket!
-            Prizes include ..... so get hyped :))
+            Prizes include a waterproof speaker and a Yeti tumbler so get hyped
+            :))
           </div>
           {this.createAchievementsRecord(achievements, tasksCompleted)}
           <div
