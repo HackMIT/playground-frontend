@@ -4,7 +4,9 @@ import socket from '../socket';
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
 
+const ORGANIZER = 1;
 const SPONSOR = 2;
+const MENTOR = 3;
 
 const INITIAL_STATE = 0;
 const GET_EMAIL = 1;
@@ -56,14 +58,14 @@ class LoginPanel {
               Sponsor Login
             </button>
             <button
+              className="yellow"
+              onclick={() => this.handleEmailLogin(MENTOR)}
+            >
+              Mentor Login
+            </button>
+            <button
               className="red"
-              onclick={() => {
-                // TODO: Replace with handleEmailLogin(ORGANIZER)
-                socket.send({
-                  type: 'join',
-                  name: prompt("What's your name?"),
-                });
-              }}
+              onclick={() => this.handleEmailLogin(ORGANIZER)}
             >
               Organizer Login
             </button>
@@ -179,10 +181,6 @@ class LoginPanel {
               <p>Emails to {this.email}</p>
             </div>
             <div className="field checkbox">
-              <input type="checkbox" />
-              <p>Slack alerts</p>
-            </div>
-            <div className="field checkbox">
               <input type="checkbox" id="phone-checkbox" />
               <div>
                 <p>Text messages (US Only)</p>
@@ -192,10 +190,6 @@ class LoginPanel {
                   id="phone-field"
                 />
               </div>
-            </div>
-            <div className="field checkbox">
-              <input type="checkbox" />
-              <p>Browser notifications</p>
             </div>
             <p id="error-text">Please enter a valid phone number.</p>
             <button
@@ -346,10 +340,10 @@ class LoginPanel {
   handleInitPacket = (data) => {
     if (
       data.character.name.length > 0 &&
-      !data.character.name.startsWith('Player (')
+      !data.character.name.startsWith('Player')
     ) {
       this.name = data.character.name;
-      this.nameFieldDisabled = true;
+      this.nameFieldDisabled = data.character.role === 4;
 
       this.email = data.character.email;
     }

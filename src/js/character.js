@@ -30,6 +30,7 @@ class Character {
     const onModelLoadSuccess = (gltf) => {
       const scale = data.id === 'tim' ? 0.04 : 1.3;
       gltf.scene.scale.set(scale, scale, scale);
+      gltf.scene.castShadow = true;
       this.setModel(
         parent,
         gltf.scene,
@@ -112,7 +113,7 @@ class Character {
       )
       .substring(1)
       .match(/.{2}/g)
-      .map((x) => Math.pow(parseInt(x, 16) / 255, CHARACTER_GAMMA));
+      .map((x) => (parseInt(x, 16) / 255) ** CHARACTER_GAMMA);
   };
 
   update(deltaTime) {
