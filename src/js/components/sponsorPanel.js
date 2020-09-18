@@ -29,11 +29,15 @@ class SponsorPanel {
   handleSocketMessage = (msg) => {
     switch (msg.type) {
       case 'queue_update_sponsor':
-        this.queue = msg.subscribers;
-        if (!this.isOpen) {
-          const audio = new Audio('/audio/notification.mp3');
-          audio.play();
-          notificationsManager.displayMessage("Someone joined the queue", 7000);
+        if (msg.subscribers > this.queue) {
+          this.queue = msg.subscribers;
+          if (!this.isOpen) {
+            const audio = new Audio('/audio/notification.mp3');
+            audio.play();
+            notificationsManager.displayMessage("Someone joined the queue", 7000);
+          }
+        } else {
+          this.queue = msg.subscribers;
         }
         break;
       case 'sponsor':
@@ -111,7 +115,15 @@ class SponsorPanel {
               .map((x) => queueTopics[x])
               .join(', ')}
           </p>
-          <button onclick={() => this.chat(subscriber.id)}>Chat</button>
+          <button id="sponsor-chat-button" onclick={() => {
+            if (document.getElementById('sponsor-zoom-link') && document.getElementById('sponsor-zoom-link').value !== '') {
+              this.chat(subscriber.id);
+            }
+            else {
+              document.getElementById("queue").insertAdjacentHTML('beforeend', '<p>Enter a valid zoom link!</p>')
+            }
+          }
+          }>Chat</button>
         </div>
       );
     });
