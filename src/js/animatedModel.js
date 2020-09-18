@@ -30,12 +30,12 @@ class AnimatedModel {
     // create html elems associated with this guy
     this.nametag = document.createElement('p');
     this.nametag.className = 'name';
-    this.nametag.innerHTML = name;
+    this.nametag.innerText = name;
     this.nametag.style.transform = 'translate(-50%, 25px)';
 
     this.chatBubble = document.createElement('div');
     this.chatBubble.className = 'text-bubble';
-    this.chatBubble.innerHTML = '';
+    this.chatBubble.innerText = '';
 
     this.gameDom.appendChild(this.nametag);
 
