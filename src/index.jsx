@@ -93,9 +93,6 @@ class Game extends Page {
       this.stopLoading();
       loginPanel.hide();
 
-      document.getElementById('top-bar-button-container').style.display =
-        'flex';
-      document.getElementById('chat').style.display = 'flex';
       document.getElementById('outer').innerHTML =
         '<div id="unsupported">Unsupported device or browser</div>';
       return;
@@ -106,9 +103,6 @@ class Game extends Page {
     // Quick check for auth data
     if (localStorage.getItem('token') !== null) {
       loginPanel.hide();
-      document.getElementById('top-bar-button-container').style.display =
-        'flex';
-      document.getElementById('chat').style.display = 'flex';
     } else {
       this.stopLoading();
     }
@@ -885,7 +879,7 @@ class Game extends Page {
     const gameRect = document.getElementById('game').getBoundingClientRect();
 
     this.elements.forEach((element) => {
-      this.convertElementTo3d(element, gameRect, () => {});
+      this.convertElementTo3d(element, gameRect, () => { });
     });
 
     this.elements.forEach((element) => {

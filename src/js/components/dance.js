@@ -3,6 +3,10 @@ import socket from '../socket';
 
 import '../../styles/dance.scss';
 
+import flip from '../../images/icons/flipdark.svg'
+import shoot from '../../images/icons/shoot.svg'
+import clap from '../../images/icons/clap.svg'
+
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
 
@@ -40,21 +44,21 @@ class DancePane {
               id="dance-button-4"
               onclick={() => this.dance(constants.dances.backflip)}
             >
-              <img src="/images/icons/dance.svg" />
+              <img id="flip-img" src={flip} />
             </button>
             <button
               className="dance-pane-button"
               id="dance-button-5"
               onclick={() => this.dance(constants.dances.clap)}
             >
-              <img src="/images/icons/dance.svg" />
+              <img src={clap} />
             </button>
             <button
               className="dance-pane-button"
               id="dance-button-6"
               onclick={() => this.dance(constants.dances.shoot)}
             >
-              <img src="/images/icons/dance.svg" />
+              <img id="shoot-img" src={shoot} />
             </button>
           </div>
         </div>
