@@ -207,60 +207,62 @@ class Scene {
     const baseX = boundingBox.x;
     const baseY = boundingBox.y + boundingBox.height * (1 / 2 - shiftAmt);
     const basePt = this.worldVectorForPos(baseX, baseY);
+    
     const texture = this.loadTexture(
       imgPath,
       boundingBox.width * this.container.clientWidth,
-      boundingBox.height * this.container.clientHeight
+      boundingBox.height * this.container.clientHeight,
+      (texture) => {
+        const geometry = new THREE.PlaneGeometry(width, height);
+        const material = new THREE.MeshBasicMaterial({
+          map: texture,
+          transparent: true,
+          side: THREE.DoubleSide,
+        });
+        const plane = new THREE.Mesh(geometry, material);
+
+        plane.renderOrder = baseY * this.container.clientHeight;
+        plane.position.set(basePt.x, height / 2 - height * shiftAmt, basePt.z);
+        // plane.scale.set(width, height, 1);
+        plane.rotateY(Math.PI / 4);
+
+        this.scene.add(plane);
+        this.buildings.set(element.data.id, plane);
+        this.buildingElements.set(element.data.id, element);
+      }
     );
-
-    const geometry = new THREE.PlaneGeometry(width, height);
-    const material = new THREE.MeshBasicMaterial({
-      map: texture,
-      transparent: true,
-      side: THREE.DoubleSide,
-    });
-    const plane = new THREE.Mesh(geometry, material);
-
-    plane.renderOrder = baseY * this.container.clientHeight;
-    plane.position.set(basePt.x, height / 2 - height * shiftAmt, basePt.z);
-    // plane.scale.set(width, height, 1);
-    plane.rotateY(Math.PI / 4);
-
-    this.scene.add(plane);
-    this.buildings.set(element.data.id, plane);
-    this.buildingElements.set(element.data.id, element);
   }
 
-  loadTexture(imgPath, width, height) {
+  loadTexture(imgPath, width, height, callback) {
     let texture = null;
     if (this.textures.has(imgPath)) {
       texture = this.textures.get(imgPath);
     } else {
       const loader = new THREE.TextureLoader();
       loader.setCrossOrigin('anonymous');
-      texture = loader.load(imgPath, (txt) => {
-        txt.image.width = width * 2;
-        txt.image.height = height * 2;
+      texture = loader.load(imgPath, (texture) => {
+        texture.image.width = width * 2;
+        texture.image.height = height * 2;
+        texture.encoding = THREE.sRGBEncoding;
+        this.textures.set(imgPath, texture);
+        callback(texture);
       });
-      texture.encoding = THREE.sRGBEncoding;
-      this.textures.set(imgPath, texture);
     }
-    return texture;
   }
 
   updateBuildingImage(id) {
     const element = this.buildingElements.get(id);
     const plane = this.buildings.get(id);
 
-    const height =
-      (element.data.width / element.aspectRatio) * this.container.clientWidth;
+    const height = (element.data.width / element.aspectRatio) * this.container.clientWidth;
     const texture = this.loadTexture(
       element.imagePath,
       element.data.width * this.container.clientWidth,
-      height
+      height,
+      (texture) => {
+        plane.material.map = texture;
+      }
     );
-
-    plane.material.map = texture;
   }
 
   updateElement(element) {
