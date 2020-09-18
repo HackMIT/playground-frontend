@@ -10,6 +10,7 @@ class SponsorPanel {
   constructor() {
     this.queue = [];
     this.sponsorId = '';
+    this.sponsor = {queueOpen: false, challenges: "", url: "", description: ""}
 
     socket.subscribe(
       ['queue_update_sponsor', 'sponsor'],
@@ -32,11 +33,7 @@ class SponsorPanel {
         this.queue = msg.subscribers;
         break;
       case 'sponsor':
-        document.getElementById('sponsor-description-field').value =
-          msg.sponsor.description;
-        document.getElementById('sponsor-challenges-field').value =
-          msg.sponsor.challenges;
-        document.getElementById('sponsor-url-field').value = msg.sponsor.url;
+        this.sponsor = msg.sponsor;
         break;
       default:
         break;
@@ -120,8 +117,13 @@ class SponsorPanel {
         <div id="sponsor-toggle-container">
           <p>Queue Toggle: This turns the queue on and off for your entire company. Make sure to check with your other reps first before turning the queue off!</p>
           <div id="sponsor-queue-toggle">
-            <input type="checkbox" id="sponsor-toggle"/>
-            <div id="slider"></div>
+            <button id={this.sponsor.queueOpen ? "sponsor-queue-off" : "sponsor-queue-on"} onclick={() => {
+              socket.send({
+                type: 'update_sponsor',
+                setQueueOpen: true,
+                queueOpen: !this.sponsor.queueOpen,
+              })
+            }} >{this.sponsor.queueOpen ? "Close the queue" : "Open the queue"}</button>
           </div>
         </div>
         <div>{hackerElems}</div>
@@ -147,6 +149,7 @@ class SponsorPanel {
                 id="sponsor-description-field"
                 placeholder="Company A is working hard to bring financial literacy to those who need it most. Talk to us to learn more about our challenges and recruiting opportunities! Our queue will be open all of Friday night and 9am-1pm EDT on Saturday."
                 rows="6"
+                defaultValue={this.sponsor.description}
               />
             </div>
             <div className="field">
@@ -159,6 +162,7 @@ class SponsorPanel {
                 id="sponsor-challenges-field"
                 placeholder="We're looking for the best hacks that teach financial literacy!&#10;&#10;Prize: $100 Amazon gift card for each team member"
                 rows="6"
+                defaultValue={this.sponsor.challenges}
               />
             </div>
             <div className="field">
@@ -171,6 +175,7 @@ class SponsorPanel {
                 id="sponsor-url-field"
                 type="text"
                 placeholder="https://company.com/jobs"
+                defaultValue={this.sponsor.url}
               />
             </div>
             <button

@@ -410,7 +410,8 @@ class Game extends Page {
 
       if (this.room.sponsorId.length > 0) {
         if (characterManager.character.queueId !== this.room.sponsorId.length) {
-          document.getElementById('queue-button-icon').src = './images/Coffee_Icon.svg';
+          document.getElementById('queue-button-icon').src =
+            './images/Coffee_Icon.svg';
         }
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
@@ -421,6 +422,10 @@ class Game extends Page {
 
         document.getElementById('challenges-button').style.display =
           this.room.sponsor.challenges.length > 0 ? 'inline-block' : 'none';
+        document.getElementById('queue-button').style.display = this.room
+          .sponsor.queueOpen
+          ? 'inline-block'
+          : 'none';
 
         const text = this.room.sponsor.description.replace(
           /(https?:\/\/[^\s]+)/g,
@@ -806,13 +811,21 @@ class Game extends Page {
       queueSponsor.subscribe(this.room.sponsor.id);
     } else if (queueManager.inQueue()) {
       queueManager.join(this.room.sponsor);
-    } else if (characterManager.character.queueId !== '' && characterManager.character.queueId !== this.room.sponsor.id) {
+    } else if (
+      characterManager.character.queueId !== '' &&
+      characterManager.character.queueId !== this.room.sponsor.id
+    ) {
       createModal(
         <div id="other-queue-modal">
           <h1>Confirm:</h1>
-          <p>You are currently in the queue for {characterManager.character.queueId}, would you like to leave and join this queue instead?</p>
+          <p>
+            You are currently in the queue for{' '}
+            {characterManager.character.queueId}, would you like to leave and
+            join this queue instead?
+          </p>
           <div id="queue-button-div">
-            <button id="no-button"
+            <button
+              id="no-button"
               onclick={() => {
                 document.getElementById('modal-background').remove();
               }}
@@ -834,7 +847,7 @@ class Game extends Page {
             </button>
           </div>
         </div>
-      )
+      );
     } else {
       createModal(queueForm.createQueueModal(this.room.sponsor));
     }
