@@ -1207,8 +1207,6 @@ class Game extends Page {
 
   makeSceneRequestFunc = (gameRect, element, callback) => {
     return (data) => {
-      console.log(element);
-
       let basebb = null;
       let customShift = 0;
 
@@ -1236,7 +1234,6 @@ class Game extends Page {
         baseElem !== null &&
         baseElem.firstElementChild.getAttribute('points') !== null
       ) {
-        console.log(baseElem);
         const base = baseElem.firstElementChild
           .getAttribute('points')
           .trim()

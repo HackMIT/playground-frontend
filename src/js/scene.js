@@ -239,7 +239,6 @@ class Scene {
             (boundingBox.y - boundingBox.height * (1 / 2 - semiAxisy)) *
             this.container.clientHeight;
         }
-        console.log(plane.renderOrder, imgPath);
 
         plane.position.set(
           basePt.x,
