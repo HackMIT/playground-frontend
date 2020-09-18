@@ -4,23 +4,15 @@ module.exports = [
     template: 'game',
   },
   {
-    path: 'character',
-    template: 'character',
-  },
-  {
     path: 'login',
-    template: 'login',
-  },
-  {
-    path: 'sponsor',
-    template: 'sponsor',
-  },
-  {
-    path: 'register',
-    template: 'register',
+    template: 'quillsso',
   },
   {
     path: 'attendance',
     template: 'attendance',
   },
+  {
+    path: '404',
+    template: '404',
+  }
 ];

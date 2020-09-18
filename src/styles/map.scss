@@ -1,0 +1,120 @@
+#map {
+  background: transparent;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  #map-container {
+    background: url(../images/map/Ground.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: calc(60vw * (578.76 / 1017.16));
+    overflow-y: hidden;
+    position: relative;
+
+    img {
+      &#event-sign {
+        top: 26%;
+        left: 34%;
+        width: 4%;
+      }
+    }
+
+    button {
+      background: transparent;
+      border: none;
+      outline: none;
+      position: absolute;
+      transform: translate(-50%, -50%);
+      width: 100%;
+
+      img {
+        transition: 0.25s ease all;
+        &.clickable{
+          &:hover {
+            transform: translateY(-5%);
+            cursor: pointer;
+          }
+        }      
+      }
+
+      p {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        position: absolute;
+        width: fit-content;
+        max-width: initial;
+        padding: 2px 4px;
+        border-radius: 2px;
+        opacity: 0;
+        visibility: hidden;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        -webkit-transition: visibility 0s, opacity 0.5s ease;
+        transition: visibility 0s, opacity 0.5s ease;
+      }
+
+      &:hover {
+        p {
+          visibility: visible;
+          opacity: 1;
+        }
+      }
+
+      &#town-square {
+        top: 20%;
+        left: 52%;
+        width: 20%;
+      }
+
+      &#town-square-2 {
+        top: 53%;
+        left: 65%;
+        width: 17%;
+      }
+
+      &#nonprofit {
+        top: 38%;
+        left: 82%;
+        width: 17%;
+      }
+
+      &#personal-room {
+        top: 68%;
+        left: 34%;
+        width: 17%;
+      }
+
+      &#sponsor-town {
+        top: 40%;
+        left: 20%;
+        width: 17%;
+      }
+
+      &#speaker-sign {
+        top: 53%;
+        left: 45%;
+        width: 3%;
+      }
+
+      &#workshop-sign {
+        top: 29%;
+        left: 70%;
+        width: 4%;
+      }
+
+      &#event-sign {
+        top: 26%;
+        left: 34%;
+        width: 4%;
+      }
+    }
+  }
+}

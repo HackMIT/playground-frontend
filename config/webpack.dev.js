@@ -1,9 +1,9 @@
-const paths = require('./paths')
-const webpack = require('webpack')
-const merge = require('webpack-merge')
-const common = require('./webpack.common.js')
+const paths = require('./paths');
+const webpack = require('webpack');
+const merge = require('webpack-merge');
+const common = require('./webpack.common.js');
 
-module.exports = merge(common, {
+module.exports = merge(common('development'), {
   /**
    * Mode
    *
@@ -42,6 +42,6 @@ module.exports = merge(common, {
   ],
 
   output: {
-    filename: '[name].bundle.js'
-  }
-})
+    filename: '[name].bundle.js',
+  },
+});

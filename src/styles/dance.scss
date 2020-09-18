@@ -1,0 +1,56 @@
+@import 'colors';
+
+#dance-pane {
+  background: #24447c;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: 6px;
+  position: absolute;
+  transform: translate(-272px, -80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#dance-buttons-div {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .dance-buttons-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    width: 100%;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+
+    button {
+      margin: 0 8px 0 0;
+
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
+
+  #dab-img {
+    transform: scale(1.5);
+  }
+}
+
+#dance-pane-arrow {
+  width: 0;
+  height: 0;
+  border-top: 12px solid #24447c;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: none;
+  position: absolute;
+  top: 92px;
+  left: 50%;
+  transform: translateX(-50%);
+}

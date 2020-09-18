@@ -38,8 +38,20 @@ class Editable {
       />
     );
 
-    const imgElem = <img className="element-img" src={this.imagePath} />;
+    const imgElem = <img className="element-img" />;
     elementElem.appendChild(imgElem);
+
+    const img = new Image();
+
+    img.onload = () => {
+      imgElem.src = img.src;
+      this.aspectRatio = img.naturalWidth / img.naturalHeight;
+      if (this.onload !== undefined) {
+        this.onload();
+      }
+    };
+
+    img.src = this.imagePath;
 
     const deleteButton = <div className="delete" />;
     elementElem.appendChild(deleteButton);
@@ -68,9 +80,7 @@ class Editable {
     elementElem.appendChild(brResizeElem);
 
     brResizeElem.onmousedown = (e) => {
-      const outerRect = document
-        .getElementById('outer')
-        .getBoundingClientRect();
+      const outerRect = document.getElementById('game').getBoundingClientRect();
 
       const startRect = elementElem.getBoundingClientRect();
       const startX =
@@ -171,9 +181,7 @@ class Editable {
       elementElem.classList.add('editing');
       elementElem.classList.add('moving');
 
-      const outerRect = document
-        .getElementById('outer')
-        .getBoundingClientRect();
+      const outerRect = document.getElementById('game').getBoundingClientRect();
 
       const shiftX =
         e.pageX -

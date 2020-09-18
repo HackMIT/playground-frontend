@@ -1,8 +1,22 @@
+import characterSelector from './components/characterSelector';
+import createModal from '../modal';
+import mapInstance from './components/worldMap';
+import misti from './components/misti';
+import nonprofit from './components/nonprofit';
+
 import Editable from './editable';
 import jukebox from '../jukebox';
+import socket from './socket';
+
+// eslint-disable-next-line
+import createElement from '../utils/jsxHelper';
 
 const NO_ACTION = 0;
 const JUKEBOX_OPEN_ACTION = 1;
+const MAP_OPEN_ACTION = 2;
+const WARDROBE_OPEN_ACTION = 3;
+const NONPROFIT_OPEN_ACTION = 4;
+const MISTI_POPUP_ACTION = 5;
 
 class Element extends Editable {
   dataKeyName = 'element';
@@ -12,7 +26,13 @@ class Element extends Editable {
   updateEventName = 'element_update';
 
   get imagePath() {
-    return `https://hackmit-playground-2020.s3.amazonaws.com/elements/${this.data.path}`;
+    let { path } = this.data;
+
+    if (this.data.toggleable) {
+      path = this.data.path.split(',')[this.data.state];
+    }
+
+    return `https://hackmit-playground-2020.s3.amazonaws.com/elements/${path}?${Math.random()}`;
   }
 
   get name() {
@@ -27,29 +47,59 @@ class Element extends Editable {
     this.data.width = newValue;
   }
 
+  remove() {
+    super.remove();
+
+    if (this.data.changingImagePath) {
+      clearInterval(this.changingImageInterval);
+    }
+  }
+
+  hasAction() {
+    return this.data.action !== NO_ACTION || this.data.toggleable;
+  }
+
   configureElement(elem) {
-    // eslint-disable-next-line
-    elem.style.cursor = this.data.action === NO_ACTION ? 'default' : 'pointer';
+    if (this.hasAction()) {
+      elem.style.cursor = 'pointer';
+    } else {
+      elem.style.cursor = 'default';
+    }
+  }
+
+  setImageForState() {
+    const pathOptions = this.data.changingPaths.split(',');
+    this.data.path = pathOptions[this.data.state];
   }
 
   configureImage(imgElem) {
-    if (this.data.changingImagePath) {
-      // TODO: Need to call clearInterval on this timer before getting rid of the element
-      setInterval(() => {
-        const pathOptions = this.data.changingPaths.split(',');
-
-        this.data.path =
-          pathOptions[Math.floor(Math.random() * pathOptions.length)];
-
-        // eslint-disable-next-line
-        imgElem.src = this.imagePath;
-      }, this.data.changingInterval);
+    if (this.data.action !== NO_ACTION || this.data.toggleable) {
+      imgElem.setAttribute('data-interactable', true);
     }
   }
 
   onClick() {
-    if (this.data.action === JUKEBOX_OPEN_ACTION) {
+    if (this.data.toggleable) {
+      socket.send({
+        type: 'element_toggle',
+        id: this.data.id,
+      });
+    } else if (this.data.action === JUKEBOX_OPEN_ACTION) {
       jukebox.openJukeboxPane(document.body);
+    } else if (this.data.action === MAP_OPEN_ACTION) {
+      const mapElem = <div className="modal-frame" id="map-frame" />;
+      createModal(mapElem);
+
+      mapInstance.createMap(this.characterId);
+    } else if (this.data.action === WARDROBE_OPEN_ACTION) {
+      createModal(characterSelector.createModal(), 'character');
+    } else if (this.data.action === NONPROFIT_OPEN_ACTION) {
+      const nonprofitId = this.data.path
+        .substring(this.data.path.indexOf('_') + 1)
+        .split('.')[0];
+      createModal(nonprofit.createNonprofitModal(nonprofitId));
+    } else if (this.data.action === MISTI_POPUP_ACTION) {
+      createModal(misti.createModal());
     }
   }
 

@@ -1,3 +1,6 @@
+import hotkeys from 'hotkeys-js';
+import isMobile from 'ismobilejs';
+
 import Scene from './js/scene';
 import Element from './js/element';
 import Hallway from './js/hallway';
@@ -5,21 +8,38 @@ import Page from './js/page';
 import socket from './js/socket';
 import createModal from './modal';
 import settings from './settings.jsx';
+import map from './js/components/map';
+import feedback from './feedback.jsx';
+import queueSponsor from './js/components/sponsorPanel';
+import adminPanel from './js/components/adminPanel';
+import projectForm from './js/components/projectForm';
 import friends from './js/components/friends';
+import dance from './js/components/dance';
 import jukebox from './jukebox';
+import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
-import {pointInPolygon, lineIntersectsPolygon} from './js/geometry';
+import { pointInPolygon, lineIntersectsPolygon } from './js/geometry';
+import characterSelector from './js/components/characterSelector';
+import queueForm from './js/components/queueForm';
+
+import characterManager from './js/managers/character';
+import notificationsManager from './js/managers/notifications';
+import queueManager from './js/managers/queue';
+import constants from './constants';
+
+// eslint-disable-next-line
+import statusManager from './js/managers/status';
 
 import './styles/index.scss';
+import './styles/notifications.scss';
 import './styles/sponsor.scss';
 import './images/Code_Icon.svg';
 import './images/Coffee_Icon.svg';
 import './images/Site_Icon.svg';
 import './images/sponsor_text.svg';
-import './styles/coffeechat.scss';
+import './images/icons/leave-queue.svg';
 
-import './coffeechat';
-
+import './images/icons/megaphone.svg';
 import './images/icons/dance.svg';
 import './images/icons/edit.svg';
 import './images/icons/friends.svg';
@@ -30,14 +50,26 @@ import './images/icons/portal.png';
 import './images/icons/send.svg';
 import './images/icons/settings.svg';
 import './images/icons/tree.svg';
+import './images/icons/map.svg';
+import './images/icons/guidebook.svg';
+import './images/icons/schedule.svg';
+import './images/logo.png';
+import './images/swoopy.svg';
+import './images/icons/dab.svg';
+import './images/icons/wave.svg';
+import './images/icons/floss.svg';
+import './images/icons/exclamation.svg';
+import './images/icons/event_flag.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
 
 const BACKGROUND_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
+const SPONSOR_NAME_IMAGE_URL =
+  'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/sponsors/%PATH%.svg';
 
-const walls = []
+let walls = [];
 
 // const walls = [[[0.2, 0.2], [0.4, 0.4], [0.2, 0.4]], [[0.4, 0.4], [0.6, 0.4], [0.6, 0.6], [0.4, 0.6]]]
 // ^ an example of a trianlge and a rectangle (coordinates are in [0,1]^2)
@@ -47,18 +79,36 @@ class Game extends Page {
     super();
 
     if (!this.loaded) {
-      document.getElementById('game').appendChild(createLoadingScreen());
+      this.startLoading();
     }
   }
 
   start = () => {
-    if (!window.WebSocket) {
-      // TODO: Handle error -- tell people their browser is incompatible
+    document.getElementById('top-bar-button-container').style.display = 'none';
+    document.getElementById('chat').style.display = 'none';
+    document.getElementById('form-button').style.display = 'none';
+    document.getElementById('edit-button').style.display = 'none';
+
+    if (isMobile(window.navigator).any || !window.WebSocket) {
+      this.stopLoading();
+      loginPanel.hide();
+
+      document.getElementById('top-bar-button-container').style.display =
+        'flex';
+      document.getElementById('chat').style.display = 'flex';
+      document.getElementById('outer').innerHTML =
+        '<div id="unsupported">Unsupported device or browser</div>';
+      return;
     }
+
+    loginPanel.update();
 
     // Quick check for auth data
     if (localStorage.getItem('token') !== null) {
-      document.getElementById('login-panel').style.display = 'none';
+      loginPanel.hide();
+      document.getElementById('top-bar-button-container').style.display =
+        'flex';
+      document.getElementById('chat').style.display = 'flex';
     } else {
       this.stopLoading();
     }
@@ -69,11 +119,14 @@ class Game extends Page {
     this.characters = new Map();
     this.elements = [];
     this.hallways = new Map();
+    this.loadingTasks = 0;
     this.room = null;
 
     this.editing = false;
     this.elementNames = [];
     this.roomNames = [];
+
+    this.buildingIntervals = [];
 
     this.addClickListener('add-button', this.handleElementAddButton);
     this.addClickListener('add-hallway-button', this.handleHallwayAddButton);
@@ -82,17 +135,57 @@ class Game extends Page {
     this.addClickListener('edit-button', this.handleEditButton);
     this.addClickListener('settings-button', this.handleSettingsButton);
     this.addClickListener('game', this.handleGameClick);
-    this.addClickListener('sponsor-login-button', this.handleSponsorLogin);
     this.addClickListener('jukebox-button', this.handleJukeboxButton);
     this.addClickListener('friends-button', this.handleFriendsButton);
     this.addClickListener('send-button', this.handleSendButton);
     this.addClickListener('igloo-button', this.handleIglooButton);
-
-    this.handleWindowSize();
+    this.addClickListener('dance-button', this.handleDanceButton);
+    this.addClickListener('map-button', this.handleMapButton);
+    this.addClickListener('queue-button', this.handleQueueButton);
+    this.addClickListener('website-button', this.handleWebsiteButton);
+    this.addClickListener('schedule-button', this.handleScheduleButton);
+    this.addClickListener('form-button', this.handleFormButton);
+    this.addClickListener('challenges-button', this.handleChallengesButton);
+    this.addClickListener('top-bar-logo', () => {
+      socket.send({
+        type: 'teleport',
+        to: 'home',
+      });
+    });
+    this.addClickListener('connectivity-button', () =>
+      this.handleArenaButton('connectivity')
+    );
+    this.addClickListener('education-button', () =>
+      this.handleArenaButton('education')
+    );
+    this.addClickListener('healthtech-button', () =>
+      this.handleArenaButton('health')
+    );
+    this.addClickListener('urbaninnovation-button', () =>
+      this.handleArenaButton('urban')
+    );
 
     socket.onopen = this.handleSocketOpen;
+    socket.onclose = this.handleSocketClose;
     socket.subscribe('*', this.handleSocketMessage);
     socket.start();
+
+    queueManager.start();
+
+    // Listen for hotkeys
+    hotkeys('t, enter, /', (e) => {
+      e.preventDefault();
+      document.getElementById('chat-box').focus();
+    });
+
+    hotkeys('esc', () => {
+      // Close all character profiles
+      Array.from(document.getElementsByClassName('profile-container')).forEach(
+        (elem) => {
+          elem.style.visibility = 'hidden';
+        }
+      );
+    });
 
     // Start sending chat events
     const chatElem = document.getElementById('chat-box');
@@ -150,19 +243,25 @@ class Game extends Page {
       this.scene.fixCameraOnResize();
       this.handleWindowSize();
     });
+
+    window.onclick = (e) => {
+      if (e.target.id === 'modal-background') {
+        document.getElementById('modal-background').remove();
+      } else if (e.target.id === 'form-modal-background') {
+        document.getElementById('form-modal-background').remove();
+      }
+    };
   };
 
   handleGameClick = (e) => {
     // When clicking on the page, send a move message to the server
     if (
-      e.target.id !== 'three-canvas' &&
-      !e.target.classList.contains('element') &&
-      !e.target.classList.contains('element-img')
+      (e.target.id !== 'three-canvas' &&
+        !e.target.classList.contains('element-img')) ||
+      e.target.hasAttribute('data-interactable')
     ) {
       return;
     }
-
-
 
     // Remove editable status from all elements
     let wasEditing = 0;
@@ -190,24 +289,39 @@ class Game extends Page {
       return;
     }
 
-    // Send move packet
-    const rect = document.getElementById('game').getBoundingClientRect();
-    const x = (e.pageX - rect.x) / rect.width;
-    const y = (e.pageY - rect.y) / rect.height;
+    const rect = document
+      .getElementById('three-canvas')
+      .getBoundingClientRect();
+    const x = (e.clientX - rect.x) / rect.width;
+    const y = (e.clientY - rect.y) / rect.height;
+
+    // call click handler of game to check for characters clicked
+    const success = this.scene.handleClickEvent(x, y);
 
     // calculate whether target location is valid (e.g. not inside walls)
     const oldPos = this.scene.getCharacterPos(this.characterId);
     // check if you're currently in the wall
-    const inWall = walls.some((wall) => pointInPolygon(oldPos, wall))
+    const inWall = walls.some((wall) => pointInPolygon(oldPos, wall));
     if (inWall) {
-      // if you're in the wall you're only allowed to move out 
-      // (this is so you can't get stuck in walls if something breaks) 
-      if (walls.some((wall) => pointInPolygon([x,y], wall))) { return; }
+      // if you're in the wall you're only allowed to move out
+      // (this is so you can't get stuck in walls if something breaks)
+      if (!walls.some((wall) => pointInPolygon([x, y], wall))) {
+        return;
+      }
     } else {
       // check that you're not trying to move through a wall
-      if (walls.some((wall) => lineIntersectsPolygon([oldPos, [x, y]], wall))) { return; }
+      // eslint-disable-next-line
+      if (walls.some((wall) => lineIntersectsPolygon([oldPos, [x, y]], wall))) {
+        return;
+      }
     }
 
+    if (success) {
+      // If we click on a character, don't move
+      return;
+    }
+
+    // Send move packet
     socket.send({
       x,
       y,
@@ -222,6 +336,7 @@ class Game extends Page {
 
     if (window.location.hash.length > 1) {
       joinPacket.quillToken = document.location.hash.substring(1);
+      window.history.replaceState({}, document.title, '.');
     } else if (localStorage.getItem('token') !== null) {
       joinPacket.token = localStorage.getItem('token');
     } else {
@@ -233,20 +348,41 @@ class Game extends Page {
     socket.send(joinPacket);
   };
 
+  handleSocketClose = () => {
+    notificationsManager.displayMessage(
+      "You've been disconnected from the HackMIT playground. Please refresh the page to try to reconnect.",
+      Number.MAX_SAFE_INTEGER
+    );
+  };
+
   handleSocketMessage = (data) => {
     console.log(data);
     if (data.type === 'init') {
+      if (data.firstTime) {
+        // If firstTime is true, components/login.js is handling this
+        this.stopLoading();
+        loginPanel.show(true);
+        return;
+      }
+
       this.characterId = data.character.id;
 
       if (data.token !== undefined) {
         localStorage.setItem('token', data.token);
         window.history.pushState(null, null, ' ');
-        document.getElementById('login-panel').style.display = 'none';
+
+        loginPanel.hide();
+        document.getElementById('top-bar-button-container').style.display =
+          'flex';
+        document.getElementById('chat').style.display = 'flex';
       }
 
       // Delete stuff from previous room
       this.scene.deleteAllCharacters();
-
+      this.scene.removeAllBuildings();
+      this.buildingIntervals.forEach((interval) => {
+        clearInterval(interval);
+      });
       this.elements.forEach((element) => {
         element.remove();
       });
@@ -260,55 +396,133 @@ class Game extends Page {
       this.hallways = new Map();
 
       Object.entries(data.room.characters).forEach(([id, character]) => {
-        this.scene.newCharacter(id, character.name, character.x, character.y);
+        this.scene.newCharacter(id, character);
         this.characters.set(id, character);
       });
 
       this.elementNames = data.elementNames;
       this.roomNames = data.roomNames;
 
-      Object.entries(data.room.elements).forEach(([id, element]) => {
-        const elementElem = new Element(element, id, data.elementNames);
-        this.elements.push(elementElem);
+      data.room.elements.forEach((element) => {
+        this.loadingTasks += 1;
 
-        document
+        const elementElem = new Element(element, element.id, data.elementNames);
+        this.elements.push(elementElem);
+        const gameRect = document
           .getElementById('game')
-          .insertBefore(
-            elementElem.element,
-            document.getElementById('three-container')
+          .getBoundingClientRect();
+
+        elementElem.onload = () => {
+          this.convertElementTo3d(elementElem, gameRect, () =>
+            this.finishedLoadingPart()
           );
+          elementElem.element.style.opacity = 0;
+        };
+
+        const threeContainer = document.getElementById('three-container');
+
+        if (element.action > 0) {
+          threeContainer.appendChild(elementElem.element);
+        } else {
+          threeContainer.insertBefore(
+            elementElem.element,
+            document.getElementById('three-canvas')
+          );
+        }
       });
 
       Object.entries(data.room.hallways).forEach(([id, hallway]) => {
         this.hallways.set(id, new Hallway(hallway, id, data.roomNames));
+
         document
           .getElementById('game')
           .appendChild(this.hallways.get(id).element);
       });
 
+      if (data.openFeedback) {
+        this.showFeedback();
+      }
+
       this.settings = data.settings;
       this.room = data.room;
 
-      if (this.room.sponsor) {
+      walls = [
+        data.room.corners
+          .split(';')
+          .map((coords) => coords.split(',').map((x) => parseFloat(x))),
+      ];
+      console.log(walls);
+
+      if (this.room.sponsorId.length > 0) {
+        if (characterManager.character.queueId !== this.room.sponsorId) {
+          document.getElementById('queue-button-icon').src =
+            './images/Coffee_Icon.svg';
+          document.getElementById(
+            'queue-button-text'
+          ).innerText = `Talk to ${this.room.sponsor.name}`;
+        } else {
+          document.getElementById('queue-button-icon').src =
+            './images/icons/leave-queue.svg';
+          document.getElementById(
+            'queue-button-text'
+          ).innerText = `Leave Queue`;
+        }
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
           'sponsor-name'
         ).innerHTML = `<span>${this.room.slug}</span>${this.room.slug}`;
         document.getElementById('outer').classList.add('sponsor');
         document.getElementById('game').classList.add('sponsor');
+
+        document.getElementById('challenges-button').style.display =
+          this.room.sponsor.challenges.length > 0 ? 'inline-block' : 'none';
+        document.getElementById('queue-button').style.display = this.room
+          .sponsor.queueOpen
+          ? 'inline-block'
+          : 'none';
+
+        const text = this.room.sponsor.description.replace(
+          /(https?:\/\/[^\s]+)/g,
+          '<a href=\'$1\' target="_blank">$1</a>'
+        );
+        document.getElementById('sponsor-description').innerHTML = text;
+
+        document.getElementById(
+          'sponsor-name'
+        ).src = SPONSOR_NAME_IMAGE_URL.replace('%PATH%', this.room.sponsorId);
       } else {
         document.getElementById('sponsor-pane').classList.remove('active');
         document.getElementById('outer').classList.remove('sponsor');
         document.getElementById('game').classList.remove('sponsor');
       }
 
+      if (this.dancePaneVisible) {
+        // Hide the dance pane
+        document.getElementById('dance-pane').classList.add('invisible');
+        this.dancePaneVisible = false;
+      }
+
+      if (this.friendsPaneVisible) {
+        // Hide the friends pane
+        document.getElementById('friends-pane').classList.add('invisible');
+        this.friendsPaneVisible = false;
+      }
+
+      // Close all character profiles
+      Array.from(document.getElementsByClassName('profile-container')).forEach(
+        (elem) => {
+          elem.style.visibility = 'hidden';
+        }
+      );
+
+      this.loadingTasks += 1;
       const img = new Image();
 
       img.onload = () => {
         this.loaded = true;
 
         document.getElementById('background').src = img.src;
-        this.stopLoading();
+        this.finishedLoadingPart();
       };
 
       img.src = BACKGROUND_IMAGE_URL.replace('%PATH%', this.room.background);
@@ -316,25 +530,179 @@ class Game extends Page {
       this.scene.fixCameraOnResize();
 
       // uncomment this to have the walls drawn in red (for testing)
-      // walls.forEach(wall => {
-      //   var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      //   svg.style.cssText = "position: absolute; height: 100%; width: 100%; top: 0; left: 0;";
+      // walls.forEach((wall) => {
+      //   const svg = document.createElementNS(
+      //     'http://www.w3.org/2000/svg',
+      //     'svg'
+      //   );
+      //   svg.style.cssText =
+      //     'position: absolute; height: 100%; width: 100%; top: 0; left: 0;';
 
-      //   var polygon = document.createElementNS('http://www.w3.org/2000/svg','polygon');
-      //   let pt_str = "";
-        
-      //   let game = document.getElementById("game")
+      //   const polygon = document.createElementNS(
+      //     'http://www.w3.org/2000/svg',
+      //     'polygon'
+      //   );
+      //   let ptStr = '';
+
+      //   const game = document.getElementById('game');
       //   const rect = game.getBoundingClientRect();
 
-      //   wall.forEach(elem => {
-      //     pt_str += `${elem[0] * rect.width},${elem[1] * rect.height} `
+      //   wall.forEach((elem) => {
+      //     ptStr += `${elem[0] * rect.width},${elem[1] * rect.height} `;
       //   });
-      //   polygon.setAttribute("points", pt_str);
-      //   polygon.setAttribute("style", "fill: red;");
+      //   polygon.setAttribute('points', ptStr);
+      //   polygon.setAttribute('style', 'fill: red;');
       //   svg.appendChild(polygon);
       //   game.insertBefore(svg, game.firstChild);
       // });
 
+      // Start managers
+      notificationsManager.start();
+
+      if (data.character.shirtColor === '#d6e2f8') {
+        createModal(characterSelector.createModal(), 'character');
+      }
+
+      document.getElementById('form-button').style.display = 'none';
+      document.getElementById('edit-button').style.display = 'none';
+
+      //  organizer
+      if (characterManager.character.role === 1) {
+        document.getElementById('edit-button').style.display = 'block';
+      }
+      //  sponsor
+      else if (characterManager.character.role === 4) {
+        const currentTime = new Date().getTime();
+        const formOpen1 = this.createUTCDate(19, 1);
+        const deadline1 = this.createUTCDate(19, 7);
+
+        const formOpen2 = this.createUTCDate(19, 16);
+        const deadline2 = this.createUTCDate(19, 22);
+
+        const first =
+          formOpen1.getTime() < currentTime &&
+          currentTime < deadline1.getTime();
+        const second =
+          formOpen2.getTime() < currentTime &&
+          currentTime < deadline2.getTime();
+
+        let formName = '';
+        let due = '';
+        let extra = '';
+        if (first) {
+          formName = 'Fun Friday Form';
+          due = 'Saturday 3am EDT';
+        } else {
+          formName = 'Spicy Saturday Survey';
+          due = 'Saturday 6pm EDT';
+          extra =
+            ' For those who have already submitted Friday, look over your form and resubmit, and add in a zoom link if you would like to participate in Peer Expo!';
+        }
+
+        if (first || second) {
+          document.getElementById('form-button').style.display = 'block';
+          if (
+            !characterManager.character.project ||
+            (second &&
+              characterManager.character.project.submittedAt < formOpen2)
+          ) {
+            if (!this.remindForm) {
+              createModal(
+                <div id="form-reminder-modal">
+                  <div id="form-reminder">
+                    <h1>Reminder: </h1>
+                    You must submit the <b>{formName}</b> in order to be
+                    eligible for judging and swag! Please fill this out by{' '}
+                    <b>{due}</b> at the latest by clicking the exclamation mark
+                    at the top right of your screen.
+                    {extra}
+                  </div>
+                  <div id="form-button-div">
+                    <button
+                      id="later-button"
+                      onclick={() => {
+                        document.getElementById('form-reminder-modal').remove();
+                        document
+                          .getElementById('form-modal-background')
+                          .remove();
+                      }}
+                    >
+                      Later
+                    </button>
+                    <button
+                      onclick={() => {
+                        document.getElementById('form-reminder-modal').remove();
+                        document
+                          .getElementById('form-modal-background')
+                          .remove();
+                        if (characterManager.character.project) {
+                          createModal(
+                            projectForm.createFormModal(
+                              characterManager.character.project
+                            )
+                          );
+                        } else {
+                          createModal(projectForm.createFormModal());
+                        }
+                      }}
+                    >
+                      OK
+                    </button>
+                  </div>
+                </div>,
+                'form',
+                () => {
+                  document.getElementById('form-reminder-modal').remove();
+                  document.getElementById('form-modal-background').remove();
+                }
+              );
+              this.remindForm = true;
+            }
+          }
+        }
+      }
+
+      // Resize appropriately if we're in a sponsor room
+      this.handleWindowSize();
+
+      // Show floor selector inside hacker arena
+      if (this.room.id.startsWith('arena:')) {
+        document.getElementById('floor-selector').style.display = 'block';
+      } else {
+        document.getElementById('floor-selector').style.display = 'none';
+      }
+
+      // Show current event on navbar
+      const currTimestamp = Math.floor(Date.now() / 1000);
+
+      data.events.some((event) => {
+        if (
+          event.startTime <= currTimestamp &&
+          currTimestamp <= event.startTime + event.duration * 60
+        ) {
+          document.getElementById('top-bar-event').innerHTML = event.name;
+          document.getElementById('top-bar-banner-container').style.visibility =
+            'visible';
+          document.getElementById('top-bar-banner-link').onclick = () => {
+            if (event.url.startsWith('room:')) {
+              socket.send({
+                type: 'teleport',
+                to: event.url.substring(event.url.indexOf(':') + 1),
+                x: 0.6007,
+                y: 0.6905,
+              });
+            } else {
+              window.open(event.url, '_blank');
+            }
+          };
+
+          return true;
+        }
+
+        return false;
+      });
+    } else if (data.type === 'dance') {
+      this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
         if (data.id !== this.characterId) {
@@ -347,11 +715,13 @@ class Game extends Page {
           );
 
           if (distance <= hallway.data.radius) {
-            // TODO: We shouldn't need the 'from' attribute in the teleport packet
+            this.startLoading();
+
             socket.send({
               type: 'teleport',
-              from: this.room.slug,
               to: hallway.data.to,
+              x: hallway.data.toX,
+              y: hallway.data.toY,
             });
 
             return true;
@@ -370,6 +740,7 @@ class Game extends Page {
     } else if (data.type === 'element_update') {
       const idx = this.elements.findIndex((elem) => elem.id === data.id);
       this.elements[idx].applyUpdate(data.element);
+      this.scene.updateElement(this.elements[idx]);
     } else if (data.type === 'hallway_add') {
       this.hallways.set(
         data.id,
@@ -386,21 +757,48 @@ class Game extends Page {
     } else if (data.type === 'room_add') {
       socket.send({
         type: 'teleport',
-        from: this.room.slug,
         to: data.id,
       });
     } else if (data.type === 'error') {
       if (data.code === 1) {
         this.stopLoading();
-        document.getElementById('login-panel').style.display = 'block';
+        loginPanel.show();
+      }
+      if (data.code === 2) {
+        this.stopLoading();
+        createModal(
+          <div id="jukebox-modal">
+            <h1 className="white-text">Oops!</h1>
+            <p className="white-text">
+              You must be a college student to enter the nightclub.
+            </p>
+          </div>
+        );
+      }
+      if (data.code === 4) {
+        createModal(
+          <div id="jukebox-modal">
+            <h1 className="white-text">Oops!</h1>
+            <p className="white-text">
+              You must be a college student to enter a sponsor queue.
+            </p>
+          </div>
+        );
+      }
+      if (data.code === 5) {
+        this.stopLoading();
+        createModal(
+          <div id="jukebox-modal">
+            <h1 className="white-text">Oops!</h1>
+            <p className="white-text">
+              You must fill out the Spicy Saturday Survey on time to enter the
+              hacker arena.
+            </p>
+          </div>
+        );
       }
     } else if (data.type === 'join') {
-      this.scene.newCharacter(
-        data.character.id,
-        data.character.name,
-        data.character.x,
-        data.character.y
-      );
+      this.scene.newCharacter(data.character.id, data.character);
     } else if (data.type === 'leave') {
       if (data.character.id === this.characterId) {
         return;
@@ -408,19 +806,27 @@ class Game extends Page {
       this.scene.deleteCharacter(data.character.id);
     } else if (data.type === 'chat') {
       this.scene.sendChat(data.id, data.mssg);
-    } else {
-      console.log(`received unknown packet: ${data.type}`);
-      console.log(data);
+    } else if (data.type === 'wardrobe_change') {
+      this.scene.updateClothes(data.characterId, data);
     }
+  };
+
+  createUTCDate = (day, hour) => {
+    const date = new Date();
+    date.setUTCFullYear(2020, 8, day);
+    date.setUTCHours(hour, 0, 0);
+    return date;
   };
 
   handleDayofButton = () => {
     createModal(
-      <iframe
-        id="day-of-iframe"
-        className="day-of-page"
-        src="https://dayof.hackmit.org"
-      />
+      <div id="day-of-div">
+        <iframe
+          id="day-of-iframe"
+          className="modal-frame"
+          src="https://dayof.hackmit.org"
+        />
+      </div>
     );
   };
 
@@ -448,21 +854,6 @@ class Game extends Page {
     });
   };
 
-  handleRoomAddButton = () => {
-    const roomName = prompt('What should the room be called?');
-    const backgroundPath = prompt("What's this room's background path?");
-    const sponsor = prompt("Type 'true' if this is a sponsor room").includes(
-      'true'
-    );
-
-    socket.send({
-      type: 'room_add',
-      id: roomName,
-      background: backgroundPath,
-      sponsor,
-    });
-  };
-
   handleEditButton = () => {
     this.editing = !this.editing;
 
@@ -483,6 +874,8 @@ class Game extends Page {
       document.getElementById('add-hallway-button').classList.remove('visible');
       document.getElementById('add-room-button').classList.remove('visible');
 
+      this.elementsTo3d();
+
       this.elements.forEach((element) => {
         element.makeUneditable();
       });
@@ -493,8 +886,140 @@ class Game extends Page {
     }
   };
 
+  elementsTo3d = () => {
+    // make everything into an actual object in 3d
+    const gameRect = document.getElementById('game').getBoundingClientRect();
+
+    this.elements.forEach((element) => {
+      this.convertElementTo3d(element, gameRect, () => {});
+    });
+
+    this.elements.forEach((element) => {
+      element.element.remove();
+    });
+  };
+
+  convertElementTo3d = (element, gameRect, callback) => {
+    const request = new XMLHttpRequest();
+    request.addEventListener(
+      'load',
+      this.makeSceneRequestFunc(gameRect, element, callback)
+    );
+    request.overrideMimeType('image/svg+xml');
+    request.open('GET', element.imagePath);
+    request.send();
+  };
+
+  handleArenaButton = (id) => {
+    socket.send({
+      type: 'teleport',
+      to: `arena:${id}`,
+      x: 0.6007,
+      y: 0.6905,
+    });
+  };
+
+  handleFormButton = () => {
+    if (!characterManager.character.project) {
+      createModal(projectForm.createFormModal());
+    } else {
+      createModal(
+        projectForm.createFormModal(characterManager.character.project)
+      );
+    }
+  };
+
   handleSettingsButton = () => {
-    createModal(settings.createSettingsModal(this.settings));
+    if (characterManager.character.role === 2) {
+      createModal(
+        queueSponsor.createQueueModal(),
+        'queue',
+        queueSponsor.onClose
+      );
+      queueSponsor.subscribe(characterManager.character.sponsorId);
+    } else if (characterManager.character.role === 1) {
+      createModal(adminPanel.createAdminModal(), '', adminPanel.onClose);
+    } else {
+      createModal(settings.createSettingsModal(this.settings));
+    }
+  };
+
+  handleQueueButton = () => {
+    // TODO: 2 should be a constant for sponsor
+    if (characterManager.character.role === 2) {
+      createModal(
+        queueSponsor.createQueueModal(),
+        'queue',
+        queueSponsor.onClose
+      );
+
+      queueSponsor.subscribe(this.room.sponsor.id);
+    } else if (queueManager.inQueue()) {
+      queueManager.join(this.room.sponsor);
+    } else if (
+      characterManager.character.queueId !== '' &&
+      characterManager.character.queueId !== this.room.sponsor.id
+    ) {
+      createModal(
+        <div id="other-queue-modal">
+          <h1>Confirm:</h1>
+          <p>
+            You are currently in the queue for{' '}
+            {characterManager.character.queueId}, would you like to leave and
+            join this queue instead?
+          </p>
+          <div id="queue-button-div">
+            <button
+              id="no-button"
+              onclick={() => {
+                document.getElementById('modal-background').remove();
+              }}
+            >
+              No
+            </button>
+            <button
+              onclick={() => {
+                document.getElementById('modal-background').remove();
+                socket.send({
+                  type: 'queue_remove',
+                  characterId: characterManager.character.id,
+                  sponsorId: this.room.sponsor.id,
+                });
+                createModal(queueForm.createQueueModal(this.room.sponsor));
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      );
+    } else {
+      createModal(queueForm.createQueueModal(this.room.sponsor));
+    }
+  };
+
+  handleChallengesButton = () => {
+    createModal(
+      <div id="challenges-modal">
+        <div id="challenges-content">
+          <h1>{this.room.sponsor.name} Challenges</h1>
+          <div id="challenge-text"></div>
+        </div>
+      </div>
+    );
+    const text = this.room.sponsor.challenges.replace(
+      /(https?:\/\/[^\s]+)/g,
+      '<a href=\'$1\' target="_blank">$1</a>'
+    );
+    document.getElementById('challenge-text').innerHTML = text;
+  };
+
+  handleWebsiteButton = () => {
+    window.open(this.room.sponsor.url, '_blank');
+  };
+
+  handleScheduleButton = () => {
+    window.open(constants.calendarURL, '_blank');
   };
 
   handleJukeboxButton = () => {
@@ -502,6 +1027,8 @@ class Game extends Page {
   };
 
   handleFriendsButton = () => {
+    const dancePane = document.getElementById('dance-pane');
+
     if (this.friendsPaneVisible === true) {
       // Hide the friends pane
       document.getElementById('friends-pane').classList.add('invisible');
@@ -510,12 +1037,24 @@ class Game extends Page {
       // Make the friends pane visible
       document.getElementById('friends-pane').classList.remove('invisible');
       this.friendsPaneVisible = true;
+
+      // Hide the dance pane
+      if (dancePane) {
+        document.getElementById('dance-pane').classList.add('invisible');
+        this.dancePaneVisible = false;
+      }
     } else {
       // Never created friends pane before, create it now
       document
         .getElementById('chat')
-        .appendChild(friends.createFriendsPane(this.characters));
+        .appendChild(friends.createFriendsPane(this.friends));
       this.friendsPaneVisible = true;
+
+      // Hide the dance pane
+      if (dancePane) {
+        document.getElementById('dance-pane').classList.add('invisible');
+        this.dancePaneVisible = false;
+      }
     }
   };
 
@@ -524,12 +1063,33 @@ class Game extends Page {
     const lengthElem = document.getElementById('chat-length-indicator');
 
     // TODO: Get this value from config
-    if (chatElem.value.length >= 400) {
+    if (chatElem.value.length >= 400 || chatElem.value.length === 0) {
       return;
     }
 
     // Replace all non-ASCII characters
     chatElem.value = chatElem.value.replace(/[^ -~]/gi, '');
+
+    // Check if chat contains any covid-related words
+    const pattern = new RegExp(
+      /(\s|^)(sick|achoo|sneeze|fever|sick|asymptomatic|symptoms)(\s|$|[.!?\\-])/i
+    );
+    const matches = chatElem.value.match(pattern);
+
+    if (matches) {
+      socket.send({ type: 'teleport_home' });
+      createModal(
+        <div id="quarantine-modal">
+          <h1 className="white-text">Welcome Home!</h1>
+          <p className="white-text">
+            You have been placed in quarantine for saying '{chatElem.value}'.
+          </p>
+        </div>,
+        'quarantine'
+      );
+      chatElem.value = '';
+      return;
+    }
 
     socket.send({
       type: 'chat',
@@ -544,25 +1104,58 @@ class Game extends Page {
   };
 
   handleIglooButton = () => {
+    // this.showFeedback();
+    this.startLoading();
+
     socket.send({
       type: 'teleport_home',
     });
   };
 
-  handleSponsorLogin = () => {
-    const joinPacket = {
-      type: 'join',
-      name: prompt("What's your name?"),
-    };
+  handleDanceButton = () => {
+    const friendsPane = document.getElementById('friends-pane');
 
-    // Connected to remote
-    socket.send(joinPacket);
+    if (this.dancePaneVisible === true) {
+      // Hide the dance pane
+      document.getElementById('dance-pane').classList.add('invisible');
+      this.dancePaneVisible = false;
+    } else if (this.dancePaneVisible === false) {
+      // make the dance pane visible
+      document.getElementById('dance-pane').classList.remove('invisible');
+      this.dancePaneVisible = true;
+
+      //  make friends pane invisible
+      if (friendsPane) {
+        document.getElementById('friends-pane').classList.add('invisible');
+        this.friendsPaneVisible = false;
+      }
+    } else {
+      // Never created dance pane before, create it now
+      document.getElementById('chat').appendChild(dance.createDancePane());
+      this.dancePaneVisible = true;
+
+      // Hide the friends pane
+      if (friendsPane) {
+        friendsPane.classList.add('invisible');
+        this.friendsPaneVisible = false;
+      }
+    }
+  };
+
+  handleMapButton = () => {
+    createModal(map.createMapModal());
   };
 
   handleWindowSize = () => {
     const outerElem = document.getElementById('outer');
 
-    if (window.innerWidth < window.innerHeight * (16 / 9)) {
+    let width = window.innerWidth;
+
+    if (this.room !== null && this.room.sponsorId.length > 0) {
+      width -= 340 + 24 * 3;
+    }
+
+    if (width < (window.innerHeight - (52 + 64)) * (16 / 9)) {
       if (outerElem.classList.contains('vertical')) {
         return;
       }
@@ -575,9 +1168,30 @@ class Game extends Page {
 
       outerElem.classList.remove('vertical');
     }
+
+    this.scene.fixCameraOnResize();
+  };
+
+  showFeedback = () => {
+    createModal(feedback.createFeedbackModal());
+  };
+
+  startLoading = () => {
+    document.getElementById('game').appendChild(createLoadingScreen());
   };
 
   stopLoading = () => {
+    this.loadingTasks = 1;
+    this.finishedLoadingPart();
+  };
+
+  finishedLoadingPart = () => {
+    this.loadingTasks -= 1;
+
+    if (this.loadingTasks > 0) {
+      return;
+    }
+
     const loadingElem = document.getElementById('loading');
 
     if (loadingElem === null) {
@@ -589,6 +1203,102 @@ class Game extends Page {
     setTimeout(() => {
       loadingElem.remove();
     }, 250);
+  };
+
+  makeSceneRequestFunc = (gameRect, element, callback) => {
+    return (data) => {
+      console.log(element);
+
+      let basebb = null;
+      let customShift = 0;
+
+      const svg = data.target.responseXML;
+      let baseElem = svg.getElementById('base');
+      if (baseElem === null) {
+        baseElem = svg.getElementById('Base');
+      }
+
+      const viewbox = svg.firstElementChild
+        .getAttribute('viewBox')
+        .split(' ')
+        .map((num) => parseFloat(num));
+      const aspect = viewbox[2] / viewbox[3];
+
+      const bb = {
+        x: element.data.x,
+        y: element.data.y,
+        width: element.data.width,
+        height:
+          (element.data.width / aspect) * (gameRect.width / gameRect.height),
+      };
+
+      if (
+        baseElem !== null &&
+        baseElem.firstElementChild.getAttribute('points') !== null
+      ) {
+        console.log(baseElem);
+        const base = baseElem.firstElementChild
+          .getAttribute('points')
+          .trim()
+          .split(',')
+          .join(' ')
+          .split(' ')
+          .map((num) => parseFloat(num));
+        // these are coordinates w/ y=0 at top and y=1 at bottom
+        const scaledBaseYs = base
+          .filter((el, i) => i % 2 === 1)
+          .map((y) => y / viewbox[3]);
+        const scaledBaseXs = base
+          .filter((el, i) => i % 2 === 0)
+          .map((x) => x / viewbox[2]);
+
+        const minY = Math.min.apply(null, scaledBaseYs);
+        const maxY = Math.max.apply(null, scaledBaseYs);
+
+        const minX = Math.min.apply(null, scaledBaseXs);
+        const maxX = Math.max.apply(null, scaledBaseXs);
+
+        const leftY = scaledBaseYs[scaledBaseXs.indexOf(minX)];
+        const rightY = scaledBaseYs[scaledBaseXs.indexOf(maxX)];
+
+        // we essentially shift the point where we draw it up by this amount (but also shift center pt "back")
+        basebb = {
+          bottom: maxY,
+          top: minY,
+          left: minX,
+          right: maxX,
+          leftY,
+          rightY,
+        };
+      } else if (element.data.path.slice(0, 5) === 'tiles') {
+        customShift = 1;
+      }
+
+      this.scene.create2DObject(
+        bb,
+        element.imagePath,
+        basebb,
+        element,
+        customShift,
+        callback
+      );
+
+      if (element.data.changingImagePath) {
+        const stateLen = element.data.changingPaths.split(',').length;
+        const interval = setInterval(() => {
+          if (element.data.changingRandomly) {
+            element.data.state = Math.floor(
+              Math.random() * Math.floor(stateLen)
+            );
+          } else {
+            element.data.state = (element.data.state + 1) % stateLen;
+          }
+          element.setImageForState();
+          this.scene.updateBuildingImage(element.data.id);
+        }, element.data.changingInterval);
+        this.buildingIntervals.push(interval);
+      }
+    };
   };
 }
 

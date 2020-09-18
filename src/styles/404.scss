@@ -1,0 +1,29 @@
+@import 'fonts';
+@import 'colors';
+
+body {
+  background: rgb(150, 208, 241);
+  background: linear-gradient(
+    135deg,
+    rgba(150, 208, 241, 1) 0%,
+    rgba(251, 205, 194, 1) 100%
+  );
+
+  div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  h1 {
+    font-family: LemonMilkMedium;
+    color: rgb(26, 35, 83);
+  }
+
+  p {
+    font-family: Muli;
+    color: rgb(26, 35, 83);
+  }
+}
