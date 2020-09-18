@@ -113,7 +113,7 @@ class Character {
       )
       .substring(1)
       .match(/.{2}/g)
-      .map((x) => Math.pow(parseInt(x, 16) / 255, CHARACTER_GAMMA));
+      .map((x) => (parseInt(x, 16) / 255) ** CHARACTER_GAMMA);
   };
 
   update(deltaTime) {

@@ -69,7 +69,7 @@ const BACKGROUND_IMAGE_URL =
 const SPONSOR_NAME_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/sponsors/%PATH%.svg';
 
-let walls = [];
+const walls = [];
 let roomWalls = [];
 
 // const walls = [[[0.2, 0.2], [0.4, 0.4], [0.2, 0.4]], [[0.4, 0.4], [0.6, 0.4], [0.6, 0.6], [0.4, 0.6]]]
@@ -296,17 +296,26 @@ class Game extends Page {
     // calculate whether target location is valid (e.g. not inside walls)
     const oldPos = this.scene.getCharacterPos(this.characterId);
     // check if you're currently in the wall
-    const inWall = walls.some((wall) => pointInPolygon(oldPos, wall)) || !roomWalls.every((wall) => pointInPolygon(oldPos, wall));
+    const inWall =
+      walls.some((wall) => pointInPolygon(oldPos, wall)) ||
+      !roomWalls.every((wall) => pointInPolygon(oldPos, wall));
     if (inWall) {
       // if you're in the wall you're only allowed to move out
       // (this is so you can't get stuck in walls if something breaks)
-      if (walls.some((wall) => pointInPolygon([x, y], wall)) || (roomWalls.length != 0  && !roomWalls.some((wall) => pointInPolygon([x, y], wall)))) {
+      if (
+        walls.some((wall) => pointInPolygon([x, y], wall)) ||
+        (roomWalls.length !== 0 &&
+          !roomWalls.some((wall) => pointInPolygon([x, y], wall)))
+      ) {
         return;
       }
     } else {
       // check that you're not trying to move through a wall
       // eslint-disable-next-line
-      if (walls.some((wall) => lineIntersectsPolygon([oldPos, [x, y]], wall)) || roomWalls.some((wall) => lineIntersectsPolygon([oldPos, [x, y]], wall))) {
+      if (
+        walls.some((wall) => lineIntersectsPolygon([oldPos, [x, y]], wall)) ||
+        roomWalls.some((wall) => lineIntersectsPolygon([oldPos, [x, y]], wall))
+      ) {
         return;
       }
     }
@@ -1253,7 +1262,7 @@ class Game extends Page {
           .split(',')
           .join(' ')
           .split(' ')
-          .filter((str) => str !== "")
+          .filter((str) => str !== '')
           .map((num) => parseFloat(num));
 
         // these are coordinates w/ y=0 at top and y=1 at bottom
