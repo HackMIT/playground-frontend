@@ -300,7 +300,7 @@ class Game extends Page {
     if (inWall) {
       // if you're in the wall you're only allowed to move out
       // (this is so you can't get stuck in walls if something breaks)
-      if (walls.some((wall) => pointInPolygon([x, y], wall)) || (roomWalls.length != 0  && !roomWalls.some((wall) => pointInPolygon([x, y], wall)))) {
+      if (walls.some((wall) => pointInPolygon([x, y], wall)) || (roomWalls.length !== 0  && !roomWalls.some((wall) => pointInPolygon([x, y], wall)))) {
         return;
       }
     } else {
@@ -394,6 +394,8 @@ class Game extends Page {
         this.scene.newCharacter(id, character);
         this.characters.set(id, character);
       });
+
+      this.scene.setNametagZorderBehind(data.room.id !== 'nightclub' && data.room.id !== 'auditorium')
 
       this.elementNames = data.elementNames;
       this.roomNames = data.roomNames;

@@ -62,6 +62,17 @@ class AnimatedModel {
     this.nametag.style.zIndex = behind ? -1 : 0;
   }
 
+  fixTrackingElems() {
+    const objPt = this.animation.destination.clone();
+    const screenPt = this.reverseRaycaster(objPt);
+
+    this.trackingElems.forEach((elem) => {
+      elem.style.transitionDuration = `${0}s`;
+      elem.style.left = `${screenPt[0]}px`;
+      elem.style.top = `${screenPt[1]}px`;
+    });
+  }
+
 
   // adds an html element that will follow the character around
   addHtmlElem(htmlElem) {
