@@ -426,7 +426,7 @@ class Game extends Page {
             .map((coords) => coords.split(',').map((x) => parseFloat(x))),
         ];
       } else {
-        walls = []
+        walls = [];
       }
 
       if (this.room.sponsorId.length > 0) {
@@ -1181,10 +1181,7 @@ class Game extends Page {
 
   testDrawWalls = () => {
     walls.forEach((wall) => {
-      const svg = document.createElementNS(
-        'http://www.w3.org/2000/svg',
-        'svg'
-      );
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       svg.style.cssText =
         'position: absolute; height: 100%; width: 100%; top: 0; left: 0;';
 
@@ -1205,7 +1202,7 @@ class Game extends Page {
       svg.appendChild(polygon);
       game.insertBefore(svg, game.firstChild);
     });
-  }
+  };
 
   makeSceneRequestFunc = (gameRect, element, callback) => {
     return (data) => {
@@ -1271,22 +1268,24 @@ class Game extends Page {
 
         // gotta add walls too lets do that
         const scaledBase = base.map((num, i) => {
-          if (i % 2 == 1) { // this is ys
-            const inBoxCoords = num/viewbox[3];
-            const inScreenCoords = bb.y -  bb.height * (1/2 - inBoxCoords);
-            return inScreenCoords;
-          } else { // this is xs 
-            const inBoxCoords = num/viewbox[2];
-            const inScreenCoords = bb.x -  bb.width * (1/2 - inBoxCoords);
+          if (i % 2 === 1) {
+            // this is ys
+            const inBoxCoords = num / viewbox[3];
+            const inScreenCoords = bb.y - bb.height * (1 / 2 - inBoxCoords);
             return inScreenCoords;
           }
+
+          // this is xs
+          const inBoxCoords = num / viewbox[2];
+          const inScreenCoords = bb.x - bb.width * (1 / 2 - inBoxCoords);
+          return inScreenCoords;
         });
 
-        const thisWall = []
-        for (var i = 0; i < scaledBase.length; i+=2) {
-          thisWall.push([scaledBase[i], scaledBase[i+1]])
+        const thisWall = [];
+        for (let i = 0; i < scaledBase.length; i += 2) {
+          thisWall.push([scaledBase[i], scaledBase[i + 1]]);
         }
-        walls.push(thisWall)
+        walls.push(thisWall);
       } else if (element.data.path.slice(0, 5) === 'tiles') {
         customShift = 1;
       } else if (element.data.path.slice(0, 21) === 'auditorium_chairs.svg') {
