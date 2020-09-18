@@ -351,7 +351,6 @@ class Game extends Page {
   };
 
   handleSocketMessage = (data) => {
-    console.log(data);
     if (data.type === 'init') {
       if (data.firstTime) {
         // If firstTime is true, components/login.js is handling this
@@ -793,6 +792,7 @@ class Game extends Page {
       }
     } else if (data.type === 'join') {
       this.scene.newCharacter(data.character.id, data.character);
+      this.scene.fixNametag(data.room.id !== 'nightclub' && data.room.id !== 'auditorium')
     } else if (data.type === 'leave') {
       this.scene.deleteCharacter(data.character.id);
     } else if (data.type === 'chat') {
