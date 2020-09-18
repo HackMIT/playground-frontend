@@ -16,6 +16,7 @@ function horizRayInterectsLine(point, lineA, lineB) {
 // check whether a point is inside polygon (a list of points)
 // uses crossing number algorithm
 function pointInPolygon(point, polygon) {
+  console.log(point, polygon)
   let numIntersections = 0;
 
   for (let i = 0; i < polygon.length; i += 1) {
@@ -26,7 +27,6 @@ function pointInPolygon(point, polygon) {
       numIntersections += 1;
     }
   }
-
   return numIntersections % 2 === 1;
 }
 
