@@ -485,7 +485,7 @@ class Game extends Page {
       notificationsManager.start();
 
       if (data.character.shirtColor === '#d6e2f8') {
-        createModal(characterSelector.createModal());
+        createModal(characterSelector.createModal(), 'character');
       }
 
       document.getElementById('form-button').style.display = 'none';
