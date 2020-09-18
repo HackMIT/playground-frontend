@@ -63,3 +63,27 @@
     }
   }
 }
+
+#project-summary {
+  h3 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  button {
+    background: #43a047;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    font-size: 14px;
+    margin: 12px auto 0;
+    outline: none;
+    padding: 12px 16px;
+
+    &:hover {
+      background: #388e3c;
+    }
+  }
+}

@@ -16,6 +16,14 @@
     overflow-y: hidden;
     position: relative;
 
+    img {
+      &#event-sign {
+        top: 26%;
+        left: 34%;
+        width: 4%;
+      }
+    }
+
     button {
       background: transparent;
       border: none;
@@ -26,11 +34,12 @@
 
       img {
         transition: 0.25s ease all;
-
-        &:hover {
-          transform: translateY(-5%);
-          cursor: pointer;
-        }
+        &.clickable{
+          &:hover {
+            transform: translateY(-5%);
+            cursor: pointer;
+          }
+        }      
       }
 
       p {

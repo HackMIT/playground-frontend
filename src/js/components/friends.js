@@ -5,7 +5,6 @@ import socket from '../socket';
 
 import '../../styles/friends.scss';
 import addFriendIcon from '../../images/icons/add-friend.svg';
-import closeIcon from '../../images/icons/close-white.svg';
 import messageIcon from '../../images/icons/message.svg';
 import teleportIcon from '../../images/icons/teleport-friend.svg';
 
@@ -123,15 +122,16 @@ class FriendsPane {
       } else {
         buttons = (
           <div className="buttons">
-            <button>
-              <img src={closeIcon} />
-            </button>
             <button onclick={() => this.handleChatButton(friend)}>
               <img src={messageIcon} />
             </button>
-            <button onclick={() => this.handleTeleportButton(friend)}>
-              <img src={teleportIcon} />
-            </button>
+            {status !== 'offline' ?
+              <button onclick={() => this.handleTeleportButton(friend)}>
+                <img src={teleportIcon} />
+              </button>
+              :
+              <div />
+            }
           </div>
         );
       }
@@ -163,12 +163,10 @@ class FriendsPane {
   };
 
   handleChatButton = (friend) => {
-    if (this.selectedId === friend.id) {
+    if (!(message.isHidden())) {
       message.hide();
       return;
     }
-
-    this.selectedId = friend.id;
 
     message.show();
     message.updateMessagesPane(friend);

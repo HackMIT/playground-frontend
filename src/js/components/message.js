@@ -2,20 +2,29 @@ import '../../styles/message.scss';
 
 import socket from '../socket';
 
+import closeIcon from '../../images/icons/close-white.svg';
+
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
 
 class MessagePane {
   constructor() {
     this.messages = [];
-
+    this.hidden = true;
     socket.subscribe(['message', 'messages'], this.handleSocketMessage);
   }
 
   createMessagePane = () => {
     return (
       <div id="message-pane" style="visibility: hidden">
-        <div className="header" id="messages-header"></div>
+        <div className="header" id="messages-header">
+          <div id="header-name"></div>
+          <button id="close-button" onclick={() => {
+            this.hide();
+          }}>
+            <img src={closeIcon} />
+          </button>
+        </div>
         <div className="messages" id="messages-container" />
         <div className="input" id="messages-input"></div>
       </div>
@@ -48,10 +57,10 @@ class MessagePane {
         recipient: character.id,
       });
 
-      document.getElementById('messages-header').innerHTML = '';
-      document.getElementById('messages-header').appendChild(
+      document.getElementById('header-name').innerHTML = '';
+      document.getElementById('header-name').appendChild(
         <p className="name">
-          {character.name} <small>active 25m ago</small>
+          {character.name}
         </p>
       );
 
@@ -101,10 +110,16 @@ class MessagePane {
 
   hide = () => {
     document.getElementById('message-pane').style.visibility = 'hidden';
+    this.hidden = true;
   };
 
   show = () => {
     document.getElementById('message-pane').style.visibility = 'inherit';
+    this.hidden = false;
+  };
+
+  isHidden = () => {
+    return this.hidden;
   };
 }
 
