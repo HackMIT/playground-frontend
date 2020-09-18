@@ -407,6 +407,9 @@ class Game extends Page {
       this.room = data.room;
 
       if (this.room.sponsorId.length > 0) {
+        if (characterManager.character.queueId !== this.room.sponsorId.length) {
+          document.getElementById('queue-button-icon').src = './images/Coffee_Icon.svg';
+        }
         document.getElementById('sponsor-pane').classList.add('active');
         document.getElementById(
           'sponsor-name'
@@ -664,11 +667,13 @@ class Game extends Page {
 
   handleDayofButton = () => {
     createModal(
-      <iframe
-        id="day-of-iframe"
-        className="modal-frame"
-        src="https://dayof.hackmit.org"
-      />
+      <div id="day-of-div">
+        <iframe
+          id="day-of-iframe"
+          className="modal-frame"
+          src="https://dayof.hackmit.org"
+        />
+      </div>
     );
   };
 
@@ -766,6 +771,35 @@ class Game extends Page {
       queueSponsor.subscribe(this.room.sponsor.id);
     } else if (queueManager.inQueue()) {
       queueManager.join(this.room.sponsor);
+    } else if (characterManager.character.queueId !== '' && characterManager.character.queueId !== this.room.sponsor.id) {
+      createModal(
+        <div id="other-queue-modal">
+          <h1>Confirm:</h1>
+          <p>You are currently in the queue for {characterManager.character.queueId}, would you like to leave and join this queue instead?</p>
+          <div id="queue-button-div">
+            <button id="no-button"
+              onclick={() => {
+                document.getElementById('modal-background').remove();
+              }}
+            >
+              No
+            </button>
+            <button
+              onclick={() => {
+                document.getElementById('modal-background').remove();
+                socket.send({
+                  type: 'queue_remove',
+                  characterId: characterManager.character.id,
+                  sponsorId: this.room.sponsor.id,
+                });
+                createModal(queueForm.createQueueModal(this.room.sponsor));
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )
     } else {
       createModal(queueForm.createQueueModal(this.room.sponsor));
     }

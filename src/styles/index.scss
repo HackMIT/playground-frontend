@@ -771,6 +771,46 @@ body {
   }
 }
 
+#other-queue-modal {
+  #queue-button-div {
+    display: inline-block;
+    text-align: center;
+
+    button {
+      background: #43a047;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 14px;
+      margin: 10px;
+      outline: none;
+      padding: 12px 16px;
+  
+      &:hover {
+        background: #388e3c;
+      }
+    }
+  
+    #no-button {
+      background: #ee0a0a;
+      display: inline-block;
+  
+      &:hover {
+        background: #ee0a0a8a;
+      }
+    }
+  }
+
+}
+
+#day-of-div {
+  height: 100%;
+  padding: 0px;
+  overflow-x: hidden;
+}
+
 #challenges-modal {
   background: $blue_light;
 
