@@ -30,7 +30,7 @@ class Character {
         parent,
         gltf.scene,
         gltf.animations,
-        data.id === 'tim' ? 0 : 2,
+        data.id === 'tim' ? 0 : constants.dances.walk,
         data.x,
         data.y
       );
