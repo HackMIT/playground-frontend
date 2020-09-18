@@ -27,6 +27,10 @@
   }
 }
 
+#hidden-jukebox {
+  display: none;
+}
+
 #jukebox-container {
   width: 400px;
   height: 100%;
@@ -94,6 +98,7 @@
   #jukebox-songs-queue {
     background: $blue_light;
     flex-grow: 1;
+    overflow-y:auto;
 
     .jukebox-song {
       display: flex;
@@ -168,4 +173,42 @@
       width: 64px;
     }
   }
+}
+
+#remove {
+  align-content: center;
+  background-color: $accent-pink;
+  font-family: Muli;
+  height: 30px;
+  width: 100px;
+  margin-top: 3px;
+  border-radius: 20px;
+  outline: none;
+  border: none;
+  margin-left: auto;
+  margin-right: auto;
+  cursor: pointer;
+}
+
+.swal-title {
+  font-family: Muli;
+}
+
+.swal-text {
+  font-family: Muli;
+}
+
+.swal-button {
+  font-family: Muli;
+}
+
+#toggle {
+  float: left;
+  margin-right: 8px;
+}
+
+.toggle {
+  float: left;
+  margin-left: 5px;
+  margin-top: 10px;
 }

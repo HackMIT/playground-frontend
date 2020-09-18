@@ -16,7 +16,7 @@ $horizontal_spacing: 24px;
   min-width: $sponsor_pane_width;
   max-width: $sponsor_pane_width;
   max-height: calc(100vh - 64px - 52px);
-  overflow-y: scroll;
+  overflow-y: auto;
   text-align: center;
   width: 30%;
 
@@ -27,9 +27,10 @@ $horizontal_spacing: 24px;
   #sponsor-name {
     display: block;
     font-size: 48px;
-    margin: 12px auto;
+    margin: 8px auto;
     position: relative;
-    width: 80%;
+    max-width: 80%;
+    max-height: 48px;
   }
 
   p {

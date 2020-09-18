@@ -15,6 +15,8 @@ const CODE_OF_CONDUCT = 4;
 class LoginPanel {
   constructor() {
     this.name = '';
+    this.location = '';
+    this.bio = '';
     this.nameFieldDisabled = false;
     this.state = INITIAL_STATE;
 
@@ -152,6 +154,19 @@ class LoginPanel {
                 disabled={this.nameFieldDisabled}
               />
             </div>
+            <div className="field">
+              <p>Location</p>
+              <input
+                type="text"
+                placeholder="Cambridge, MA"
+                id="location-field"
+                maxLength="30"
+              />
+            </div>
+            <div className="field">
+              <p>Short bio (&#8804; 150 characters)</p>
+              <textarea id="bio-field" maxLength="150" rows="4" />
+            </div>
             <h2>Notifications</h2>
             <p className="small">
               We recommend you enable all of these. We'll only alert you if it's
@@ -197,6 +212,26 @@ class LoginPanel {
                   this.name = nameField.value;
                 } else {
                   showError('Please enter your name.');
+                  return;
+                }
+
+                const locationField = document.getElementById('location-field');
+                if (locationField.value.length <= 30) {
+                  this.location = locationField.value;
+                } else {
+                  showError(
+                    'Please shorten your location to 30 characters or fewer.'
+                  );
+                  return;
+                }
+
+                const bioField = document.getElementById('bio-field');
+                if (bioField.value.length <= 150) {
+                  this.bio = bioField.value;
+                } else {
+                  showError(
+                    'Please shorten your bio to 150 characters or fewer.'
+                  );
                   return;
                 }
 
@@ -280,9 +315,14 @@ class LoginPanel {
   }
 
   handleInitPacket = (data) => {
-    if (data.character.name.length > 0 && data.character.name !== 'Player') {
+    if (
+      data.character.name.length > 0 &&
+      !data.character.name.startsWith('Player (')
+    ) {
       this.name = data.character.name;
       this.nameFieldDisabled = true;
+
+      this.email = data.character.email;
     }
 
     this.state = CREATE_ACCOUNT;
@@ -300,6 +340,14 @@ class LoginPanel {
 
     if (this.phoneNumber !== undefined) {
       data.phoneNumber = this.phoneNumber;
+    }
+
+    if (this.location !== undefined) {
+      data.location = this.location;
+    }
+
+    if (this.bio !== undefined) {
+      data.bio = this.bio;
     }
 
     socket.send(data);
