@@ -5,6 +5,7 @@ import socket from '../socket';
 import createElement from '../../utils/jsxHelper';
 
 const SPONSOR = 2;
+const MENTOR = 3;
 
 const INITIAL_STATE = 0;
 const GET_EMAIL = 1;
@@ -56,6 +57,12 @@ class LoginPanel {
               Sponsor Login
             </button>
             <button
+              className="blue"
+              onclick={() => this.handleEmailLogin(MENTOR)}
+            >
+              Mentor Login
+            </button>
+            <button
               className="red"
               onclick={() => {
                 // TODO: Replace with handleEmailLogin(ORGANIZER)
@@ -90,7 +97,7 @@ class LoginPanel {
                   this.email = document.getElementById('email-field').value;
                   this.state = CHECK_EMAIL;
                   this.update();
-
+                  
                   socket.send({
                     type: 'email_code',
                     email: this.email,
