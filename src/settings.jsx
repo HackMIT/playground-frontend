@@ -73,7 +73,6 @@ class Settings {
   checkTweets = () => {
     const elem = document.getElementById('settings-twitter');
     this.twitterHandle = elem.value;
-
     if (this.twitterHandle.startsWith('@')) {
       this.twitterHandle = this.twitterHandle.substring(1);
     }
