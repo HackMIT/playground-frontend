@@ -119,8 +119,9 @@ body {
         justify-content: center;
         flex-grow: 1;
         height: $top_bar_height;
+        visibility: hidden;
 
-        #top-bar-banner {
+        #top-bar-banner-link {
           background: rgb(141, 208, 238);
           border-radius: 3px;
           border-top: 6px solid rgb(70, 113, 180);
@@ -165,11 +166,6 @@ body {
             font-size: 14px;
             text-align: center;
           }
-        }
-
-        #top-bar-event {
-          position: absolute;
-          margin-left: 16px;
         }
       }
     }

@@ -57,6 +57,7 @@ import './images/icons/dab.svg';
 import './images/icons/wave.svg';
 import './images/icons/floss.svg';
 import './images/icons/exclamation.svg';
+import './images/icons/event_flag.svg';
 
 // eslint-disable-next-line
 import createElement from './utils/jsxHelper';
@@ -561,8 +562,19 @@ class Game extends Page {
       }
 
       // Show current event on navbar
+      const currTimestamp = Date.now();
       data.events.forEach((event) => {
-        console.log(event);
+        if (
+          event.startTime <= currTimestamp &&
+          currTimestamp <= event.startTime + event.duration * 60
+        ) {
+          document.getElementById('top-bar-event').innerHTML = event.name;
+          document.getElementById('top-bar-banner-container').style.visibility =
+            'visible';
+          document.getElementById('top-bar-banner-link').onclick = () => {
+            window.open(event.url, '_blank');
+          };
+        }
       });
     } else if (data.type === 'dance') {
       this.scene.danceCharacter(data.id, data.dance);
