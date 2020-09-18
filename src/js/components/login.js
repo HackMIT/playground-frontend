@@ -181,10 +181,6 @@ class LoginPanel {
               <p>Emails to {this.email}</p>
             </div>
             <div className="field checkbox">
-              <input type="checkbox" />
-              <p>Slack alerts</p>
-            </div>
-            <div className="field checkbox">
               <input type="checkbox" id="phone-checkbox" />
               <div>
                 <p>Text messages (US Only)</p>
@@ -194,10 +190,6 @@ class LoginPanel {
                   id="phone-field"
                 />
               </div>
-            </div>
-            <div className="field checkbox">
-              <input type="checkbox" />
-              <p>Browser notifications</p>
             </div>
             <p id="error-text">Please enter a valid phone number.</p>
             <button
