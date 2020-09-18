@@ -44,7 +44,6 @@ const achievements = [
   },
   {
     title: 'HANGOUTS',
-    // eslint-disable-next-line no-multi-str
     blurb:
       '\
       HackMIT 2020 is larger than ever! That means more people to interact with, more connections to make, more friendships \
@@ -65,7 +64,7 @@ const achievements = [
   {
     title: 'PUB HACK ON SOCIAL MEDIA',
     blurb:
-      'Share your HackMIT experience on social media with our hashtag, #HackMIT2020! Inflict some #fomo on the rest of the world.',
+      "Share your HackMIT experience on social media with our hashtag, #HackMIT2020! Inflict some #fomo on the rest of the world. Once you've done this task, submit your Twitter handle in the settings panel to claim your badge!",
     img: yellowArrow,
     sticker: socialMedia,
     variableName: 'socialMedia',
@@ -73,7 +72,7 @@ const achievements = [
   {
     title: 'MEME LORD',
     blurb:
-      'Want to battle it out for the ultimate prize and become “Meme Lord”?  Submit a meme to our meme challenge, and get a sticker for participating. Also, winners of the meme challenge get cool prizes. #justforlaughs',
+      "Want to battle it out for the ultimate prize and become “Meme Lord”?  Submit a meme to our meme challenge by Tweeting it with #hackmitmemes, and get a sticker for participating. Also, winners of the meme challenge get cool prizes. Once you've done this task, submit your Twitter handle in the settings panel to claim your badge!",
     img: blueArrow,
     sticker: memeLord,
     variableName: 'memeLord',

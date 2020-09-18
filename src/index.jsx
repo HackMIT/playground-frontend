@@ -509,7 +509,16 @@ class Game extends Page {
       notificationsManager.start();
 
       if (data.character.shirtColor === '#d6e2f8') {
-        createModal(characterSelector.createModal(), 'character');
+        createModal(characterSelector.createModal(), 'character', () => {
+          // Make sure the character selector doesn't come up again
+          socket.send({
+            type: 'wardrobe_change',
+            eyeColor: '#634e34',
+            skinColor: '#8d5524',
+            shirtColor: '#ff99c8',
+            pantsColor: '#ff99c8',
+          });
+        });
       }
 
       document.getElementById('form-button').style.display = 'none';
@@ -876,7 +885,7 @@ class Game extends Page {
     const gameRect = document.getElementById('game').getBoundingClientRect();
 
     this.elements.forEach((element) => {
-      this.convertElementTo3d(element, gameRect, () => { });
+      this.convertElementTo3d(element, gameRect, () => {});
     });
 
     this.elements.forEach((element) => {
