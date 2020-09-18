@@ -1252,7 +1252,9 @@ class Game extends Page {
           .split(',')
           .join(' ')
           .split(' ')
+          .filter((str) => str !== "")
           .map((num) => parseFloat(num));
+
         // these are coordinates w/ y=0 at top and y=1 at bottom
         const scaledBaseYs = base
           .filter((el, i) => i % 2 === 1)
@@ -1279,7 +1281,7 @@ class Game extends Page {
           leftY,
           rightY,
         };
-
+        
         // gotta add walls too lets do that
         const scaledBase = base.map((num, i) => {
           if (i % 2 === 1) {
