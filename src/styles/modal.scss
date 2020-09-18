@@ -99,6 +99,10 @@
   transition: 0.3s;
 }
 
+#character-modal-content {
+  width: fit-content;
+}
+
 .modal-close-button:hover,
 .modal-close-button:focus {
   color: #bbb;

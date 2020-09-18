@@ -106,7 +106,7 @@ class Element extends Editable {
 
       mapInstance.createMap(this.characterId);
     } else if (this.data.action === WARDROBE_OPEN_ACTION) {
-      createModal(characterSelector.createModal());
+      createModal(characterSelector.createModal(), 'character');
     } else if (this.data.action === NONPROFIT_OPEN_ACTION) {
       const nonprofitId = this.data.path
         .substring(this.data.path.indexOf('_') + 1)
