@@ -348,10 +348,10 @@ class LoginPanel {
   handleInitPacket = (data) => {
     if (
       data.character.name.length > 0 &&
-      !data.character.name.startsWith('Player (')
+      !data.character.name.startsWith('Player')
     ) {
       this.name = data.character.name;
-      this.nameFieldDisabled = true;
+      this.nameFieldDisabled = data.character.role === 4;
 
       this.email = data.character.email;
     }
