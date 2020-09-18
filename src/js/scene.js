@@ -39,6 +39,10 @@ class Scene {
     this.loader = new GLTFLoader();
 
     this.characters = new Map();
+    this.buildings = new Map();
+    this.buildingElements = new Map();
+    this.textures = new Map();
+    this.loadingCanvas = document.createElement('canvas');
 
     // set up renderer
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -48,20 +52,11 @@ class Scene {
       this.container.clientWidth,
       this.container.clientHeight
     );
-    // this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    // this.renderer.toneMappingExposure = 0.8;
-    // this.renderer.outputEncoding = THREE.sRGBEncoding;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 0.8;
+    this.renderer.outputEncoding = THREE.sRGBEncoding;
     this.renderer.setClearColor(0xffffff, 0);
     this.container.appendChild(this.renderer.domElement);
-
-    // Add floor plane
-    // var geo = new THREE.PlaneBufferGeometry(30, 30, 8, 8);
-    // var texture = THREE.ImageUtils.loadTexture('assets/images/grid.jpg');
-    // var mat = new THREE.MeshBasicMaterial({map: texture});
-    // var floorPlane = new THREE.Mesh(geo, mat);
-    // floorPlane.rotateX( - Math.PI / 2);
-
-    // this.scene.add(floorPlane);
 
     const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
     pmremGenerator.compileEquirectangularShader();
@@ -189,7 +184,172 @@ class Scene {
       return false;
     });
 
-    return success;
+    let buildingSuccess = false;
+    this.buildings.forEach((building, id) => {
+      const intersects = this.raycaster.intersectObject(building);
+      if (intersects.length > 0) {
+        const elem = this.buildingElements.get(id);
+        if (elem.hasAction()) {
+          buildingSuccess = true;
+          elem.onClick();
+        }
+      }
+    });
+
+    return success || buildingSuccess;
+  }
+
+  // creates an object on a plane for an object with the given bounding box in [0,1]^2 coords
+  create2DObject(boundingBox, imgPath, basebb, element, customShift, callback) {
+    let shiftAmt = 0;
+    if (basebb !== null) {
+      shiftAmt = (basebb.bottom - basebb.top) / 2;
+    } 
+
+    const aspect = this.container.clientWidth / this.container.clientHeight;
+    const height = boundingBox.height * 2 * d * Math.sqrt(3 / 2);
+    const width = boundingBox.width * 2 * d * aspect;
+    const baseX = boundingBox.x;
+    const baseY = boundingBox.y + boundingBox.height * (1 / 2 - shiftAmt - customShift);
+    const basePt = this.worldVectorForPos(baseX, baseY);
+    this.loadTexture(
+      imgPath,
+      boundingBox.width * this.container.clientWidth,
+      boundingBox.height * this.container.clientHeight,
+      (texture) => {
+        const geometry = new THREE.PlaneGeometry(width, height);        
+        const material = new THREE.MeshBasicMaterial({
+          map: texture,
+          transparent: true,
+          side: THREE.DoubleSide,
+        });
+        const plane = new THREE.Mesh(geometry, material);
+
+        plane.renderOrder = baseY * this.container.clientHeight;
+
+        if (basebb !== null) {
+          const semiAxisy = Math.min(basebb.leftY, basebb.rightY);
+          plane.renderOrder = (boundingBox.y - boundingBox.height * (1/2 - semiAxisy)) * this.container.clientHeight;
+        }
+        console.log(plane.renderOrder, imgPath)
+
+
+        plane.position.set(basePt.x, height / 2 - height * (shiftAmt + customShift), basePt.z);
+        // plane.scale.set(width, height, 1);
+        plane.rotateY(Math.PI / 4);
+
+        plane.updateMatrix();
+
+        const cameraDirection = new THREE.Vector3(1, 1, 1);
+        geometry.vertices.forEach((v) => {
+          v.applyMatrix4(plane.matrix);
+        });
+        plane.matrixAutoUpdate = false;
+        plane.matrix.identity();
+
+        if (basebb !== null) {
+
+          const leftX = boundingBox.x - boundingBox.width * (1/2 - basebb.left);
+          const leftY = boundingBox.y - boundingBox.height * (1/2 - basebb.leftY);
+
+          const rightX = boundingBox.x - boundingBox.width * (1/2 - basebb.right);
+          const rightY = boundingBox.y - boundingBox.height * (1/2 - basebb.rightY);
+
+          const leftPt = this.worldVectorForPos(leftX, leftY);
+          const rightPt = this.worldVectorForPos(rightX, rightY);
+
+          // const geometry1 = new THREE.SphereGeometry( 2, 32, 32 );
+          // const material1 = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+          // const sphere = new THREE.Mesh( geometry1, material1 );
+          // sphere.position.set(geometry.vertices[2].x, geometry.vertices[2].y, geometry.vertices[2].z);
+          // this.scene.add( sphere );
+
+          const camDirProj = new THREE.Vector3(1,0,1);
+          const leftProj = new THREE.Vector3(geometry.vertices[0].x, 0, geometry.vertices[0].z);
+          const tl = leftPt.clone().addScaledVector(leftProj, -1).dot(camDirProj)/2
+
+          geometry.vertices[0].addScaledVector(cameraDirection, tl)
+          geometry.vertices[2].addScaledVector(cameraDirection, tl)
+
+          const rightProj = new THREE.Vector3(geometry.vertices[1].x, 0, geometry.vertices[1].z);
+          const tr = rightPt.clone().addScaledVector(rightProj, -1).dot(camDirProj)/2
+
+          geometry.vertices[1].addScaledVector(cameraDirection, tr)
+          geometry.vertices[3].addScaledVector(cameraDirection, tr)
+
+          // const geometry1 = new THREE.SphereGeometry( 2, 32, 32 );
+          // const material1 = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+          // const sphere = new THREE.Mesh( geometry1, material1 );
+          // sphere.position.set(geometry.vertices[0].x, geometry.vertices[0].y, geometry.vertices[0].z);
+          // this.scene.add( sphere );
+
+          // const geometry2 = new THREE.SphereGeometry( 2, 32, 32 );
+          // const material2 = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+          // const sphere2 = new THREE.Mesh( geometry2, material2 );
+          // sphere2.position.set(geometry.vertices[2].x, geometry.vertices[2].y, geometry.vertices[2].z);
+          // this.scene.add( sphere2 );
+
+          
+        }
+
+        this.scene.add(plane);
+        this.buildings.set(element.data.id, plane);
+        this.buildingElements.set(element.data.id, element);
+        callback();
+      }
+    );
+  }
+
+  loadTexture(imgPath, width, height, callback) {
+    const queryIndex = imgPath.lastIndexOf('?')
+    const imgKey = imgPath.slice(0, queryIndex)
+    if (this.textures.has(imgKey)) {
+      callback(this.textures.get(imgKey))
+    } else {
+      const loader = new THREE.TextureLoader();
+      loader.setCrossOrigin('anonymous');
+      loader.load(imgPath, (texture) => {
+        texture.image.width = width * 2;
+        texture.image.height = height * 2;
+        texture.encoding = THREE.sRGBEncoding;
+        this.textures.set(imgKey, texture);
+        callback(texture);
+      });
+    }
+  }
+
+  updateBuildingImage(id) {
+    const element = this.buildingElements.get(id);
+    const plane = this.buildings.get(id);
+    if (element !== undefined) {
+      const height = (element.data.width / element.aspectRatio) * this.container.clientWidth;
+      this.loadTexture(
+        element.imagePath,
+        element.data.width * this.container.clientWidth,
+        height,
+        (texture) => {
+          plane.material.map = texture;
+        }
+      );
+    }
+  }
+
+  updateElement(element) {
+    this.buildingElements.set(element.data.id, element);
+    this.updateBuildingImage(element.data.id);
+  }
+
+  removeAllBuildings() {
+    this.buildings.forEach((building) => {
+      this.scene.remove(building);
+    });
+
+    this.buildings.clear();
+    this.buildingElements.clear();
+    this.textures.forEach((texture) => {
+      texture.dispose();
+    });
+    this.textures.clear();
   }
 
   render() {

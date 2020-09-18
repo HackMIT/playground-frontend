@@ -120,6 +120,8 @@ class Game extends Page {
     this.elementNames = [];
     this.roomNames = [];
 
+    this.buildingIntervals = [];
+
     this.addClickListener('add-button', this.handleElementAddButton);
     this.addClickListener('add-hallway-button', this.handleHallwayAddButton);
     this.addClickListener('add-room-button', this.handleRoomAddButton);
@@ -353,7 +355,10 @@ class Game extends Page {
 
       // Delete stuff from previous room
       this.scene.deleteAllCharacters();
-
+      this.scene.removeAllBuildings();
+      this.buildingIntervals.forEach((interval) => {
+        clearInterval(interval);
+      });
       this.elements.forEach((element) => {
         element.remove();
       });
@@ -379,9 +384,15 @@ class Game extends Page {
 
         const elementElem = new Element(element, element.id, data.elementNames);
         this.elements.push(elementElem);
+        const gameRect = document
+          .getElementById('game')
+          .getBoundingClientRect();
 
         elementElem.onload = () => {
-          this.finishedLoadingPart();
+          this.convertElementTo3d(elementElem, gameRect, () =>
+            this.finishedLoadingPart()
+          );
+          elementElem.element.style.opacity = 0;
         };
 
         const threeContainer = document.getElementById('three-container');
@@ -665,6 +676,7 @@ class Game extends Page {
     } else if (data.type === 'element_update') {
       const idx = this.elements.findIndex((elem) => elem.id === data.id);
       this.elements[idx].applyUpdate(data.element);
+      this.scene.updateElement(this.elements[idx]);
     } else if (data.type === 'hallway_add') {
       this.hallways.set(
         data.id,
@@ -798,6 +810,8 @@ class Game extends Page {
       document.getElementById('add-hallway-button').classList.remove('visible');
       document.getElementById('add-room-button').classList.remove('visible');
 
+      this.elementsTo3d();
+
       this.elements.forEach((element) => {
         element.makeUneditable();
       });
@@ -806,6 +820,30 @@ class Game extends Page {
         hallway.makeUneditable();
       });
     }
+  };
+
+  elementsTo3d = () => {
+    // make everything into an actual object in 3d
+    const gameRect = document.getElementById('game').getBoundingClientRect();
+
+    this.elements.forEach((element) => {
+      this.convertElementTo3d(element, gameRect, () => {});
+    });
+
+    this.elements.forEach((element) => {
+      element.element.remove();
+    });
+  };
+
+  convertElementTo3d = (element, gameRect, callback) => {
+    const request = new XMLHttpRequest();
+    request.addEventListener(
+      'load',
+      this.makeSceneRequestFunc(gameRect, element, callback)
+    );
+    request.overrideMimeType('image/svg+xml');
+    request.open('GET', element.imagePath);
+    request.send();
   };
 
   handleArenaButton = (id) => {
@@ -1101,6 +1139,102 @@ class Game extends Page {
     setTimeout(() => {
       loadingElem.remove();
     }, 250);
+  };
+
+  makeSceneRequestFunc = (gameRect, element, callback) => {
+    return (data) => {
+      console.log(element);
+
+      let basebb = null;
+      let customShift = 0;
+
+      const svg = data.target.responseXML;
+      let baseElem = svg.getElementById('base');
+      if (baseElem === null) {
+        baseElem = svg.getElementById('Base');
+      }
+
+      const viewbox = svg.firstElementChild
+        .getAttribute('viewBox')
+        .split(' ')
+        .map((num) => parseFloat(num));
+      const aspect = viewbox[2] / viewbox[3];
+
+      const bb = {
+        x: element.data.x,
+        y: element.data.y,
+        width: element.data.width,
+        height:
+          (element.data.width / aspect) * (gameRect.width / gameRect.height),
+      };
+
+      if (
+        baseElem !== null &&
+        baseElem.firstElementChild.getAttribute('points') !== null
+      ) {
+        console.log(baseElem);
+        const base = baseElem.firstElementChild
+          .getAttribute('points')
+          .trim()
+          .split(',')
+          .join(' ')
+          .split(' ')
+          .map((num) => parseFloat(num));
+        // these are coordinates w/ y=0 at top and y=1 at bottom
+        const scaledBaseYs = base
+          .filter((el, i) => i % 2 === 1)
+          .map((y) => y / viewbox[3]);
+        const scaledBaseXs = base
+          .filter((el, i) => i % 2 === 0)
+          .map((x) => x / viewbox[2]);
+
+        const minY = Math.min.apply(null, scaledBaseYs);
+        const maxY = Math.max.apply(null, scaledBaseYs);
+
+        const minX = Math.min.apply(null, scaledBaseXs);
+        const maxX = Math.max.apply(null, scaledBaseXs);
+
+        const leftY = scaledBaseYs[scaledBaseXs.indexOf(minX)];
+        const rightY = scaledBaseYs[scaledBaseXs.indexOf(maxX)];
+
+        // we essentially shift the point where we draw it up by this amount (but also shift center pt "back")
+        basebb = {
+          bottom: maxY,
+          top: minY,
+          left: minX,
+          right: maxX,
+          leftY,
+          rightY,
+        };
+      } else if (element.data.path.slice(0, 5) === 'tiles') {
+        customShift = 1;
+      }
+
+      this.scene.create2DObject(
+        bb,
+        element.imagePath,
+        basebb,
+        element,
+        customShift,
+        callback
+      );
+
+      if (element.data.changingImagePath) {
+        const stateLen = element.data.changingPaths.split(',').length;
+        const interval = setInterval(() => {
+          if (element.data.changingRandomly) {
+            element.data.state = Math.floor(
+              Math.random() * Math.floor(stateLen)
+            );
+          } else {
+            element.data.state = (element.data.state + 1) % stateLen;
+          }
+          element.setImageForState();
+          this.scene.updateBuildingImage(element.data.id);
+        }, element.data.changingInterval);
+        this.buildingIntervals.push(interval);
+      }
+    };
   };
 }
 

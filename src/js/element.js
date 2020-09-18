@@ -32,7 +32,7 @@ class Element extends Editable {
       path = this.data.path.split(',')[this.data.state];
     }
 
-    return `https://hackmit-playground-2020.s3.amazonaws.com/elements/${path}`;
+    return `https://hackmit-playground-2020.s3.amazonaws.com/elements/${path}?${Math.random()}`;
   }
 
   get name() {
@@ -55,38 +55,24 @@ class Element extends Editable {
     }
   }
 
+  hasAction() {
+    return this.data.action !== NO_ACTION || this.data.toggleable;
+  }
+
   configureElement(elem) {
-    if (this.data.action !== NO_ACTION || this.data.toggleable) {
+    if (this.hasAction()) {
       elem.style.cursor = 'pointer';
     } else {
       elem.style.cursor = 'default';
     }
   }
 
+  setImageForState() {
+    const pathOptions = this.data.changingPaths.split(',');
+    this.data.path = pathOptions[this.data.state];
+  }
+
   configureImage(imgElem) {
-    if (this.data.changingImagePath) {
-      let state = 0;
-
-      this.changingImageInterval = setInterval(() => {
-        const pathOptions = this.data.changingPaths.split(',');
-
-        if (this.data.changingRandomly) {
-          this.data.path =
-            pathOptions[Math.floor(Math.random() * pathOptions.length)];
-        } else {
-          if (state === pathOptions.length) {
-            state = 0;
-          }
-
-          this.data.path = pathOptions[state];
-          state += 1;
-        }
-
-        // eslint-disable-next-line
-        imgElem.src = this.imagePath;
-      }, this.data.changingInterval);
-    }
-
     if (this.data.action !== NO_ACTION || this.data.toggleable) {
       imgElem.setAttribute('data-interactable', true);
     }
