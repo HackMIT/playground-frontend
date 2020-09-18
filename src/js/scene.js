@@ -78,6 +78,10 @@ class Scene {
 
   // create a new character at 0,0
   newCharacter(id, character) {
+    if (id in this.characters) {
+      return;
+    }
+
     this.characters[id] = new Character(character, this, (vec) => {
       vec.project(this.camera);
 
@@ -245,6 +249,7 @@ class Scene {
           height / 2 - height * (shiftAmt + customShift),
           basePt.z
         );
+
         // plane.scale.set(width, height, 1);
         plane.rotateY(Math.PI / 4);
 
@@ -271,12 +276,6 @@ class Scene {
           const leftPt = this.worldVectorForPos(leftX, leftY);
           const rightPt = this.worldVectorForPos(rightX, rightY);
 
-          // const geometry1 = new THREE.SphereGeometry( 2, 32, 32 );
-          // const material1 = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-          // const sphere = new THREE.Mesh( geometry1, material1 );
-          // sphere.position.set(geometry.vertices[2].x, geometry.vertices[2].y, geometry.vertices[2].z);
-          // this.scene.add( sphere );
-
           const camDirProj = new THREE.Vector3(1, 0, 1);
           const leftProj = new THREE.Vector3(
             geometry.vertices[0].x,
@@ -299,18 +298,6 @@ class Scene {
 
           geometry.vertices[1].addScaledVector(cameraDirection, tr);
           geometry.vertices[3].addScaledVector(cameraDirection, tr);
-
-          // const geometry1 = new THREE.SphereGeometry( 2, 32, 32 );
-          // const material1 = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-          // const sphere = new THREE.Mesh( geometry1, material1 );
-          // sphere.position.set(geometry.vertices[0].x, geometry.vertices[0].y, geometry.vertices[0].z);
-          // this.scene.add( sphere );
-
-          // const geometry2 = new THREE.SphereGeometry( 2, 32, 32 );
-          // const material2 = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-          // const sphere2 = new THREE.Mesh( geometry2, material2 );
-          // sphere2.position.set(geometry.vertices[2].x, geometry.vertices[2].y, geometry.vertices[2].z);
-          // this.scene.add( sphere2 );
         }
 
         this.scene.add(plane);
