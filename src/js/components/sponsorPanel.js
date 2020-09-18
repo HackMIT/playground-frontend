@@ -3,7 +3,6 @@ import socket from '../socket';
 import '../../styles/sponsorPanel.scss';
 import characterManager from '../managers/character';
 
-
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
 
@@ -116,6 +115,13 @@ class SponsorPanel {
                 settings: { twitterHandle: '' },
               })
             }}>Update</button>
+          </div>
+        </div>
+        <div id="sponsor-toggle-container">
+          <p>Queue Toggle: This turns the queue on and off for your entire company. Make sure to check with your other reps first before turning the queue off!</p>
+          <div id="sponsor-queue-toggle">
+            <input type="checkbox" id="sponsor-toggle"/>
+            <div id="slider"></div>
           </div>
         </div>
         <div>{hackerElems}</div>
