@@ -88,8 +88,7 @@ class Character {
   }
 
   handleSocketMessage = (msg) => {
-    console.log(msg);
-    if (msg.type !== 'achievements') {
+    if (msg.id !== this.data.id || msg.type !== 'achievements') {
       return;
     }
 
