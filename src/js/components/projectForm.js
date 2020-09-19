@@ -226,16 +226,6 @@ class SponsorPanel {
       submit = false;
     }
 
-    if (!selectedTrackElem) {
-      document
-        .getElementById('form-errors')
-        .insertAdjacentHTML(
-          'beforeend',
-          '<p>Please select a track to submit to.</p>'
-        );
-      submit = false;
-    }
-
     const packet = {
       name: document.getElementById('name').value,
       pitch: document.getElementById('pitch').value,
