@@ -14,22 +14,20 @@ class ProjectsPane {
     document.getElementById("projects-list").innerHTML = '';
     if (data.projects) {
       data.projects.forEach(project => {
-        document.getElementById("projects-list").appendChild(<div class="project-submission">
-          <a href={project.zoom || ''}>{project.name}</a>
+        document.getElementById("projects-list").appendChild(<div className="project-submission">
+          <a target="_blank" href={project.zoom || ''}>{project.name}</a>
+          <p>{project.pitch}</p>
         </div>
         )
       });
     }
   }
 
-  clear = () => {
-    document.getElementById("projects-list").innerHTML = '';
-  }
-
   handleJoinPacket = (data) => {
     if (data.project) {
-      document.getElementById("projects-list").appendChild(<div class="project-submission">
-        <a href={data.project.zoom}>{data.project.name}</a>
+      document.getElementById("projects-list").appendChild(<div className="project-submission">
+        <a target="_blank" href={data.project.zoom}>{data.project.name}</a>
+        <p>{data.project.pitch}</p>
       </div>)
     }
   }

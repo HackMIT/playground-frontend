@@ -275,13 +275,28 @@ body {
       border-top-right-radius: 12px;
       border-bottom-right-radius: 12px;
       display: none;
-
+      max-height: 70%;
+      overflow-y: scroll;
+      
       h3 {
         padding-bottom: 8px;
         border-bottom: 3px solid #1a2353;
         width: 100%;
         text-align: center;
         margin-bottom: 12px;
+      }
+    
+      #projects-list {
+        .project-submission {
+          background: #95cff0;
+          border-radius: 5px;
+          margin-bottom: 10px;
+          padding: 9px;
+
+          p {
+            font-size: 11px;
+          }
+        }
       }
     }
   }
