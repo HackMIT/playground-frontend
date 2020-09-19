@@ -70,7 +70,7 @@ const BACKGROUND_IMAGE_URL =
 const SPONSOR_NAME_IMAGE_URL =
   'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/sponsors/%PATH%.svg';
 
-const walls = [];
+let walls = [];
 let roomWalls = [];
 
 // const walls = [[[0.2, 0.2], [0.4, 0.4], [0.2, 0.4]], [[0.4, 0.4], [0.6, 0.4], [0.6, 0.6], [0.4, 0.6]]]
@@ -405,7 +405,9 @@ class Game extends Page {
         this.characters.set(id, character);
       });
 
-      this.scene.setNametagZorderBehind(data.room.id !== 'nightclub' && data.room.id !== 'auditorium')
+      this.scene.setNametagZorderBehind(
+        data.room.id !== 'nightclub' && data.room.id !== 'auditorium'
+      );
 
       this.elementNames = data.elementNames;
       this.roomNames = data.roomNames;
@@ -803,7 +805,9 @@ class Game extends Page {
       }
     } else if (data.type === 'join') {
       this.scene.newCharacter(data.character.id, data.character);
-      this.scene.fixNametag(data.room.id !== 'nightclub' && data.room.id !== 'auditorium')
+      this.scene.fixNametag(
+        data.room.id !== 'nightclub' && data.room.id !== 'auditorium'
+      );
     } else if (data.type === 'leave') {
       this.scene.deleteCharacter(data.character.id);
     } else if (data.type === 'chat') {
@@ -893,7 +897,7 @@ class Game extends Page {
     const gameRect = document.getElementById('game').getBoundingClientRect();
 
     this.elements.forEach((element) => {
-      this.convertElementTo3d(element, gameRect, () => { });
+      this.convertElementTo3d(element, gameRect, () => {});
     });
 
     this.elements.forEach((element) => {
@@ -1323,9 +1327,7 @@ class Game extends Page {
         element.data.path.startsWith('stripper_pole.svg')
       ) {
         customShift = 1;
-      } else if (
-        element.data.path.startsWith('tiles')
-      ) {
+      } else if (element.data.path.startsWith('tiles')) {
         customShift = 20;
       }
 
