@@ -561,12 +561,12 @@ class Game extends Page {
         }
 
         if (first || second) {
-          document.getElementById('form-button').style.display = 'block';
           if (
             !characterManager.character.project ||
             (second &&
               characterManager.character.project.submittedAt < formOpen2)
           ) {
+            document.getElementById('form-button').style.display = 'block';
             if (!this.remindForm) {
               createModal(
                 <div id="form-reminder-modal">
@@ -889,7 +889,7 @@ class Game extends Page {
     const gameRect = document.getElementById('game').getBoundingClientRect();
 
     this.elements.forEach((element) => {
-      this.convertElementTo3d(element, gameRect, () => {});
+      this.convertElementTo3d(element, gameRect, () => { });
     });
 
     this.elements.forEach((element) => {
