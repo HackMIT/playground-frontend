@@ -63,7 +63,7 @@ class AnimatedModel {
   }
 
   fixTrackingElems() {
-    const objPt = this.animation.destination.clone();
+    const objPt = this.modelGeometry.position.clone();
     const screenPt = this.reverseRaycaster(objPt);
 
     this.trackingElems.forEach((elem) => {
