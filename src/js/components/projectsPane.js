@@ -12,6 +12,9 @@ class ProjectsPane {
 
   handleInitPacket = (data) => {
     document.getElementById("projects-list").innerHTML = '';
+    if (data.character.project) {
+      document.getElementById("project-pane-zoom").innerHTML = `<p>Make sure to stay on <a target="_blank" href=${data.character.project.zom}>your Zoom link</a> as you check out other projects! Click on the links below to meet other hackers.</p>`;
+    }
     if (data.projects) {
       data.projects.forEach(project => {
         document.getElementById("projects-list").appendChild(<div className="project-submission">

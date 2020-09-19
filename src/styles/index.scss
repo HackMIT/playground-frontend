@@ -278,24 +278,36 @@ body {
       max-height: 70%;
       overflow-y: scroll;
       
-      h3 {
-        padding-bottom: 8px;
+      #project-pane-zoom {
+        font-size: 11px;
         border-bottom: 3px solid #1a2353;
+        padding-bottom: 12px;
+        margin-bottom: 12px;
+      }
+
+      h3 {
+        padding-bottom: 4px;
         width: 100%;
         text-align: center;
-        margin-bottom: 12px;
       }
     
       #projects-list {
         .project-submission {
           background: #95cff0;
           border-radius: 5px;
-          margin-bottom: 10px;
+          margin-bottom: 7px;
           padding: 9px;
+
+          a {
+            font-size: 13px;
+          }
 
           p {
             font-size: 11px;
+            margin-top: 5px;
           }
+
+          &:last-of-type { margin-bottom: 0 }
         }
       }
     }
