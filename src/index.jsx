@@ -20,7 +20,7 @@ import loginPanel from './js/components/login';
 import createLoadingScreen from './js/components/loading';
 import characterSelector from './js/components/characterSelector';
 import queueForm from './js/components/queueForm';
-import arcadePanel from './js/components/arcade';
+// import arcadePanel from './js/components/arcade';
 
 import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
@@ -1054,7 +1054,7 @@ class Game extends Page {
   };
 
   handleDanceButton = () => {
-    createModal(arcadePanel.createArcadePanel());
+    // createModal(arcadePanel.createArcadePanel());
 
     const friendsPane = document.getElementById('friends-pane');
 
