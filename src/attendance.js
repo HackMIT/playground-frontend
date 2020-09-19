@@ -36,6 +36,7 @@ function handleSocketOpen() {
   }
 
   // Connected to remote
+  console.log('hello');
   socket.send(joinPacket);
 }
 
@@ -54,5 +55,5 @@ function handleConfirm() {
   });
 }
 
-window.onload = handleSocketOpen;
+socket.onload = handleSocketOpen;
 document.getElementById('submit').onclick = handleConfirm;
