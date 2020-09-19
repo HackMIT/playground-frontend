@@ -98,8 +98,19 @@ class Jukebox {
   };
 
   createPlayingNowContents = () => {
-    const title = this.currentSong.duration === 0 ? "No songs playing" : this.currentSong.title;
-    const input = <input onclick={this.toggleJukebox} id="jukebox-toggle" class="toggle" type="checkbox" checked={this.jukeboxToggle} />;
+    const title =
+      this.currentSong.duration === 0
+        ? 'No songs playing'
+        : this.currentSong.title;
+    const input = (
+      <input
+        onclick={this.toggleJukebox}
+        id="jukebox-toggle"
+        class="toggle"
+        type="checkbox"
+        checked={this.jukeboxToggle}
+      />
+    );
     return (
       <div>
         <div>
@@ -107,9 +118,7 @@ class Jukebox {
           <h2>{title}</h2>
         </div>
         <p id="toggle">Toggle Jukebox: </p>
-        <label class="toggle">
-          {input}
-        </label>
+        <label class="toggle">{input}</label>
       </div>
     );
   };
@@ -122,11 +131,10 @@ class Jukebox {
         type: 'get_current_song',
       });
       this.player.loadVideoById(this.currentSong.id, this.songStart);
-    }
-    else if (this.player !== null) {
+    } else if (this.player !== null) {
       this.player.pauseVideo();
     }
-  }
+  };
 
   createSongsQueueContents = () => {
     socket.send({
@@ -135,7 +143,12 @@ class Jukebox {
     const rootElem = <div />;
     setTimeout(() => {
       this.songs.forEach((song) => {
-        const removeButton = characterManager.character.role === 1 ? (<button id="remove" onclick={() => this.handleRemoveButton(song)}>Remove</button>) : null;
+        const removeButton =
+          characterManager.character.role === 1 ? (
+            <button id="remove" onclick={() => this.handleRemoveButton(song)}>
+              Remove
+            </button>
+          ) : null;
         const minutesStr = Math.floor(song.duration / 60)
           .toString()
           .padStart(2, '0');
@@ -251,9 +264,7 @@ class Jukebox {
       createModal(
         <div id="jukebox-modal">
           <h1 className="white-text">Oops!</h1>
-          <p className="white-text">
-            Please input a valid YouTube video URL.
-          </p>
+          <p className="white-text">Please input a valid YouTube video URL.</p>
         </div>
       );
       return;
@@ -266,9 +277,7 @@ class Jukebox {
       createModal(
         <div id="jukebox-modal">
           <h1 className="white-text">Oops!</h1>
-          <p className="white-text">
-            Please input a valid YouTube video URL.
-          </p>
+          <p className="white-text">Please input a valid YouTube video URL.</p>
         </div>
       );
       return;
@@ -280,18 +289,14 @@ class Jukebox {
       splitUrl = url.search.split(/[&=]/);
       if (url.toString().includes('&')) {
         vidCode = splitUrl[splitUrl.length - 3];
-      }
-      else {
+      } else {
         vidCode = splitUrl[splitUrl.length - 1];
       }
-    }
-    catch {
+    } catch {
       createModal(
         <div id="jukebox-modal">
           <h1 className="white-text">Oops!</h1>
-          <p className="white-text">
-            Please input a valid YouTube video URL.
-          </p>
+          <p className="white-text">Please input a valid YouTube video URL.</p>
         </div>
       );
       return;
@@ -311,6 +316,9 @@ class Jukebox {
   };
 
   updateJukeboxPane = (updateVideo) => {
+    if (!document.getElementById('jukebox-playing-now')) {
+      return;
+    }
     // Get updated songs from queue
     if (updateVideo) {
       this.updateYouTubePlayer();
