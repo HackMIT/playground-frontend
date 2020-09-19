@@ -193,15 +193,17 @@ class Scene {
     let success = false;
 
     Object.values(this.characters).some((character) => {
-      const intersects = this.raycaster.intersectObject(
-        character.model.modelGeometry,
-        true
-      );
-
-      if (intersects.length > 0) {
-        success = true;
-        character.showProfile();
-        return true;
+      if (character.model !== undefined) {
+        const intersects = this.raycaster.intersectObject(
+          character.model.modelGeometry,
+          true
+        );
+        
+        if (intersects.length > 0) {
+          success = true;
+          character.showProfile();
+          return true;
+        }
       }
 
       return false;

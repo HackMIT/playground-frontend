@@ -123,20 +123,26 @@ class Character {
   }
 
   dance(dance) {
-    this.model.setDanceAnimation(dance);
+    if (this.model !== undefined) {
+      this.model.setDanceAnimation(dance);
+    }
   }
 
   // returns time it'll take
   // x and y are just stored so the screen position doesn't have to be recalculated
   moveTo(vector, callback, x, y) {
-    this.model.setAnimation(vector, callback);
+    if (this.model !== undefined) {
+      this.model.setAnimation(vector, callback);
+    }
     this.curX = x;
     this.curY = y;
   }
 
   safeDelete(parent) {
-    this.model.deconstruct();
-    parent.scene.remove(this.model.modelGeometry);
+    if (this.model !== undefined) {
+      this.model.deconstruct();
+      parent.scene.remove(this.model.modelGeometry);
+    }
   }
 
   setModel(parentScene, model, actions, walkActionIndex, initX, initY) {
