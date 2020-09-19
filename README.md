@@ -23,3 +23,11 @@ If you need to test anything that involves communicating with [playground-backen
 ### Recommended
 
 I recommend you install the [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) VSCode extensions for easy development.
+
+## License
+
+Playground frontend is available under the MIT license. See the LICENSE file for more details.
+
+## FAQs, credits, etc.
+
+Check out the [main Playground repo](https://github.com/hackmit/playground) for more details!
