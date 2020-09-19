@@ -4,12 +4,11 @@ import socket from '../socket';
 
 import '../../styles/projectForm.scss';
 
-import notificationsManager from '../managers/notifications'
+import notificationsManager from '../managers/notifications';
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
 
 class SponsorPanel {
-
   createFormModal = (project) => {
     const isFriday = new Date().getTime() < 1600498800000;
 
@@ -33,7 +32,12 @@ class SponsorPanel {
     ].map((track) => {
       return (
         <div className="checkbox-container">
-          <input type="radio" name="track" value={track.id} checked={project ? project.track === track.id : 'false'} />
+          <input
+            type="radio"
+            name="track"
+            value={track.id}
+            checked={project ? project.track === track.id : 'false'}
+          />
           <label for={track.id}>{track.title}</label>
         </div>
       );
@@ -63,12 +67,35 @@ class SponsorPanel {
       {
         id: 'ibm',
         title:
-          '(IBM) Best solution addressing the community response to COVID-19',
+          '(IBM-CGI U) Best solution addressing the community response to COVID-19',
+      },
+      {
+        id: 'ibm2',
+        title: '(MIT-IBM) Green Compute Challenge',
+      },
+      {
+        id: 'intersystems',
+        title: '(InterSystems) InterSystems Technology Challenge',
+      },
+      {
+        id: 'nasdaq',
+        title: 'Most Creative Use of Nasdaq Quandl Datasets',
+      },
+      {
+        id: 'nasdaq2',
+        title: 'Virtual Music Challenge',
       },
     ].map((challenge) => {
       return (
         <div className="checkbox-container">
-          <input type="checkbox" name="challenges" value={challenge.id} checked={project ? project.challenges.includes(challenge.id) : 'false'} />
+          <input
+            type="checkbox"
+            name="challenges"
+            value={challenge.id}
+            checked={
+              project ? project.challenges.includes(challenge.id) : 'false'
+            }
+          />
           <label for={challenge.id}>{challenge.title}</label>
         </div>
       );
@@ -84,27 +111,48 @@ class SponsorPanel {
             for HackMIT with. Only one person on your team needs to fill out
             this form.
           </p>
-          <input type="text" id="teammates" defaultValue={project ? project.emails : ''} />
+          <input
+            type="text"
+            id="teammates"
+            defaultValue={project ? project.emails : ''}
+          />
         </div>
         <div className="field">
           <p>What's your project's name?</p>
-          <input type="text" id="name" defaultValue={project ? project.name : ''} />
+          <input
+            type="text"
+            id="name"
+            defaultValue={project ? project.name : ''}
+          />
         </div>
         <div className="field">
           <p>
             Write a 1-2 sentence &ldquo;elevator pitch&rdquo; explaining your
-            idea.
+            idea. (max 200 characters)
           </p>
-          <input type="text" id="pitch" defaultValue={project ? project.pitch : ''} />
+          <input
+            type="text"
+            id="pitch"
+            defaultValue={project ? project.pitch : ''}
+            maxLength="200"
+          />
         </div>
         {isFriday ? (
           <div className="field">
-            {isFriday ? <p>
-              If you&rsquo;ll be participating in peer expo (happening in the
-              hacker arena at 6pm EDT!), enter a Zoom link that other
-              participants can use to meet you.
-            </p> : <div />}
-            <input type="text" id="zoom" defaultValue={project ? project.zoom || '' : ''} />
+            {isFriday ? (
+              <p>
+                If you&rsquo;ll be participating in peer expo (happening in the
+                hacker arena at 6pm EDT!), enter a Zoom link that other
+                participants can use to meet you.
+              </p>
+            ) : (
+              <div />
+            )}
+            <input
+              type="text"
+              id="zoom"
+              defaultValue={project ? project.zoom || '' : ''}
+            />
           </div>
         ) : null}
         <div className="field checkbox-field">
@@ -124,7 +172,6 @@ class SponsorPanel {
         </button>
       </div>
     );
-
   };
 
   handleSubmitButton = () => {
@@ -214,7 +261,9 @@ class SponsorPanel {
     }
     if (submit) {
       socket.send(packet);
-      notificationsManager.displayMessage("You successfully submitted your project form!")
+      notificationsManager.displayMessage(
+        'You successfully submitted your project form!'
+      );
       document.getElementById('modal-background').remove();
     }
   };
