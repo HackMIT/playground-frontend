@@ -1,3 +1,4 @@
+import arcade from './components/arcade';
 import characterSelector from './components/characterSelector';
 import createModal from '../modal';
 import mapInstance from './components/worldMap';
@@ -18,6 +19,7 @@ const WARDROBE_OPEN_ACTION = 3;
 const NONPROFIT_OPEN_ACTION = 4;
 const MISTI_POPUP_ACTION = 5;
 const CEREMONY_OPEN_ACTION = 6;
+const ARCADE_POPUP_ACTION = 7;
 
 class Element extends Editable {
   dataKeyName = 'element';
@@ -103,6 +105,8 @@ class Element extends Editable {
       createModal(misti.createModal());
     } else if (this.data.action === CEREMONY_OPEN_ACTION) {
       window.open('https://go.hackmit.org/opening', '_blank');
+    } else if (this.data.action === ARCADE_POPUP_ACTION) {
+      createModal(arcade.createArcadePanel());
     }
   }
 
