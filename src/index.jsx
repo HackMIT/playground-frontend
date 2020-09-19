@@ -21,6 +21,7 @@ import createLoadingScreen from './js/components/loading';
 import { pointInPolygon, lineIntersectsPolygon } from './js/geometry';
 import characterSelector from './js/components/characterSelector';
 import queueForm from './js/components/queueForm';
+// import arcadePanel from './js/components/arcade';
 
 import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
@@ -889,7 +890,7 @@ class Game extends Page {
     const gameRect = document.getElementById('game').getBoundingClientRect();
 
     this.elements.forEach((element) => {
-      this.convertElementTo3d(element, gameRect, () => {});
+      this.convertElementTo3d(element, gameRect, () => { });
     });
 
     this.elements.forEach((element) => {
@@ -1111,6 +1112,8 @@ class Game extends Page {
   };
 
   handleDanceButton = () => {
+    // createModal(arcadePanel.createArcadePanel());
+
     const friendsPane = document.getElementById('friends-pane');
 
     if (this.dancePaneVisible === true) {

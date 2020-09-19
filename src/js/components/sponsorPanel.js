@@ -2,6 +2,7 @@ import socket from '../socket';
 
 import '../../styles/sponsorPanel.scss';
 import characterManager from '../managers/character';
+import notificationsManager from '../managers/notifications';
 
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
@@ -10,8 +11,7 @@ class SponsorPanel {
   constructor() {
     this.queue = [];
     this.sponsorId = '';
-    this.sponsor = {queueOpen: false, challenges: "", url: "", description: ""}
-
+    this.sponsor = { queueOpen: false, challenges: "", url: "", description: "" }
     socket.subscribe(
       ['queue_update_sponsor', 'sponsor'],
       this.handleSocketMessage
@@ -20,7 +20,6 @@ class SponsorPanel {
 
   updateQueueContent = () => {
     const queueList = document.getElementById('queue');
-
     if (queueList !== null) {
       queueList.innerHTML = '';
       queueList.appendChild(this.createQueueContent());
@@ -30,10 +29,23 @@ class SponsorPanel {
   handleSocketMessage = (msg) => {
     switch (msg.type) {
       case 'queue_update_sponsor':
-        this.queue = msg.subscribers;
+        if (msg.subscribers > this.queue) {
+          this.queue = msg.subscribers;
+          if (!this.isOpen) {
+            const audio = new Audio('/audio/notification.mp3');
+            audio.play();
+            notificationsManager.displayMessage("Someone joined the queue", 7000);
+          }
+        } else {
+          this.queue = msg.subscribers;
+        }
         break;
       case 'sponsor':
         this.sponsor = msg.sponsor;
+        document.getElementById('sponsor-description-field').value =
+          msg.sponsor.description;
+        document.getElementById('sponsor-url-field').value = msg.sponsor.url || '';
+        document.getElementById('sponsor-challenges-field').value = msg.sponsor.challenges;
         break;
       default:
         break;
@@ -54,20 +66,30 @@ class SponsorPanel {
       type: 'queue_subscribe',
       sponsorId: this.sponsorId,
     });
+
+    this.isOpen = true;
   };
 
   unsubscribe = () => {
-    socket.send({
-      type: 'queue_unsubscribe',
-      sponsorId: this.sponsorId,
-    });
+    // socket.send({
+    //   type: 'queue_unsubscribe',
+    //   sponsorId: this.sponsorId,
+    // });
+    this.isOpen = false;
   };
 
   chat = (subscriberId) => {
+    let zoomLink = document.getElementById('sponsor-zoom-link').value;
+
+    if (zoomLink && !zoomLink.startsWith('http')) {
+      zoomLink = `https://${zoomLink}`;
+    }
+
     socket.send({
       type: 'queue_remove',
       characterId: subscriberId,
       sponsorId: this.sponsorId,
+      zoom: zoomLink,
     });
   };
 
@@ -93,7 +115,15 @@ class SponsorPanel {
               .map((x) => queueTopics[x])
               .join(', ')}
           </p>
-          <button onclick={() => this.chat(subscriber.id)}>Chat</button>
+          <button id="sponsor-chat-button" onclick={() => {
+            if (document.getElementById('sponsor-zoom-link') && document.getElementById('sponsor-zoom-link').value !== '') {
+              this.chat(subscriber.id);
+            }
+            else {
+              document.getElementById("queue").insertAdjacentHTML('beforeend', '<p>Enter a valid zoom link!</p>')
+            }
+          }
+          }>Chat</button>
         </div>
       );
     });
@@ -104,7 +134,7 @@ class SponsorPanel {
         <div id="sponsor-zoom">
           <p>Zoom Link: This is the link that hackers will receive when you accept them off of the queue.</p>
           <div id="sponsor-zoom-input">
-            <input defaultValue={characterManager.character.zoom} id="sponsor-zoom-link"/>
+            <input defaultValue={characterManager.character.zoom || ''} id="sponsor-zoom-link" />
             <button onclick={() => {
               socket.send({
                 type: 'settings',
@@ -149,7 +179,6 @@ class SponsorPanel {
                 id="sponsor-description-field"
                 placeholder="Company A is working hard to bring financial literacy to those who need it most. Talk to us to learn more about our challenges and recruiting opportunities! Our queue will be open all of Friday night and 9am-1pm EDT on Saturday."
                 rows="6"
-                defaultValue={this.sponsor.description}
               />
             </div>
             <div className="field">
@@ -162,7 +191,6 @@ class SponsorPanel {
                 id="sponsor-challenges-field"
                 placeholder="We're looking for the best hacks that teach financial literacy!&#10;&#10;Prize: $100 Amazon gift card for each team member"
                 rows="6"
-                defaultValue={this.sponsor.challenges}
               />
             </div>
             <div className="field">
@@ -175,7 +203,6 @@ class SponsorPanel {
                 id="sponsor-url-field"
                 type="text"
                 placeholder="https://company.com/jobs"
-                defaultValue={this.sponsor.url}
               />
             </div>
             <button

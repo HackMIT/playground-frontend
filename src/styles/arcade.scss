@@ -1,0 +1,32 @@
+#arcade-panel {
+  text-align: center;
+
+  #games {
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+    grid-row-gap: 5px;
+    grid-column-gap: 5px;
+    background: lightgray;
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+  }
+
+  button {
+    padding: 5px;
+    border-radius: 4px;
+
+    img {
+      max-width: 100%;
+      object-fit: cover;
+    }
+  }
+
+  h1 {
+    background: #ff8c69;
+    color: white;
+    padding: 30px;
+  }
+}
