@@ -360,7 +360,6 @@ class Game extends Page {
   };
 
   handleSocketMessage = (data) => {
-    console.log(data);
     if (data.type === 'init') {
       if (data.firstTime) {
         // If firstTime is true, components/login.js is handling this
