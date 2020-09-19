@@ -546,7 +546,7 @@ class Game extends Page {
         const deadline1 = this.createUTCDate(19, 7);
 
         const formOpen2 = this.createUTCDate(19, 16);
-        const deadline2 = this.createUTCDate(19, 22);
+        const deadline2 = this.createUTCDate(20, 0);
 
         const first =
           formOpen1.getTime() < currentTime &&
