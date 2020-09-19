@@ -137,24 +137,18 @@ class SponsorPanel {
             maxLength="200"
           />
         </div>
-        {isFriday ? (
-          <div className="field">
-            {isFriday ? (
-              <p>
-                If you&rsquo;ll be participating in peer expo (happening in the
-                hacker arena at 6pm EDT!), enter a Zoom link that other
-                participants can use to meet you.
-              </p>
-            ) : (
-              <div />
-            )}
-            <input
-              type="text"
-              id="zoom"
-              defaultValue={project ? project.zoom || '' : ''}
-            />
-          </div>
-        ) : null}
+        <div className="field">
+          <p>
+            If you&rsquo;ll be participating in peer expo (happening in the
+            hacker arena at 6pm EDT!), enter a Zoom link that other participants
+            can use to meet you.
+          </p>
+          <input
+            type="text"
+            id="zoom"
+            defaultValue={project ? project.zoom || '' : ''}
+          />
+        </div>
         <div className="field checkbox-field">
           <p>Which track are you planning to submit to?</p>
           {trackElems}
