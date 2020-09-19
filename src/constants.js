@@ -13,7 +13,7 @@ const config = {
 };
 
 const dev = {
-  baseURL: 'http://localhost:3000',
+  baseURL: 'http://0.0.0.0:3000',
   websocketURL: 'ws://localhost:5000/ws',
 };
 
