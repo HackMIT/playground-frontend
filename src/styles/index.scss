@@ -262,6 +262,28 @@ body {
         }
       }
     }
+
+    #arena-projects-pane {
+      position: absolute;
+      width: 160px;
+      left: 0px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: white;
+      text-align: center;
+      padding: 24px;
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+      display: none;
+
+      h3 {
+        padding-bottom: 8px;
+        border-bottom: 3px solid #1a2353;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 12px;
+      }
+    }
   }
 
   &.vertical #game {
