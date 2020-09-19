@@ -4,21 +4,11 @@ import './styles/attendance.scss';
 import constants from './constants';
 import socket from './js/socket';
 
-socket.start();
-socket.subscribe('join', (msg) => {
-  document.getElementById(
-    'confirm-message'
-  ).innerHTML = `Please confirm your attendance for the <strong>${msg.event} Workshop</strong>`;
-});
-
-const param = '/attendance?id=';
-const idURL = constants.baseURL + param;
-const eventID = window.location.href.slice(idURL.length);
+const eventID = window.location.href.split('=')[1];
 
 function handleSocketOpen() {
   const joinPacket = {
     type: 'join',
-    event: eventID,
   };
 
   if (localStorage.getItem('token') !== null) {
@@ -36,7 +26,6 @@ function handleSocketOpen() {
   }
 
   // Connected to remote
-  console.log('hello');
   socket.send(joinPacket);
 }
 
@@ -55,5 +44,14 @@ function handleConfirm() {
   });
 }
 
-socket.onload = handleSocketOpen;
+socket.onopen = handleSocketOpen;
+
+socket.subscribe(['*'], (msg) => {
+  document.getElementById(
+    'confirm-message'
+  ).innerHTML = `Please confirm your attendance for the <strong>${msg.event} Workshop</strong>`;
+});
+
+socket.start();
+
 document.getElementById('submit').onclick = handleConfirm;
