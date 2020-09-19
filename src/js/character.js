@@ -187,6 +187,10 @@ class Character {
       this.data.name,
       this.reverseRaycaster
     );
+
+    if (parentScene.zorderVal !== undefined) {
+      this.model.changeZorderOfNameTag(parentScene.zorderVal);
+    }
   }
 
   hideProfile() {
@@ -226,6 +230,12 @@ class Character {
     this.profileBox.style.left = `${x}px`;
     this.profileBox.style.top = `${y}px`;
     this.profileBox.style.visibility = 'inherit';
+  }
+
+  fixZorderOfNameTag(behind) {
+    if (this.model !== undefined) {
+      this.model.changeZorderOfNameTag(behind);
+    }
   }
 
   createCharacterProfile() {

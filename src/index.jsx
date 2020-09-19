@@ -303,6 +303,7 @@ class Game extends Page {
     if (inWall) {
       // if you're in the wall you're only allowed to move out
       // (this is so you can't get stuck in walls if something breaks)
+
       if (
         walls.some((wall) => pointInPolygon([x, y], wall)) ||
         (roomWalls.length !== 0 &&
@@ -361,7 +362,6 @@ class Game extends Page {
   };
 
   handleSocketMessage = (data) => {
-    console.log(data);
     if (data.type === 'init') {
       if (data.firstTime) {
         // If firstTime is true, components/login.js is handling this
@@ -405,6 +405,8 @@ class Game extends Page {
         this.characters.set(id, character);
       });
 
+      this.scene.setNametagZorderBehind(data.room.id !== 'nightclub' && data.room.id !== 'auditorium')
+
       this.elementNames = data.elementNames;
       this.roomNames = data.roomNames;
 
@@ -432,6 +434,7 @@ class Game extends Page {
       } else {
         roomWalls = [];
       }
+      walls = [];
 
       if (this.room.sponsorId.length > 0) {
         if (characterManager.character.queueId !== this.room.sponsorId) {
@@ -692,7 +695,6 @@ class Game extends Page {
         return false;
       });
     } else if (data.type === 'dance') {
-      this.testDrawWalls();
       this.scene.danceCharacter(data.id, data.dance);
     } else if (data.type === 'move') {
       this.scene.moveCharacter(data.id, data.x, data.y, () => {
@@ -801,6 +803,7 @@ class Game extends Page {
       }
     } else if (data.type === 'join') {
       this.scene.newCharacter(data.character.id, data.character);
+      this.scene.fixNametag(data.room.id !== 'nightclub' && data.room.id !== 'auditorium')
     } else if (data.type === 'leave') {
       this.scene.deleteCharacter(data.character.id);
     } else if (data.type === 'chat') {
@@ -1316,11 +1319,14 @@ class Game extends Page {
         }
         walls.push(thisWall);
       } else if (
-        element.data.path.startsWith('tiles') ||
         element.data.path.startsWith('auditorium_chairs.svg') ||
         element.data.path.startsWith('stripper_pole.svg')
       ) {
         customShift = 1;
+      } else if (
+        element.data.path.startsWith('tiles')
+      ) {
+        customShift = 20;
       }
 
       this.scene.create2DObject(

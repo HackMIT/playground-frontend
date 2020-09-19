@@ -74,6 +74,20 @@ class Scene {
       this.container.clientWidth,
       this.container.clientHeight
     );
+
+    Object.values(this.characters).forEach((character) => {
+      if (character.model !== undefined) {
+        character.model.fixTrackingElems();
+      }
+    });
+  }
+
+  setNametagZorderBehind(behind) {
+    this.zorderVal = behind
+    Object.values(this.characters).forEach((character) => {
+      character.fixZorderOfNameTag(behind);
+    });
+
   }
 
   // create a new character at 0,0
