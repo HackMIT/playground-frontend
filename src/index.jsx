@@ -806,9 +806,6 @@ class Game extends Page {
       }
     } else if (data.type === 'join') {
       this.scene.newCharacter(data.character.id, data.character);
-      // this.scene.fixNametag(
-      //   this.room.id !== 'nightclub' && this.room.id !== 'auditorium'
-      // );
     } else if (data.type === 'leave') {
       this.scene.deleteCharacter(data.character.id);
     } else if (data.type === 'chat') {
