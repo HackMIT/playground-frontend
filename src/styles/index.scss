@@ -262,6 +262,55 @@ body {
         }
       }
     }
+
+    #arena-projects-pane {
+      position: absolute;
+      width: 160px;
+      left: 0px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: white;
+      text-align: center;
+      padding: 24px;
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+      display: none;
+      max-height: 70%;
+      overflow-y: scroll;
+      
+      #project-pane-zoom {
+        font-size: 11px;
+        border-bottom: 3px solid #1a2353;
+        padding-bottom: 12px;
+        margin-bottom: 12px;
+      }
+
+      h3 {
+        padding-bottom: 4px;
+        width: 100%;
+        text-align: center;
+      }
+    
+      #projects-list {
+        .project-submission {
+          background: #95cff0;
+          border-radius: 5px;
+          margin-bottom: 7px;
+          padding: 9px;
+
+          a {
+            font-size: 13px;
+          }
+
+          p {
+            font-size: 11px;
+            margin-top: 5px;
+          }
+
+          &:last-of-type { margin-bottom: 0 }
+        }
+      }
+    }
   }
 
   &.vertical #game {

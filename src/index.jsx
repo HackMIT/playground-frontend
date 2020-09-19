@@ -21,6 +21,7 @@ import createLoadingScreen from './js/components/loading';
 import { pointInPolygon, lineIntersectsPolygon } from './js/geometry';
 import characterSelector from './js/components/characterSelector';
 import queueForm from './js/components/queueForm';
+import projectPane from './js/components/projectsPane';
 // import arcadePanel from './js/components/arcade';
 
 import characterManager from './js/managers/character';
@@ -664,8 +665,10 @@ class Game extends Page {
       // Show floor selector inside hacker arena
       if (this.room.id.startsWith('arena:')) {
         document.getElementById('floor-selector').style.display = 'block';
+        projectPane.show();
       } else {
         document.getElementById('floor-selector').style.display = 'none';
+        projectPane.hide();
       }
 
       // Show current event on navbar
