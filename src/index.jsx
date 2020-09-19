@@ -571,7 +571,7 @@ class Game extends Page {
           if (
             !characterManager.character.project ||
             (second &&
-              characterManager.character.project.submittedAt < formOpen2)
+              characterManager.character.project.submittedAt * 1000 < formOpen2)
           ) {
             document.getElementById('form-button').style.display = 'block';
             if (!this.remindForm) {
@@ -895,7 +895,7 @@ class Game extends Page {
     const gameRect = document.getElementById('game').getBoundingClientRect();
 
     this.elements.forEach((element) => {
-      this.convertElementTo3d(element, gameRect, () => { });
+      this.convertElementTo3d(element, gameRect, () => {});
     });
 
     this.elements.forEach((element) => {
