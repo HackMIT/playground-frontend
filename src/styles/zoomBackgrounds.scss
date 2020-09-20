@@ -1,0 +1,74 @@
+$background_item_padding: 8px;
+
+#zoom-backgrounds-panel {
+  align-items: center;
+  background: rgb(230, 242, 249);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+
+  h1 {
+    font-family: LemonMilkRegular;
+    font-size: 38px;
+    letter-spacing: 2px;
+    text-align: center;
+  }
+
+  .border {
+    background: rgb(86, 98, 145);
+    border-radius: 3px;
+    height: 6px;
+    margin: 8px 0;
+    width: 85%;
+  }
+
+  p {
+    margin: 8px 0 16px;
+    text-align: center;
+    width: 85%;
+  }
+
+  .zoom-backgrounds-container-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    width: 85%;
+
+    .zoom-backgrounds-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+
+      .zoom-background {
+        border-radius: 8px;
+        padding: $background_item_padding;
+        position: relative;
+
+        &:hover .zoom-background-overlay {
+          display: initial;
+        }
+
+        .zoom-background-overlay {
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 12px;
+          display: none;
+          position: absolute;
+          top: $background_item_padding;
+          left: $background_item_padding;
+          right: $background_item_padding;
+          bottom: $background_item_padding;
+
+          img {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            bottom: 10px;
+            right: 10px;
+          }
+        }
+
+        .zoom-background-img {
+          border-radius: 12px;
+        }
+      }
+    }
+  }
+}

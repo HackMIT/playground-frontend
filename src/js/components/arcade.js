@@ -36,7 +36,9 @@ class ArcadePanel {
             <p>Typeracer</p>
           </div>
           <div className="game">
-            <button onclick={() => window.open('http://spyfall.app', '_blank')}>
+            <button
+              onclick={() => window.open('https://www.spyfall.app', '_blank')}
+            >
               <img src={spyfall} />
             </button>
             <p>Spyfall</p>

@@ -4,6 +4,7 @@ import createModal from '../modal';
 import mapInstance from './components/worldMap';
 import misti from './components/misti';
 import nonprofit from './components/nonprofit';
+import zoomBackgrounds from './components/zoomBackgrounds';
 
 import Editable from './editable';
 import jukebox from '../jukebox';
@@ -20,6 +21,7 @@ const NONPROFIT_OPEN_ACTION = 4;
 const MISTI_POPUP_ACTION = 5;
 const CEREMONY_OPEN_ACTION = 6;
 const ARCADE_POPUP_ACTION = 7;
+const ZOOM_POPUP_ACTION = 8;
 
 class Element extends Editable {
   dataKeyName = 'element';
@@ -107,6 +109,8 @@ class Element extends Editable {
       window.open('https://go.hackmit.org/opening', '_blank');
     } else if (this.data.action === ARCADE_POPUP_ACTION) {
       createModal(arcade.createArcadePanel());
+    } else if (this.data.action === ZOOM_POPUP_ACTION) {
+      createModal(zoomBackgrounds.createZoomBackgroundsPanel());
     }
   }
 
