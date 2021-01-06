@@ -45,7 +45,7 @@
     "@babel/plugin-transform-react-jsx": "^7.10.4",
     "@babel/plugin-transform-react-jsx-self": "^7.10.4",
     "@mapbox/mapbox-gl-geocoder": "^4.6.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "email-validator": "^2.0.4",
     "eslint-config-prettier": "^6.11.0",
     "fs": "^0.0.1-security",
