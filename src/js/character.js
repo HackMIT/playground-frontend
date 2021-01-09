@@ -307,6 +307,10 @@ class Character {
         <div className="profile-card">
           <h2 className="name"> {this.data.name} </h2>{' '}
           <p className="school"> {this.data.school} </p>{' '}
+          <div className="vc-container">
+            <div className="vc-icon"> </div>
+            <h3 className="vc-coins">{/* this.data.coins */}0</h3>
+          </div>
           <div className="profile-badge">
             <div />
             <div className="bio-background">

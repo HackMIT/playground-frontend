@@ -1,9 +1,9 @@
 @charset "utf-8";
 
-@import 'variables';
+@import "variables";
 
-@import 'fonts';
-@import 'colors';
+@import "fonts";
+@import "colors";
 
 $profile_border_radius: 12px;
 
@@ -54,6 +54,19 @@ $profile_border_radius: 12px;
     .name {
       font-size: 20px;
     }
+    .vc-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      width: inherit;
+
+      .vc-icon {
+        width: 24px;
+        height: 24px;
+        margin: 5px;
+        background-image: url("../images/iconmonstr-coin-2.svg");
+      }
+    }
 
     .school {
       font-size: 10px;
@@ -61,11 +74,7 @@ $profile_border_radius: 12px;
     }
 
     .profile-badge {
-      background: linear-gradient(
-        135deg,
-        rgba(150, 208, 241, 1) 0%,
-        rgba(251, 205, 194, 1) 100%
-      );
+      background: linear-gradient(135deg, rgba(150, 208, 241, 1) 0%, rgba(251, 205, 194, 1) 100%);
       border-radius: $profile_border_radius;
       height: 200px;
       margin-top: 8px;
