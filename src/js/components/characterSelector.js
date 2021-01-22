@@ -14,8 +14,35 @@ class CharacterSelector {
 
     // pink: FF69B4
     this.options = {
-      eyes: ['#634e34', '#2e536f', '#3d671d', '#1c7847', '#497665', '#ff0000', '#CD5266', '#DB7E35', '#8ABE3F', '#389BAE', '#4F5AAE', '#FFFFFF', '#603101', '#5e481e', '#63390f'],
-      skin: ['#8d5524', '#c68642', '#e0ac69', '#f1c27d', '#ffdbac', '#FE4E8E', '#94D869', '#77E1F9', '#A671FE', '#FE0000'],
+      eyes: [
+        '#634e34',
+        '#2e536f',
+        '#3d671d',
+        '#1c7847',
+        '#497665',
+        '#ff0000',
+        '#CD5266',
+        '#DB7E35',
+        '#8ABE3F',
+        '#389BAE',
+        '#4F5AAE',
+        '#FFFFFF',
+        '#603101',
+        '#5e481e',
+        '#63390f',
+      ],
+      skin: [
+        '#8d5524',
+        '#c68642',
+        '#e0ac69',
+        '#f1c27d',
+        '#ffdbac',
+        '#FE4E8E',
+        '#94D869',
+        '#77E1F9',
+        '#A671FE',
+        '#FE0000',
+      ],
       shirt: [
         '#ff99c8',
         '#fcf6bd',
@@ -292,6 +319,10 @@ class CharacterSelector {
     return (
       <div id="character-selector">
         <div id="character-selector-tabs">{tabElements}</div>
+        <div className="char-vc-container">
+          <div className="vc-icon"> </div>
+          <h3 className="vc-coins">{/* this.data.coins */}0</h3>
+        </div>
         <div id="character-selector-content">
           <div id="character-selector-canvas-container">
             {this.renderer.domElement}
