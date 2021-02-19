@@ -45,7 +45,6 @@ class SponsorPanel {
         document.getElementById('sponsor-description-field').value =
           msg.sponsor.description;
         document.getElementById('sponsor-url-field').value = msg.sponsor.url || '';
-        document.getElementById('sponsor-challenges-field').value = msg.sponsor.challenges;
         break;
       default:
         break;
@@ -183,18 +182,6 @@ class SponsorPanel {
             </div>
             <div className="field">
               <p>
-                Challenges: A description of the challenge(s) you're offering
-                this weekend, including any relevant details, criteria, and
-                prizes.
-              </p>
-              <textarea
-                id="sponsor-challenges-field"
-                placeholder="We're looking for the best hacks that teach financial literacy!&#10;&#10;Prize: $100 Amazon gift card for each team member"
-                rows="6"
-              />
-            </div>
-            <div className="field">
-              <p>
                 URL: The URL hackers will be redirected to when clicking on the
                 "Visit Website" button. Feel free to use this to share
                 recruitment opportunities.
@@ -219,9 +206,7 @@ class SponsorPanel {
                   description: document.getElementById(
                     'sponsor-description-field'
                   ).value,
-                  challenges: document.getElementById(
-                    'sponsor-challenges-field'
-                  ).value,
+                  challenges: '',
                   url,
                 });
                 document

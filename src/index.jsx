@@ -532,7 +532,7 @@ class Game extends Page {
 
       //  organizer
       if (characterManager.character.role === 1) {
-        document.getElementById('edit-button').style.display = 'block';
+        // document.getElementById('edit-button').style.display = 'block';
       }
 
       //  sponsor
