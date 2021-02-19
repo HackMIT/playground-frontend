@@ -34,7 +34,7 @@ class Map {
             <img className="clickable" src={personalRoom} />
             <p class="label">Personal Room</p>
           </button>
-          <button id="sponsor-town" onclick={() => this.teleport('plat_area')}>
+          <button id="sponsor-town" onclick={() => this.teleport('left_field')}>
             <img className="clickable" src={sponsorTown} />
             <p class="label">Organizations Fair</p>
           </button>
