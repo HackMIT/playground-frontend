@@ -21,8 +21,6 @@ import createLoadingScreen from './js/components/loading';
 import { pointInPolygon, lineIntersectsPolygon } from './js/geometry';
 import characterSelector from './js/components/characterSelector';
 import queueForm from './js/components/queueForm';
-import projectPane from './js/components/projectsPane';
-// import arcadePanel from './js/components/arcade';
 
 import characterManager from './js/managers/character';
 import notificationsManager from './js/managers/notifications';
@@ -67,15 +65,12 @@ import './images/icons/event_flag.svg';
 import createElement from './utils/jsxHelper';
 
 const BACKGROUND_IMAGE_URL =
-  'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
+  'https://blueprint-playground-2021.s3.us-east-1.amazonaws.com/backgrounds/%PATH%';
 const SPONSOR_NAME_IMAGE_URL =
-  'https://hackmit-playground-2020.s3.us-east-1.amazonaws.com/sponsors/%PATH%.svg';
+  'https://blueprint-playground-2021.s3.us-east-1.amazonaws.com/sponsors/%PATH%.svg';
 
 let walls = [];
 let roomWalls = [];
-
-// const walls = [[[0.2, 0.2], [0.4, 0.4], [0.2, 0.4]], [[0.4, 0.4], [0.6, 0.4], [0.6, 0.6], [0.4, 0.6]]]
-// ^ an example of a trianlge and a rectangle (coordinates are in [0,1]^2)
 
 class Game extends Page {
   constructor() {
@@ -537,8 +532,9 @@ class Game extends Page {
 
       //  organizer
       if (characterManager.character.role === 1) {
-        // document.getElementById('edit-button').style.display = 'block';
+        document.getElementById('edit-button').style.display = 'block';
       }
+
       //  sponsor
       else if (characterManager.character.role === 4) {
         const currentTime = new Date().getTime();
@@ -661,15 +657,6 @@ class Game extends Page {
           );
         }
       });
-
-      // Show floor selector inside hacker arena
-      if (this.room.id.startsWith('arena:')) {
-        document.getElementById('floor-selector').style.display = 'block';
-        projectPane.show();
-      } else {
-        document.getElementById('floor-selector').style.display = 'none';
-        projectPane.hide();
-      }
 
       // Show current event on navbar
       const currTimestamp = Math.floor(Date.now() / 1000);
@@ -1265,16 +1252,32 @@ class Game extends Page {
 
       if (
         baseElem !== null &&
-        baseElem.firstElementChild.getAttribute('points') !== null
+        (baseElem.firstElementChild.getAttribute('points') !== null || baseElem.firstElementChild.getAttribute('d') !== null)
       ) {
-        const base = baseElem.firstElementChild
-          .getAttribute('points')
-          .trim()
-          .split(',')
-          .join(' ')
-          .split(' ')
-          .filter((str) => str !== '')
-          .map((num) => parseFloat(num));
+        let base;
+
+        if (baseElem.firstElementChild.getAttribute('points') !== null) {
+          // polygon
+          base = baseElem.firstElementChild
+            .getAttribute('points')
+            .trim()
+            .split(',')
+            .join(' ')
+            .split(' ')
+            .filter((str) => str !== '')
+            .map((num) => parseFloat(num));
+        } else {
+          // path
+          base = baseElem.firstElementChild
+            .getAttribute('d')
+            .slice(1, -1)
+            .split('L')
+            .join(' ')
+            .split(',')
+            .join(' ')
+            .split(' ')
+            .map((num) => parseFloat(num));
+        }
 
         // these are coordinates w/ y=0 at top and y=1 at bottom
         const scaledBaseYs = base

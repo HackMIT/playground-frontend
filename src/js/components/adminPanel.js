@@ -8,21 +8,14 @@ import createElement from '../../utils/jsxHelper';
 class AdminPanel {
   constructor() {
     this.sponsorArray = [
-      ['ArrowStreet', 'arrowstreet'],
-      ['Citadel', 'citadel'],
-      ['CMT', 'cmt'],
-      ['DRW', 'drw'],
-      ['Facebook', 'facebook'],
-      ['Goldman Sachs', 'goldman'],
-      ['IBM', 'ibm'],
-      ['Intersystems', 'intersystems'],
-      ['MISTI', 'misti'],
-      ['Linode', 'linode'],
-      ['Nasdaq', 'nasdaq'],
-      ['OCA Ventures', 'oca'],
-      ['Pegasystems', 'pega'],
-      ['QuantCo', 'quantco'],
-      ['Yext', 'yext'],
+      ['MIT Beaverworks', 'beaverworks'],
+      ['HMS Medscience', 'medscience'],
+      ['IEEE', 'ieee'],
+      ['Kode with Klossy', 'kodewithklossy'],
+      ['KTByte', 'ktbyte'],
+      ['Latino Stem Alliance', 'lsa'],
+      ['LEAH Project', 'leah'],
+      ['MIT Lincoln Laboratory', 'lincoln'],
     ];
 
     this.sponsorMap = new Map(this.sponsorArray);

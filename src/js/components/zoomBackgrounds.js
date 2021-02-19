@@ -4,7 +4,7 @@ import downloadIcon from '../../images/icons/download.svg';
 // eslint-disable-next-line
 import createElement from '../../utils/jsxHelper';
 
-const BASE_URL = 'https://hackmit-playground-2020.s3.amazonaws.com/zooms/';
+const BASE_URL = 'https://blueprint-playground-2021.s3.amazonaws.com/zooms/';
 
 class ZoomBackgroundsPanel {
   createZoomBackgroundsPanel = () => {

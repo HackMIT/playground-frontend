@@ -37,7 +37,7 @@ class Element extends Editable {
       path = this.data.path.split(',')[this.data.state];
     }
 
-    return `https://hackmit-playground-2020.s3.amazonaws.com/elements/${path}?${Math.random()}`;
+    return `https://blueprint-playground-2021.s3.amazonaws.com/elements/${path}?${Math.random()}`;
   }
 
   get name() {
@@ -78,6 +78,8 @@ class Element extends Editable {
   }
 
   configureImage(imgElem) {
+    imgElem.setAttribute('data-id', this.data.id);
+
     if (this.data.action !== NO_ACTION || this.data.toggleable) {
       imgElem.setAttribute('data-interactable', true);
     }
