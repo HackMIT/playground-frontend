@@ -63,7 +63,7 @@ const generateConfig = (mode) => {
       ...pages.map(
         (page) =>
           new HtmlWebpackPlugin({
-            title: 'HackMIT Playground',
+            title: 'Blueprint Playground',
             template: `${paths.src}/${page.template}.html`,
             chunks: ['common', page.template],
             filename:

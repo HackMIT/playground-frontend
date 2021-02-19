@@ -262,13 +262,13 @@ class LoginPanel {
           <div>
             <h1>Code of Conduct</h1>
             <p>
-              Our team spent countless hours building the HackMIT Playground to
+              Our team spent countless hours building the Blueprint Playground to
               create a unique and special event for you.{' '}
               <strong>
                 All forms of abuse of our platform will not be tolerated.
               </strong>{' '}
               By checking the box below, you agree to follow our{' '}
-              <a href="http://go.hackmit.org/code-of-conduct" target="_blank">
+              <a href="http://go.hackmit.org/coc" target="_blank">
                 code of conduct
               </a>{' '}
               throughout the weekend.

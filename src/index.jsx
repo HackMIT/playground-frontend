@@ -352,7 +352,7 @@ class Game extends Page {
 
   handleSocketClose = () => {
     notificationsManager.displayMessage(
-      "You've been disconnected from the HackMIT playground. Please refresh the page to try to reconnect.",
+      "You've been disconnected from the Blueprint playground. Please refresh the page to try to reconnect.",
       Number.MAX_SAFE_INTEGER
     );
   };
